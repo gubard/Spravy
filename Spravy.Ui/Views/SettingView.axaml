@@ -36,7 +36,7 @@
 
     <c:BusyAreaControl IsBusy="{Binding IsBusy}" Margin="2">
         <Grid RowDefinitions="*,Auto">
-            <ScrollViewer Classes="mini">
+            <ScrollViewer>
                 <c:GroupBoxControl>
                     <c:GroupBoxControl.Header>
                         <Grid ColumnDefinitions="Auto,*">
@@ -51,8 +51,7 @@
                             <ScrollViewer Grid.Column="1"
                                           VerticalScrollBarVisibility="Disabled"
                                           HorizontalScrollBarVisibility="Auto"
-                                          HorizontalAlignment="Left"
-                                          Classes="mini">
+                                          HorizontalAlignment="Left">
                                 <TextBlock Text="{DynamicResource SettingView.Header}" />
                             </ScrollViewer>
                         </Grid>

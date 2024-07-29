@@ -222,6 +222,7 @@ public class DialogViewer : IDialogViewer
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
         where TView : ViewModelBase
@@ -231,22 +232,25 @@ public class DialogViewer : IDialogViewer
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+        confirmViewModel.Initialized = view => initialized.Invoke((TView)view);
 
-        confirmViewModel.Initialized = () =>
-            this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
+        return this.PostUiBackground(
+                () =>
+                {
+                    setupView.Invoke(content);
 
-                return Result.Success;
-            });
-
-        return ShowView(confirmViewModel, ContentDialogHostIdentifier);
+                    return Result.Success;
+                },
+                ct
+            )
+            .IfSuccessAsync(() => ShowView(confirmViewModel, ContentDialogHostIdentifier), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowConfirmInputDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
         where TView : ViewModelBase
@@ -256,16 +260,18 @@ public class DialogViewer : IDialogViewer
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+        confirmViewModel.Initialized = view => initialized.Invoke((TView)view);
 
-        confirmViewModel.Initialized = () =>
-            this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
+        return this.PostUiBackground(
+                () =>
+                {
+                    setupView.Invoke(content);
 
-                return Result.Success;
-            });
-
-        return ShowView(confirmViewModel, InputDialogHostIdentifier);
+                    return Result.Success;
+                },
+                ct
+            )
+            .IfSuccessAsync(() => ShowView(confirmViewModel, InputDialogHostIdentifier), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseContentDialogAsync(CancellationToken ct)

@@ -12,7 +12,6 @@ public class RootToDoItemsViewModel
     private readonly IToDoCache toDoCache;
 
     public RootToDoItemsViewModel(
-        FastAddToDoItemViewModel fastAddToDoItemViewModel,
         SpravyCommandNotifyService spravyCommandNotifyService,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IToDoCache toDoCache,
@@ -24,7 +23,6 @@ public class RootToDoItemsViewModel
         : base(true)
     {
         Commands = new();
-        FastAddToDoItemViewModel = fastAddToDoItemViewModel;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
@@ -53,7 +51,6 @@ public class RootToDoItemsViewModel
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }
-    public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public override string ViewId

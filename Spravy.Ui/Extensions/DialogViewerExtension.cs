@@ -6,6 +6,7 @@ public static class DialogViewerExtension
         this IDialogViewer dialogViewer,
         Func<string, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<TextViewModel> setup,
+        Func<TextViewModel, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
     {
@@ -13,6 +14,7 @@ public static class DialogViewerExtension
             view => confirmTask.Invoke(view.Text.ThrowIfNull()),
             _ => dialogViewer.CloseInputDialogAsync(ct),
             setup,
+            initialized,
             ct
         );
     }
@@ -21,6 +23,7 @@ public static class DialogViewerExtension
         this IDialogViewer dialogViewer,
         Func<ToDoItemEntityNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemSelectorViewModel> setup,
+        Func<ToDoItemSelectorViewModel, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
     {
@@ -28,6 +31,7 @@ public static class DialogViewerExtension
             view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull()),
             _ => dialogViewer.CloseInputDialogAsync(ct),
             setup,
+            initialized,
             ct
         );
     }

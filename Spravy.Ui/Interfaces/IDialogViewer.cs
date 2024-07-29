@@ -57,6 +57,7 @@ public interface IDialogViewer
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
         where TView : ViewModelBase;
@@ -65,6 +66,7 @@ public interface IDialogViewer
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
         CancellationToken ct
     )
         where TView : ViewModelBase;

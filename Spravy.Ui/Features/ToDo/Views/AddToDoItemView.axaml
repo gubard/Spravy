@@ -20,14 +20,14 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <controls:GroupBoxControl>
             <controls:GroupBoxControl.Header>
                 <TextBlock Classes="alignment-left" Text="{DynamicResource AddToDoItemView.Header}" />
             </controls:GroupBoxControl.Header>
 
             <StackPanel>
-                <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Disabled">
                     <controls:PathControl Segments="{Binding Path}" HorizontalAlignment="Left">
                         <controls:PathControl.DataTemplates>

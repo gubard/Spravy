@@ -31,8 +31,7 @@
             <ScrollViewer Grid.Column="1"
                           VerticalScrollBarVisibility="Disabled"
                           HorizontalScrollBarVisibility="Auto"
-                          HorizontalAlignment="Left"
-                          Classes="mini">
+                          HorizontalAlignment="Left">
                 <TextBlock Text="{DynamicResource LeafToDoItemsView.Header}" />
             </ScrollViewer>
 
@@ -85,7 +84,7 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Classes="mini" Grid.Row="1">
+        <ScrollViewer Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>

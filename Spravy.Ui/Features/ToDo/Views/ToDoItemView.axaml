@@ -38,8 +38,7 @@
                     <ScrollViewer Grid.Column="1"
                                   VerticalScrollBarVisibility="Disabled"
                                   HorizontalScrollBarVisibility="Auto"
-                                  HorizontalAlignment="Left"
-                                  Classes="mini">
+                                  HorizontalAlignment="Left">
                         <TextBlock Text="{Binding Item.Name}" />
                     </ScrollViewer>
 
@@ -97,7 +96,6 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1"
-                      Classes="mini"
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
@@ -112,7 +110,7 @@
             </controls:PathControl>
         </ScrollViewer>
 
-        <ScrollViewer Classes="mini" Grid.Row="2">
+        <ScrollViewer Grid.Row="2">
             <StackPanel>
                 <Expander Classes="header-alignment-left"
                           Margin="3"
@@ -143,7 +141,6 @@
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
-                <ContentControl Content="{Binding FastAddToDoItemViewModel}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

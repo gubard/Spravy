@@ -199,11 +199,6 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ReferenceToDoItemSettingsView>());
         }
 
-        if (typeof(FastAddToDoItemViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<FastAddToDoItemView>());
-        }
-
         if (typeof(ChangeToDoItemOrderIndexViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<ChangeToDoItemOrderIndexView>());

@@ -112,8 +112,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoSubItemsView))]
 [Transient(typeof(ReferenceToDoItemSettingsViewModel))]
 [Transient(typeof(ReferenceToDoItemSettingsView))]
-[Transient(typeof(FastAddToDoItemViewModel))]
-[Transient(typeof(FastAddToDoItemView))]
 [Transient(typeof(ChangeToDoItemOrderIndexViewModel))]
 [Transient(typeof(ChangeToDoItemOrderIndexView))]
 [Transient(typeof(MultiToDoItemSettingViewModel))]

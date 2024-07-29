@@ -27,7 +27,7 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
 
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? ConfirmTask { get; set; }
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? CancelTask { get; set; }
-    public Func<ConfiguredValueTaskAwaitable<Result>>? Initialized { get; set; }
+    public Func<object, ConfiguredValueTaskAwaitable<Result>>? Initialized { get; set; }
     public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
     public SpravyCommand InitializedCommand { get; }
@@ -42,7 +42,12 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
             return Result.AwaitableSuccess;
         }
 
-        return Initialized.Invoke();
+        if (Content is null)
+        {
+            return Result.AwaitableSuccess;
+        }
+
+        return Initialized.Invoke(Content);
     }
 
     public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)

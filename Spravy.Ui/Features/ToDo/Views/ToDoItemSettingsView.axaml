@@ -15,8 +15,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer Classes="mini"
-                  HorizontalScrollBarVisibility="Disabled"
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                   VerticalScrollBarVisibility="Auto">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>

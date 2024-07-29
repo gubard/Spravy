@@ -19,7 +19,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
                 <Panel Classes="alignment-left">
@@ -39,7 +39,7 @@
             </c:GroupBoxControl.DataTemplates>
 
             <StackPanel>
-                <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled"
+                <ScrollViewer VerticalScrollBarVisibility="Disabled"
                               HorizontalScrollBarVisibility="Auto">
                     <c:PathControl Segments="{Binding Item.Path}" HorizontalAlignment="Center">
                         <c:PathControl.DataTemplates>

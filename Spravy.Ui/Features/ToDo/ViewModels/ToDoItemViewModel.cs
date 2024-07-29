@@ -7,13 +7,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
 
-    private Guid id;
-
     public ToDoItemViewModel(
         IObjectStorage objectStorage,
         ToDoItemCommands commands,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        FastAddToDoItemViewModel fastAddToDoItemViewModel,
         IToDoService toDoService,
         IToDoCache toDoCache,
         IErrorHandler errorHandler,
@@ -24,7 +21,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         this.objectStorage = objectStorage;
         Commands = commands;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        FastAddToDoItemViewModel = fastAddToDoItemViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
         SpravyCommandService = spravyCommandService;
@@ -35,21 +31,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
             .Subscribe(_ => UpdateCommandItemsUi());
     }
 
-    public Guid Id
-    {
-        get => id;
-        set
-        {
-            id = value;
-            FastAddToDoItemViewModel.ParentId = id;
-        }
-    }
-
+    public Guid Id { get; set; }
     public SpravyCommandService SpravyCommandService { get; }
     public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
     public ToDoItemCommands Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-    public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
 
     [Reactive]
     public ToDoItemEntityNotify? Item { get; set; }
@@ -86,18 +72,22 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return toDoCache
             .GetToDoItem(Id)
             .IfSuccess(item =>
-                this.PostUiBackground(() =>
-                {
-                    Item = item;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        Item = item;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, ct), ct)
             .IfSuccessAsync(
                 item =>
                     this.PostUiBackground(
-                        () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi()), ct
+                        () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi()),
+                        ct
                     ),
                 ct
             );
@@ -115,24 +105,31 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
 
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken ct)
     {
-        return this.PostUiBackground(() =>
-            {
-                if (Item is null)
+        return this.PostUiBackground(
+                () =>
                 {
-                    ToDoSubItemsViewModel.ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+                    if (Item is null)
+                    {
+                        ToDoSubItemsViewModel.ClearExceptUi(
+                            ReadOnlyMemory<ToDoItemEntityNotify>.Empty
+                        );
 
-                    return Result.Success;
-                }
+                        return Result.Success;
+                    }
 
-                if (Item.Children.Count == 0)
-                {
-                    ToDoSubItemsViewModel.ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+                    if (Item.Children.Count == 0)
+                    {
+                        ToDoSubItemsViewModel.ClearExceptUi(
+                            ReadOnlyMemory<ToDoItemEntityNotify>.Empty
+                        );
 
-                    return Result.Success;
-                }
+                        return Result.Success;
+                    }
 
-                return ToDoSubItemsViewModel.ClearExceptUi(Item.Children.ToArray());
-            }, ct)
+                    return ToDoSubItemsViewModel.ClearExceptUi(Item.Children.ToArray());
+                },
+                ct
+            )
             .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, ct), ct)
             .IfSuccessAsync(
                 ids => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateChildrenItemsUi(Id, ids)),
@@ -177,13 +174,16 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return setting
             .CastObject<ToDoItemViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                    ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

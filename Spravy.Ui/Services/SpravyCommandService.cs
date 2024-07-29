@@ -96,6 +96,7 @@ public class SpravyCommandService
                                             ct
                                         ),
                                 vm => vm.IgnoreIds = selectedIds,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -138,6 +139,7 @@ public class SpravyCommandService
                                             ct
                                         ),
                                 vm => vm.IgnoreIds = selectedIds,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -181,6 +183,7 @@ public class SpravyCommandService
                                         ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 ActionHelper<ResetToDoItemViewModel>.Empty,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -239,6 +242,7 @@ public class SpravyCommandService
                                         .Select(x => x.Id)
                                         .ToArray();
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -279,6 +283,7 @@ public class SpravyCommandService
                                 {
                                     viewModel.RandomizeChildrenOrderIds = selected;
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -326,6 +331,7 @@ public class SpravyCommandService
                                 },
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -383,6 +389,7 @@ public class SpravyCommandService
                                 {
                                     viewModel.IgnoreIds = selected;
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -483,6 +490,7 @@ public class SpravyCommandService
                                         ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 ActionHelper<MultiToDoItemSettingViewModel>.Empty,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -522,6 +530,7 @@ public class SpravyCommandService
                                 {
                                     vm.DeleteItems.Update(selected);
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -567,6 +576,7 @@ public class SpravyCommandService
                                     ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 ActionHelper<AddToDoItemViewModel>.Empty,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -765,6 +775,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     view => view.PasswordItemId = passwordItem.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -855,6 +866,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     vm => vm.ParentId = item.CurrentId,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -897,6 +909,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     view => view.Item = item,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -946,6 +959,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     vm => vm.ToDoItemId = item.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -978,6 +992,7 @@ public class SpravyCommandService
                         viewModel.IgnoreIds = new([item.Id,]);
                         viewModel.DefaultSelectedItemId = (item.Parent?.Id).GetValueOrDefault();
                     },
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1024,6 +1039,7 @@ public class SpravyCommandService
                     },
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1050,6 +1066,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     viewModel => viewModel.Item = item,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1082,6 +1099,7 @@ public class SpravyCommandService
                     },
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     viewModel => viewModel.Id = item.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1105,6 +1123,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     vm => vm.Id = item.CurrentId,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1160,6 +1179,7 @@ public class SpravyCommandService
                                 ct
                             ),
                     view => view.DefaultSelectedItemId = item.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1202,6 +1222,7 @@ public class SpravyCommandService
                                 ct
                             ),
                     view => view.DefaultSelectedItemId = item.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1245,6 +1266,7 @@ public class SpravyCommandService
                                     ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 vm => vm.ParentId = item.CurrentId,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1326,6 +1348,7 @@ public class SpravyCommandService
                                         ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 vm => vm.ToDoItemId = item.Id,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1362,6 +1385,7 @@ public class SpravyCommandService
                                     vm.Item = item;
                                     vm.DeleteItems.Update(selected);
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1423,6 +1447,7 @@ public class SpravyCommandService
                                     viewModel.IgnoreIds = selected;
                                     viewModel.DefaultSelectedItemId = item.Id;
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1487,6 +1512,7 @@ public class SpravyCommandService
                                 },
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1528,6 +1554,7 @@ public class SpravyCommandService
                                     viewModel.Item = item;
                                     viewModel.RandomizeChildrenOrderIds = selected;
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1586,6 +1613,7 @@ public class SpravyCommandService
                                         .Select(x => x.Id)
                                         .ToArray();
                                 },
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1629,6 +1657,7 @@ public class SpravyCommandService
                                         ),
                                 _ => dialogViewer.CloseContentDialogAsync(ct),
                                 vm => vm.Id = item.CurrentId,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1666,6 +1695,7 @@ public class SpravyCommandService
                                             ct
                                         ),
                                 view => view.DefaultSelectedItemId = item.Id,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1723,6 +1753,7 @@ public class SpravyCommandService
                                             ct
                                         ),
                                 view => view.DefaultSelectedItemId = item.Id,
+                                _ => Result.AwaitableSuccess,
                                 ct
                             ),
                         ct
@@ -1852,6 +1883,7 @@ public class SpravyCommandService
                     },
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     ActionHelper<AddRootToDoItemViewModel>.Empty,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -1934,6 +1966,10 @@ public class SpravyCommandService
                         viewModel.ToDoItemName = item.Name;
                         viewModel.FocusUi();
                     },
+                    viewModel =>
+                        ct.PostUiBackground(() => viewModel.FocusUi(), ct)
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                     ct
                 ),
             errorHandler,
@@ -1960,6 +1996,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     ActionHelper<AddPasswordItemViewModel>.Empty,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,
@@ -2055,6 +2092,7 @@ public class SpravyCommandService
                             ),
                     _ => dialogViewer.CloseContentDialogAsync(ct),
                     vm => vm.Id = item.Id,
+                    _ => Result.AwaitableSuccess,
                     ct
                 ),
             errorHandler,

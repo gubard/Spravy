@@ -29,8 +29,6 @@ public class ToDoItemCommands
         CancellationToken ct
     )
     {
-        viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
-
         return objectStorage
             .GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, ct)
             .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, ct), ct)

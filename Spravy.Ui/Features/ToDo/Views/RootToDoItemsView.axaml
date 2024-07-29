@@ -31,8 +31,7 @@
             <ScrollViewer Grid.Column="1"
                           VerticalScrollBarVisibility="Disabled"
                           HorizontalScrollBarVisibility="Auto"
-                          HorizontalAlignment="Left"
-                          Classes="mini">
+                          HorizontalAlignment="Left">
                 <TextBlock Text="{DynamicResource RootToDoItemsView.Header}" />
             </ScrollViewer>
 
@@ -84,12 +83,9 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Classes="mini" Grid.Row="1">
-            <StackPanel>
-                <ContentControl Name="{x:Static v:RootToDoItemsView.ToDoSubItemsContentControlName}"
-                                Content="{Binding ToDoSubItemsViewModel}" />
-                <ContentControl Content="{Binding FastAddToDoItemViewModel}" />
-            </StackPanel>
+        <ScrollViewer Grid.Row="1">
+            <ContentControl Name="{x:Static v:RootToDoItemsView.ToDoSubItemsContentControlName}"
+                            Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
 
         <Button Grid.Row="2"
