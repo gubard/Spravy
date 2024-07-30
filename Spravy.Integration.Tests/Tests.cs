@@ -452,6 +452,11 @@ public class Tests
                             () =>
                                 w.GetCurrentView<LoginView, LoginViewModel>()
                                     .Case(view =>
+                                        view.FindControl<TextBox>(ElementNames.LoginTextBox)
+                                            .ThrowIfNull()
+                                            .SetText(w, TextHelper.TextLength4)
+                                    )
+                                    .Case(view =>
                                         view.FindControl<TextBox>(ElementNames.PasswordTextBox)
                                             .ThrowIfNull()
                                             .SetText(w, TextHelper.TextLength8)
