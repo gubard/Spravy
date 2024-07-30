@@ -418,12 +418,57 @@ public class Tests
                                     .FindControl<Button>("ForgotPasswordButton")
                                     .ThrowIfNull()
                                     .ClickOn(w)
-                                    .RunJobsAll(5)
+                                    .RunJobsAll(12)
                         )
                         .Case(
                             () =>
-                                TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
-                        ),
+                                w.GetCurrentView<ForgotPasswordView, ForgotPasswordViewModel>()
+                                    .Case(view =>
+                                        view.FindControl<TextBox>("VerificationCodeTextBox")
+                                            .ThrowIfNull()
+                                            .SetText(
+                                                w,
+                                                TestAppBuilder
+                                                    .Configuration.GetImapConnection()
+                                                    .GetLastEmailText()
+                                            )
+                                    )
+                                    .Case(view =>
+                                        view.FindControl<TextBox>("NewPasswordTextBox")
+                                            .ThrowIfNull()
+                                            .SetText(w, TextHelper.TextLength50)
+                                    )
+                                    .Case(view =>
+                                        view.FindControl<TextBox>("NewRepeatPasswordTextBox")
+                                            .ThrowIfNull()
+                                            .SetText(w, TextHelper.TextLength50)
+                                    )
+                                    .FindControl<Button>("ForgotPasswordButton")
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(3)
+                        )
+                        .Case(
+                            () =>
+                                w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .Case(view =>
+                                        view.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                                            .ThrowIfNull()
+                                            .SetText(w, TextHelper.TextLength8)
+                                    )
+                                    .Case(view =>
+                                        view.FindControl<CheckBox>(
+                                                ElementNames.RememberMeCheckBoxName
+                                            )
+                                            .ThrowIfNull()
+                                            .ClickOn(w)
+                                    )
+                                    .FindControl<Button>(ElementNames.LoginButton)
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(4)
+                        )
+                        .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
     }

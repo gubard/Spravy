@@ -534,19 +534,35 @@ public class EfAuthenticationService : IAuthenticationService
 
     private Result CheckVerificationCode(string code, UserEntity entity)
     {
-        return Check(
-            code,
-            entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace(),
-            entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace()
-        );
+        return hasherFactory
+            .Create(entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace())
+            .IfSuccess(newHasher =>
+            {
+                var hash = newHasher.ComputeHash(code);
+
+                if (hash != entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace())
+                {
+                    return new(new VerificationCodePasswordError());
+                }
+
+                return Result.Success;
+            });
     }
 
     private Result CheckPassword(string password, UserEntity entity)
     {
-        return Check(
-            $"{entity.Salt};{password}",
-            entity.HashMethod.ThrowIfNullOrWhiteSpace(),
-            entity.PasswordHash.ThrowIfNullOrWhiteSpace()
-        );
+        return hasherFactory
+            .Create(entity.HashMethod.ThrowIfNullOrWhiteSpace())
+            .IfSuccess(newHasher =>
+            {
+                var hash = newHasher.ComputeHash($"{entity.Salt};{password}");
+
+                if (hash != entity.PasswordHash.ThrowIfNullOrWhiteSpace())
+                {
+                    return new(new WrongPasswordError());
+                }
+
+                return Result.Success;
+            });
     }
 }

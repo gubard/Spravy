@@ -15,7 +15,7 @@
                        MinWidth="300">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource EmailOrLoginInputView.Header}" />
+                <TextBlock Classes="alignment-center" Text="{DynamicResource EmailOrLoginInputView.Header}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>

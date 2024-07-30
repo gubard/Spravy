@@ -20,6 +20,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         this.navigator = navigator;
         this.objectStorage = objectStorage;
         this.authenticationService = authenticationService;
+
         ForgotPasswordCommand = SpravyCommand.Create(
             ForgotPasswordAsync,
             errorHandler,
@@ -60,24 +61,14 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                 {
                                     if (value)
                                     {
-                                        return authenticationService
-                                            .UpdateVerificationCodeByEmailAsync(EmailOrLogin, ct)
-                                            .IfSuccessAsync(
-                                                () =>
-                                                    navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                                                        vm =>
-                                                        {
-                                                            vm.Identifier = EmailOrLogin;
-
-                                                            vm.IdentifierType =
-                                                                EmailOrLogin.Contains('@')
-                                                                    ? UserIdentifierType.Email
-                                                                    : UserIdentifierType.Login;
-                                                        },
-                                                        ct
-                                                    ),
-                                                ct
-                                            );
+                                        return navigator.NavigateToAsync<ForgotPasswordViewModel>(
+                                            vm =>
+                                            {
+                                                vm.Identifier = EmailOrLogin;
+                                                vm.IdentifierType = UserIdentifierType.Email;
+                                            },
+                                            ct
+                                        );
                                     }
 
                                     return navigator.NavigateToAsync<VerificationCodeViewModel>(
@@ -100,25 +91,14 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                             {
                                 if (value)
                                 {
-                                    return authenticationService
-                                        .UpdateVerificationCodeByLoginAsync(EmailOrLogin, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                                                    vm =>
-                                                    {
-                                                        vm.Identifier = EmailOrLogin;
-
-                                                        vm.IdentifierType = EmailOrLogin.Contains(
-                                                            '@'
-                                                        )
-                                                            ? UserIdentifierType.Email
-                                                            : UserIdentifierType.Login;
-                                                    },
-                                                    ct
-                                                ),
-                                            ct
-                                        );
+                                    return navigator.NavigateToAsync<ForgotPasswordViewModel>(
+                                        vm =>
+                                        {
+                                            vm.Identifier = EmailOrLogin;
+                                            vm.IdentifierType = UserIdentifierType.Login;
+                                        },
+                                        ct
+                                    );
                                 }
 
                                 return navigator.NavigateToAsync<VerificationCodeViewModel>(

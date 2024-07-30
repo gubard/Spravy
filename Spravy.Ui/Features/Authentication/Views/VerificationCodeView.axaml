@@ -19,7 +19,7 @@
     <Border Classes="card" MinWidth="300">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource VerificationCodeView.Header}" />
+                <TextBlock Classes="alignment-center" Text="{DynamicResource VerificationCodeView.Header}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
