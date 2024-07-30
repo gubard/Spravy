@@ -14,7 +14,7 @@ public class Tests
     public void CreateUserFlow()
     {
         LogCurrentTestMethod();
-        Directory.GetCurrentDirectory().ToDirectory().Combine("storage").Delete(true);
+        Directory.GetCurrentDirectory().ToDirectory().Combine("storage").DeleteIfExists(true);
 
         WindowHelper
             .CreateWindow()
