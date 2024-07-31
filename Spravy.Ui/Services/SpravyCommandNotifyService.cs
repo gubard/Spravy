@@ -1,3 +1,5 @@
+using Avalonia.Input;
+
 namespace Spravy.Ui.Services;
 
 public class SpravyCommandNotifyService
@@ -265,7 +267,8 @@ public class SpravyCommandNotifyService
         NavigateToCurrentToDoItem = new(
             MaterialIconKind.ArrowRight,
             new("Command.OpenCurrent"),
-            commandService.NavigateToCurrentToDoItem
+            commandService.NavigateToCurrentToDoItem,
+            new(Key.C, KeyModifiers.Control)
         );
 
         LeafToDoItemsMulti = new[]

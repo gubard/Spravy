@@ -32,6 +32,7 @@
         <DataTemplate x:DataType="m:SpravyCommandNotify">
             <Button Content="{Binding Kind}"
                     Command="{Binding Item.Command}"
+                    HotKey="{Binding HotKey}"
                     ToolTip.Tip="{Binding Text}" />
         </DataTemplate>
 
