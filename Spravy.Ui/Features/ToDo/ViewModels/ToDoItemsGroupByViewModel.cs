@@ -24,22 +24,11 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
                 };
             });
-
-        this.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                GroupByNone.IsMulti = x;
-                GroupByStatus.IsMulti = x;
-                GroupByType.IsMulti = x;
-            });
     }
 
     public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
     public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
     public ToDoItemsGroupByTypeViewModel GroupByType { get; }
-
-    [Reactive]
-    public bool IsMulti { get; set; }
 
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;

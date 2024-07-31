@@ -3,7 +3,6 @@ using Jab;
 using Microsoft.Extensions.Configuration;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
-using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Services;
 using Spravy.Db.Sqlite.EntityTypeConfigurations;
@@ -35,7 +34,7 @@ public partial class DesktopServiceProvider : IServiceFactory
     {
         return application.GetTopLevel().ThrowIfNull();
     }
-    
+
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
     {
         return new(setup);

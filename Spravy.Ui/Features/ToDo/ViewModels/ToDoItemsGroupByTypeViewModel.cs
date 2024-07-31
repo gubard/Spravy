@@ -29,19 +29,6 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         Values = values;
         references.Header = new("ToDoItemsGroupByTypeView.Reference");
         References = references;
-
-        this.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                Values.IsMulti = x;
-                Groups.IsMulti = x;
-                Planneds.IsMulti = x;
-                Periodicitys.IsMulti = x;
-                PeriodicityOffsets.IsMulti = x;
-                Circles.IsMulti = x;
-                Steps.IsMulti = x;
-                References.IsMulti = x;
-            });
     }
 
     public ToDoItemsViewModel Values { get; }

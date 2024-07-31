@@ -18,7 +18,6 @@
 
                     <Button Grid.Column="1"
                             Classes="mode-press"
-                            IsVisible="{Binding IsMulti}"
                             Command="{Binding SwitchAllSelectionCommand.Command}">
                         <mi:MaterialIcon Kind="CheckAll" />
                     </Button>

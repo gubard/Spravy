@@ -2536,14 +2536,22 @@ public class SpravyCommandService
         );
 
         MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
-            (view, _) =>
+            (view, ct) =>
                 view
                     .ViewModel.IfNotNull(nameof(view.ViewModel))
                     .IfSuccess(vm =>
                     {
                         vm.MultiToDoItemsView = view;
 
-                        return Result.Success;
+                        return vm.PostUiBackground(
+                            () =>
+                            {
+                                vm.UpdateMultiUi(vm.IsMulti);
+
+                                return Result.Success;
+                            },
+                            ct
+                        );
                     })
                     .ToValueTaskResult()
                     .ConfigureAwait(false),

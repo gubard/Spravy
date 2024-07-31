@@ -17,24 +17,12 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Planned = planned;
         completed.Header = new("ToDoItemsGroupByStatusView.Completed");
         Completed = completed;
-
-        this.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                Missed.IsMulti = x;
-                ReadyForCompleted.IsMulti = x;
-                Planned.IsMulti = x;
-                Completed.IsMulti = x;
-            });
     }
 
     public ToDoItemsViewModel Missed { get; }
     public ToDoItemsViewModel ReadyForCompleted { get; }
     public ToDoItemsViewModel Planned { get; }
     public ToDoItemsViewModel Completed { get; }
-
-    [Reactive]
-    public bool IsMulti { get; set; }
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

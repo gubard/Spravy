@@ -8,25 +8,28 @@ public class ToDoItemsViewModel : ViewModelBase
 
         SwitchAllSelectionCommand = SpravyCommand.Create(
             ct =>
-                this.PostUiBackground(() =>
-                    {
-                        if (Items.All(x => x.IsSelected))
+                this.PostUiBackground(
+                        () =>
                         {
-                            foreach (var item in Items)
+                            if (Items.All(x => x.IsSelected))
                             {
-                                item.IsSelected = false;
+                                foreach (var item in Items)
+                                {
+                                    item.IsSelected = false;
+                                }
                             }
-                        }
-                        else
-                        {
-                            foreach (var item in Items)
+                            else
                             {
-                                item.IsSelected = true;
+                                foreach (var item in Items)
+                                {
+                                    item.IsSelected = true;
+                                }
                             }
-                        }
 
-                        return Result.Success;
-                    }, ct)
+                            return Result.Success;
+                        },
+                        ct
+                    )
                     .ToValueTaskResult()
                     .ConfigureAwait(false),
             errorHandler,
@@ -36,9 +39,6 @@ public class ToDoItemsViewModel : ViewModelBase
 
     public SpravyCommand SwitchAllSelectionCommand { get; }
     public AvaloniaList<ToDoItemEntityNotify> Items { get; }
-
-    [Reactive]
-    public bool IsMulti { get; set; }
 
     [Reactive]
     public TextLocalization? Header { get; set; }

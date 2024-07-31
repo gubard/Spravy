@@ -7,7 +7,7 @@ public static class ResourceHostExtension
         string resourceKey,
         [MaybeNullWhen(false)] out IStyle style
     )
-        where T : IStyleHost, IResourceHost
+        where T : IResourceHost
     {
         style = null;
 
@@ -31,7 +31,7 @@ public static class ResourceHostExtension
         string resourceKey,
         [MaybeNullWhen(false)] out IDataTemplate dataTemplate
     )
-        where T : IStyleHost, IResourceHost
+        where T : IResourceHost
     {
         dataTemplate = null;
 
@@ -41,6 +41,30 @@ public static class ResourceHostExtension
         }
 
         if (resource is not IDataTemplate result)
+        {
+            return false;
+        }
+
+        dataTemplate = result;
+
+        return true;
+    }
+
+    public static bool TryGetTemplate<T>(
+        this T resourceHost,
+        string resourceKey,
+        [MaybeNullWhen(false)] out ITemplate dataTemplate
+    )
+        where T : IResourceHost
+    {
+        dataTemplate = null;
+
+        if (!resourceHost.TryFindResource(resourceKey, out var resource))
+        {
+            return false;
+        }
+
+        if (resource is not ITemplate result)
         {
             return false;
         }
