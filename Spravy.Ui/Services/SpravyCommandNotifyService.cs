@@ -268,7 +268,7 @@ public class SpravyCommandNotifyService
             MaterialIconKind.ArrowRight,
             new("Command.OpenCurrent"),
             commandService.NavigateToCurrentToDoItem,
-            new(Key.C, KeyModifiers.Control)
+            new(Key.Q, KeyModifiers.Control)
         );
 
         LeafToDoItemsMulti = new[]
