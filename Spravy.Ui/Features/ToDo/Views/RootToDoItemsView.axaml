@@ -69,7 +69,12 @@
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
                                 <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
-                                <Setter Property="Icon" Value="{Binding Kind}" />
+                                
+                                <Setter Property="Icon">
+                                    <Template>
+                                        <mi:MaterialIcon Kind="{Binding Kind}" />
+                                    </Template>
+                                </Setter>
                             </Style>
                         </Button.Styles>
 

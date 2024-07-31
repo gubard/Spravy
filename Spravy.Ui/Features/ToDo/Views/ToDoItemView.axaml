@@ -75,7 +75,12 @@
                                     <Setter Property="Command" Value="{Binding Item.Command}" />
                                     <Setter Property="CommandParameter"
                                             Value="{Binding $parent[v:ToDoItemView].MainViewModel.Item}" />
-                                    <Setter Property="Icon" Value="{Binding Kind}" />
+                                    
+                                    <Setter Property="Icon">
+                                        <Template>
+                                            <mi:MaterialIcon Kind="{Binding Kind}" />
+                                        </Template>
+                                    </Setter>
                                 </Style>
                             </Button.Styles>
 

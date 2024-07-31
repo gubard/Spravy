@@ -7,9 +7,7 @@
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -86,12 +84,6 @@
 
         <DataTemplate x:DataType="m:DayOfWeekSelectItem">
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding DayOfWeek}" />
-        </DataTemplate>
-
-        <DataTemplate x:DataType="m:CommandItem">
-            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
-                <mi:MaterialIcon Kind="{Binding Icon}" />
-            </Button>
         </DataTemplate>
 
         <DataTemplate DataType="m:RootItem">
