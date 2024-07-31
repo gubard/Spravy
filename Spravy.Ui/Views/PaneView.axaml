@@ -10,66 +10,77 @@
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
                         x:DataType="vm:PaneViewModel">
-    <Panel>
-        <Button Classes="alignment-top alignment-right"
-                Command="{x:Static h:UiHelper.SwitchPane}">
-            <mi:MaterialIcon Kind="Close" />
+    <StackPanel>
+        <StackPanel.Styles>
+            <Style Selector="Button">
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+            </Style>
+            
+            <Style Selector="TextBlock">
+                <Setter Property="Margin" Value="2,0,0,0" />
+            </Style>
+        </StackPanel.Styles>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Classes="alignment-left" Margin="5,0,0,0" Text="{Binding Account.Login}" />
+
+            <Button Grid.Column="1" Classes="alignment-top alignment-right"
+                    Command="{x:Static h:UiHelper.SwitchPane}">
+                <mi:MaterialIcon Kind="Close" />
+            </Button>
+        </Grid>
+
+        <Rectangle Height="1"
+                   Margin="0,10,0,10"
+                   Fill="{DynamicResource ExpanderHeaderBorderBrush}" />
+
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="Checks" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
+            </Grid>
         </Button>
 
-        <StackPanel>
-            <TextBlock Text="{Binding Account.Login}" Margin="5" />
-            <Rectangle Height="1"
-                    Margin="0,10,0,10"
-                    Fill="{DynamicResource ExpanderHeaderBorderBrush}" />
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="CalendarToday" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
+            </Grid>
+        </Button>
 
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="Checks" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
-                </Grid>
-            </Button>
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="Search" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
+            </Grid>
+        </Button>
 
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="CalendarToday" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
-                </Grid>
-            </Button>
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
+                IsVisible="{Binding IsShowPasswordGenerator}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="Password" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
+            </Grid>
+        </Button>
 
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="Search" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
-                </Grid>
-            </Button>
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.NavigateToSetting}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="Settings" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
+            </Grid>
+        </Button>
 
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
-                    IsVisible="{Binding IsShowPasswordGenerator}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="Password" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
-                </Grid>
-            </Button>
-
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToSetting}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="Settings" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
-                </Grid>
-            </Button>
-
-            <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.Logout}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <mi:MaterialIcon Kind="Logout" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
-                </Grid>
-            </Button>
-        </StackPanel>
-    </Panel>
+        <Button Classes="mode-press"
+                Command="{x:Static h:UiHelper.Logout}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <mi:MaterialIcon Kind="Logout" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
+            </Grid>
+        </Button>
+    </StackPanel>
 </ru:ReactiveUserControl>
