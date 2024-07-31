@@ -33,7 +33,8 @@
             <Button Name="{x:Static ui:App.RootToDoItemButtonName}"
                     Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"
-                    Classes="alignment-stretch content-alignment-stretch to-do-item">
+                    Classes="alignment-stretch content-alignment-stretch to-do-item"
+                    Tapped="ToDoItemTapped">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
                     <ToggleButton Grid.Row="1"
                                   Grid.RowSpan="2"

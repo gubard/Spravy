@@ -44,6 +44,65 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
+    private async void ToDoItemTapped(object? sender, TappedEventArgs e)
+    {
+        if (!OperatingSystem.IsAndroid())
+        {
+            return;
+        }
+
+        if (!UiHelper.IsDrag)
+        {
+            return;
+        }
+
+        var data = UiHelper.DragData;
+
+        if (data is not ToDoItemEntityNotify dataItem)
+        {
+            return;
+        }
+
+        if (e.Source is not Control control)
+        {
+            return;
+        }
+
+        if (control.DataContext is not ToDoItemEntityNotify sourceItem)
+        {
+            return;
+        }
+
+        if (dataItem.Equals(sourceItem))
+        {
+            return;
+        }
+
+        var button = control.FindVisualParent<Button>(App.RootToDoItemButtonName);
+
+        if (button is null)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        UiHelper.IsDrag = false;
+        var pointerPosition = e.GetPosition(button);
+
+        var options =
+            pointerPosition.Y > button.Bounds.Height / 2
+                ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
+                : new(dataItem.Id, sourceItem.Id, false);
+
+        await serviceFactory
+            .CreateService<IToDoService>()
+            .UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
+
+        await serviceFactory
+            .CreateService<IUiApplicationService>()
+            .RefreshCurrentViewAsync(CancellationToken.None);
+    }
+
     private async void ReorderOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         var mainPanel = DiHelper
@@ -92,6 +151,8 @@ public class App : Application
         var dragData = new DataObject();
         dragData.Set(UiHelper.ToDoItemEntityNotifyDataFormat, toDoItem);
         UiHelper.IsDrag = true;
+        UiHelper.DragControl = contentControl;
+        UiHelper.DragPanel = mainPanel;
 
         try
         {
@@ -99,6 +160,7 @@ public class App : Application
         }
         finally
         {
+            UiHelper.DragData = toDoItem;
             UiHelper.IsDrag = false;
         }
 

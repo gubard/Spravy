@@ -5,9 +5,12 @@ namespace Spravy.Ui.Views;
 
 public partial class MainView : ReactiveUserControl<MainViewModel>
 {
-    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory.CreateService<IServiceFactory>();
-    private readonly IToDoService toDoService = DiHelper.ServiceFactory.CreateService<IToDoService>();
-    private readonly IUiApplicationService uiApplicationService = DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
+    private readonly IServiceFactory serviceFactory =
+        DiHelper.ServiceFactory.CreateService<IServiceFactory>();
+    private readonly IToDoService toDoService =
+        DiHelper.ServiceFactory.CreateService<IToDoService>();
+    private readonly IUiApplicationService uiApplicationService =
+        DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
     public const string ErrorDialogHostName = "error-dialog-host";
     public const string ProgressDialogHostName = "progress-dialog-host";
     public const string InputDialogHostName = "input-dialog-host";
@@ -123,17 +126,23 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
 
         var pointerPosition = e.GetPosition(button);
 
-        if (pointerPosition.Y > button.Bounds.Height / 2)
+        var options =
+            pointerPosition.Y > button.Bounds.Height / 2
+                ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
+                : new(dataItem.Id, sourceItem.Id, false);
+
+        if (UiHelper.DragControl is null)
         {
-            var options = new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true);
-            await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
-        }
-        else
-        {
-            var options = new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, false);
-            await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
+            return;
         }
 
+        if (UiHelper.DragPanel is null)
+        {
+            return;
+        }
+
+        UiHelper.DragPanel.Children.Remove(UiHelper.DragControl);
+        await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
         await uiApplicationService.RefreshCurrentViewAsync(CancellationToken.None);
     }
 }
