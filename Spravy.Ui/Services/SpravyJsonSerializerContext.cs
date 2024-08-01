@@ -51,4 +51,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(SettingModel))]
 [JsonSerializable(typeof(EmailOrLoginInputViewModelSetting))]
 [JsonSerializable(typeof(VerificationCodePasswordError))]
+[JsonSerializable(typeof(Setting.Setting))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

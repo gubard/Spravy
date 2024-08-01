@@ -1,27 +1,33 @@
+using Spravy.Ui.Mappers;
+
 namespace Spravy.Ui.ViewModels;
 
 public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
-    private readonly Application application;
+    private readonly IObjectStorage objectStorage;
 
     public SettingViewModel(
         IErrorHandler errorHandler,
         INavigator navigator,
         AccountNotify accountNotify,
         ITaskProgressService taskProgressService,
-        Application application
+        Application application,
+        IObjectStorage objectStorage
     )
         : base(true)
     {
         this.navigator = navigator;
         AccountNotify = accountNotify;
-        this.application = application;
+        this.objectStorage = objectStorage;
+        SaveCommand = SpravyCommand.Create(SaveStateAsync, errorHandler, taskProgressService);
+
         ChangePasswordCommand = SpravyCommand.Create(
             ChangePasswordAsync,
             errorHandler,
             taskProgressService
         );
+
         DeleteAccountCommand = SpravyCommand.Create(
             DeleteAccountAsync,
             errorHandler,
@@ -29,16 +35,22 @@ public class SettingViewModel : NavigatableViewModelBase
         );
 
         this.WhenAnyValue(x => x.SelectedTheme)
-            .Subscribe(x =>
-                application.RequestedThemeVariant = x switch
-                {
-                    ThemeType.Default => ThemeVariant.Default,
-                    ThemeType.Light => ThemeVariant.Light,
-                    ThemeType.Dark => ThemeVariant.Dark,
-                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-                }
-            );
+            .Subscribe(x => application.RequestedThemeVariant = x.ToThemeVariant());
     }
+
+    public AccountNotify AccountNotify { get; }
+    public SpravyCommand ChangePasswordCommand { get; }
+    public SpravyCommand DeleteAccountCommand { get; }
+    public SpravyCommand SaveCommand { get; }
+
+    [Reactive]
+    public ThemeType SelectedTheme { get; set; }
+
+    [Reactive]
+    public bool IsBusy { get; set; }
+
+    [Reactive]
+    public bool IsLightTheme { get; set; }
 
     public override string ViewId
     {
@@ -65,19 +77,6 @@ public class SettingViewModel : NavigatableViewModelBase
             return $"{version}({version.Code})";
         }
     }
-
-    public AccountNotify AccountNotify { get; }
-    public SpravyCommand ChangePasswordCommand { get; }
-    public SpravyCommand DeleteAccountCommand { get; }
-
-    [Reactive]
-    public ThemeType SelectedTheme { get; set; }
-
-    [Reactive]
-    public bool IsBusy { get; set; }
-
-    [Reactive]
-    public bool IsLightTheme { get; set; }
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
     {
@@ -110,7 +109,7 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return objectStorage.SaveObjectAsync(ViewId, new Setting.Setting(this), ct);
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -118,6 +117,20 @@ public class SettingViewModel : NavigatableViewModelBase
         CancellationToken ct
     )
     {
-        return Result.AwaitableSuccess;
+        return setting
+            .CastObject<Setting.Setting>()
+            .IfSuccess(s =>
+                s.PostUiBackground(
+                    () =>
+                    {
+                        SelectedTheme = s.Theme;
+
+                        return Result.Success;
+                    },
+                    ct
+                )
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 }

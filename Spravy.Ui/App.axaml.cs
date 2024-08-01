@@ -1,5 +1,6 @@
 using Avalonia.Input;
 using Spravy.Core.Helpers;
+using Spravy.Ui.Mappers;
 
 namespace Spravy.Ui;
 
@@ -25,6 +26,8 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        SetTheme().GetAwaiter().GetResult();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var window = serviceFactory
@@ -42,6 +45,42 @@ public class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private ConfiguredValueTaskAwaitable<Result> SetTheme()
+    {
+        var objectStorage = serviceFactory.CreateService<IObjectStorage>();
+        var ct = CancellationToken.None;
+        var key = TypeCache<SettingViewModel>.Type.Name;
+
+        return objectStorage
+            .IsExistsAsync(key, ct)
+            .IfSuccessAsync(
+                isExists =>
+                {
+                    if (isExists)
+                    {
+                        return objectStorage
+                            .GetObjectAsync<Setting.Setting>(key, ct)
+                            .IfSuccessAsync(
+                                setting =>
+                                    setting.PostUiBackground(
+                                        () =>
+                                        {
+                                            RequestedThemeVariant = setting.Theme.ToThemeVariant();
+
+                                            return Result.Success;
+                                        },
+                                        ct
+                                    ),
+                                ct
+                            );
+                    }
+
+                    return Result.AwaitableSuccess;
+                },
+                ct
+            );
     }
 
     private async void ToDoItemTapped(object? sender, TappedEventArgs e)

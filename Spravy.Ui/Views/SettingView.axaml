@@ -97,6 +97,8 @@
                     </ItemsControl>
                 </c:GroupBoxControl>
             </ScrollViewer>
+
+            <Button Grid.Row="1" Command="{Binding SaveCommand.Command}" Content="{DynamicResource SettingView.Save}" />
         </Grid>
     </c:BusyAreaControl>
 </ru:ReactiveUserControl>
