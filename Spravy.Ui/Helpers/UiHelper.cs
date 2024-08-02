@@ -4,6 +4,9 @@ namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
 {
+    public const bool True = true;
+    public const bool False = false;
+
     public static bool IsDrag;
     public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
     public const uint ChunkSize = 10;

@@ -104,12 +104,12 @@
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
         <c:ViewSelectorControl State="{Binding IsMulti}">
-            <c:ViewSelectorItemControl State="False">
+            <c:ViewSelectorItemControl State="{x:Static h:UiHelper.False}">
                 <ContentControl Name="{x:Static v:MultiToDoItemsView.ContentContentControlName}"
                                 Content="{Binding ToDoItems}" />
             </c:ViewSelectorItemControl>
 
-            <c:ViewSelectorItemControl State="True">
+            <c:ViewSelectorItemControl State="{x:Static h:UiHelper.True}">
                 <ContentControl IsVisible="{Binding IsMulti}"
                                 Content="{Binding ToDoItems}">
                     <ContentControl.DataTemplates>

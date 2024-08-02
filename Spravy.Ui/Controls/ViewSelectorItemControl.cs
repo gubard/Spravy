@@ -74,19 +74,6 @@ public class ViewSelectorItemControl : TemplatedControl
             return;
         }
 
-        if (State is string str && currentState is bool s)
-        {
-            if (bool.TryParse(str, out var r))
-            {
-                if (s == r)
-                {
-                    contentControl.IsVisible = true;
-
-                    return;
-                }
-            }
-        }
-
         contentControl.IsVisible = false;
     }
 }
