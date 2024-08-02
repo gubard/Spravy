@@ -55,7 +55,7 @@
                         <Setter Property="Command" Value="{Binding Item.Command}" />
                         <Setter Property="CommandParameter"
                                 Value="{Binding $parent[v:SearchToDoItemsView].MainViewModel}" />
-                        
+
                         <Setter Property="Icon">
                             <Template>
                                 <mi:MaterialIcon Kind="{Binding Kind}" />
@@ -72,18 +72,20 @@
             </Button>
         </Panel>
 
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto">
             <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
                 <mi:MaterialIcon Kind="Menu" />
             </Button>
 
-            <StackPanel Grid.Column="1">
+            <ContentControl Grid.Column="1" Classes="alignment-center" Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+
+            <StackPanel Grid.Column="2">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
                 <TextBox Name="{x:Static v:SearchToDoItemsView.SearchTextTextBoxName}"
                          Text="{Binding SearchText}" />
             </StackPanel>
 
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Classes="mode-press alignment-bottom"
                     Command="{x:Static h:UiHelper.RefreshCurrentView}">
                 <mi:MaterialIcon Kind="Search" />

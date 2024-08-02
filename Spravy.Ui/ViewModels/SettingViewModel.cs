@@ -49,9 +49,6 @@ public class SettingViewModel : NavigatableViewModelBase
     [Reactive]
     public bool IsBusy { get; set; }
 
-    [Reactive]
-    public bool IsLightTheme { get; set; }
-
     public override string ViewId
     {
         get => TypeCache<SettingViewModel>.Type.Name;
