@@ -102,6 +102,45 @@
 
         <ContentControl Content="{Binding Favorite}"
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-        <Control />
+
+        <c:ViewSelectorControl State="{Binding IsMulti}">
+            <c:ViewSelectorItemControl State="False">
+                <ContentControl Name="{x:Static v:MultiToDoItemsView.ContentContentControlName}"
+                                Content="{Binding ToDoItems}" />
+            </c:ViewSelectorItemControl>
+
+            <c:ViewSelectorItemControl State="True">
+                <ContentControl IsVisible="{Binding IsMulti}"
+                                Content="{Binding ToDoItems}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                            <ToggleButton Classes="content-alignment-stretch to-do-item" Padding="0"
+                                          IsChecked="{Binding IsSelected}">
+                                <Border Margin="0" CornerRadius="0" Padding="5">
+                                    <StackPanel>
+                                        <Grid ColumnDefinitions="*,Auto,*">
+                                            <Rectangle Margin="0,0,3,0"
+                                                       Height="2"
+                                                       Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
+                                            <Rectangle Grid.Column="2"
+                                                       Margin="3,0,3,0"
+                                                       Height="2"
+                                                       Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                        </Grid>
+
+                                        <ScrollViewer VerticalScrollBarVisibility="Disabled"
+                                                      HorizontalScrollBarVisibility="Auto">
+                                            <TextBlock Classes="alignment-left" Text="{Binding Name}" />
+                                        </ScrollViewer>
+                                    </StackPanel>
+                                </Border>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </c:ViewSelectorItemControl>
+        </c:ViewSelectorControl>
     </StackPanel>
 </ru:ReactiveUserControl>

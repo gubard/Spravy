@@ -12,7 +12,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
         ToDoItems = toDoItems;
 
         this.WhenAnyValue(x => x.GroupBy).Subscribe(x => ToDoItems.GroupBy = x);
-        this.WhenAnyValue(x => x.IsMulti).Subscribe(UpdateMultiUi);
 
         this.WhenAnyValue(x => x.ToDoItemViewType)
             .Subscribe(x =>
@@ -56,38 +55,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     [Reactive]
     public bool IsMulti { get; set; }
-
-    public void UpdateMultiUi(bool isMulti)
-    {
-        if (MultiToDoItemsView is null)
-        {
-            return;
-        }
-
-        var panel = MultiToDoItemsView.GetControl<Panel>("MainPanel");
-        panel.Children.Remove(panel.Children[^1]);
-        ITemplate? template;
-
-        if (isMulti)
-        {
-            if (!MultiToDoItemsView.TryGetTemplate("MultiToDoItemsTemplate", out template))
-            {
-                return;
-            }
-        }
-        else
-        {
-            if (!MultiToDoItemsView.TryGetTemplate("ToDoItemsTemplate", out template))
-            {
-                return;
-            }
-        }
-
-        if (template.Build() is Control control)
-        {
-            panel.Children.Add(control);
-        }
-    }
 
     public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {

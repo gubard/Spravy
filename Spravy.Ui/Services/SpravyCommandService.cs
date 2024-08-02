@@ -2543,15 +2543,7 @@ public class SpravyCommandService
                     {
                         vm.MultiToDoItemsView = view;
 
-                        return vm.PostUiBackground(
-                            () =>
-                            {
-                                vm.UpdateMultiUi(vm.IsMulti);
-
-                                return Result.Success;
-                            },
-                            ct
-                        );
+                        return Result.Success;
                     })
                     .ToValueTaskResult()
                     .ConfigureAwait(false),

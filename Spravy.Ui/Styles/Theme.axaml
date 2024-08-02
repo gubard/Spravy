@@ -12,6 +12,8 @@
                 <MergeResourceInclude Source="BusyAreaControl.axaml" />
                 <MergeResourceInclude Source="CopiedTextControl.axaml" />
                 <MergeResourceInclude Source="AdaptiveResources.axaml" />
+                <MergeResourceInclude Source="ViewSelectorControl.axaml" />
+                <MergeResourceInclude Source="ViewSelectorItemControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
