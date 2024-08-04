@@ -44,7 +44,10 @@ public class TextLocalization
                 return formatted;
             }
 
-            return string.Join(Environment.NewLine, result.Errors.Select(x => x.Message).ToArray());
+            return string.Join(
+                Environment.NewLine,
+                result.Errors.Span.Select(x => x.Message).ToArray()
+            );
         }
     }
 }

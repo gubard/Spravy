@@ -201,11 +201,6 @@ public static class ObjectExtension
         return memory;
     }
 
-    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Span<T> span)
-    {
-        return new(span.ToArray());
-    }
-
     public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
         where T : notnull
     {

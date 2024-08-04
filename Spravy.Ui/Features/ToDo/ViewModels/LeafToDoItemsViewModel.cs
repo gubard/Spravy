@@ -95,7 +95,7 @@ public class LeafToDoItemsViewModel
         return LeafIds
             .ToResult()
             .IfSuccessForEachAsync(id => toDoService.GetLeafToDoItemIdsAsync(id, ct), ct)
-            .IfSuccessAsync(items => items.SelectMany().ToReadOnlyMemory().ToResult(), ct)
+            .IfSuccessAsync(items => items.SelectMany().ToResult(), ct)
             .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
             .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, true, ct), ct);
     }

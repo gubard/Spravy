@@ -49,7 +49,7 @@ public static class ResultExtension
     )
         where TReturn : notnull
     {
-        var span = new Span<TReturn>(new TReturn[values.Length]);
+        var span = new Memory<TReturn>(new TReturn[values.Length]);
 
         for (var index = 0; index < values.Length; index++)
         {
@@ -60,7 +60,7 @@ public static class ResultExtension
                 return new(result.Errors);
             }
 
-            span[index] = rv;
+            span.Span[index] = rv;
         }
 
         return span.ToReadOnlyMemory().ToResult();
@@ -77,7 +77,7 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
-        var array = new Span<TReturn>(new TReturn[v.Length]);
+        var array = new Memory<TReturn>(new TReturn[v.Length]);
 
         for (var index = 0; index < v.Length; index++)
         {
@@ -88,7 +88,7 @@ public static class ResultExtension
                 return new(result.Errors);
             }
 
-            array[index] = rv;
+            array.Span[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();

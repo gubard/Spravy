@@ -233,11 +233,11 @@ public class EfToDoService : IToDoService
                                     {
                                         SetRandomOrderIndex(children);
 
-                                        var items = children.OrderBy(x => x.OrderIndex);
+                                        var items = children.Span.OrderBy(x => x.OrderIndex);
 
                                         for (var i = 0; items.Length > i; i++)
                                         {
-                                            items.Span[i].OrderIndex = (uint)i;
+                                            items[i].OrderIndex = (uint)i;
                                         }
 
                                         return Result.Success;
@@ -1549,7 +1549,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             items =>
                             {
-                                var item = items.FirstOrDefault(x => x.IsHasValue);
+                                var item = items.Span.FirstOrDefault(x => x.IsHasValue);
 
                                 return new Result<OptionStruct<ActiveToDoItem>>(item);
                             },
@@ -1936,13 +1936,13 @@ public class EfToDoService : IToDoService
                 {
                     if (circleChildren.Length != 0)
                     {
-                        if (!onlyCompletedTasks || circleChildren.All(x => x.IsCompleted))
+                        if (!onlyCompletedTasks || circleChildren.Span.All(x => x.IsCompleted))
                         {
                             var nextOrderIndex = item.CurrentCircleOrderIndex;
 
                             if (moveCircleOrderIndex)
                             {
-                                var next = circleChildren.FirstOrDefault(x =>
+                                var next = circleChildren.Span.FirstOrDefault(x =>
                                     x.OrderIndex > item.CurrentCircleOrderIndex
                                 );
 
@@ -2205,11 +2205,11 @@ public class EfToDoService : IToDoService
             .IfSuccessAsync(
                 items =>
                 {
-                    var ordered = items.OrderBy(x => x.OrderIndex);
+                    var ordered = items.Span.OrderBy(x => x.OrderIndex);
 
                     for (var index = 0; index < ordered.Length; index++)
                     {
-                        ordered.Span[index].OrderIndex = (uint)index;
+                        ordered[index].OrderIndex = (uint)index;
                     }
 
                     return Result.Success;

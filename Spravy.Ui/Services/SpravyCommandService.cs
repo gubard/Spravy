@@ -315,7 +315,7 @@ public class SpravyCommandService
                                         .IfSuccessAsync(
                                             items =>
                                                 clipboardService.SetTextAsync(
-                                                    items.Join(Environment.NewLine).ToString()
+                                                    items.Span.Join(Environment.NewLine).ToString()
                                                 ),
                                             ct
                                         );
@@ -1453,7 +1453,7 @@ public class SpravyCommandService
                                         .IfSuccessAsync(
                                             items =>
                                                 clipboardService.SetTextAsync(
-                                                    items.Join(Environment.NewLine).ToString()
+                                                    items.Span.Join(Environment.NewLine).ToString()
                                                 ),
                                             ct
                                         );
