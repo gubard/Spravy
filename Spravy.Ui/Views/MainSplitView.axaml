@@ -15,7 +15,8 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     
-    <SplitView Content="{Binding Content}"
+    <SplitView x:Name="MainSplit" 
+               Content="{Binding Content}"
                Pane="{Binding Pane}"
                IsPaneOpen="{Binding IsPaneOpen}"
                OpenPaneLength="200"
