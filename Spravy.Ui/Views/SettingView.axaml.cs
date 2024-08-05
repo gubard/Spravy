@@ -23,7 +23,7 @@ public partial class SettingView : ReactiveUserControl<SettingViewModel>
                 MaterialDesignSizeType.Large,
                 MaterialDesignSizeType.ExtraLarge
             },
-            "ItemsControlAdaptiveI"
+            "ItemsControlAdaptive"
         );
     }
 }

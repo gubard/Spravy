@@ -25,7 +25,7 @@
             <Setter Property="Margin" Value="2" />
         </Style>
 
-        <Style x:Key="ItemsControlAdaptiveI" Selector="ItemsControl.adaptive-items-control">
+        <Style x:Key="ItemsControlAdaptive" Selector="ItemsControl.adaptive-items-control">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <WrapPanel />
