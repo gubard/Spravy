@@ -17,6 +17,10 @@ namespace Spravy.Ui.Browser.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
+[Singleton(
+    typeof(IFactory<ISingleViewTopLevelControl>),
+    typeof(BrowserSingleViewTopLevelControlFactory)
+)]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]

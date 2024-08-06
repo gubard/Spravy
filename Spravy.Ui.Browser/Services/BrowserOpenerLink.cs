@@ -9,7 +9,7 @@ public class BrowserOpenerLink : IOpenerLink
 {
     public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken ct)
     {
-        JSInterop.WindowOpen(link.AbsoluteUri);
+        JsWindowInterop.WindowOpen(link.AbsoluteUri);
 
         return Result.AwaitableSuccess;
     }

@@ -4,7 +4,7 @@ using System.Runtime.Versioning;
 namespace Spravy.Ui.Browser.Helpers;
 
 [SupportedOSPlatform("browser")]
-public static partial class JSInterop
+public static partial class JsLocalStorageInterop
 {
     [JSImport("localStorageGetItem", "localStorage.js")]
     public static partial string LocalStorageGetItem(string key);
@@ -14,10 +14,4 @@ public static partial class JSInterop
 
     [JSImport("localStorageRemoveItem", "localStorage.js")]
     public static partial void LocalStorageRemoveItem(string key);
-
-    [JSImport("windowOpen", "window.js")]
-    public static partial void WindowOpen(string url);
-
-    [JSImport("getCurrentUrl", "window.js")]
-    public static partial string GetCurrentUrl();
 }

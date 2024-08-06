@@ -26,7 +26,7 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        SetTheme().GetAwaiter().GetResult();
+        SetTheme().GetAwaiter().GetResult().ThrowIfError();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -39,7 +39,11 @@ public class App : Application
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var control = serviceFactory.CreateService<ISingleViewTopLevelControl>().As<Control>();
+            var control = serviceFactory
+                .CreateService<IFactory<ISingleViewTopLevelControl>>()
+                .Create()
+                .ThrowIfError()
+                .As<Control>();
 
             singleViewPlatform.MainView = control;
         }

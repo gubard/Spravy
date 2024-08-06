@@ -21,6 +21,10 @@ namespace Spravy.Ui.Android.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
+[Singleton(
+    typeof(IFactory<ISingleViewTopLevelControl>),
+    typeof(AndroidSingleViewTopLevelControlFactory)
+)]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]

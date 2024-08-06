@@ -17,14 +17,14 @@ public class LocalStorageObjectStorage : IObjectStorage
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id, CancellationToken ct)
     {
-        var value = JSInterop.LocalStorageGetItem(id);
+        var value = JsLocalStorageInterop.LocalStorageGetItem(id);
 
         return (!value.IsNullOrWhiteSpace()).ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id, CancellationToken ct)
     {
-        JSInterop.LocalStorageRemoveItem(id);
+        JsLocalStorageInterop.LocalStorageRemoveItem(id);
 
         return Result.AwaitableSuccess;
     }
@@ -59,7 +59,7 @@ public class LocalStorageObjectStorage : IObjectStorage
 
         var bytes = stream.ToArray();
         var value = Convert.ToBase64String(bytes);
-        JSInterop.LocalStorageSetItem(id, value);
+        JsLocalStorageInterop.LocalStorageSetItem(id, value);
 
         return Result.Success;
     }
@@ -67,7 +67,7 @@ public class LocalStorageObjectStorage : IObjectStorage
     public async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct)
         where TObject : notnull
     {
-        var value = JSInterop.LocalStorageGetItem(id);
+        var value = JsLocalStorageInterop.LocalStorageGetItem(id);
         var bytes = Convert.FromBase64String(value);
         await using var stream = new MemoryStream(bytes);
 
