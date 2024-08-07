@@ -1,16 +1,14 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:MainProgressBarViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.MainProgressBarView"
-                        x:DataType="vm:MainProgressBarViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Views.MainProgressBarView"
+             x:DataType="vm:MainProgressBarViewModel">
     <ProgressBar IsVisible="{Binding Maximum, Converter={StaticResource DoubleZeroToBooleanConverter}}"
                  Minimum="0"
                  Value="{Binding Value}"
                  Maximum="{Binding Maximum}"
                  IsIndeterminate="{Binding IsIndeterminate}" />
-</ru:ReactiveUserControl>
+</UserControl>

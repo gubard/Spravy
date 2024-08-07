@@ -21,7 +21,6 @@ public class TestAppBuilder
 
         return AppBuilder
             .Configure<App>()
-            .UseReactiveUI()
             .UseSkia()
             .UseHeadless(new() { UseHeadlessDrawing = false, })
             .WithShantellSansFont()

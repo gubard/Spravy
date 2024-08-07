@@ -20,7 +20,7 @@
     <Style Selector="dh|DialogHost /template/ Rectangle#PART_ContentCover">
         <Setter Property="Fill" Value="Transparent" />
     </Style>
-    
+
     <Style Selector="dh|DialogHost:is-open /template/ ContentPresenter#ContentPresenter">
         <Setter Property="Effect" Value="blur(20)" />
     </Style>

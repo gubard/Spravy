@@ -1,74 +1,37 @@
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
-public class CreateUserViewModel
+public partial class CreateUserViewModel
     : NavigatableViewModelBase,
         ICreateUserProperties,
         INotifyDataErrorInfo
 {
     private readonly IPropertyValidator propertyValidator;
 
-    private bool emailChanged;
-    private bool loginChanged;
-    private bool passwordChanged;
-    private bool repeatPasswordChanged;
+    [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
+    private string email = string.Empty;
+
+    [ObservableProperty]
+    private string login = string.Empty;
+
+    [ObservableProperty]
+    private string password = string.Empty;
+
+    [ObservableProperty]
+    private string repeatPassword = string.Empty;
 
     public CreateUserViewModel(IPropertyValidator propertyValidator)
         : base(true)
     {
         this.propertyValidator = propertyValidator;
-
-        this.WhenAnyValue(x => x.Email)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                emailChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
-
-        this.WhenAnyValue(x => x.Login)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                loginChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
-
-        this.WhenAnyValue(x => x.Password)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                passwordChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
-
-        this.WhenAnyValue(x => x.RepeatPassword)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                repeatPasswordChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
     }
 
     public override string ViewId
     {
         get => TypeCache<CreateUserViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public bool IsBusy { get; set; }
-
-    [Reactive]
-    public string Email { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Login { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Password { get; set; } = string.Empty;
-
-    [Reactive]
-    public string RepeatPassword { get; set; } = string.Empty;
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -107,105 +70,85 @@ public class CreateUserViewModel
         {
             case nameof(Login):
             {
-                if (loginChanged)
+                var valid = propertyValidator.ValidLogin(Login, nameof(Login));
+                var validLength = propertyValidator.ValidLength(Login, 4, 512, nameof(Login));
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidLogin(Login, nameof(Login));
-                    var validLength = propertyValidator.ValidLength(Login, 4, 512, nameof(Login));
+                    yield return valid;
+                }
 
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
+                if (validLength is not null)
+                {
+                    yield return validLength;
                 }
 
                 break;
             }
             case nameof(Email):
             {
-                if (emailChanged)
+                var valid = propertyValidator.ValidEmail(Email, nameof(Email));
+                var validLength = propertyValidator.ValidLength(Email, 6, 50, nameof(Email));
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidEmail(Email, nameof(Email));
-                    var validLength = propertyValidator.ValidLength(Email, 6, 50, nameof(Email));
+                    yield return valid;
+                }
 
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
+                if (validLength is not null)
+                {
+                    yield return validLength;
                 }
 
                 break;
             }
             case nameof(Password):
             {
-                if (passwordChanged)
+                var valid = propertyValidator.ValidPassword(Password, nameof(Password));
+                var validLength = propertyValidator.ValidLength(Password, 8, 512, nameof(Password));
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidPassword(Password, nameof(Password));
-                    var validLength = propertyValidator.ValidLength(
-                        Password,
-                        8,
-                        512,
-                        nameof(Password)
-                    );
+                    yield return valid;
+                }
 
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
+                if (validLength is not null)
+                {
+                    yield return validLength;
                 }
 
                 break;
             }
             case nameof(RepeatPassword):
             {
-                if (repeatPasswordChanged)
+                var valid = propertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword));
+                var validLength = propertyValidator.ValidLength(
+                    RepeatPassword,
+                    8,
+                    512,
+                    nameof(RepeatPassword)
+                );
+
+                var validEquals = propertyValidator.ValidEquals(
+                    Password,
+                    RepeatPassword,
+                    nameof(Password),
+                    nameof(RepeatPassword)
+                );
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidPassword(
-                        RepeatPassword,
-                        nameof(RepeatPassword)
-                    );
-                    var validLength = propertyValidator.ValidLength(
-                        RepeatPassword,
-                        8,
-                        512,
-                        nameof(RepeatPassword)
-                    );
+                    yield return valid;
+                }
 
-                    var validEquals = propertyValidator.ValidEquals(
-                        Password,
-                        RepeatPassword,
-                        nameof(Password),
-                        nameof(RepeatPassword)
-                    );
+                if (validLength is not null)
+                {
+                    yield return validLength;
+                }
 
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
-
-                    if (validEquals is not null)
-                    {
-                        yield return validEquals;
-                    }
+                if (validEquals is not null)
+                {
+                    yield return validEquals;
                 }
 
                 break;

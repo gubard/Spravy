@@ -1,8 +1,11 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
+
+    [ObservableProperty]
+    private Guid toDoItemId;
 
     public ReferenceToDoItemSettingsViewModel(
         ToDoItemSelectorViewModel toDoItemSelector,
@@ -23,9 +26,6 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 
     public SpravyCommand InitializedCommand { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
-
-    [Reactive]
-    public Guid ToDoItemId { get; set; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {

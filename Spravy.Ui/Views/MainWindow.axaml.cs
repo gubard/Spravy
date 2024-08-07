@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class MainWindow : ReactiveWindow<MainWindowModel>, IDesktopTopLevelControl
+public partial class MainWindow : Window, IDesktopTopLevelControl
 {
     public MainWindow()
     {

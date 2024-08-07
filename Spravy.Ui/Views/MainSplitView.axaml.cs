@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class MainSplitView : ReactiveUserControl<MainSplitViewModel>
+public partial class MainSplitView : UserControl
 {
     public const string MainSplitViewName = "main-split-view";
 

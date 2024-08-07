@@ -1,14 +1,12 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:ToDoSubItemsViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoSubItemsView"
-                        x:DataType="vm:ToDoSubItemsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.ToDo.Views.ToDoSubItemsView"
+             x:DataType="vm:ToDoSubItemsViewModel">
     <ContentControl Name="{x:Static v:ToDoSubItemsView.ListContentControlName}" Content="{Binding List}">
         <ContentControl.Styles>
             <Style Selector="Expander">
@@ -16,4 +14,4 @@
             </Style>
         </ContentControl.Styles>
     </ContentControl>
-</ru:ReactiveUserControl>
+</UserControl>

@@ -21,7 +21,7 @@ public class ModuleDataTemplate : IDataTemplate
             return CreateErrorView(view.Errors);
         }
 
-        value.ViewModel = param;
+        value.DataContext = param;
         var cast = value.CastObject<Control>();
 
         if (!cast.TryGetValue(out var control))
@@ -35,8 +35,9 @@ public class ModuleDataTemplate : IDataTemplate
     private ErrorView CreateErrorView(ReadOnlyMemory<Error> errors)
     {
         var errorView = serviceFactory.CreateService<ErrorView>();
-        errorView.ViewModel = serviceFactory.CreateService<ErrorViewModel>();
-        errorView.ViewModel.Errors.AddRange(errors.ToArray());
+        var viewModel = serviceFactory.CreateService<ErrorViewModel>();
+        viewModel.Errors.AddRange(errors.ToArray());
+        errorView.DataContext = viewModel;
 
         return errorView;
     }

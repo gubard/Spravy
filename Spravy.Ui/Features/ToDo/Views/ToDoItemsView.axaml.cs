@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemsView : ReactiveUserControl<ToDoItemsViewModel>
+public partial class ToDoItemsView : UserControl
 {
     public const string PanelName = "panel-control";
     public const string ItemsItemsControlName = "items-items-control";

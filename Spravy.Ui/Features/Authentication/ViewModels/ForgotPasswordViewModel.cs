@@ -1,7 +1,22 @@
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
-public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEmail
+public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEmail
 {
+    [ObservableProperty]
+    private string newPassword = string.Empty;
+
+    [ObservableProperty]
+    private string newRepeatPassword = string.Empty;
+
+    [ObservableProperty]
+    private string identifier = string.Empty;
+
+    [ObservableProperty]
+    private UserIdentifierType identifierType;
+
+    [ObservableProperty]
+    private string verificationCode = string.Empty;
+
     public ForgotPasswordViewModel()
         : base(true) { }
 
@@ -9,21 +24,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     {
         get => TypeCache<ForgotPasswordViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public string NewPassword { get; set; } = string.Empty;
-
-    [Reactive]
-    public string NewRepeatPassword { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Identifier { get; set; } = string.Empty;
-
-    [Reactive]
-    public UserIdentifierType IdentifierType { get; set; }
-
-    [Reactive]
-    public string VerificationCode { get; set; } = string.Empty;
 
     public override Result Stop()
     {

@@ -1,14 +1,12 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:DeleteAccountViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.DeleteAccountView"
-                        x:DataType="vm:DeleteAccountViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Views.DeleteAccountView"
+             x:DataType="vm:DeleteAccountViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -16,7 +14,7 @@
     </Interaction.Behaviors>
 
     <Border Classes="alignment-center"
-                 MinWidth="300">
+            MinWidth="300">
         <StackPanel>
             <TextBlock Classes="field"
                        Text="{DynamicResource DeleteAccountView.VerificationCode}" />
@@ -40,4 +38,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</ru:ReactiveUserControl>
+</UserControl>

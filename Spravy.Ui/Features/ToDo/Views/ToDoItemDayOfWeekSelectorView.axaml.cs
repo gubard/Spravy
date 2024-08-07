@@ -1,7 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemDayOfWeekSelectorView
-    : ReactiveUserControl<ToDoItemDayOfWeekSelectorViewModel>
+public partial class ToDoItemDayOfWeekSelectorView : UserControl
 {
     public ToDoItemDayOfWeekSelectorView()
     {

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class SearchToDoItemsViewModel
+public partial class SearchToDoItemsViewModel
     : NavigatableViewModelBase,
         IToDoItemUpdater,
         IToDoSubItemsViewModelProperty,
@@ -10,6 +10,10 @@ public class SearchToDoItemsViewModel
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
     private readonly IObjectStorage objectStorage;
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+
+    [ObservableProperty]
+    private string searchText = string.Empty;
 
     public SearchToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -22,34 +26,21 @@ public class SearchToDoItemsViewModel
     )
         : base(true)
     {
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.objectStorage = objectStorage;
         this.toDoCache = toDoCache;
         Commands = new();
-
-        ToDoSubItemsViewModel
-            .List.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                Commands.Clear();
-
-                if (x)
-                {
-                    Commands.Update(spravyCommandNotifyService.SearchToDoItemsMulti);
-                }
-                else
-                {
-                    Commands.Clear();
-                }
-            });
-
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
+
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -60,9 +51,6 @@ public class SearchToDoItemsViewModel
     {
         get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public string SearchText { get; set; } = string.Empty;
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
@@ -126,5 +114,20 @@ public class SearchToDoItemsViewModel
         }
 
         return Result.Success;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.Update(spravyCommandNotifyService.SearchToDoItemsMulti);
+            }
+            else
+            {
+                Commands.Clear();
+            }
+        }
     }
 }

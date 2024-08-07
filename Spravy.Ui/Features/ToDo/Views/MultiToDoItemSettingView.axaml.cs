@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class MultiToDoItemSettingView : ReactiveUserControl<MultiToDoItemSettingViewModel>
+public partial class MultiToDoItemSettingView : UserControl
 {
     public MultiToDoItemSettingView()
     {

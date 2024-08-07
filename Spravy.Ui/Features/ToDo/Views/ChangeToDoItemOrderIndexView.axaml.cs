@@ -1,7 +1,6 @@
 ﻿namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ChangeToDoItemOrderIndexView
-    : ReactiveUserControl<ChangeToDoItemOrderIndexViewModel>
+public partial class ChangeToDoItemOrderIndexView : UserControl
 {
     public const string ItemsListBoxName = "items-list-box";
 

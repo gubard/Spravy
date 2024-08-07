@@ -1,17 +1,16 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:LeafToDoItemsViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
-                        x:DataType="vm:LeafToDoItemsViewModel">
+<c:MainUserControl x:TypeArguments="vm:LeafToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                   xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                   xmlns:m="clr-namespace:Spravy.Ui.Models"
+                   xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                   xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                   x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
+                   x:DataType="vm:LeafToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -51,7 +50,7 @@
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="m:SpravyCommandNotify">
                                 <Button Command="{Binding Item.Command}"
-                                        CommandParameter="{Binding $parent[v:LeafToDoItemsView].MainViewModel}"
+                                        CommandParameter="{Binding $parent[v:LeafToDoItemsView].ViewModel}"
                                         Content="{Binding Kind}"
                                         ToolTip.Tip="{Binding Text}" />
                             </DataTemplate>
@@ -69,7 +68,7 @@
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
                                 <Setter Property="CommandParameter"
-                                        Value="{Binding $parent[v:LeafToDoItemsView].MainViewModel}" />
+                                        Value="{Binding $parent[v:LeafToDoItemsView].ViewModel}" />
 
                                 <Setter Property="Icon">
                                     <Template>
@@ -93,4 +92,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</ru:ReactiveUserControl>
+</c:MainUserControl>

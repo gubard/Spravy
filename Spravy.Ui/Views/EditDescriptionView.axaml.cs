@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class EditDescriptionView : ReactiveUserControl<EditDescriptionViewModel>
+public partial class EditDescriptionView : UserControl
 {
     public EditDescriptionView()
     {

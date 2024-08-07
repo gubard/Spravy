@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class SettingView : ReactiveUserControl<SettingViewModel>
+public partial class SettingView : UserControl
 {
     public SettingView()
     {

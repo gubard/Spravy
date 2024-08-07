@@ -3,7 +3,7 @@ using Spravy.Core.Helpers;
 
 namespace Spravy.Ui.Views;
 
-public partial class MainView : ReactiveUserControl<MainViewModel>
+public partial class MainView : UserControl
 {
     private readonly IServiceFactory serviceFactory =
         DiHelper.ServiceFactory.CreateService<IServiceFactory>();

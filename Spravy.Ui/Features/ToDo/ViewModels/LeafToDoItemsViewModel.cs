@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class LeafToDoItemsViewModel
+public partial class LeafToDoItemsViewModel
     : NavigatableViewModelBase,
         IRefresh,
         IToDoItemUpdater,
@@ -10,6 +10,10 @@ public class LeafToDoItemsViewModel
     private readonly IObjectStorage objectStorage;
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+
+    [ObservableProperty]
+    public ToDoItemEntityNotify? item;
 
     public LeafToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -22,31 +26,20 @@ public class LeafToDoItemsViewModel
     )
         : base(true)
     {
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.objectStorage = objectStorage;
         this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
-
-        ToDoSubItemsViewModel
-            .List.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                if (x)
-                {
-                    Commands.Update(spravyCommandNotifyService.LeafToDoItemsMulti);
-                }
-                else
-                {
-                    Commands.Clear();
-                }
-            });
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -58,9 +51,6 @@ public class LeafToDoItemsViewModel
     {
         get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
     }
-
-    [Reactive]
-    public ToDoItemEntityNotify? Item { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
@@ -151,5 +141,20 @@ public class LeafToDoItemsViewModel
         }
 
         return Result.Success;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.Update(spravyCommandNotifyService.LeafToDoItemsMulti);
+            }
+            else
+            {
+                Commands.Clear();
+            }
+        }
     }
 }

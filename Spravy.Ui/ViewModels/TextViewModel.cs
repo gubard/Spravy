@@ -1,19 +1,19 @@
 namespace Spravy.Ui.ViewModels;
 
-public class TextViewModel : ViewModelBase
+public partial class TextViewModel : ViewModelBase
 {
-    [Reactive]
-    public bool IsReadOnly { get; set; }
+    [ObservableProperty]
+    private bool isReadOnly;
 
-    [Reactive]
-    public string Text { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string text = string.Empty;
 
-    [Reactive]
-    public bool AcceptsReturn { get; set; }
+    [ObservableProperty]
+    private bool acceptsReturn;
 
-    [Reactive]
-    public TextWrapping TextWrapping { get; set; }
+    [ObservableProperty]
+    private TextWrapping textWrapping;
 
-    [Reactive]
-    public string Label { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string label = string.Empty;
 }

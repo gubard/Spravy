@@ -1,4 +1,6 @@
-﻿namespace Spravy.Ui.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+
+namespace Spravy.Ui.Models;
 
 public class SpravyCommand
 {
@@ -17,17 +19,22 @@ public class SpravyCommand
         ITaskProgressService taskProgressService
     )
     {
-        async void OnNextError(Exception exception)
-        {
-            await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
-        }
-
         var work = TaskWork.Create(
             errorHandler,
             ct => taskProgressService.RunProgressAsync(func, ct)
         );
-        var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
-        command.ThrownExceptions.Subscribe(OnNextError);
+
+        var command = new AsyncRelayCommand(async () =>
+        {
+            try
+            {
+                await work.RunAsync();
+            }
+            catch (Exception e)
+            {
+                await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
+            }
+        });
 
         return new(work, command);
     }
@@ -38,17 +45,22 @@ public class SpravyCommand
         ITaskProgressService taskProgressService
     )
     {
-        async void OnNextError(Exception exception)
-        {
-            await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
-        }
-
         var work = TaskWork.Create<TParam>(
             errorHandler,
             (param, ct) => taskProgressService.RunProgressAsync(func, param, ct)
         );
-        var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync<TParam>);
-        command.ThrownExceptions.Subscribe(OnNextError);
+
+        var command = new AsyncRelayCommand<TParam>(async p =>
+        {
+            try
+            {
+                await work.RunAsync(p.ThrowIfNull());
+            }
+            catch (Exception e)
+            {
+                await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
+            }
+        });
 
         return new(work, command);
     }

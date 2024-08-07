@@ -1,7 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ReferenceToDoItemSettingsView
-    : ReactiveUserControl<ReferenceToDoItemSettingsViewModel>
+public partial class ReferenceToDoItemSettingsView : UserControl
 {
     public ReferenceToDoItemSettingsView()
     {

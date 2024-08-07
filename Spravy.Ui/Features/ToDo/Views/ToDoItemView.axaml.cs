@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemView : ReactiveUserControl<ToDoItemViewModel>
+public partial class ToDoItemView : MainUserControl<ToDoItemViewModel>
 {
     public const string PlainTextTextBlockName = "plain-text-text-block";
     public const string MarkdownTextMarkdownScrollViewerName =
@@ -10,6 +10,4 @@ public partial class ToDoItemView : ReactiveUserControl<ToDoItemViewModel>
     {
         InitializeComponent();
     }
-
-    public ToDoItemViewModel MainViewModel => ViewModel.ThrowIfNull();
 }

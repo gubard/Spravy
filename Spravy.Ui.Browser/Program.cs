@@ -2,7 +2,6 @@
 using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Browser;
-using Avalonia.ReactiveUI;
 using Serilog;
 using Spravy.Core.Helpers;
 using Spravy.Ui.Browser.Modules;
@@ -24,7 +23,7 @@ internal class Program
             Log.Information("Starting web app");
             await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
             await JSHost.ImportAsync("window.js", "./window.js");
-            await BuildAvaloniaApp().WithInterFont().UseReactiveUI().StartBrowserAppAsync("out");
+            await BuildAvaloniaApp().WithInterFont().StartBrowserAppAsync("out");
         }
         catch (Exception ex)
         {
@@ -40,7 +39,6 @@ internal class Program
     {
         return AppBuilder
             .Configure(() => DiHelper.ServiceFactory.CreateService<App>())
-            .UseReactiveUI()
             .WithInterFont()
             .WithShantellSansFont();
     }

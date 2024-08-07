@@ -1,7 +1,16 @@
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
-public class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
+public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
 {
+    [ObservableProperty]
+    private string identifier = string.Empty;
+
+    [ObservableProperty]
+    private UserIdentifierType identifierType;
+
+    [ObservableProperty]
+    private string verificationCode = string.Empty;
+
     public VerificationCodeViewModel(VerificationCodeCommands commands)
         : base(true)
     {
@@ -14,15 +23,6 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     {
         get => TypeCache<VerificationCodeViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public string Identifier { get; set; } = string.Empty;
-
-    [Reactive]
-    public UserIdentifierType IdentifierType { get; set; }
-
-    [Reactive]
-    public string VerificationCode { get; set; } = string.Empty;
 
     public override Result Stop()
     {

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ErrorHandling.Views;
 
-public partial class ExceptionView : ReactiveUserControl<ExceptionViewModel>
+public partial class ExceptionView : UserControl
 {
     public ExceptionView()
     {

@@ -1,7 +1,10 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemsGroupByTypeViewModel : ViewModelBase
+public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private bool isMulti;
+
     public ToDoItemsGroupByTypeViewModel(
         ToDoItemsViewModel circles,
         ToDoItemsViewModel groups,
@@ -39,9 +42,6 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
     public ToDoItemsViewModel Circles { get; }
     public ToDoItemsViewModel Steps { get; }
     public ToDoItemsViewModel References { get; }
-
-    [Reactive]
-    public bool IsMulti { get; set; }
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

@@ -1,7 +1,13 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class DeleteToDoItemViewModel : ViewModelBase
+public partial class DeleteToDoItemViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    public ToDoItemEntityNotify? item;
+
+    [ObservableProperty]
+    public string childrenText = string.Empty;
+
     public DeleteToDoItemViewModel(
         IToDoService toDoService,
         IToDoCache toDoCache,
@@ -30,7 +36,8 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             .IfSuccessAsync(
                                 i =>
                                     this.PostUiBackground(
-                                        () => toDoCache.UpdateUi(i).ToResultOnly(), ct
+                                        () => toDoCache.UpdateUi(i).ToResultOnly(),
+                                        ct
                                     ),
                                 ct
                             );
@@ -47,7 +54,8 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             .IfSuccessAsync(
                                 parents =>
                                     this.PostUiBackground(
-                                        () => toDoCache.UpdateParentsUi(Item.Id, parents), ct
+                                        () => toDoCache.UpdateParentsUi(Item.Id, parents),
+                                        ct
                                     ),
                                 ct
                             );
@@ -63,12 +71,15 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                             .ToDoItemToStringAsync(new(statuses, item.Id), ct)
                                             .IfSuccessAsync(
                                                 text =>
-                                                    this.PostUiBackground(() =>
-                                                    {
-                                                        ChildrenText = text;
+                                                    this.PostUiBackground(
+                                                        () =>
+                                                        {
+                                                            ChildrenText = text;
 
-                                                        return Result.Success;
-                                                    }, ct),
+                                                            return Result.Success;
+                                                        },
+                                                        ct
+                                                    ),
                                                 ct
                                             ),
                                     ct
@@ -97,12 +108,15 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                         values.ToArray()
                                     );
 
-                                    return this.PostUiBackground(() =>
-                                    {
-                                        ChildrenText = childrenText;
+                                    return this.PostUiBackground(
+                                        () =>
+                                        {
+                                            ChildrenText = childrenText;
 
-                                        return Result.Success;
-                                    }, ct);
+                                            return Result.Success;
+                                        },
+                                        ct
+                                    );
                                 },
                                 ct
                             );
@@ -116,10 +130,4 @@ public class DeleteToDoItemViewModel : ViewModelBase
 
     public SpravyCommand InitializedCommand { get; }
     public AvaloniaList<ToDoItemEntityNotify> DeleteItems { get; }
-
-    [Reactive]
-    public ToDoItemEntityNotify? Item { get; set; }
-
-    [Reactive]
-    public string ChildrenText { get; set; } = string.Empty;
 }

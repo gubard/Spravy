@@ -12,7 +12,7 @@ public class ViewSelector : IViewSelector
         this.serviceFactory = serviceFactory;
     }
 
-    public Result<IViewFor> GetView(Type viewModelType)
+    public Result<Control> GetView(Type viewModelType)
     {
         if (typeof(MainViewModel) == viewModelType)
         {

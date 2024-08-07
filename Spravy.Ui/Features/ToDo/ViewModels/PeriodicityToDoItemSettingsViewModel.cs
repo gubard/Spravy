@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class PeriodicityToDoItemSettingsViewModel
+public partial class PeriodicityToDoItemSettingsViewModel
     : ViewModelBase,
         IToDoChildrenTypeProperty,
         IToDoDueDateProperty,
@@ -11,6 +11,24 @@ public class PeriodicityToDoItemSettingsViewModel
     private readonly IToDoService toDoService;
     private readonly IServiceFactory serviceFactory;
 
+    [ObservableProperty]
+    private IApplySettings? periodicity;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private Guid id;
+
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private TypeOfPeriodicity typeOfPeriodicity;
+
     public PeriodicityToDoItemSettingsViewModel(
         IToDoService toDoService,
         IServiceFactory serviceFactory,
@@ -18,8 +36,10 @@ public class PeriodicityToDoItemSettingsViewModel
         ITaskProgressService taskProgressService
     )
     {
+        PropertyChanged += OnPropertyChanged;
         this.toDoService = toDoService;
         this.serviceFactory = serviceFactory;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
@@ -28,24 +48,6 @@ public class PeriodicityToDoItemSettingsViewModel
     }
 
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public IApplySettings? Periodicity { get; set; }
-
-    [Reactive]
-    public bool IsRequiredCompleteInDueDate { get; set; }
-
-    [Reactive]
-    public Guid Id { get; set; }
-
-    [Reactive]
-    public ToDoItemChildrenType ChildrenType { get; set; }
-
-    [Reactive]
-    public DateOnly DueDate { get; set; }
-
-    [Reactive]
-    public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
@@ -74,42 +76,53 @@ public class PeriodicityToDoItemSettingsViewModel
             .GetPeriodicityToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.PostUiBackground(() =>
-                    {
-                        ChildrenType = setting.ChildrenType;
-                        DueDate = setting.DueDate;
-                        TypeOfPeriodicity = setting.TypeOfPeriodicity;
-                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ChildrenType = setting.ChildrenType;
+                            DueDate = setting.DueDate;
+                            TypeOfPeriodicity = setting.TypeOfPeriodicity;
+                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
-                        return Result.Success;
-                    }, ct),
+                            return Result.Success;
+                        },
+                        ct
+                    ),
                 ct
             );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        this.WhenAnyValue(x => x.TypeOfPeriodicity)
-            .Subscribe(x =>
-                Periodicity = x switch
-                {
-                    TypeOfPeriodicity.Daily => new EmptyApplySettings(),
-                    TypeOfPeriodicity.Weekly
-                        => serviceFactory
-                            .CreateService<ToDoItemDayOfWeekSelectorViewModel>()
-                            .Case(y => y.ToDoItemId = Id),
-                    TypeOfPeriodicity.Monthly
-                        => serviceFactory
-                            .CreateService<ToDoItemDayOfMonthSelectorViewModel>()
-                            .Case(y => y.ToDoItemId = Id),
-                    TypeOfPeriodicity.Annually
-                        => serviceFactory
-                            .CreateService<ToDoItemDayOfYearSelectorViewModel>()
-                            .Case(y => y.ToDoItemId = Id),
-                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
-                }
-            );
-
         return RefreshAsync(ct);
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TypeOfPeriodicity))
+        {
+            Periodicity = TypeOfPeriodicity switch
+            {
+                TypeOfPeriodicity.Daily => new EmptyApplySettings(),
+                TypeOfPeriodicity.Weekly
+                    => serviceFactory
+                        .CreateService<ToDoItemDayOfWeekSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
+                TypeOfPeriodicity.Monthly
+                    => serviceFactory
+                        .CreateService<ToDoItemDayOfMonthSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
+                TypeOfPeriodicity.Annually
+                    => serviceFactory
+                        .CreateService<ToDoItemDayOfYearSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
+                _
+                    => throw new ArgumentOutOfRangeException(
+                        nameof(TypeOfPeriodicity),
+                        TypeOfPeriodicity,
+                        null
+                    ),
+            };
+        }
     }
 }

@@ -1,7 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class PeriodicityToDoItemSettingsView
-    : ReactiveUserControl<PeriodicityToDoItemSettingsViewModel>
+public partial class PeriodicityToDoItemSettingsView : UserControl
 {
     public PeriodicityToDoItemSettingsView()
     {

@@ -1,7 +1,13 @@
 namespace Spravy.Ui.ViewModels;
 
-public class MainSplitViewModel : ViewModelBase
+public partial class MainSplitViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private bool isPaneOpen;
+
+    [ObservableProperty]
+    private object? content;
+
     public MainSplitViewModel(
         PaneViewModel pane,
         IServiceFactory serviceFactory,
@@ -26,10 +32,4 @@ public class MainSplitViewModel : ViewModelBase
 
     public SpravyCommand InitializedCommand { get; }
     public PaneViewModel Pane { get; }
-
-    [Reactive]
-    public bool IsPaneOpen { get; set; }
-
-    [Reactive]
-    public object? Content { get; set; }
 }

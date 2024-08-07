@@ -1,9 +1,15 @@
 ﻿namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
+public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? selectedItem;
+
+    [ObservableProperty]
+    private bool isAfter = true;
 
     public ChangeToDoItemOrderIndexViewModel(
         IToDoService toDoService,
@@ -21,17 +27,12 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
         );
     }
 
-    public SpravyCommand InitializedCommand { get; }
-    public Guid Id { get; set; }
     public ReadOnlyMemory<Guid> ChangeToDoItemOrderIndexIds { get; set; } =
         ReadOnlyMemory<Guid>.Empty;
+
+    public SpravyCommand InitializedCommand { get; }
+    public Guid Id { get; set; }
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
-
-    [Reactive]
-    public ToDoItemEntityNotify? SelectedItem { get; set; }
-
-    [Reactive]
-    public bool IsAfter { get; set; } = true;
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
@@ -41,23 +42,26 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                 .GetSiblingsAsync(Id, ct)
                 .IfSuccessAsync(
                     items =>
-                        this.PostUiBackground(() =>
-                        {
-                            Items.Clear();
+                        this.PostUiBackground(
+                            () =>
+                            {
+                                Items.Clear();
 
-                            return items
-                                .ToResult()
-                                .IfSuccessForEach(item =>
-                                    toDoCache
-                                        .UpdateUi(item)
-                                        .IfSuccess(i =>
-                                        {
-                                            Items.Add(i);
+                                return items
+                                    .ToResult()
+                                    .IfSuccessForEach(item =>
+                                        toDoCache
+                                            .UpdateUi(item)
+                                            .IfSuccess(i =>
+                                            {
+                                                Items.Add(i);
 
-                                            return Result.Success;
-                                        })
-                                );
-                        }, ct),
+                                                return Result.Success;
+                                            })
+                                    );
+                            },
+                            ct
+                        ),
                     ct
                 );
         }
@@ -66,12 +70,15 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
             .ToResult()
             .IfSuccessForEach(id => toDoCache.GetToDoItem(id))
             .IfSuccess(items =>
-                this.PostUiBackground(() =>
-                {
-                    Items.Update(items.ToArray());
+                this.PostUiBackground(
+                    () =>
+                    {
+                        Items.Update(items.ToArray());
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

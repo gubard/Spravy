@@ -1,11 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class LeafToDoItemsView : ReactiveUserControl<LeafToDoItemsViewModel>
+public partial class LeafToDoItemsView : MainUserControl<LeafToDoItemsViewModel>
 {
     public LeafToDoItemsView()
     {
         InitializeComponent();
     }
-
-    public LeafToDoItemsViewModel MainViewModel => ViewModel.ThrowIfNull();
 }

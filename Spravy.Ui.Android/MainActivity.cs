@@ -1,7 +1,6 @@
 ﻿using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
-using Avalonia.ReactiveUI;
 using Serilog;
 using Serilog.Core;
 using Spravy.Core.Helpers;
@@ -40,10 +39,7 @@ public class MainActivity : AvaloniaMainActivity<App>
             .Enrich.WithProperty(Constants.SourceContextPropertyName, "Spravy")
             .CreateLogger();
 
-        return base.CustomizeAppBuilder(builder)
-            .WithInterFont()
-            .WithShantellSansFont()
-            .UseReactiveUI();
+        return base.CustomizeAppBuilder(builder).WithInterFont().WithShantellSansFont();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class EmailOrLoginInputView : ReactiveUserControl<EmailOrLoginInputViewModel>
+public partial class EmailOrLoginInputView : UserControl
 {
     public EmailOrLoginInputView()
     {

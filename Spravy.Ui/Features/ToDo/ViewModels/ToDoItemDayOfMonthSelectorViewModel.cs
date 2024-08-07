@@ -22,8 +22,6 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 
     public AvaloniaList<int> SelectedDays { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
     public Guid ToDoItemId { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
@@ -41,14 +39,17 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
             .GetMonthlyPeriodicityAsync(ToDoItemId, ct)
             .IfSuccessAsync(
                 monthlyPeriodicity =>
-                    this.PostUiBackground(() =>
-                    {
-                        SelectedDays.AddRange(
-                            monthlyPeriodicity.Days.Select(x => (int)x).ToArray()
-                        );
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            SelectedDays.AddRange(
+                                monthlyPeriodicity.Days.Select(x => (int)x).ToArray()
+                            );
 
-                        return Result.Success;
-                    }, ct),
+                            return Result.Success;
+                        },
+                        ct
+                    ),
                 ct
             );
     }

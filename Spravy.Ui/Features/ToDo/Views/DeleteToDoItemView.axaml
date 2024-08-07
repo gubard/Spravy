@@ -1,18 +1,16 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:DeleteToDoItemViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:mia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
-                        x:DataType="vm:DeleteToDoItemViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:mia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+             x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
+             x:DataType="vm:DeleteToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -61,4 +59,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
-</ru:ReactiveUserControl>
+</UserControl>

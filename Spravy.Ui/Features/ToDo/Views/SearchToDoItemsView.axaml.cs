@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class SearchToDoItemsView : ReactiveUserControl<SearchToDoItemsViewModel>
+public partial class SearchToDoItemsView : MainUserControl<SearchToDoItemsViewModel>
 {
     public const string SearchTextTextBoxName = "SearchTextTextBox";
 
@@ -8,8 +8,6 @@ public partial class SearchToDoItemsView : ReactiveUserControl<SearchToDoItemsVi
     {
         InitializeComponent();
     }
-
-    public SearchToDoItemsViewModel MainViewModel => ViewModel.ThrowIfNull();
 
     private void InitializeComponent()
     {

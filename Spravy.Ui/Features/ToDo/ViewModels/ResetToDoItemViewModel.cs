@@ -1,8 +1,23 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ResetToDoItemViewModel : NavigatableViewModelBase
+public partial class ResetToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
+
+    [ObservableProperty]
+    private Guid id;
+
+    [ObservableProperty]
+    private bool isCompleteCurrentTask;
+
+    [ObservableProperty]
+    private bool isCompleteChildrenTask;
+
+    [ObservableProperty]
+    private bool isMoveCircleOrderIndex = true;
+
+    [ObservableProperty]
+    private bool isOnlyCompletedTasks;
 
     public ResetToDoItemViewModel(
         IObjectStorage objectStorage,
@@ -20,21 +35,6 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     }
 
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public Guid Id { get; set; }
-
-    [Reactive]
-    public bool IsCompleteCurrentTask { get; set; }
-
-    [Reactive]
-    public bool IsCompleteChildrenTask { get; set; }
-
-    [Reactive]
-    public bool IsMoveCircleOrderIndex { get; set; } = true;
-
-    [Reactive]
-    public bool IsOnlyCompletedTasks { get; set; }
 
     public override string ViewId
     {

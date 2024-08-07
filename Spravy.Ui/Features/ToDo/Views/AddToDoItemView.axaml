@@ -1,18 +1,16 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:AddToDoItemViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
-                        x:DataType="vm:AddToDoItemViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+             x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
+             x:DataType="vm:AddToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{x:Static helpers:UiHelper.AddToDoItemViewInitialized}"
@@ -47,4 +45,4 @@
             </StackPanel>
         </controls:GroupBoxControl>
     </ScrollViewer>
-</ru:ReactiveUserControl>
+</UserControl>

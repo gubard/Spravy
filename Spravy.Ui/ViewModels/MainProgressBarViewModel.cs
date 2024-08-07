@@ -1,18 +1,26 @@
 namespace Spravy.Ui.ViewModels;
 
-public class MainProgressBarViewModel : ViewModelBase
+public partial class MainProgressBarViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private double value;
+
+    [ObservableProperty]
+    private double maximum;
+
+    [ObservableProperty]
+    private bool isIndeterminate;
+
     public MainProgressBarViewModel()
     {
-        this.WhenAnyValue(x => x.Value).Subscribe(x => IsIndeterminate = Math.Abs(x) < 0.1);
+        PropertyChanged += OnPropertyChanged;
     }
 
-    [Reactive]
-    public double Value { get; set; }
-
-    [Reactive]
-    public double Maximum { get; set; }
-
-    [Reactive]
-    public bool IsIndeterminate { get; set; }
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Value))
+        {
+            IsIndeterminate = Math.Abs(Value) < 0.1;
+        }
+    }
 }

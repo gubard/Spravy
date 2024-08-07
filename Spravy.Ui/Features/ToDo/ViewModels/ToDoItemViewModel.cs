@@ -1,11 +1,14 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUpdater
+public partial class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUpdater
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? item;
 
     public ToDoItemViewModel(
         IObjectStorage objectStorage,
@@ -26,9 +29,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         SpravyCommandService = spravyCommandService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         CommandItems = new();
-        ToDoSubItemsViewModel
-            .List.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(_ => UpdateCommandItemsUi());
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public Guid Id { get; set; }
@@ -36,9 +37,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
     public ToDoItemCommands Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-
-    [Reactive]
-    public ToDoItemEntityNotify? Item { get; set; }
 
     public override string ViewId
     {
@@ -71,11 +69,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     {
         return toDoCache
             .GetToDoItem(Id)
-            .IfSuccess(item =>
+            .IfSuccess(i =>
                 this.PostUiBackground(
                     () =>
                     {
-                        Item = item;
+                        Item = i;
 
                         return Result.Success;
                     },
@@ -84,9 +82,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
             )
             .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, ct), ct)
             .IfSuccessAsync(
-                item =>
+                i =>
                     this.PostUiBackground(
-                        () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi()),
+                        () => toDoCache.UpdateUi(i).IfSuccess(_ => UpdateCommandItemsUi()),
                         ct
                     ),
                 ct
@@ -197,5 +195,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         }
 
         return Result.Success;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            UpdateCommandItemsUi();
+        }
     }
 }

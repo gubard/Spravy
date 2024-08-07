@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class PeriodicityOffsetToDoItemSettingsViewModel
+public partial class PeriodicityOffsetToDoItemSettingsViewModel
     : ViewModelBase,
         IToDoChildrenTypeProperty,
         IToDoDueDateProperty,
@@ -12,6 +12,30 @@ public class PeriodicityOffsetToDoItemSettingsViewModel
         IApplySettings
 {
     private readonly IToDoService toDoService;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private Guid id;
+
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private ushort daysOffset;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private ushort monthsOffset;
+
+    [ObservableProperty]
+    private ushort weeksOffset;
+
+    [ObservableProperty]
+    private ushort yearsOffset;
 
     public PeriodicityOffsetToDoItemSettingsViewModel(
         IToDoService toDoService,
@@ -28,30 +52,6 @@ public class PeriodicityOffsetToDoItemSettingsViewModel
     }
 
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public bool IsRequiredCompleteInDueDate { get; set; }
-
-    [Reactive]
-    public Guid Id { get; set; }
-
-    [Reactive]
-    public ToDoItemChildrenType ChildrenType { get; set; }
-
-    [Reactive]
-    public ushort DaysOffset { get; set; }
-
-    [Reactive]
-    public DateOnly DueDate { get; set; }
-
-    [Reactive]
-    public ushort MonthsOffset { get; set; }
-
-    [Reactive]
-    public ushort WeeksOffset { get; set; }
-
-    [Reactive]
-    public ushort YearsOffset { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
@@ -91,18 +91,21 @@ public class PeriodicityOffsetToDoItemSettingsViewModel
             .GetPeriodicityOffsetToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.PostUiBackground(() =>
-                    {
-                        ChildrenType = setting.ChildrenType;
-                        DueDate = setting.DueDate;
-                        MonthsOffset = setting.MonthsOffset;
-                        YearsOffset = setting.YearsOffset;
-                        DaysOffset = setting.DaysOffset;
-                        WeeksOffset = setting.WeeksOffset;
-                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ChildrenType = setting.ChildrenType;
+                            DueDate = setting.DueDate;
+                            MonthsOffset = setting.MonthsOffset;
+                            YearsOffset = setting.YearsOffset;
+                            DaysOffset = setting.DaysOffset;
+                            WeeksOffset = setting.WeeksOffset;
+                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
-                        return Result.Success;
-                    }, ct),
+                            return Result.Success;
+                        },
+                        ct
+                    ),
                 ct
             );
     }

@@ -25,8 +25,6 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 
     public AvaloniaList<DayOfYearSelectItem> Items { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
     public Guid ToDoItemId { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
@@ -66,12 +64,15 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 
                                 items.Add(
                                     () =>
-                                        this.PostUiBackground(() =>
-                                            {
-                                                d.IsSelected = true;
+                                        this.PostUiBackground(
+                                                () =>
+                                                {
+                                                    d.IsSelected = true;
 
-                                                return Result.Success;
-                                            }, ct)
+                                                    return Result.Success;
+                                                },
+                                                ct
+                                            )
                                             .ToValueTaskResult()
                                             .ConfigureAwait(false)
                                 );

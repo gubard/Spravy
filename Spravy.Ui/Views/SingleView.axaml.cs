@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class SingleView : ReactiveUserControl<SingleViewModel>, ISingleViewTopLevelControl
+public partial class SingleView : UserControl, ISingleViewTopLevelControl
 {
     public SingleView()
     {

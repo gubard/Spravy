@@ -1,14 +1,14 @@
 namespace Spravy.Ui.ViewModels;
 
-public class InfoViewModel : ViewModelBase
+public partial class InfoViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private object? content;
+
     public InfoViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         OkCommand = SpravyCommand.Create(OkAsync, errorHandler, taskProgressService);
     }
-
-    [Reactive]
-    public object? Content { get; set; }
 
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? OkTask { get; set; }
     public SpravyCommand OkCommand { get; }

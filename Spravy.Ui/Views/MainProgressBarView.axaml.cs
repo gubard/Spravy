@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class MainProgressBarView : ReactiveUserControl<MainProgressBarViewModel>
+public partial class MainProgressBarView : UserControl
 {
     public MainProgressBarView()
     {

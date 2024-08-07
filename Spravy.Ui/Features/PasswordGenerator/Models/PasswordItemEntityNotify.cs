@@ -1,15 +1,19 @@
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
-public class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, IObjectParameters
+public partial class PasswordItemEntityNotify
+    : NotifyBase,
+        IPasswordItem,
+        IIdProperty,
+        IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
 
-    [Reactive]
-    public string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string name = string.Empty;
 
-    [Reactive]
-    public Guid Id { get; set; }
+    [ObservableProperty]
+    private Guid id;
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {

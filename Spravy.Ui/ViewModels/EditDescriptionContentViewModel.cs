@@ -1,8 +1,14 @@
 namespace Spravy.Ui.ViewModels;
 
-public class EditDescriptionContentViewModel : ViewModelBase
+public partial class EditDescriptionContentViewModel : ViewModelBase
 {
     private EditDescriptionContentView? editDescriptionContentView;
+
+    [ObservableProperty]
+    private string description = string.Empty;
+
+    [ObservableProperty]
+    private DescriptionType type;
 
     public EditDescriptionContentViewModel(
         IErrorHandler errorHandler,
@@ -17,12 +23,6 @@ public class EditDescriptionContentViewModel : ViewModelBase
     }
 
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public string Description { get; set; } = string.Empty;
-
-    [Reactive]
-    public DescriptionType Type { get; set; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
         EditDescriptionContentView view,

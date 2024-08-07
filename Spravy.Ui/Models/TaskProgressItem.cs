@@ -1,16 +1,16 @@
 namespace Spravy.Ui.Models;
 
-public class TaskProgressItem : NotifyBase
+public partial class TaskProgressItem : NotifyBase
 {
+    [ObservableProperty]
+    private ushort progress;
+
     public TaskProgressItem(ushort impact)
     {
         Impact = impact;
     }
 
     public ushort Impact { get; }
-
-    [Reactive]
-    public ushort Progress { get; set; }
 
     public bool IsFinished
     {
@@ -19,12 +19,15 @@ public class TaskProgressItem : NotifyBase
 
     public void Finish()
     {
-        this.PostUiBackground(() =>
-        {
-            Progress = Impact;
-        
-            return Result.Success;
-        }, CancellationToken.None);
+        this.PostUiBackground(
+            () =>
+            {
+                Progress = Impact;
+
+                return Result.Success;
+            },
+            CancellationToken.None
+        );
     }
 
     public Result IncreaseUi()

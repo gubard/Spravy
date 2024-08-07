@@ -1,16 +1,14 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:LoginViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
-                        x:DataType="vm:LoginViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+             xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+             x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{x:Static h:UiHelper.LoginViewInitialized}"
@@ -67,4 +65,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </c:BusyAreaControl>
-</ru:ReactiveUserControl>
+</UserControl>

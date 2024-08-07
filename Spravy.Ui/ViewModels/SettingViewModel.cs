@@ -2,10 +2,17 @@ using Spravy.Ui.Mappers;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SettingViewModel : NavigatableViewModelBase
+public partial class SettingViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
     private readonly IObjectStorage objectStorage;
+    private readonly Application application;
+
+    [ObservableProperty]
+    private ThemeType selectedTheme;
+
+    [ObservableProperty]
+    private bool isBusy;
 
     public SettingViewModel(
         IErrorHandler errorHandler,
@@ -17,6 +24,7 @@ public class SettingViewModel : NavigatableViewModelBase
     )
         : base(true)
     {
+        this.application = application;
         this.navigator = navigator;
         AccountNotify = accountNotify;
         this.objectStorage = objectStorage;
@@ -34,20 +42,13 @@ public class SettingViewModel : NavigatableViewModelBase
             taskProgressService
         );
 
-        this.WhenAnyValue(x => x.SelectedTheme)
-            .Subscribe(x => application.RequestedThemeVariant = x.ToThemeVariant());
+        PropertyChanged += OnPropertyChanged;
     }
 
     public AccountNotify AccountNotify { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SaveCommand { get; }
-
-    [Reactive]
-    public ThemeType SelectedTheme { get; set; }
-
-    [Reactive]
-    public bool IsBusy { get; set; }
 
     public override string ViewId
     {
@@ -129,5 +130,13 @@ public class SettingViewModel : NavigatableViewModelBase
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SelectedTheme))
+        {
+            application.RequestedThemeVariant = SelectedTheme.ToThemeVariant();
+        }
     }
 }

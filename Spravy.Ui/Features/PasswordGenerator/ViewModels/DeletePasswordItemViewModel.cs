@@ -1,23 +1,22 @@
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public class DeletePasswordItemViewModel : ViewModelBase, IObjectParameters
+public partial class DeletePasswordItemViewModel : ViewModelBase, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> passwordItemNameParameterName = nameof(
             PasswordItemName
         )
         .AsMemory();
 
+    [ObservableProperty]
+    private Guid passwordItemId;
+
+    [ObservableProperty]
+    private string passwordItemName = string.Empty;
+
     public DeletePasswordItemViewModel()
     {
-        this.WhenAnyValue(x => x.PasswordItemName)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
+        PropertyChanged += OnPropertyChanged;
     }
-
-    [Reactive]
-    public Guid PasswordItemId { get; set; }
-
-    [Reactive]
-    public string PasswordItemName { get; set; } = string.Empty;
 
     public Header4Localization DeleteText
     {
@@ -37,5 +36,13 @@ public class DeletePasswordItemViewModel : ViewModelBase, IObjectParameters
     public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
     {
         return new(new NotImplementedError(nameof(SetParameter)));
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PasswordItemName))
+        {
+            OnPropertyChanged(nameof(DeleteText));
+        }
     }
 }

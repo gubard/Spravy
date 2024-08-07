@@ -6,19 +6,46 @@ namespace Spravy.Ui.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class UiMapper
 {
-    public static partial CreateUserOptions ToCreateUserOptions(this CreateUserViewModel value);
+    public static CreateUserOptions ToCreateUserOptions(this CreateUserViewModel value)
+    {
+        return new(value.Login, value.Password, value.Email);
+    }
 
-    public static partial User ToUser(this CreateUserViewModel value);
+    public static User ToUser(this CreateUserViewModel value)
+    {
+        return new(value.Login, value.Password);
+    }
 
-    public static partial User ToUser(this LoginViewModel value);
+    public static User ToUser(this LoginViewModel value)
+    {
+        return new(value.Login, value.Password);
+    }
 
-    public static partial AddPasswordOptions ToAddPasswordOptions(
-        this AddPasswordItemViewModel value
-    );
+    public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemViewModel value)
+    {
+        return new(
+            value.Name,
+            value.Key,
+            value.Length,
+            value.Regex,
+            value.IsAvailableLowerLatin,
+            value.IsAvailableUpperLatin,
+            value.IsAvailableNumber,
+            value.IsAvailableSpecialSymbols,
+            value.CustomAvailableCharacters
+        );
+    }
 
-    public static partial ResetToDoItemOptions ToResetToDoItemOptions(
-        this ResetToDoItemViewModel value
-    );
+    public static ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemViewModel value)
+    {
+        return new(
+            value.Id,
+            value.IsCompleteChildrenTask,
+            value.IsMoveCircleOrderIndex,
+            value.IsOnlyCompletedTasks,
+            value.IsCompleteCurrentTask
+        );
+    }
 
     public static ThemeType ToThemeType(this ThemeVariant value)
     {

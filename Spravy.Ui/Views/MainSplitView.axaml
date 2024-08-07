@@ -1,25 +1,23 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:MainSplitViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Views"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.MainSplitView"
-                        x:DataType="vm:MainSplitViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:v="clr-namespace:Spravy.Ui.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Views.MainSplitView"
+             x:DataType="vm:MainSplitViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    
-    <SplitView x:Name="MainSplit" 
+
+    <SplitView x:Name="MainSplit"
                Content="{Binding Content}"
                Pane="{Binding Pane}"
                IsPaneOpen="{Binding IsPaneOpen}"
                OpenPaneLength="200"
                PanePlacement="Left"
                Name="{x:Static v:MainSplitView.MainSplitViewName}" />
-</ru:ReactiveUserControl>
+</UserControl>

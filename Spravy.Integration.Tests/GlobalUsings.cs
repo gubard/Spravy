@@ -9,7 +9,6 @@ global using Avalonia.Controls.Primitives;
 global using Avalonia.Headless;
 global using Avalonia.Headless.NUnit;
 global using Avalonia.Input;
-global using Avalonia.ReactiveUI;
 global using Avalonia.Threading;
 global using Avalonia.VisualTree;
 global using DialogHostAvalonia;

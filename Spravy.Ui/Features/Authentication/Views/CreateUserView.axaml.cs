@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.Authentication.Views;
 
-public partial class CreateUserView : ReactiveUserControl<CreateUserViewModel>
+public partial class CreateUserView : UserControl
 {
     public const string EmailTextBoxName = "email-text-box";
     public const string LoginTextBoxName = "login-text-box";

@@ -2,8 +2,14 @@ using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.ViewModels;
 
-public class EmailOrLoginInputViewModel : NavigatableViewModelBase
+public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
+    [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
+    private string emailOrLogin = string.Empty;
+
     private readonly INavigator navigator;
     private readonly IObjectStorage objectStorage;
     private readonly IAuthenticationService authenticationService;
@@ -34,12 +40,6 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     {
         get => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public bool IsBusy { get; set; }
-
-    [Reactive]
-    public string EmailOrLogin { get; set; } = string.Empty;
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken ct)
     {

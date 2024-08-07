@@ -1,52 +1,33 @@
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
-public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
+public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
 {
     private readonly IObjectStorage objectStorage;
     private readonly IPropertyValidator propertyValidator;
 
-    private bool loginChanged;
-    private bool passwordChanged;
+    [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
+    private string login = string.Empty;
+
+    [ObservableProperty]
+    private string password = string.Empty;
+
+    [ObservableProperty]
+    private bool isRememberMe;
 
     public LoginViewModel(IObjectStorage objectStorage, IPropertyValidator propertyValidator)
         : base(true)
     {
         this.objectStorage = objectStorage;
         this.propertyValidator = propertyValidator;
-
-        this.WhenAnyValue(x => x.Login)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                loginChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
-
-        this.WhenAnyValue(x => x.Password)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                passwordChanged = true;
-                this.RaisePropertyChanged(nameof(HasErrors));
-            });
     }
-
-    [Reactive]
-    public bool IsBusy { get; set; }
-
-    [Reactive]
-    public string Login { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Password { get; set; } = string.Empty;
 
     public override string ViewId
     {
         get => TypeCache<LoginViewModel>.Type.Name;
     }
-
-    [Reactive]
-    public bool IsRememberMe { get; set; }
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -58,45 +39,33 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
         {
             case nameof(Login):
             {
-                if (loginChanged)
+                var valid = propertyValidator.ValidLogin(Login, nameof(Login));
+                var validLength = propertyValidator.ValidLength(Login, 4, 512, nameof(Login));
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidLogin(Login, nameof(Login));
-                    var validLength = propertyValidator.ValidLength(Login, 4, 512, nameof(Login));
-
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
+                    yield return valid;
                 }
 
+                if (validLength is not null)
+                {
+                    yield return validLength;
+                }
                 break;
             }
             case nameof(Password):
             {
-                if (passwordChanged)
+                var valid = propertyValidator.ValidPassword(Password, nameof(Password));
+                var validLength = propertyValidator.ValidLength(Password, 8, 512, nameof(Password));
+
+                if (valid is not null)
                 {
-                    var valid = propertyValidator.ValidPassword(Password, nameof(Password));
-                    var validLength = propertyValidator.ValidLength(
-                        Password,
-                        8,
-                        512,
-                        nameof(Password)
-                    );
+                    yield return valid;
+                }
 
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
+                if (validLength is not null)
+                {
+                    yield return validLength;
                 }
 
                 break;
@@ -108,11 +77,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     {
         get
         {
-            if (propertyValidator is null)
-            {
-                return true;
-            }
-
             var hasError =
                 propertyValidator.ValidLogin(Login, nameof(Login)) is not null
                 || propertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
@@ -141,12 +105,15 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
         return setting
             .CastObject<LoginViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    Login = s.Login;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        Login = s.Login;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

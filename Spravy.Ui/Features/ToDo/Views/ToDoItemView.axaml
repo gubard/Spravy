@@ -1,20 +1,18 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:sm="clr-namespace:Spravy.Ui.Models"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
-                        x:DataType="vm:ToDoItemViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+             xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:sm="clr-namespace:Spravy.Ui.Models"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
+             x:DataType="vm:ToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding Commands.InitializedCommand.Command}" CommandParameter="{Binding}" />
@@ -56,7 +54,7 @@
                                 <DataTemplate DataType="sm:SpravyCommandNotify">
                                     <Button Classes="mode-press"
                                             Command="{Binding Item.Command}"
-                                            CommandParameter="{Binding $parent[v:ToDoItemView].MainViewModel.Item}"
+                                            CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel.Item}"
                                             Content="{Binding Kind}"
                                             ToolTip.Tip="{Binding Text}" />
                                 </DataTemplate>
@@ -74,8 +72,8 @@
                                 <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
                                     <Setter Property="Command" Value="{Binding Item.Command}" />
                                     <Setter Property="CommandParameter"
-                                            Value="{Binding $parent[v:ToDoItemView].MainViewModel.Item}" />
-                                    
+                                            Value="{Binding $parent[v:ToDoItemView].ViewModel.Item}" />
+
                                     <Setter Property="Icon">
                                         <Template>
                                             <mi:MaterialIcon Kind="{Binding Kind}" />
@@ -147,4 +145,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</ru:ReactiveUserControl>
+</UserControl>

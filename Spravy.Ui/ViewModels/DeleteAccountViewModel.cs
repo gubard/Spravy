@@ -1,9 +1,18 @@
 namespace Spravy.Ui.ViewModels;
 
-public class DeleteAccountViewModel : NavigatableViewModelBase
+public partial class DeleteAccountViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
     private readonly IAuthenticationService authenticationService;
+
+    [ObservableProperty]
+    private UserIdentifierType identifierType;
+
+    [ObservableProperty]
+    private string verificationCode = string.Empty;
+
+    [ObservableProperty]
+    private string identifier = string.Empty;
 
     public DeleteAccountViewModel(
         IErrorHandler errorHandler,
@@ -15,11 +24,13 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     {
         this.navigator = navigator;
         this.authenticationService = authenticationService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
+
         DeleteAccountCommand = SpravyCommand.Create(
             DeleteAccountAsync,
             errorHandler,
@@ -29,15 +40,6 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public UserIdentifierType IdentifierType { get; set; }
-
-    [Reactive]
-    public string VerificationCode { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Identifier { get; set; } = string.Empty;
 
     public override string ViewId
     {

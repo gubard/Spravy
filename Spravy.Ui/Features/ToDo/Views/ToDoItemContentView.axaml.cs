@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemContentView : ReactiveUserControl<ToDoItemContentViewModel>
+public partial class ToDoItemContentView : UserControl
 {
     public const string NameTextBoxName = "name-text-box";
 

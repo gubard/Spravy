@@ -1,7 +1,13 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemsGroupByViewModel : ViewModelBase
+public partial class ToDoItemsGroupByViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private GroupBy groupBy = GroupBy.ByStatus;
+
+    [ObservableProperty]
+    private object? content;
+
     public ToDoItemsGroupByViewModel(
         ToDoItemsGroupByNoneViewModel groupByNone,
         ToDoItemsGroupByStatusViewModel groupByStatus,
@@ -12,29 +18,12 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         GroupByStatus = groupByStatus;
         GroupByType = groupByType;
         Content = GroupByStatus;
-
-        this.WhenAnyValue(x => x.GroupBy)
-            .Subscribe(x =>
-            {
-                Content = x switch
-                {
-                    GroupBy.None => GroupByNone,
-                    GroupBy.ByStatus => GroupByStatus,
-                    GroupBy.ByType => GroupByType,
-                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
-                };
-            });
+        PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
     public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
     public ToDoItemsGroupByTypeViewModel GroupByType { get; }
-
-    [Reactive]
-    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
-
-    [Reactive]
-    public object? Content { get; set; }
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
@@ -50,5 +39,19 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
             .UpdateItemUi(item)
             .IfSuccess(() => GroupByStatus.UpdateItemUi(item))
             .IfSuccess(() => GroupByType.UpdateItemUi(item));
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GroupBy))
+        {
+            Content = GroupBy switch
+            {
+                GroupBy.None => GroupByNone,
+                GroupBy.ByStatus => GroupByStatus,
+                GroupBy.ByType => GroupByType,
+                _ => throw new ArgumentOutOfRangeException(nameof(GroupBy), GroupBy, null),
+            };
+        }
     }
 }

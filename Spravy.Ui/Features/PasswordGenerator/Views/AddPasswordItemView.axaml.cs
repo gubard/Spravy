@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.PasswordGenerator.Views;
 
-public partial class AddPasswordItemView : ReactiveUserControl<AddPasswordItemViewModel>
+public partial class AddPasswordItemView : UserControl
 {
     public AddPasswordItemView()
     {

@@ -1,34 +1,34 @@
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public class PasswordItemSettingsViewModel : ViewModelBase
+public partial class PasswordItemSettingsViewModel : ViewModelBase
 {
-    [Reactive]
-    public Guid Id { get; set; }
+    [ObservableProperty]
+    private Guid id;
 
-    [Reactive]
-    public string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string name = string.Empty;
 
-    [Reactive]
-    public string Regex { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string regex = string.Empty;
 
-    [Reactive]
-    public string Key { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string key = string.Empty;
 
-    [Reactive]
-    public ushort Length { get; set; } = 512;
+    [ObservableProperty]
+    private ushort length = 512;
 
-    [Reactive]
-    public bool IsAvailableUpperLatin { get; set; } = true;
+    [ObservableProperty]
+    private bool isAvailableUpperLatin = true;
 
-    [Reactive]
-    public bool IsAvailableLowerLatin { get; set; } = true;
+    [ObservableProperty]
+    private bool isAvailableLowerLatin = true;
 
-    [Reactive]
-    public bool IsAvailableNumber { get; set; } = true;
+    [ObservableProperty]
+    private bool isAvailableNumber = true;
 
-    [Reactive]
-    public bool IsAvailableSpecialSymbols { get; set; } = true;
+    [ObservableProperty]
+    private bool isAvailableSpecialSymbols = true;
 
-    [Reactive]
-    public string CustomAvailableCharacters { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string customAvailableCharacters = string.Empty;
 }

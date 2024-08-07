@@ -1,7 +1,10 @@
 namespace Spravy.Ui.ViewModels;
 
-public class ConfirmViewModel : ViewModelBase, ISaveState
+public partial class ConfirmViewModel : ViewModelBase, ISaveState
 {
+    [ObservableProperty]
+    private object? content;
+
     public ConfirmViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         ConfirmCommand = SpravyCommand.Create(
@@ -31,9 +34,6 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
-    public object? Content { get; set; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {

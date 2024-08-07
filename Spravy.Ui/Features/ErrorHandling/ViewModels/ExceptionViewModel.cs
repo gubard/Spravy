@@ -1,15 +1,23 @@
 namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
-public class ExceptionViewModel : ViewModelBase
+public partial class ExceptionViewModel : ViewModelBase
 {
     public ExceptionViewModel()
     {
-        this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty);
+        PropertyChanged += OnPropertyChanged;
     }
 
-    [Reactive]
-    public Exception? Exception { get; set; }
+    [ObservableProperty]
+    private Exception? exception;
 
-    [Reactive]
-    public string Message { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string message = string.Empty;
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Exception))
+        {
+            OnPropertyChanged(nameof(Message));
+        }
+    }
 }

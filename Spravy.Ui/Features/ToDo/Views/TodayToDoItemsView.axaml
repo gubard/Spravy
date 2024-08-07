@@ -1,16 +1,14 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:TodayToDoItemsViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.TodayToDoItemsView"
-                        x:DataType="vm:TodayToDoItemsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.ToDo.Views.TodayToDoItemsView"
+             x:DataType="vm:TodayToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -68,7 +66,7 @@
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
                                 <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
-                                
+
                                 <Setter Property="Icon">
                                     <Template>
                                         <mi:MaterialIcon Kind="{Binding Kind}" />
@@ -91,4 +89,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</ru:ReactiveUserControl>
+</UserControl>

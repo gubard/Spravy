@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class DeleteAccountView : ReactiveUserControl<DeleteAccountViewModel>
+public partial class DeleteAccountView : UserControl
 {
     public DeleteAccountView()
     {

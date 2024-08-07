@@ -2179,7 +2179,10 @@ public class SpravyCommandService
                             }
 
                             return this.InvokeUiAsync(
-                                    () => view.ViewModel.IfNotNull(nameof(view.ViewModel))
+                                    () =>
+                                        view
+                                            .DataContext.ThrowIfNull()
+                                            .CastObject<CreateUserViewModel>()
                                 )
                                 .IfSuccessAsync(
                                     vm =>
@@ -2209,7 +2212,8 @@ public class SpravyCommandService
         LoginViewInitialized = SpravyCommand.Create<LoginView>(
             (view, ct) =>
                 view
-                    .ViewModel.IfNotNull(nameof(LoginView.ViewModel))
+                    .DataContext.ThrowIfNull()
+                    .CastObject<LoginViewModel>()
                     .IfSuccessAsync(
                         viewModel =>
                             this.InvokeUiBackgroundAsync(() =>
@@ -2405,9 +2409,9 @@ public class SpravyCommandService
                                         {
                                             return this.InvokeUiAsync(
                                                     () =>
-                                                        view.ViewModel.IfNotNull(
-                                                            nameof(view.ViewModel)
-                                                        )
+                                                        view
+                                                            .DataContext.ThrowIfNull()
+                                                            .CastObject<LoginViewModel>()
                                                 )
                                                 .IfSuccessAsync(
                                                     viewModel =>
@@ -2538,7 +2542,8 @@ public class SpravyCommandService
         MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
             (view, ct) =>
                 view
-                    .ViewModel.IfNotNull(nameof(view.ViewModel))
+                    .DataContext.ThrowIfNull()
+                    .CastObject<MultiToDoItemsViewModel>()
                     .IfSuccess(vm =>
                     {
                         vm.MultiToDoItemsView = view;

@@ -1,16 +1,14 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:SettingViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                        xmlns:ai="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.SettingView"
-                        x:DataType="vm:SettingViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:ai="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Views.SettingView"
+             x:DataType="vm:SettingViewModel">
     <UserControl.Resources>
         <Style x:Key="BorderAdaptive" Selector="Border.adaptive">
             <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
@@ -101,4 +99,4 @@
             <Button Grid.Row="1" Command="{Binding SaveCommand.Command}" Content="{DynamicResource SettingView.Save}" />
         </Grid>
     </c:BusyAreaControl>
-</ru:ReactiveUserControl>
+</UserControl>

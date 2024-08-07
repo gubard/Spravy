@@ -2,9 +2,15 @@ using Spravy.Core.Mappers;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class AddToDoItemViewModel : NavigatableViewModelBase
+public partial class AddToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
+
+    [ObservableProperty]
+    private object[] path = [];
+
+    [ObservableProperty]
+    private Guid parentId;
 
     public AddToDoItemViewModel(
         ToDoItemContentViewModel toDoItemContent,
@@ -20,12 +26,6 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
-
-    [Reactive]
-    public object[] Path { get; set; } = [];
-
-    [Reactive]
-    public Guid ParentId { get; set; }
 
     public override string ViewId
     {
@@ -52,16 +52,19 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return setting
             .CastObject<AddToDoItemViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    ToDoItemContent.Name = s.Name;
-                    ToDoItemContent.Type = s.Type;
-                    ToDoItemContent.Link = s.Link;
-                    DescriptionContent.Description = s.Description;
-                    DescriptionContent.Type = s.DescriptionType;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoItemContent.Name = s.Name;
+                        ToDoItemContent.Type = s.Type;
+                        ToDoItemContent.Link = s.Link;
+                        DescriptionContent.Description = s.Description;
+                        DescriptionContent.Type = s.DescriptionType;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

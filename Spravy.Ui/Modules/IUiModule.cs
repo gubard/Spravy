@@ -164,14 +164,14 @@ public interface IUiModule
 {
     static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainWindowModel mainWindowModel)
     {
-        return new MainWindow { ViewModel = mainWindowModel, };
+        return new MainWindow { DataContext = mainWindowModel, };
     }
 
     static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(
         SingleViewModel singleViewModel
     )
     {
-        return new SingleView { ViewModel = singleViewModel, };
+        return new SingleView { DataContext = singleViewModel, };
     }
 
     static IClipboard ClipboardFactory(TopLevel topLevel)

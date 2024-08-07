@@ -1,17 +1,15 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:SearchToDoItemsViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
-                        x:DataType="vm:SearchToDoItemsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+             x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
+             x:DataType="vm:SearchToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -36,7 +34,7 @@
                 <ItemsControl.DataTemplates>
                     <DataTemplate DataType="m:SpravyCommandNotify">
                         <Button Command="{Binding Item.Command}"
-                                CommandParameter="{Binding $parent[v:SearchToDoItemsView].MainViewModel}"
+                                CommandParameter="{Binding $parent[v:SearchToDoItemsView].ViewModel}"
                                 Content="{Binding Kind}"
                                 ToolTip.Tip="{Binding Text}" />
                     </DataTemplate>
@@ -54,7 +52,7 @@
                     <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                         <Setter Property="Command" Value="{Binding Item.Command}" />
                         <Setter Property="CommandParameter"
-                                Value="{Binding $parent[v:SearchToDoItemsView].MainViewModel}" />
+                                Value="{Binding $parent[v:SearchToDoItemsView].ViewModel}" />
 
                         <Setter Property="Icon">
                             <Template>
@@ -77,7 +75,8 @@
                 <mi:MaterialIcon Kind="Menu" />
             </Button>
 
-            <ContentControl Grid.Column="1" Classes="alignment-center" Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+            <ContentControl Grid.Column="1" Classes="alignment-center"
+                            Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
 
             <StackPanel Grid.Column="2">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
@@ -96,4 +95,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</ru:ReactiveUserControl>
+</UserControl>

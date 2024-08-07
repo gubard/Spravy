@@ -1,9 +1,15 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemSelectorViewModel : ViewModelBase
+public partial class ToDoItemSelectorViewModel : ViewModelBase
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+
+    [ObservableProperty]
+    private string searchText = string.Empty;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? selectedItem;
 
     public ToDoItemSelectorViewModel(
         IToDoService toDoService,
@@ -34,12 +40,6 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     public Guid DefaultSelectedItemId { get; set; }
     public SpravyCommand SearchCommand { get; }
 
-    [Reactive]
-    public string SearchText { get; set; } = string.Empty;
-
-    [Reactive]
-    public ToDoItemEntityNotify? SelectedItem { get; set; }
-
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return Refresh(ct);
@@ -50,12 +50,15 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         return this.PostUiBackground(() => toDoCache.ResetItemsUi(), ct)
             .IfSuccess(() => toDoCache.GetRootItems())
             .IfSuccess(items =>
-                this.PostUiBackground(() =>
-                {
-                    Roots.Update(items);
+                this.PostUiBackground(
+                    () =>
+                    {
+                        Roots.Update(items);
 
-                    return SetupUi();
-                }, ct)
+                        return SetupUi();
+                    },
+                    ct
+                )
             )
             .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds, ct), ct)
             .IfSuccessAsync(
@@ -64,13 +67,16 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             )
             .IfSuccessAsync(
                 items =>
-                    this.PostUiBackground(() =>
-                    {
-                        Roots.Update(items);
-                        Roots.BinarySort();
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            Roots.Update(items);
+                            Roots.BinarySort();
 
-                        return SetupUi();
-                    }, ct),
+                            return SetupUi();
+                        },
+                        ct
+                    ),
                 ct
             );
     }
@@ -115,12 +121,15 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private Result Search(CancellationToken ct)
     {
-        return this.PostUiBackground(() =>
-            {
-                Roots.Clear();
+        return this.PostUiBackground(
+                () =>
+                {
+                    Roots.Clear();
 
-                return Result.Success;
-            }, ct)
+                    return Result.Success;
+                },
+                ct
+            )
             .IfSuccess(() => toDoCache.GetRootItems())
             .IfSuccessForEach(x => Search(x, ct));
     }
@@ -132,18 +141,26 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             {
                 if (item.Name.Contains(SearchText))
                 {
-                    return this.PostUiBackground(() =>
-                    {
-                        Roots.Add(item);
+                    return this.PostUiBackground(
+                        () =>
+                        {
+                            Roots.Add(item);
 
-                        return Result.Success;
-                    }, ct);
+                            return Result.Success;
+                        },
+                        ct
+                    );
                 }
 
                 return Result.Success;
             })
             .IfSuccess(
-                () => item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(x => Search(x, ct))
+                () =>
+                    item
+                        .Children.ToArray()
+                        .ToReadOnlyMemory()
+                        .ToResult()
+                        .IfSuccessForEach(x => Search(x, ct))
             );
     }
 }

@@ -7,6 +7,7 @@ public class TodayToDoItemsViewModel
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public TodayToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -22,6 +23,7 @@ public class TodayToDoItemsViewModel
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -29,19 +31,7 @@ public class TodayToDoItemsViewModel
             taskProgressService
         );
 
-        ToDoSubItemsViewModel
-            .List.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                if (x)
-                {
-                    Commands.Update(spravyCommandNotifyService.TodayToDoItemsMulti);
-                }
-                else
-                {
-                    Commands.Clear();
-                }
-            });
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
@@ -82,5 +72,20 @@ public class TodayToDoItemsViewModel
     )
     {
         return Result.AwaitableSuccess;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.Update(spravyCommandNotifyService.TodayToDoItemsMulti);
+            }
+            else
+            {
+                Commands.Clear();
+            }
+        }
     }
 }

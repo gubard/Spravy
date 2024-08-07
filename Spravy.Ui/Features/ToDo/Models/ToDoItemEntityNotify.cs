@@ -1,11 +1,62 @@
 namespace Spravy.Ui.Features.ToDo.Models;
 
-public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>, IObjectParameters
+public partial class ToDoItemEntityNotify
+    : NotifyBase,
+        IEquatable<ToDoItemEntityNotify>,
+        IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
 
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+
+    [ObservableProperty]
+    private object[] path;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? active;
+
+    [ObservableProperty]
+    private bool isSelected;
+
+    [ObservableProperty]
+    private bool isExpanded;
+
+    [ObservableProperty]
+    private bool isIgnore;
+
+    [ObservableProperty]
+    private bool isFavorite;
+
+    [ObservableProperty]
+    private string description;
+
+    [ObservableProperty]
+    private uint orderIndex;
+
+    [ObservableProperty]
+    private ToDoItemStatus status;
+
+    [ObservableProperty]
+    private ToDoItemIsCan isCan;
+
+    [ObservableProperty]
+    private string name;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? parent;
+
+    [ObservableProperty]
+    private Guid? referenceId;
+
+    [ObservableProperty]
+    private DescriptionType descriptionType;
+
+    [ObservableProperty]
+    private string link;
+
+    [ObservableProperty]
+    private ToDoItemType type;
 
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
@@ -21,16 +72,6 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         SingleCommands = new();
         Children = new();
         MultiCommands = new();
-
-        this.WhenAnyValue(x => x.ReferenceId)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
-
-        this.WhenAnyValue(x => x.DescriptionType)
-            .Subscribe(_ =>
-            {
-                this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
-                this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
-            });
 
         MultiCommands.AddRange(
             [
@@ -52,6 +93,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 spravyCommandNotifyService.MultiCreateReferenceToDoItem,
             ]
         );
+
+        PropertyChanged += OnPropertyChanged;
     }
 
     public Guid Id { get; }
@@ -60,54 +103,6 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public AvaloniaList<SpravyCommandNotify> SingleCommands { get; }
     public AvaloniaList<SpravyCommandNotify> MultiCommands { get; }
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
-
-    [Reactive]
-    public object[] Path { get; set; }
-
-    [Reactive]
-    public ToDoItemEntityNotify? Active { get; set; }
-
-    [Reactive]
-    public bool IsSelected { get; set; }
-
-    [Reactive]
-    public bool IsExpanded { get; set; }
-
-    [Reactive]
-    public bool IsIgnore { get; set; }
-
-    [Reactive]
-    public bool IsFavorite { get; set; }
-
-    [Reactive]
-    public string Description { get; set; }
-
-    [Reactive]
-    public uint OrderIndex { get; set; }
-
-    [Reactive]
-    public ToDoItemStatus Status { get; set; }
-
-    [Reactive]
-    public ToDoItemIsCan IsCan { get; set; }
-
-    [Reactive]
-    public string Name { get; set; }
-
-    [Reactive]
-    public ToDoItemEntityNotify? Parent { get; set; }
-
-    [Reactive]
-    public Guid? ReferenceId { get; set; }
-
-    [Reactive]
-    public DescriptionType DescriptionType { get; set; }
-
-    [Reactive]
-    public string Link { get; set; }
-
-    [Reactive]
-    public ToDoItemType Type { get; set; }
 
     public bool IsDescriptionPlainText
     {
@@ -239,5 +234,18 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
     {
         return new(new NotImplementedError(nameof(SetParameter)));
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ReferenceId))
+        {
+            OnPropertyChanged(nameof(CurrentId));
+        }
+        else if (e.PropertyName == nameof(DescriptionType))
+        {
+            OnPropertyChanged(nameof(IsDescriptionPlainText));
+            OnPropertyChanged(nameof(IsDescriptionMarkdownText));
+        }
     }
 }

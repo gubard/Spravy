@@ -1,15 +1,13 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemToStringSettingsViewModel"
-                        xmlns="https://github.com/avaloniaui"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:ru="http://reactiveui.net"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
-                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemToStringSettingsView"
-                        x:DataType="vm:ToDoItemToStringSettingsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemToStringSettingsView"
+             x:DataType="vm:ToDoItemToStringSettingsViewModel">
     <Design.DataContext>
         <vm:ToDoItemToStringSettingsViewModel />
     </Design.DataContext>
@@ -25,4 +23,4 @@
             </DataTemplate>
         </ItemsControl.DataTemplates>
     </ItemsControl>
-</ru:ReactiveUserControl>
+</UserControl>

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class PlannedToDoItemSettingsViewModel
+public partial class PlannedToDoItemSettingsViewModel
     : ViewModelBase,
         IToDoChildrenTypeProperty,
         IToDoDueDateProperty,
@@ -8,6 +8,18 @@ public class PlannedToDoItemSettingsViewModel
         IApplySettings
 {
     private readonly IToDoService toDoService;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private Guid id;
+
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
 
     public PlannedToDoItemSettingsViewModel(
         IToDoService toDoService,
@@ -41,32 +53,23 @@ public class PlannedToDoItemSettingsViewModel
             );
     }
 
-    [Reactive]
-    public bool IsRequiredCompleteInDueDate { get; set; }
-
-    [Reactive]
-    public Guid Id { get; set; }
-
-    [Reactive]
-    public ToDoItemChildrenType ChildrenType { get; set; }
-
-    [Reactive]
-    public DateOnly DueDate { get; set; }
-
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
         return toDoService
             .GetPlannedToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.PostUiBackground(() =>
-                    {
-                        ChildrenType = setting.ChildrenType;
-                        DueDate = setting.DueDate;
-                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ChildrenType = setting.ChildrenType;
+                            DueDate = setting.DueDate;
+                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
-                        return Result.Success;
-                    }, ct),
+                            return Result.Success;
+                        },
+                        ct
+                    ),
                 ct
             );
     }

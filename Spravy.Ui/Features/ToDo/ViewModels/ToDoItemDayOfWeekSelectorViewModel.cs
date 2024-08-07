@@ -25,8 +25,6 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 
     public AvaloniaList<DayOfWeekSelectItem> Items { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Reactive]
     public Guid ToDoItemId { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
@@ -56,12 +54,15 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                                 var y = x;
 
                                 return () =>
-                                    this.PostUiBackground(() =>
-                                        {
-                                            y.IsSelected = true;
+                                    this.PostUiBackground(
+                                            () =>
+                                            {
+                                                y.IsSelected = true;
 
-                                            return Result.Success;
-                                        }, ct)
+                                                return Result.Success;
+                                            },
+                                            ct
+                                        )
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false);
                             })

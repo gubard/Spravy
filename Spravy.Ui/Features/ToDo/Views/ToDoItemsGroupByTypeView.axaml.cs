@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemsGroupByTypeView : ReactiveUserControl<ToDoItemsGroupByTypeViewModel>
+public partial class ToDoItemsGroupByTypeView : UserControl
 {
     public ToDoItemsGroupByTypeView()
     {

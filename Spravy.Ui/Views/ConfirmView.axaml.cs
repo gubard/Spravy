@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Views;
 
-public partial class ConfirmView : ReactiveUserControl<ConfirmViewModel>
+public partial class ConfirmView : UserControl
 {
     public const string ContentContentControlName = "content-content-control";
     public const string OkButtonName = "ok-button";

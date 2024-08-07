@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
 using Serilog;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
@@ -39,7 +38,6 @@ public class Program
             .Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
             .UsePlatformDetect()
             .WithInterFont()
-            .WithShantellSansFont()
-            .UseReactiveUI();
+            .WithShantellSansFont();
     }
 }

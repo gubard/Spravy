@@ -10,6 +10,7 @@ public class RootToDoItemsViewModel
     private readonly IObjectStorage objectStorage;
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public RootToDoItemsViewModel(
         SpravyCommandNotifyService spravyCommandNotifyService,
@@ -22,31 +23,22 @@ public class RootToDoItemsViewModel
     )
         : base(true)
     {
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
         Commands = new();
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
         this.toDoService = toDoService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
 
-        toDoSubItemsViewModel
-            .List.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                if (x)
-                {
-                    Commands.Update(spravyCommandNotifyService.RootToDoItemsMulti);
-                }
-                else
-                {
-                    Commands.Clear();
-                }
-            });
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
@@ -136,5 +128,20 @@ public class RootToDoItemsViewModel
         }
 
         return Result.Success;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.Update(spravyCommandNotifyService.RootToDoItemsMulti);
+            }
+            else
+            {
+                Commands.Clear();
+            }
+        }
     }
 }

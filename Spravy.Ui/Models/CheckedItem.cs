@@ -1,19 +1,10 @@
 namespace Spravy.Ui.Models;
 
-public class CheckedItem<TItem> : NotifyBase
+public partial class CheckedItem<TItem> : NotifyBase
 {
+    [ObservableProperty]
     private bool isChecked;
+
+    [ObservableProperty]
     private TItem? item;
-
-    public bool IsChecked
-    {
-        get => isChecked;
-        set => this.RaiseAndSetIfChanged(ref isChecked, value);
-    }
-
-    public TItem? Item
-    {
-        get => item;
-        set => this.RaiseAndSetIfChanged(ref item, value);
-    }
 }
