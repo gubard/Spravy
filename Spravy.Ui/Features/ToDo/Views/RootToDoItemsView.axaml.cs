@@ -8,10 +8,20 @@ public partial class RootToDoItemsView : UserControl
     public RootToDoItemsView()
     {
         InitializeComponent();
-    }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
+        Initialized += (s, e) =>
+        {
+            if (s is not RootToDoItemsView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not RootToDoItemsViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.InitializedCommand.Command.Execute(null);
+        };
     }
 }

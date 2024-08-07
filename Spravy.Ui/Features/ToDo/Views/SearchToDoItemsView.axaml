@@ -10,12 +10,6 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
              x:DataType="vm:SearchToDoItemsViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.RefreshCurrentView}" />
     </UserControl.KeyBindings>
@@ -80,8 +74,7 @@
 
             <StackPanel Grid.Column="2">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
-                <TextBox Name="{x:Static v:SearchToDoItemsView.SearchTextTextBoxName}"
-                         Text="{Binding SearchText}" />
+                <TextBox x:Name="SearchTextTextBox" Text="{Binding SearchText}" />
             </StackPanel>
 
             <Button Grid.Column="3"

@@ -13,12 +13,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
              x:DataType="vm:ToDoItemViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding Commands.InitializedCommand.Command}" CommandParameter="{Binding}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Grid RowDefinitions="Auto, Auto,*">
         <Grid RowDefinitions="*,4">
             <Panel>

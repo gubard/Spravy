@@ -9,5 +9,20 @@ public partial class ConfirmView : UserControl
     public ConfirmView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not ConfirmView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not ConfirmViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.InitializedCommand.Command.Execute(null);
+        };
     }
 }

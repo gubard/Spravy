@@ -11,13 +11,6 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
              x:DataType="vm:AddToDoItemViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static helpers:UiHelper.AddToDoItemViewInitialized}"
-                                 CommandParameter="{Binding}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <controls:GroupBoxControl>
             <controls:GroupBoxControl.Header>

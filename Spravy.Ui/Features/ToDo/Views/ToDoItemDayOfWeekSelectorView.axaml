@@ -6,12 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemDayOfWeekSelectorView"
              x:DataType="vm:ToDoItemDayOfWeekSelectorViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <ItemsControl ItemsSource="{Binding Items}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

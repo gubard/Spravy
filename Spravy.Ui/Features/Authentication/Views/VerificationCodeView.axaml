@@ -8,12 +8,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.Authentication.Views.VerificationCodeView"
              x:DataType="vm:VerificationCodeViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding Commands.Initialized.Command}" CommandParameter="{Binding}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Border Classes="card" MinWidth="300">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>

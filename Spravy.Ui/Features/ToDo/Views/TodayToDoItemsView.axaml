@@ -9,12 +9,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.TodayToDoItemsView"
              x:DataType="vm:TodayToDoItemsViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">

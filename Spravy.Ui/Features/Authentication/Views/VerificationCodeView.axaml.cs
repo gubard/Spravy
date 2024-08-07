@@ -8,5 +8,20 @@ public partial class VerificationCodeView : UserControl
     public VerificationCodeView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not VerificationCodeView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not VerificationCodeViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.Commands.Initialized.Command.Execute(viewModel);
+        };
     }
 }

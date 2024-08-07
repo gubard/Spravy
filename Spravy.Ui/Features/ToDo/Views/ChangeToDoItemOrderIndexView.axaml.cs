@@ -7,5 +7,20 @@ public partial class ChangeToDoItemOrderIndexView : UserControl
     public ChangeToDoItemOrderIndexView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not ChangeToDoItemOrderIndexView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not ChangeToDoItemOrderIndexViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.InitializedCommand.Command.Execute(null);
+        };
     }
 }

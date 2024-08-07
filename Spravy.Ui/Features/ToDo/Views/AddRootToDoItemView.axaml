@@ -9,13 +9,6 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.AddRootToDoItemView"
              x:DataType="vm:AddRootToDoItemViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static h:UiHelper.AddRootToDoItemViewInitialized}"
-                                 CommandParameter="{Binding}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>

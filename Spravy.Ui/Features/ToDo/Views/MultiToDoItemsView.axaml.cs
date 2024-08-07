@@ -7,5 +7,15 @@ public partial class MultiToDoItemsView : UserControl
     public MultiToDoItemsView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not MultiToDoItemsView view)
+            {
+                return;
+            }
+
+            UiHelper.MultiToDoItemsViewInitialized.Execute(view);
+        };
     }
 }

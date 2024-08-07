@@ -7,5 +7,20 @@ public partial class ResetToDoItemView : UserControl
     public ResetToDoItemView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not ResetToDoItemView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not ResetToDoItemViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.InitializedCommand.Command.Execute(null);
+        };
     }
 }

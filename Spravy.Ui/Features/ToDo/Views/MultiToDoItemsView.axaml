@@ -11,13 +11,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
              x:DataType="vm:MultiToDoItemsViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static h:UiHelper.MultiToDoItemsViewInitialized}"
-                                 CommandParameter="{Binding $self}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <UserControl.Resources>
         <!-- ReSharper disable once Xaml.RedundantResource -->
         <Styles x:Key="CardToDoItems">

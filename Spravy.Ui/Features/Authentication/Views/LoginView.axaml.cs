@@ -12,5 +12,15 @@ public partial class LoginView : UserControl
     public LoginView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not LoginView view)
+            {
+                return;
+            }
+
+            UiHelper.LoginViewInitialized.Execute(view);
+        };
     }
 }

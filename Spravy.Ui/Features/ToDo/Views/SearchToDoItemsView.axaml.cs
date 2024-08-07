@@ -7,6 +7,21 @@ public partial class SearchToDoItemsView : MainUserControl<SearchToDoItemsViewMo
     public SearchToDoItemsView()
     {
         InitializeComponent();
+
+        Initialized += (s, e) =>
+        {
+            if (s is not RootToDoItemsView view)
+            {
+                return;
+            }
+
+            if (view.DataContext is not RootToDoItemsViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.InitializedCommand.Command.Execute(null);
+        };
     }
 
     private void InitializeComponent()
@@ -17,6 +32,6 @@ public partial class SearchToDoItemsView : MainUserControl<SearchToDoItemsViewMo
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        this.FindControl<TextBox>(SearchTextTextBoxName)?.Focus();
+        SearchTextTextBox.Focus();
     }
 }

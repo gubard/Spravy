@@ -11,12 +11,6 @@
                    mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                    x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
                    x:DataType="vm:LeafToDoItemsViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Grid RowDefinitions="Auto, *">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">

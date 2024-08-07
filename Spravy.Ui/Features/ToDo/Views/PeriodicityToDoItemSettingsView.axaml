@@ -7,12 +7,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.PeriodicityToDoItemSettingsView"
              x:DataType="vm:PeriodicityToDoItemSettingsViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.ChildrenTypes}" />
