@@ -26,6 +26,12 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
         var appBundleFolder = Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath)
             .ToFolder();
+
+        if (appBundleFolder.Exists)
+        {
+            throw new($"Not exists {appBundleFolder}");
+        }
+
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
