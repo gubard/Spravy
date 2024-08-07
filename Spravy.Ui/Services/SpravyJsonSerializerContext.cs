@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Spravy.Db.Errors;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;
@@ -38,7 +37,6 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(ContinueError))]
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
-[JsonSerializable(typeof(NotFoundEntityError))]
 [JsonSerializable(typeof(LoginViewModelSetting))]
 [JsonSerializable(typeof(AddRootToDoItemViewModelSetting))]
 [JsonSerializable(typeof(AddToDoItemViewModelSetting))]

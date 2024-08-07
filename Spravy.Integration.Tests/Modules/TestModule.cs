@@ -1,7 +1,7 @@
 using Jab;
+using Spavy.LocalStorage.Sqlite.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
-using Spravy.Db.Services;
 using Spravy.Ui.Modules;
 
 namespace Spravy.Integration.Tests.Modules;
@@ -14,19 +14,17 @@ namespace Spravy.Integration.Tests.Modules;
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Transient(typeof(IClipboardService), typeof(CodeClipboardService))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
-[Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
-[Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
+[Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class TestServiceProvider : IServiceFactory
 {
+    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    {
+        return new SqliteObjectStorage(serializer, "./storage/storage.db".ToFile());
+    }
+
     static TopLevel TopLevelFactory(IDesktopTopLevelControl desktopTopLevelControl)
     {
         return desktopTopLevelControl.ThrowIfIsNotCast<Window>();
-    }
-
-    static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
-    {
-        return new(setup);
     }
 
     public IServiceFactory ServiceFactoryFactory()
@@ -42,15 +40,6 @@ public partial class TestServiceProvider : IServiceFactory
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile("testsettings.json").Build();
-    }
-
-    public IDbContextSetup DbContextSetupFactory()
-    {
-        return new SqliteDbContextSetup(
-            new[] { new StorageEntityTypeConfiguration(), },
-            "./storage/storage.db".ToFile(),
-            true
-        );
     }
 
     public T CreateService<T>()

@@ -1,12 +1,9 @@
 using Avalonia.Controls;
 using Jab;
 using Microsoft.Extensions.Configuration;
+using Spavy.LocalStorage.Sqlite.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Services;
-using Spravy.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Sqlite.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -29,21 +26,22 @@ namespace Spravy.Ui.Android.Modules;
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
+[Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 [Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
-[Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
-[Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
 public partial class AndroidServiceProvider : IServiceFactory
 {
+    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    {
+        return new SqliteObjectStorage(
+            serializer,
+            FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db")
+        );
+    }
+
     static TopLevel TopLevelFactory(Avalonia.Application application)
     {
         return application.GetTopLevel().ThrowIfNull();
-    }
-
-    static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
-    {
-        return new(setup);
     }
 
     public IServiceFactory ServiceFactoryFactory()
@@ -61,15 +59,6 @@ public partial class AndroidServiceProvider : IServiceFactory
         using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
 
         return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
-    }
-
-    public IDbContextSetup DbContextSetupFactory()
-    {
-        return new SqliteDbContextSetup(
-            new[] { new StorageEntityTypeConfiguration(), },
-            FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"),
-            true
-        );
     }
 
     public T CreateService<T>()

@@ -1,12 +1,9 @@
 using Avalonia.Controls;
 using Jab;
 using Microsoft.Extensions.Configuration;
+using Spavy.LocalStorage.Sqlite.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Services;
-using Spravy.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Sqlite.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -25,19 +22,17 @@ namespace Spravy.Ui.Desktop.Modules;
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
-[Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
-[Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
+[Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory
 {
+    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    {
+        return new SqliteObjectStorage(serializer, "./storage/storage.db".ToFile());
+    }
+
     static TopLevel TopLevelFactory(Avalonia.Application application)
     {
         return application.GetTopLevel().ThrowIfNull();
-    }
-
-    static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
-    {
-        return new(setup);
     }
 
     public IServiceFactory ServiceFactoryFactory()
@@ -53,15 +48,6 @@ public partial class DesktopServiceProvider : IServiceFactory
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build();
-    }
-
-    public IDbContextSetup DbContextSetupFactory()
-    {
-        return new SqliteDbContextSetup(
-            new[] { new StorageEntityTypeConfiguration(), },
-            "./storage/storage.db".ToFile(),
-            true
-        );
     }
 
     public T CreateService<T>()

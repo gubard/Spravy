@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Spavy.LocalStorage.Sqlite\Spavy.LocalStorage.Sqlite.csproj" />
         <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
-        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
         <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 

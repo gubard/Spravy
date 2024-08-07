@@ -1,5 +1,4 @@
 using Spravy.Core.Interfaces;
-using Spravy.Db.Errors;
 using Spravy.PasswordGenerator.Domain.Errors;
 
 namespace Spravy.Ui.Services;
@@ -495,18 +494,6 @@ public class RpcExceptionHandler : IRpcExceptionHandler
         if (NotFoundError.MainId == id)
         {
             var result = await serializer.DeserializeAsync<NotFoundError>(stream, ct);
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
-
-        if (NotFoundEntityError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<NotFoundEntityError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
