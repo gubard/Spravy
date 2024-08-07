@@ -22,7 +22,6 @@ public class IntegersSelectorControl : TemplatedControl
     private readonly List<IntegerSelectorItemControl> integerControls = new();
     private ItemsControl? itemsControl;
     private IEnumerable<int>? selectedIntegers;
-    private readonly List<IDisposable> disposables = new();
 
     static IntegersSelectorControl()
     {
@@ -151,9 +150,9 @@ public class IntegersSelectorControl : TemplatedControl
 
     private void Clear()
     {
-        foreach (var disposable in disposables)
+        foreach (var integerControl in integerControls)
         {
-            disposable.Dispose();
+            integerControl.PropertyChanged -= OnPropertyChanged;
         }
 
         integerControls.Clear();
@@ -180,43 +179,7 @@ public class IntegersSelectorControl : TemplatedControl
 
         foreach (var integerControl in integerControls)
         {
-            var source = integerControl
-                .GetObservable(IntegerSelectorItemControl.IsSelectedProperty)
-                .Skip(1)
-                .Subscribe(x =>
-                {
-                    if (selectedIntegers is null)
-                    {
-                        return;
-                    }
-
-                    if (x)
-                    {
-                        if (selectedIntegers.Contains(integerControl.Value))
-                        {
-                            return;
-                        }
-
-                        if (selectedIntegers is ICollection<int> collection)
-                        {
-                            collection.Add(integerControl.Value);
-                        }
-                    }
-                    else
-                    {
-                        if (!selectedIntegers.Contains(integerControl.Value))
-                        {
-                            return;
-                        }
-
-                        if (selectedIntegers is ICollection<int> collection)
-                        {
-                            collection.Remove(integerControl.Value);
-                        }
-                    }
-                });
-
-            disposables.Add(source);
+            integerControl.PropertyChanged += OnPropertyChanged;
         }
 
         foreach (var integer in integerControls)
@@ -225,5 +188,46 @@ public class IntegersSelectorControl : TemplatedControl
         }
 
         UpdateSelectedIntegers();
+    }
+
+    private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (sender is not IntegerSelectorItemControl integerControl)
+        {
+            return;
+        }
+
+        if (e.Property.Name == nameof(IntegerSelectorItemControl.IsSelected))
+        {
+            if (selectedIntegers is null)
+            {
+                return;
+            }
+
+            if (integerControl.IsSelected)
+            {
+                if (selectedIntegers.Contains(integerControl.Value))
+                {
+                    return;
+                }
+
+                if (selectedIntegers is ICollection<int> collection)
+                {
+                    collection.Add(integerControl.Value);
+                }
+            }
+            else
+            {
+                if (!selectedIntegers.Contains(integerControl.Value))
+                {
+                    return;
+                }
+
+                if (selectedIntegers is ICollection<int> collection)
+                {
+                    collection.Remove(integerControl.Value);
+                }
+            }
+        }
     }
 }
