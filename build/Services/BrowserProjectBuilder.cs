@@ -27,7 +27,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         var appBundleFolder = Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath)
             .ToFolder();
 
-        if (appBundleFolder.Exists)
+        if (!appBundleFolder.Exists)
         {
             throw new($"Not exists {appBundleFolder}");
         }
