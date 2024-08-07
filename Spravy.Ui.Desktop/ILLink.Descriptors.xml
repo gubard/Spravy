@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<linker>
-    <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-    <assembly fullname="Spravy.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-</linker>
