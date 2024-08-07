@@ -128,17 +128,9 @@
                         </Button>
                     </Expander.Header>
 
-                    <Panel>
-                        <TextBlock Name="{x:Static v:ToDoItemView.PlainTextTextBlockName}"
-                                   Classes="alignment-left text-wrap"
-                                   IsVisible="{Binding Item.IsDescriptionPlainText}"
-                                   Text="{Binding Item.Description}" />
-
-                        <md:MarkdownScrollViewer
-                            Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
-                            IsVisible="{Binding Item.IsDescriptionMarkdownText}"
-                            Markdown="{Binding Item.Description}" />
-                    </Panel>
+                    <TextBlock Name="{x:Static v:ToDoItemView.PlainTextTextBlockName}"
+                               Classes="alignment-left text-wrap"
+                               Text="{Binding Item.Description}" />
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
