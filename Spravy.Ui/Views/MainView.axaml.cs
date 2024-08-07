@@ -7,14 +7,13 @@ public partial class MainView : UserControl
 {
     private readonly IServiceFactory serviceFactory =
         DiHelper.ServiceFactory.CreateService<IServiceFactory>();
+
     private readonly IToDoService toDoService =
         DiHelper.ServiceFactory.CreateService<IToDoService>();
+
     private readonly IUiApplicationService uiApplicationService =
         DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
-    public const string ErrorDialogHostName = "error-dialog-host";
-    public const string ProgressDialogHostName = "progress-dialog-host";
-    public const string InputDialogHostName = "input-dialog-host";
-    public const string ContentDialogHostName = "content-dialog-host";
+
     public const string MainContentName = "main-content-control";
     public const string MainPanelName = "main-panel-control";
 

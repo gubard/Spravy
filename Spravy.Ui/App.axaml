@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
@@ -24,7 +23,6 @@
     <Application.Styles>
         <FluentTheme />
         <mi:MaterialIconStyles />
-        <dh:DialogHostStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
     </Application.Styles>
 

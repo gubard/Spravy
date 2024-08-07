@@ -1,3 +1,5 @@
+using Spravy.Ui.Controls;
+
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class WindowExtension
@@ -12,8 +14,6 @@ public static class WindowExtension
             .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Grid>()
-            .Children.OfType<DialogOverlayPopupHost>()
-            .Single()
             .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Border>()
@@ -93,7 +93,7 @@ public static class WindowExtension
             Console.WriteLine($"HasError: {notifyDataErrorInfo.HasErrors}");
         }
 
-        switch (controls.ErrorDialogHost.DialogContent)
+        switch (controls.ErrorDialogHost.Dialog)
         {
             case InfoViewModel { Content: ExceptionViewModel exception, }:
                 Console.WriteLine(exception.Exception?.ToString());
@@ -145,7 +145,7 @@ public static class WindowExtension
         return window;
     }
 
-    public static DialogHost GetErrorDialogHost(this Window window)
+    public static DialogControl GetErrorDialogHost(this Window window)
     {
         var errorDialogHost = window
             .ThrowIfIsNotCast<MainWindow>()
@@ -170,17 +170,17 @@ public static class WindowExtension
             .ThrowIfIsNotCast<Panel>()
             .Children.Last()
             .ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"));
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ErrorDialogHost"));
 
         return errorDialogHost;
     }
 
     public static (
-        DialogHost ErrorDialogHost,
-        DialogHost ProgressDialogHost,
-        DialogHost InputDialogHost,
-        DialogHost ContentDialogHost,
+        DialogControl ErrorDialogHost,
+        DialogControl ProgressDialogHost,
+        DialogControl InputDialogHost,
+        DialogControl ContentDialogHost,
         object Content
     ) GetMainControls(this Window window)
     {
@@ -188,18 +188,18 @@ public static class WindowExtension
 
         var progressDialogHost = errorDialogHost
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"));
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ProgressDialogHost"));
 
         var inputDialogHost = progressDialogHost
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("InputDialogHost"));
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("InputDialogHost"));
 
         var contentDialogHost = inputDialogHost
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"));
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ContentDialogHost"));
 
         var content = contentDialogHost
             .Content.ThrowIfNull()
@@ -221,14 +221,14 @@ public static class WindowExtension
         return window
             .GetErrorDialogHost()
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ProgressDialogHost"))
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("InputDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("InputDialogHost"))
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ContentDialogHost"))
             .Content.ThrowIfNull()
             .ThrowIfIsNotCast<ContentControl>()
             .GetContentView<MainSplitView>()
@@ -270,25 +270,20 @@ public static class WindowExtension
         return window
             .GetErrorDialogHost()
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ProgressDialogHost"))
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("InputDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("InputDialogHost"))
             .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"))
+            .ThrowIfIsNotCast<DialogControl>()
+            .Case(dh => dh.Name.Should().Be("ContentDialogHost"))
             .Case(dh => dh.IsOpen.Should().Be(true))
-            .Case(dh =>
-                dh.DialogContent.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>())
-            )
+            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
             .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Grid>()
             .Children.TakeLast(1)
-            .Single()
-            .ThrowIfIsNotCast<DialogOverlayPopupHost>()
-            .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Border>()
             .GetVisualChildren()
@@ -306,16 +301,11 @@ public static class WindowExtension
         return window
             .GetErrorDialogHost()
             .Case(dh => dh.IsOpen.Should().Be(true))
-            .Case(dh =>
-                dh.DialogContent.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>())
-            )
+            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
             .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Grid>()
             .Children.TakeLast(1)
-            .Single()
-            .ThrowIfIsNotCast<DialogOverlayPopupHost>()
-            .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Border>()
             .GetVisualChildren()

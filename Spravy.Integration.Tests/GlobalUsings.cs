@@ -11,7 +11,6 @@ global using Avalonia.Headless.NUnit;
 global using Avalonia.Input;
 global using Avalonia.Threading;
 global using Avalonia.VisualTree;
-global using DialogHostAvalonia;
 global using FluentAssertions;
 global using MailKit;
 global using MailKit.Net.Imap;

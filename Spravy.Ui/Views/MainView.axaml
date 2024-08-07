@@ -3,9 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-             xmlns:s="clr-namespace:Spravy.Ui.Services"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -55,34 +54,34 @@
         </Styles>
 
         <Style x:Key="DialogHostExtraSmall"
-               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
+               Selector="c|DialogControl.adaptive-dialog-host">
+            <Setter Property="WidthDialog"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
-            <Setter Property="MaxHeight"
+            <Setter Property="MaxHeightDialog"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style x:Key="DialogHostSmall"
-               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
+               Selector="c|DialogControl.adaptive-dialog-host">
+            <Setter Property="WidthDialog"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
-            <Setter Property="MaxHeight"
+            <Setter Property="MaxHeightDialog"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style x:Key="DialogHostMedium"
-               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
+               Selector="c|DialogControl.adaptive-dialog-host">
+            <Setter Property="WidthDialog"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
-            <Setter Property="MaxHeight"
+            <Setter Property="MaxHeightDialog"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style x:Key="DialogHostLarge"
-               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
+               Selector="c|DialogControl.adaptive-dialog-host">
+            <Setter Property="WidthDialog"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
-            <Setter Property="MaxHeight"
+            <Setter Property="MaxHeightDialog"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
     </UserControl.Resources>
@@ -90,23 +89,14 @@
     <Panel Name="{x:Static v:MainView.MainPanelName}">
         <ContentControl Content="{Binding MainProgressBar}" VerticalAlignment="Top" />
 
-        <dh:DialogHost Name="{x:Static v:MainView.ErrorDialogHostName}"
-                       Classes="adaptive-dialog-host"
-                       Identifier="{x:Static s:DialogViewer.ErrorDialogHostIdentifier}">
-            <dh:DialogHost Name="{x:Static v:MainView.ProgressDialogHostName}"
-                           Classes="adaptive-dialog-host"
-                           Identifier="{x:Static s:DialogViewer.ProgressDialogHostIdentifier}">
-                <dh:DialogHost Name="{x:Static v:MainView.InputDialogHostName}"
-                               Classes="adaptive-dialog-host"
-                               Identifier="{x:Static s:DialogViewer.InputDialogHostIdentifier}">
-                    <dh:DialogHost Name="{x:Static v:MainView.ContentDialogHostName}"
-                                   Classes="adaptive-dialog-host"
-                                   Identifier="{x:Static s:DialogViewer.ContentDialogHostIdentifier}">
-                        <ContentControl Name="{x:Static v:MainView.MainContentName}"
-                                        Content="{Binding MainSplit}" />
-                    </dh:DialogHost>
-                </dh:DialogHost>
-            </dh:DialogHost>
-        </dh:DialogHost>
+        <c:DialogControl x:Name="ErrorDialogControl" Classes="adaptive-dialog-host">
+            <c:DialogControl x:Name="ProgressDialogControl" Classes="adaptive-dialog-host">
+                <c:DialogControl x:Name="InputDialogControl" Classes="adaptive-dialog-host">
+                    <c:DialogControl x:Name="ContentDialogControl" Classes="adaptive-dialog-host">
+                        <ContentControl Name="{x:Static v:MainView.MainContentName}" Content="{Binding MainSplit}" />
+                    </c:DialogControl>
+                </c:DialogControl>
+            </c:DialogControl>
+        </c:DialogControl>
     </Panel>
 </UserControl>

@@ -14,6 +14,7 @@
                 <MergeResourceInclude Source="AdaptiveResources.axaml" />
                 <MergeResourceInclude Source="ViewSelectorControl.axaml" />
                 <MergeResourceInclude Source="ViewSelectorItemControl.axaml" />
+                <MergeResourceInclude Source="DialogControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -21,7 +22,6 @@
     <StyleInclude Source="Layoutable.axaml" />
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />
-    <StyleInclude Source="DialogHost.axaml" />
     <StyleInclude Source="SplitView.axaml" />
     <StyleInclude Source="FlyoutPresenter.axaml" />
     <StyleInclude Source="CheckBox.axaml" />

@@ -8,13 +8,6 @@ public class App : Application
 {
     public const string RootToDoItemButtonName = "root-to-do-item-button";
 
-    static App()
-    {
-        DialogHost.IsOpenProperty.Changed.AddClassHandler<DialogHost>(
-            (control, _) => control.Classes.As<IPseudoClasses>()?.Set(":is-open", control.IsOpen)
-        );
-    }
-
     private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
 
     public override void Initialize()

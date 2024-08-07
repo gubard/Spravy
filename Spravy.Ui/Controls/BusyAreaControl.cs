@@ -15,17 +15,7 @@ public class BusyAreaControl : ContentControl
     static BusyAreaControl()
     {
         IsBusyProperty.Changed.AddClassHandler<BusyAreaControl>(
-            (control, _) =>
-            {
-                if (control.IsBusy)
-                {
-                    control.PseudoClasses.Set(":is-busy", true);
-                }
-                else
-                {
-                    control.PseudoClasses.Set(":is-busy", false);
-                }
-            }
+            (control, _) => control.PseudoClasses.Set(":is-busy", control.IsBusy)
         );
     }
 
