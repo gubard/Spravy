@@ -66,7 +66,7 @@ public class ErrorHandler : IErrorHandler
             }
         }
 
-        Log.Logger.Error(exception, "UI error");
+        Console.WriteLine(exception);
 
         return dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ =>

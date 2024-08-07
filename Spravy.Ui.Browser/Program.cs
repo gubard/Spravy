@@ -2,7 +2,6 @@
 using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Browser;
-using Serilog;
 using Spravy.Core.Helpers;
 using Spravy.Ui.Browser.Modules;
 using Spravy.Ui.Extensions;
@@ -16,23 +15,9 @@ internal class Program
     private static async Task Main()
     {
         DiHelper.ServiceFactory = new BrowserServiceProvider();
-        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-
-        try
-        {
-            Log.Information("Starting web app");
-            await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
-            await JSHost.ImportAsync("window.js", "./window.js");
-            await BuildAvaloniaApp().WithInterFont().StartBrowserAppAsync("out");
-        }
-        catch (Exception ex)
-        {
-            Log.Fatal(ex, "Application terminated unexpectedly");
-        }
-        finally
-        {
-            await Log.CloseAndFlushAsync();
-        }
+        await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
+        await JSHost.ImportAsync("window.js", "./window.js");
+        await BuildAvaloniaApp().WithInterFont().StartBrowserAppAsync("out");
     }
 
     public static AppBuilder BuildAvaloniaApp()

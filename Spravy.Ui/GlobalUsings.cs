@@ -40,7 +40,6 @@ global using Grpc.Core;
 global using Grpc.Net.Client;
 global using Material.Icons;
 global using Microsoft.Extensions.DependencyInjection;
-global using Serilog;
 global using Spravy.Authentication.Domain.Client.Models;
 global using Spravy.Authentication.Domain.Client.Services;
 global using Spravy.Authentication.Domain.Interfaces;

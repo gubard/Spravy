@@ -1,8 +1,6 @@
 ﻿using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
-using Serilog;
-using Serilog.Core;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Android.Modules;
@@ -34,11 +32,6 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.AndroidLog()
-            .Enrich.WithProperty(Constants.SourceContextPropertyName, "Spravy")
-            .CreateLogger();
-
         return base.CustomizeAppBuilder(builder).WithInterFont().WithShantellSansFont();
     }
 
@@ -47,12 +40,6 @@ public class MainActivity : AvaloniaMainActivity<App>
         _instance = this;
         DiHelper.ServiceFactory = new AndroidServiceProvider();
         base.OnCreate(savedInstanceState);
-    }
-
-    protected override void OnDestroy()
-    {
-        Log.CloseAndFlush();
-        base.OnDestroy();
     }
 
     public override void OnBackPressed()

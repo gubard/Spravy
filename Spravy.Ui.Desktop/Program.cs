@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Serilog;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Desktop.Modules;
@@ -12,22 +11,7 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-
-        try
-        {
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-        }
-        catch (Exception ex)
-        {
-            Log.Fatal(ex, "Application terminated unexpectedly");
-
-            throw;
-        }
-        finally
-        {
-            Log.CloseAndFlush();
-        }
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
     public static AppBuilder BuildAvaloniaApp()
