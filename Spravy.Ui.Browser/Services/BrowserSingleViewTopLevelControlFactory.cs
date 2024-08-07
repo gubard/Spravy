@@ -25,15 +25,15 @@ public class BrowserSingleViewTopLevelControlFactory : IFactory<ISingleViewTopLe
     public Result<ISingleViewTopLevelControl> Create()
     {
         var url = JsWindowInterop.GetCurrentUrl().ToUri();
-        var query = HttpUtility.ParseQueryString(url.Query);
-        var view = query.Get("view");
 
-        if (view is null)
+        if (url.Segments.Length == 0)
         {
             return singleView.ToResult();
         }
 
-        if (view.Equals("policy", StringComparison.InvariantCultureIgnoreCase))
+        var lastSegment = url.Segments[^1];
+
+        if (lastSegment.Equals("policy", StringComparison.InvariantCultureIgnoreCase))
         {
             return policyView.ToResult();
         }
