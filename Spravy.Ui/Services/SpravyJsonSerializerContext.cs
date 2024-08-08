@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;
@@ -50,4 +51,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(EmailOrLoginInputViewModelSetting))]
 [JsonSerializable(typeof(VerificationCodePasswordError))]
 [JsonSerializable(typeof(Setting.Setting))]
+[JsonSerializable(typeof(GrpcToDoServiceOptionsConfiguration))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

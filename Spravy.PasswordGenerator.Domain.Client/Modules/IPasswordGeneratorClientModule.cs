@@ -27,11 +27,14 @@ public interface IPasswordGeneratorClientModule
         );
     }
 
-    static GrpcPasswordServiceOptions GrpcPasswordServiceOptionsFactory(
-        IConfiguration configuration
-    )
+    static GrpcPasswordServiceOptions GrpcPasswordServiceOptionsFactory(ISerializer serializer)
     {
-        return configuration.GetOptionsValue<GrpcPasswordServiceOptions>();
+        var file = new FileInfo("appsettings.json");
+        using var stream = file.OpenRead();
+
+        var configuration = serializer.Deserialize<GrpcPasswordServiceOptionsConfiguration>(stream);
+
+        return configuration.ThrowIfError().GrpcPasswordService.ThrowIfNull();
     }
 
     static IFactory<Uri, PasswordServiceClient> PasswordServiceClientsFactory(

@@ -6,6 +6,7 @@ using Spravy.Client.Interfaces;
 using Spravy.Client.Models;
 using Spravy.Core.Extensions;
 using Spravy.Core.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Services;
@@ -31,9 +32,13 @@ public interface IToDoClientModule
         );
     }
 
-    static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(IConfiguration configuration)
+    static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(ISerializer serializer)
     {
-        return configuration.GetOptionsValue<GrpcToDoServiceOptions>();
+        var file = new FileInfo("appsettings.json");
+        using var stream = file.OpenRead();
+        var configuration = serializer.Deserialize<GrpcToDoServiceOptionsConfiguration>(stream);
+
+        return configuration.ThrowIfError().GrpcToDoService.ThrowIfNull();
     }
 
     static IFactory<Uri, ToDoService.ToDoServiceClient> ToDoServiceClientsFactory(

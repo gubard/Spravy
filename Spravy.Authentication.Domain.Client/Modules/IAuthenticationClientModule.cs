@@ -8,6 +8,7 @@ using Spravy.Client.Helpers;
 using Spravy.Client.Models;
 using Spravy.Core.Extensions;
 using Spravy.Core.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
@@ -34,10 +35,17 @@ public interface IAuthenticationClientModule
     }
 
     static GrpcAuthenticationServiceOptions GrpcAuthenticationServiceOptionsFactory(
-        IConfiguration configuration
+        ISerializer serializer
     )
     {
-        return configuration.GetOptionsValue<GrpcAuthenticationServiceOptions>();
+        var file = new FileInfo("appsettings.json");
+        using var stream = file.OpenRead();
+
+        var configuration = serializer.Deserialize<GrpcAuthenticationServiceOptionsConfiguration>(
+            stream
+        );
+
+        return configuration.ThrowIfError().GrpcAuthenticationService.ThrowIfNull();
     }
 
     static IFactory<Uri, AuthenticationServiceClient> AuthenticationServiceClientsFactory(

@@ -15,3 +15,8 @@ public class GrpcAuthenticationServiceOptions : IGrpcOptionsValue
     public ChannelCredentialType ChannelCredentialType { get; set; }
     public string? Token { get; set; }
 }
+
+public class GrpcAuthenticationServiceOptionsConfiguration
+{
+    public GrpcAuthenticationServiceOptions? GrpcAuthenticationService { get; set; }
+}

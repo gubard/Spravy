@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Spravy.Client.Enums;
 using Spravy.Client.Interfaces;
 
@@ -14,4 +15,9 @@ public class GrpcToDoServiceOptions : IGrpcOptionsValue
     public GrpcChannelType ChannelType { get; set; }
     public ChannelCredentialType ChannelCredentialType { get; set; }
     public string? Token { get; set; }
+}
+
+public class GrpcToDoServiceOptionsConfiguration
+{
+    public GrpcToDoServiceOptions? GrpcToDoService { get; set; }
 }
