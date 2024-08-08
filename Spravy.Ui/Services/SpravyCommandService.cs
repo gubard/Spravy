@@ -246,7 +246,6 @@ public class SpravyCommandService
         MultiRandomizeChildrenOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
                 view.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmContentDialogAsync<RandomizeChildrenOrderViewModel>(
@@ -259,7 +258,7 @@ public class SpravyCommandService
                                                     selected,
                                                     i =>
                                                         toDoService.RandomizeChildrenOrderIndexAsync(
-                                                            i,
+                                                            i.Id,
                                                             ct
                                                         ),
                                                     ct
@@ -270,10 +269,7 @@ public class SpravyCommandService
                                             () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
                                         ),
-                                viewModel =>
-                                {
-                                    viewModel.Items = selected;
-                                },
+                                viewModel => viewModel.Items.Update(selected),
                                 ct
                             ),
                         ct
@@ -925,7 +921,7 @@ public class SpravyCommandService
                                 () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                 ct
                             ),
-                    vm => vm.ToDoItemId = item.Id,
+                    vm => vm.Item = item,
                     ct
                 ),
             errorHandler,
@@ -1463,7 +1459,6 @@ public class SpravyCommandService
         MultiRandomizeChildrenOrderToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
                 item.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmContentDialogAsync<RandomizeChildrenOrderViewModel>(
@@ -1476,7 +1471,7 @@ public class SpravyCommandService
                                                     selected,
                                                     i =>
                                                         toDoService.RandomizeChildrenOrderIndexAsync(
-                                                            i,
+                                                            i.Id,
                                                             ct
                                                         ),
                                                     ct
@@ -1490,7 +1485,7 @@ public class SpravyCommandService
                                 viewModel =>
                                 {
                                     viewModel.Item = item;
-                                    viewModel.Items = selected;
+                                    viewModel.Items.Update(selected);
                                 },
                                 ct
                             ),
