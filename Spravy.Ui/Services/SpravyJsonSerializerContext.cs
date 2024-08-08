@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
+using Spravy.Authentication.Domain.Client.Models;
+using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;
 
-[JsonSourceGenerationOptions]
+[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 [JsonSerializable(typeof(UserIdentifierTypeOutOfRangeError))]
 [JsonSerializable(typeof(NonItemSelectedError))]
 [JsonSerializable(typeof(NotViewForViewModelError))]
@@ -52,4 +54,6 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(VerificationCodePasswordError))]
 [JsonSerializable(typeof(Setting.Setting))]
 [JsonSerializable(typeof(GrpcToDoServiceOptionsConfiguration))]
+[JsonSerializable(typeof(GrpcAuthenticationServiceOptionsConfiguration))]
+[JsonSerializable(typeof(GrpcPasswordServiceOptionsConfiguration))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;
