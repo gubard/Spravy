@@ -13,6 +13,7 @@ using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Services;
 using AuthenticationSchedule::Spravy.Schedule.Protos;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Models;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Services;
+using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Extensions;
@@ -58,6 +59,21 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextTimeZoneOffsetHttpHeaderFactory>();
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
+
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, AuthenticationService.AuthenticationServiceClient>,
+            AuthenticationClientFactory
+        >();
+
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, ScheduleService.ScheduleServiceClient>,
+            ScheduleServiceClientFactory
+        >();
+
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, ToDoService.ToDoServiceClient>,
+            ToDoServiceClientFactory
+        >();
 
         serviceCollection.AddGrpcService<
             GrpcAuthenticationService,

@@ -19,6 +19,14 @@ namespace Spravy.PasswordGenerator.Domain.Client.Modules;
 [Transient(typeof(IPasswordService), Factory = nameof(PasswordServiceFactory))]
 public interface IPasswordGeneratorClientModule
 {
+    static IPasswordGeneratorClientModule()
+    {
+        GrpcClientFactoryHelper.ClientFactories.Add(
+            typeof(PasswordServiceClient),
+            new PasswordServiceClientFactory()
+        );
+    }
+
     static GrpcPasswordServiceOptions GrpcPasswordServiceOptionsFactory(
         IConfiguration configuration
     )

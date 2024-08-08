@@ -4,6 +4,8 @@ namespace Spravy.Client.Helpers;
 
 public static class GrpcClientFactoryHelper
 {
+    public static Dictionary<Type, object> ClientFactories = new();
+
     public static IFactory<Uri, TGrpcClient> CreateCacheGrpcFactory<
         TGrpcService,
         TGrpcClient,
@@ -16,7 +18,11 @@ public static class GrpcClientFactoryHelper
         var channelCredentials = options.ChannelCredentialType.GetChannelCredentials();
         var grpcChannelFactory = new GrpcChannelFactory(options.ChannelType, channelCredentials);
         var cacheFactory = new CacheFactory<Uri, GrpcChannel>(grpcChannelFactory, cacheValidator);
-        var clientFactory = new GrpcClientFactory<TGrpcClient>(cacheFactory);
+
+        var clientFactory = new GrpcClientFactory<TGrpcClient>(
+            cacheFactory,
+            (IFactory<ChannelBase, TGrpcClient>)ClientFactories[typeof(TGrpcClient)]
+        );
 
         var clientValidator = new GrpcClientCacheValidator<TGrpcClient>(
             cacheValidator,
@@ -38,7 +44,10 @@ public static class GrpcClientFactoryHelper
         var channelCredentials = options.ChannelCredentialType.GetChannelCredentials();
         var channelFactory = new GrpcChannelFactory(options.ChannelType, channelCredentials);
 
-        return new GrpcClientFactory<TGrpcClient>(channelFactory);
+        return new GrpcClientFactory<TGrpcClient>(
+            channelFactory,
+            (IFactory<ChannelBase, TGrpcClient>)ClientFactories[typeof(TGrpcClient)]
+        );
     }
 
     public static TGrpcService CreateGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(

@@ -23,6 +23,14 @@ namespace Spravy.ToDo.Domain.Client.Modules;
 [Transient(typeof(IToDoService), Factory = nameof(ToDoServiceFactory))]
 public interface IToDoClientModule
 {
+    static IToDoClientModule()
+    {
+        GrpcClientFactoryHelper.ClientFactories.Add(
+            typeof(ToDoService.ToDoServiceClient),
+            new ToDoServiceClientFactory()
+        );
+    }
+
     static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(IConfiguration configuration)
     {
         return configuration.GetOptionsValue<GrpcToDoServiceOptions>();

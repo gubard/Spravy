@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Spravy.Client.Extensions;
+using Spravy.Client.Helpers;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Interfaces;
@@ -21,6 +22,14 @@ public class GrpcEventBusService
         IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
+
+    static GrpcEventBusService()
+    {
+        GrpcClientFactoryHelper.ClientFactories.Add(
+            typeof(EventBusServiceClient),
+            new EventBusServiceClientFactory()
+        );
+    }
 
     public GrpcEventBusService(
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,

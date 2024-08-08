@@ -25,6 +25,14 @@ namespace Spravy.Authentication.Domain.Client.Modules;
 [Transient(typeof(IAuthenticationService), Factory = nameof(AuthenticationServiceFactory))]
 public interface IAuthenticationClientModule
 {
+    static IAuthenticationClientModule()
+    {
+        GrpcClientFactoryHelper.ClientFactories.Add(
+            typeof(AuthenticationServiceClient),
+            new AuthenticationClientFactory()
+        );
+    }
+
     static GrpcAuthenticationServiceOptions GrpcAuthenticationServiceOptionsFactory(
         IConfiguration configuration
     )

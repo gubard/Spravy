@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Grpc.Core;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Services;
@@ -50,6 +51,10 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<
             IFactory<string, IEventBusService>,
             EventBusServiceFactory
+        >();
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, AuthenticationService.AuthenticationServiceClient>,
+            AuthenticationClientFactory
         >();
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();

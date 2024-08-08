@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Spravy.Client.Extensions;
+using Spravy.Client.Helpers;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Interfaces;
@@ -20,6 +21,14 @@ public class GrpcScheduleService
         IGrpcServiceCreatorAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
+
+    static GrpcScheduleService()
+    {
+        GrpcClientFactoryHelper.ClientFactories.Add(
+            typeof(ScheduleService.ScheduleServiceClient),
+            new ScheduleServiceClientFactory()
+        );
+    }
 
     public GrpcScheduleService(
         IFactory<Uri, ScheduleService.ScheduleServiceClient> grpcClientFactory,

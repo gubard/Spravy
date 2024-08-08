@@ -23,6 +23,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
         {
             var options = sp.GetConfigurationSection<TGrpcOptions>();
+            var clientFactory = sp.GetRequiredService<IFactory<ChannelBase, TGrpcClient>>();
 
             var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
                 new GrpcChannelFactory(
@@ -33,7 +34,7 @@ public static class ServiceCollectionExtension
             );
 
             return new CacheFactory<Uri, TGrpcClient>(
-                new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
+                new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory, clientFactory),
                 new GrpcClientCacheValidator<TGrpcClient>(
                     sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
                     grpcChannelCacheFactory
@@ -73,6 +74,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
         {
             var options = sp.GetConfigurationSection<TGrpcOptions>();
+            var clientFactory = sp.GetRequiredService<IFactory<ChannelBase, TGrpcClient>>();
 
             var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
                 new GrpcChannelFactory(
@@ -83,7 +85,7 @@ public static class ServiceCollectionExtension
             );
 
             return new CacheFactory<Uri, TGrpcClient>(
-                new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
+                new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory, clientFactory),
                 new GrpcClientCacheValidator<TGrpcClient>(
                     sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
                     grpcChannelCacheFactory

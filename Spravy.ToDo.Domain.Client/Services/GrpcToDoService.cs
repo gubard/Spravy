@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Grpc.Core;
 using Spravy.Client.Extensions;
+using Spravy.Client.Helpers;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Interfaces;
