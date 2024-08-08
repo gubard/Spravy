@@ -28,6 +28,7 @@ public partial class PlannedToDoItemSettingsViewModel
     )
     {
         this.toDoService = toDoService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,

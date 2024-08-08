@@ -4,8 +4,11 @@ public partial class LeafToDoItemsViewModel
     : NavigatableViewModelBase,
         IRefresh,
         IToDoItemUpdater,
-        IToDoSubItemsViewModelProperty
+        IToDoSubItemsViewModelProperty,
+        IObjectParameters
 {
+    private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
+
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoService toDoService;
@@ -13,7 +16,7 @@ public partial class LeafToDoItemsViewModel
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     [ObservableProperty]
-    public ToDoItemEntityNotify? item;
+    private ToDoItemEntityNotify? item;
 
     public LeafToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -33,19 +36,25 @@ public partial class LeafToDoItemsViewModel
         this.objectStorage = objectStorage;
         this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
+
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }
-    public ReadOnlyMemory<Guid> LeafIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
+    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
+
+    public string Header
+    {
+        get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+    }
 
     public override string ViewId
     {
@@ -66,13 +75,13 @@ public partial class LeafToDoItemsViewModel
 
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        if (LeafIds.IsEmpty)
+        if (Items.IsEmpty())
         {
             return Item.IfNotNull(nameof(Item))
                 .IfSuccessAsync(
-                    item =>
+                    i =>
                         toDoService
-                            .GetLeafToDoItemIdsAsync(item.Id, ct)
+                            .GetLeafToDoItemIdsAsync(i.Id, ct)
                             .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
                             .IfSuccessAsync(
                                 items => ToDoSubItemsViewModel.UpdateItemsAsync(items, true, ct),
@@ -82,7 +91,10 @@ public partial class LeafToDoItemsViewModel
                 );
         }
 
-        return LeafIds
+        return Items
+            .Select(x => x.Id)
+            .ToArray()
+            .ToReadOnlyMemory()
             .ToResult()
             .IfSuccessForEachAsync(id => toDoService.GetLeafToDoItemIdsAsync(id, ct), ct)
             .IfSuccessAsync(items => items.SelectMany().ToResult(), ct)
@@ -156,5 +168,20 @@ public partial class LeafToDoItemsViewModel
                 Commands.Clear();
             }
         }
+    }
+
+    public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
+    {
+        if (headerParameterName.Span.AreEquals(parameterName))
+        {
+            return Header.ToResult();
+        }
+
+        return new(new NotFoundNamedError(parameterName.ToString()));
+    }
+
+    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
+    {
+        return new(new NotImplementedError(nameof(SetParameter)));
     }
 }

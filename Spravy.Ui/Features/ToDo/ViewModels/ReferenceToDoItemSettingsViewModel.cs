@@ -5,7 +5,7 @@ public partial class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplyS
     private readonly IToDoService toDoService;
 
     [ObservableProperty]
-    private Guid toDoItemId;
+    private ToDoItemEntityNotify? item;
 
     public ReferenceToDoItemSettingsViewModel(
         ToDoItemSelectorViewModel toDoItemSelector,
@@ -29,14 +29,14 @@ public partial class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplyS
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetToDoItemAsync(ToDoItemId, ct)
+        return Item.IfNotNull(nameof(Item))
+            .IfSuccessAsync(i => toDoService.GetToDoItemAsync(i.Id, ct), ct)
             .IfSuccessAsync(
-                item =>
+                i =>
                 {
-                    ToDoItemSelector.IgnoreIds = new([ToDoItemId,]);
+                    ToDoItemSelector.IgnoreIds = new([i.Id,]);
 
-                    if (item.ReferenceId.TryGetValue(out var referenceId))
+                    if (i.ReferenceId.TryGetValue(out var referenceId))
                     {
                         ToDoItemSelector.DefaultSelectedItemId = referenceId;
                     }
@@ -49,10 +49,15 @@ public partial class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplyS
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateReferenceToDoItemAsync(
-            ToDoItemId,
-            ToDoItemSelector.SelectedItem.ThrowIfNull().Id,
-            ct
-        );
+        return Item.IfNotNull(nameof(Item))
+            .IfSuccessAsync(
+                i =>
+                    toDoService.UpdateReferenceToDoItemAsync(
+                        i.Id,
+                        ToDoItemSelector.SelectedItem.ThrowIfNull().Id,
+                        ct
+                    ),
+                ct
+            );
     }
 }

@@ -272,7 +272,7 @@ public class SpravyCommandService
                                         ),
                                 viewModel =>
                                 {
-                                    viewModel.RandomizeChildrenOrderIds = selected;
+                                    viewModel.Items = selected;
                                 },
                                 ct
                             ),
@@ -387,14 +387,10 @@ public class SpravyCommandService
         MultiOpenLeaf = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
                 view.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessAsync(
                         selected =>
                             navigator.NavigateToAsync<LeafToDoItemsViewModel>(
-                                vm =>
-                                {
-                                    vm.LeafIds = selected;
-                                },
+                                vm => vm.Items.Update(selected),
                                 ct
                             ),
                         ct
@@ -1345,14 +1341,13 @@ public class SpravyCommandService
         MultiOpenLeafToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
                 item.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessAsync(
                         selectedIds =>
                             navigator.NavigateToAsync<LeafToDoItemsViewModel>(
                                 vm =>
                                 {
                                     vm.Item = item;
-                                    vm.LeafIds = selectedIds;
+                                    vm.Items.Update(selectedIds);
                                 },
                                 ct
                             ),
@@ -1495,7 +1490,7 @@ public class SpravyCommandService
                                 viewModel =>
                                 {
                                     viewModel.Item = item;
-                                    viewModel.RandomizeChildrenOrderIds = selected;
+                                    viewModel.Items = selected;
                                 },
                                 ct
                             ),

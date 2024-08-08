@@ -36,7 +36,6 @@ public partial class PeriodicityToDoItemSettingsViewModel
         ITaskProgressService taskProgressService
     )
     {
-        PropertyChanged += OnPropertyChanged;
         this.toDoService = toDoService;
         this.serviceFactory = serviceFactory;
 
@@ -45,6 +44,8 @@ public partial class PeriodicityToDoItemSettingsViewModel
             errorHandler,
             taskProgressService
         );
+
+        PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }

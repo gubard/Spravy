@@ -5,13 +5,13 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class MultiToDoItemsViewModel : ViewModelBase
 {
     [ObservableProperty]
-    public GroupBy groupBy;
+    private GroupBy groupBy;
 
     [ObservableProperty]
-    public ToDoItemViewType toDoItemViewType;
+    private ToDoItemViewType toDoItemViewType;
 
     [ObservableProperty]
-    public bool isMulti;
+    private bool isMulti;
 
     public MultiToDoItemsViewModel(ToDoItemsViewModel favorite, ToDoItemsGroupByViewModel toDoItems)
     {

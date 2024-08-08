@@ -24,7 +24,7 @@
     <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>
 
     <!--LeafToDoItemsView-->
-    <sys:String x:Key="LeafToDoItemsView.Header">Leaf</sys:String>
+    <sys:String x:Key="LeafToDoItemsView.Header">Leaf {Header}</sys:String>
 
     <!--FastToDoItemView-->
     <sys:String x:Key="FastAddToDoItemView.Type">Type</sys:String>

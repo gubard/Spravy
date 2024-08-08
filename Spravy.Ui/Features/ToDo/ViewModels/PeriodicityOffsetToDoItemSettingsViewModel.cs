@@ -44,6 +44,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel
     )
     {
         this.toDoService = toDoService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,

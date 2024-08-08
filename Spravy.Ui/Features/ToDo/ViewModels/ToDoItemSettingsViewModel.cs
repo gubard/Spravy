@@ -9,7 +9,7 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
     private IApplySettings? settings;
 
     [ObservableProperty]
-    private Guid toDoItemId;
+    private ToDoItemEntityNotify? item;
 
     public ToDoItemSettingsViewModel(
         ToDoItemContentViewModel toDoItemContent,
@@ -48,8 +48,8 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetToDoItemAsync(ToDoItemId, ct)
+        return Item.IfNotNull(nameof(Item))
+            .IfSuccessAsync(i => toDoService.GetToDoItemAsync(i.Id, ct), ct)
             .IfSuccessAsync(
                 toDoItem =>
                     this.PostUiBackground(
@@ -91,38 +91,43 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
     {
         if (e.PropertyName == nameof(ToDoItemContent.Type))
         {
+            if (Item is null)
+            {
+                return;
+            }
+
             Settings = ToDoItemContent.Type switch
             {
                 ToDoItemType.Value
                     => serviceFactory
                         .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.Planned
                     => serviceFactory
                         .CreateService<PlannedToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.Periodicity
                     => serviceFactory
                         .CreateService<PeriodicityToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.PeriodicityOffset
                     => serviceFactory
                         .CreateService<PeriodicityOffsetToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.Circle
                     => serviceFactory
                         .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.Step
                     => serviceFactory
                         .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
+                        .Case(vm => vm.Id = Item.Id),
                 ToDoItemType.Group
                     => serviceFactory.CreateService<GroupToDoItemSettingsViewModel>(),
                 ToDoItemType.Reference
                     => serviceFactory
                         .CreateService<ReferenceToDoItemSettingsViewModel>()
-                        .Case(vm => vm.ToDoItemId = ToDoItemId),
+                        .Case(vm => vm.Item = Item),
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }

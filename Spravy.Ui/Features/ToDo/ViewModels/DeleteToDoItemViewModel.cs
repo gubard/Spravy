@@ -3,10 +3,10 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class DeleteToDoItemViewModel : ViewModelBase
 {
     [ObservableProperty]
-    public ToDoItemEntityNotify? item;
+    private ToDoItemEntityNotify? item;
 
     [ObservableProperty]
-    public string childrenText = string.Empty;
+    private string childrenText = string.Empty;
 
     public DeleteToDoItemViewModel(
         IToDoService toDoService,

@@ -25,7 +25,8 @@
                           VerticalScrollBarVisibility="Disabled"
                           HorizontalScrollBarVisibility="Auto"
                           HorizontalAlignment="Left">
-                <TextBlock Text="{DynamicResource LeafToDoItemsView.Header}" />
+                <TextBlock
+                    Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=LeafToDoItemsView.Header}" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
