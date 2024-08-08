@@ -229,12 +229,11 @@ public class SpravyCommandService
                                         ),
                                 viewModel =>
                                 {
-                                    viewModel.ChangeToDoItemOrderIndexIds = view
-                                        .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(
+                                    viewModel.Items.Update(
+                                        view.ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(
                                             x => !x.IsSelected
                                         )
-                                        .Select(x => x.Id)
-                                        .ToArray();
+                                    );
                                 },
                                 ct
                             ),
@@ -1042,7 +1041,7 @@ public class SpravyCommandService
                         var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
 
                         var options = new UpdateOrderIndexToDoItemOptions(
-                            viewModel.Id,
+                            viewModel.Item.ThrowIfNull().Id,
                             targetId,
                             viewModel.IsAfter
                         );
@@ -1058,7 +1057,7 @@ public class SpravyCommandService
                                 ct
                             );
                     },
-                    viewModel => viewModel.Id = item.Id,
+                    viewModel => viewModel.Item = item,
                     ct
                 ),
             errorHandler,
@@ -1548,12 +1547,8 @@ public class SpravyCommandService
                                         ),
                                 viewModel =>
                                 {
-                                    viewModel.Id = item.Id;
-
-                                    viewModel.ChangeToDoItemOrderIndexIds = item
-                                        .Children.Where(x => !x.IsSelected)
-                                        .Select(x => x.Id)
-                                        .ToArray();
+                                    viewModel.Item = item;
+                                    viewModel.Items.Update(item.Children.Where(x => !x.IsSelected));
                                 },
                                 ct
                             ),
@@ -2540,7 +2535,7 @@ public class SpravyCommandService
         );
 
         MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
-            (view, ct) =>
+            (view, _) =>
                 view
                     .DataContext.ThrowIfNull()
                     .CastObject<MultiToDoItemsViewModel>()

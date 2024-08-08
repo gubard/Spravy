@@ -27,19 +27,16 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
         );
     }
 
-    public ReadOnlyMemory<Guid> ChangeToDoItemOrderIndexIds { get; set; } =
-        ReadOnlyMemory<Guid>.Empty;
-
     public SpravyCommand InitializedCommand { get; }
-    public Guid Id { get; set; }
+    public ToDoItemEntityNotify? Item { get; set; }
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        if (ChangeToDoItemOrderIndexIds.IsEmpty)
+        if (Items.IsEmpty())
         {
-            return toDoService
-                .GetSiblingsAsync(Id, ct)
+            return Item.IfNotNull(nameof(Item))
+                .IfSuccessAsync(i => toDoService.GetSiblingsAsync(i.Id, ct), ct)
                 .IfSuccessAsync(
                     items =>
                         this.PostUiBackground(
@@ -66,21 +63,18 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                 );
         }
 
-        return ChangeToDoItemOrderIndexIds
-            .ToResult()
-            .IfSuccessForEach(id => toDoCache.GetToDoItem(id))
-            .IfSuccess(items =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        Items.Update(items.ToArray());
+        return this.PostUiBackground(
+                () =>
+                {
+                    Items.Update(Items);
 
-                        return Result.Success;
-                    },
-                    ct
-                )
+                    return Result.Success;
+                },
+                ct
             )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+            .IfSuccess(() => Items.Select(x => x.Id).ToArray().ToReadOnlyMemory().ToResult())
+            .IfSuccessForEachAsync(id => toDoService.GetToDoItemAsync(id, ct), ct)
+            .IfSuccessForEachAsync(id => toDoCache.UpdateUi(id), ct)
+            .ToResultOnlyAsync();
     }
 }

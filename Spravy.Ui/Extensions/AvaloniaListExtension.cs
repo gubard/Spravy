@@ -11,6 +11,24 @@ public static class AvaloniaListExtension
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
     }
 
+    public static void Update(
+        this AvaloniaList<ToDoItemEntityNotify> list,
+        AvaloniaList<ToDoItemEntityNotify> items
+    )
+    {
+        list.RemoveAll(list.Where(x => !items.Contains(x)));
+        list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
+    }
+
+    public static void Update(
+        this AvaloniaList<ToDoItemEntityNotify> list,
+        IEnumerable<ToDoItemEntityNotify> items
+    )
+    {
+        list.RemoveAll(list.Where(x => !items.Contains(x)));
+        list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
+    }
+
     public static void Update<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)
     {
         list.Clear();
