@@ -4,7 +4,7 @@
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
 
-        <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
+        <RuntimeIdentifier>linux-bionic-arm64</RuntimeIdentifier>
         <ApplicationId>com.SerhiiMaksymovFOP.Spravy</ApplicationId>
         <ApplicationVersion>1</ApplicationVersion>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
