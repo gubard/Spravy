@@ -12,7 +12,7 @@
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishTrimmed>true</PublishTrimmed>
-        <!--<TrimMode>full</TrimMode>-->
+        <TrimMode>full</TrimMode>
         <!--<PublishAot>true</PublishAot>
         <RunAOTCompilation>true</RunAOTCompilation>-->
     </PropertyGroup>

@@ -11,10 +11,10 @@
         <AndroidPackageFormat>aab</AndroidPackageFormat>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>full</TrimMode>
         <!--<PublishReadyToRun>true</PublishReadyToRun>-->
         <!--<PublishAot>true</PublishAot>
-        <RunAOTCompilation>true</RunAOTCompilation>        
-        <TrimMode>full</TrimMode>-->
+        <RunAOTCompilation>true</RunAOTCompilation>-->
     </PropertyGroup>
 
     <ItemGroup>
