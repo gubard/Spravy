@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Nuke.Common.Tools.DotNet;
 using Serilog;
 using _build.Extensions;
 using _build.Helpers;
@@ -17,6 +18,33 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
     public void Publish()
     {
+        if (Options.Runtimes.IsEmpty)
+        {
+            DotNetTasks.DotNetPublish(setting =>
+                setting
+                    .SetConfiguration(Options.Configuration)
+                    .SetProject(Options.CsprojFile.FullName)
+                    .SetOutput(Options.PublishFolder.FullName)
+                    .EnableNoBuild()
+                    .EnableNoRestore()
+            );
+        }
+        else
+        {
+            foreach (var runtime in Options.Runtimes.Span)
+            {
+                DotNetTasks.DotNetPublish(setting =>
+                    setting
+                        .SetConfiguration(Options.Configuration)
+                        .SetProject(Options.CsprojFile.FullName)
+                        .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
+                        .EnableNoBuild()
+                        .EnableNoRestore()
+                        .SetRuntime(runtime.Name)
+                );
+            }
+        }
+
         var appBundlePath = "bin/Release/net8.0-browser/browser-wasm/AppBundle";
 
         if (Options.CsprojFile.Directory is null)

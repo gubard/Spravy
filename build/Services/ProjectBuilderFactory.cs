@@ -165,7 +165,8 @@ public class ProjectBuilderFactory
                         sshHost,
                         sshUser,
                         sshPassword,
-                        publishFolders
+                        publishFolders,
+                        publishFolder.Combine(projectName)
                     )
                 );
             }

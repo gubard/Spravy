@@ -19,7 +19,8 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         string sshHost,
         string sshUser,
         string sshPassword,
-        IEnumerable<IPublished> publisheds
+        IEnumerable<IPublished> publisheds,
+        DirectoryInfo publishFolder
     )
         : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
@@ -30,6 +31,7 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         SshUser = sshUser;
         SshPassword = sshPassword;
         Publisheds = publisheds;
+        PublishFolder = publishFolder;
     }
 
     public IEnumerable<IPublished> Publisheds { get; }
@@ -40,4 +42,5 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
     public string SshHost { get; }
     public string SshUser { get; }
     public string SshPassword { get; }
+    public DirectoryInfo PublishFolder { get; }
 }
