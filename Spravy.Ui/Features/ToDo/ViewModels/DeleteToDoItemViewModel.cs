@@ -20,7 +20,9 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
         InitializedCommand = SpravyCommand.Create(
             ct =>
             {
-                var statuses = Enum.GetValues<ToDoItemStatus>();
+                var statuses = Enum.GetValuesAsUnderlyingType<ToDoItemStatus>()
+                    .OfType<ToDoItemStatus>()
+                    .ToArray();
 
                 return Result.AwaitableSuccess.IfSuccessAllAsync(
                     ct,

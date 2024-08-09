@@ -13,8 +13,8 @@
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
-        <!--<PublishAot>true</PublishAot>
-        <RunAOTCompilation>true</RunAOTCompilation>-->
+        <PublishAot>true</PublishAot>
+        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
     </PropertyGroup>
 
     <PropertyGroup>

@@ -4,7 +4,8 @@ public class ToDoItemToStringSettingsViewModel : ViewModelBase
 {
     public ToDoItemToStringSettingsViewModel()
     {
-        var items = Enum.GetValues<ToDoItemStatus>()
+        var items = Enum.GetValuesAsUnderlyingType<ToDoItemStatus>()
+            .OfType<ToDoItemStatus>()
             .Select(x => new CheckedItem<ToDoItemStatus> { Item = x, IsChecked = true, });
 
         Statuses.AddRange(items);

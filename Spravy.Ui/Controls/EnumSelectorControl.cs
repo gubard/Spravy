@@ -88,7 +88,7 @@ public class EnumSelectorControl : TemplatedControl
 
         if (first is null)
         {
-            var values = Enum.GetValues(SelectedEnum.GetType());
+            var values = Enum.GetValuesAsUnderlyingType(SelectedEnum.GetType());
 
             foreach (var value in values)
             {
@@ -103,7 +103,7 @@ public class EnumSelectorControl : TemplatedControl
         if (first.GetType() != SelectedEnum.GetType())
         {
             selectingItemsControl.Items.Clear();
-            var values = Enum.GetValues(SelectedEnum.GetType());
+            var values = Enum.GetValuesAsUnderlyingType(SelectedEnum.GetType());
 
             foreach (var value in values)
             {

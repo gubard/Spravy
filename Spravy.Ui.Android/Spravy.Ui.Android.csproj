@@ -12,9 +12,8 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
-        <!--<PublishReadyToRun>true</PublishReadyToRun>-->
-        <!--<PublishAot>true</PublishAot>
-        <RunAOTCompilation>true</RunAOTCompilation>-->
+        <PublishAot>true</PublishAot>
+        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
     </PropertyGroup>
 
     <ItemGroup>

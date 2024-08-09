@@ -24,7 +24,7 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     {
         Name = string.Empty;
         Link = string.Empty;
-        ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
+        ToDoItemTypes = new(Enum.GetValuesAsUnderlyingType<ToDoItemType>().OfType<ToDoItemType>());
     }
 
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
