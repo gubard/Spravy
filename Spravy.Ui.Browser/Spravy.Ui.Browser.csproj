@@ -8,11 +8,11 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <PublishReadyToRun>true</PublishReadyToRun>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
         <RunAOTCompilation>true</RunAOTCompilation>
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
+        <!--<PublishReadyToRun>true</PublishReadyToRun>-->
     </PropertyGroup>
 
     <ItemGroup>
