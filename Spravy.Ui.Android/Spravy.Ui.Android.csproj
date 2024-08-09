@@ -12,7 +12,7 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
-        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
+        <RunAOTCompilation>true</RunAOTCompilation>
     </PropertyGroup>
 
     <ItemGroup>
