@@ -96,4 +96,77 @@ public static class UiHelper
     public static readonly ICommand DeletePasswordItem;
     public static readonly ICommand MultiToDoItemsViewInitialized;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
+
+    public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses =
+        new(
+            [
+                ToDoItemStatus.Miss,
+                ToDoItemStatus.ReadyForComplete,
+                ToDoItemStatus.Planned,
+                ToDoItemStatus.Completed
+            ]
+        );
+
+    public static ReadOnlyMemory<ToDoItemType> ToDoItemTypes =
+        new(
+            [
+                ToDoItemType.Value,
+                ToDoItemType.Circle,
+                ToDoItemType.Group,
+                ToDoItemType.Periodicity,
+                ToDoItemType.Reference,
+                ToDoItemType.Planned,
+                ToDoItemType.Step,
+                ToDoItemType.PeriodicityOffset
+            ]
+        );
+
+    public static ReadOnlyMemory<DayOfWeek> DayOfWeeks =
+        new(
+            [
+                DayOfWeek.Monday,
+                DayOfWeek.Thursday,
+                DayOfWeek.Wednesday,
+                DayOfWeek.Tuesday,
+                DayOfWeek.Friday,
+                DayOfWeek.Saturday,
+                DayOfWeek.Sunday
+            ]
+        );
+
+    public static ReadOnlyMemory<GroupBy> GroupBys =
+        new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
+
+    public static ReadOnlyMemory<ToDoItemViewType> ToDoItemViewTypes =
+        new([ToDoItemViewType.List, ToDoItemViewType.Card,]);
+
+    public static ReadOnlyMemory<object> GetEnumValues(Type type)
+    {
+        if (typeof(ToDoItemStatus) == type)
+        {
+            return new(ToDoItemStatuses.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(ToDoItemType) == type)
+        {
+            return new(ToDoItemTypes.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(DayOfWeek) == type)
+        {
+            return new(DayOfWeeks.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(GroupBy) == type)
+        {
+            return new(GroupBys.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(ToDoItemViewType) == type)
+        {
+            return new(ToDoItemViewTypes.ToArray().OfType<object>().ToArray());
+        }
+
+        throw new ArgumentOutOfRangeException(type.ToString());
+    }
 }

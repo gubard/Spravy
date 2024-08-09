@@ -13,9 +13,7 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
         this.toDoService = toDoService;
 
         Items = new(
-            Enum.GetValuesAsUnderlyingType<DayOfWeek>()
-                .OfType<DayOfWeek>()
-                .Select(x => new DayOfWeekSelectItem { DayOfWeek = x, })
+            UiHelper.DayOfWeeks.ToArray().Select(x => new DayOfWeekSelectItem { DayOfWeek = x, })
         );
 
         InitializedCommand = SpravyCommand.Create(
