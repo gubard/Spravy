@@ -10,7 +10,7 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>aab</AndroidPackageFormat>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <!--<PublishTrimmed>true</PublishTrimmed>-->
+        <PublishTrimmed>true</PublishTrimmed>
         <!--<PublishReadyToRun>true</PublishReadyToRun>-->
         <!--<PublishAot>true</PublishAot>
         <RunAOTCompilation>true</RunAOTCompilation>        

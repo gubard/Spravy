@@ -17,6 +17,7 @@ public class SqliteObjectStorage : IObjectStorage
         this.serializer = serializer;
         this.file = file;
         connectionString = $"DataSource={file}";
+        Init();
     }
 
     private void Init()
@@ -26,6 +27,13 @@ public class SqliteObjectStorage : IObjectStorage
             return;
         }
 
+        if (file.Directory is not null && !file.Directory.Exists)
+        {
+            file.Directory.Create();
+        }
+
+        var steam = file.Create();
+        steam.Close();
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
         using var transaction = connection.BeginTransaction();

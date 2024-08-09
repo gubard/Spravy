@@ -9,8 +9,9 @@
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <!--<PublishTrimmed>true</PublishTrimmed>-->
+        <PublishTrimmed>true</PublishTrimmed>
         <!--<TrimMode>full</TrimMode>-->
         <!--<PublishAot>true</PublishAot>
         <RunAOTCompilation>true</RunAOTCompilation>-->
