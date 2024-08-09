@@ -183,7 +183,7 @@ public class ProjectBuilderFactory
                             {
                                 Runtime.LinuxX64,
                                 //Runtime.LinuxArm64,
-                                Runtime.WinX64,
+                                //Runtime.WinX64,
                                 //Runtime.WinArm64,
                             },
                             configuration,
