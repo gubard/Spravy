@@ -318,16 +318,6 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static ConstantExpression ToConstant(this object obj)
-    {
-        return Expression.Constant(obj);
-    }
-
-    public static ConstantExpression ToConstant(this object obj, Type type)
-    {
-        return Expression.Constant(obj, type);
-    }
-
     public static Ref<T> ToRef<T>(this T value)
         where T : struct
     {

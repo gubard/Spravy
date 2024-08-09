@@ -14,7 +14,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
         <PublishAot>true</PublishAot>
-        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
+        <RunAOTCompilation>true</RunAOTCompilation>
     </PropertyGroup>
 
     <PropertyGroup>
