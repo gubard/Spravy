@@ -133,7 +133,7 @@ public class ProjectBuilderFactory
                             csprojFile,
                             csprojFile.Directory.ToFile("appsettings.json"),
                             ports,
-                            new[] { Runtime.LinuxBionicArm64, },
+                            new[] { Runtime.AndroidArm64, },
                             configuration,
                             domain,
                             keyStoreFile,
