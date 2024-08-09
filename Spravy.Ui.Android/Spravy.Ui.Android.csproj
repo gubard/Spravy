@@ -4,7 +4,7 @@
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
 
-        <RuntimeIdentifier>linux-bionic-arm64</RuntimeIdentifier>
+        <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
         <ApplicationId>com.SerhiiMaksymovFOP.Spravy</ApplicationId>
         <ApplicationVersion>1</ApplicationVersion>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -14,10 +14,10 @@
         <TrimMode>full</TrimMode>
         <RunAOTCompilation>true</RunAOTCompilation>
         <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
-        <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+        <!--<AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
         <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
         <PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
-        <PublishAot>true</PublishAot>
+        <PublishAot>true</PublishAot>-->
     </PropertyGroup>
 
     <ItemGroup>
