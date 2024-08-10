@@ -18,7 +18,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
     public void Publish()
     {
-        if (Options.Runtimes.IsEmpty)
+        /*if (Options.Runtimes.IsEmpty)
         {
             DotNetTasks.DotNetPublish(setting =>
                 setting
@@ -43,7 +43,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
                         .SetRuntime(runtime.Name)
                 );
             }
-        }
+        }*/
 
         var appBundlePath = "bin/Release/net8.0-browser/browser-wasm/AppBundle";
 
