@@ -9,9 +9,9 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
              x:DataType="vm:LoginViewModel">
-    <UserControl.KeyBindings>
+    <!--<UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding $self}" />
-    </UserControl.KeyBindings>
+    </UserControl.KeyBindings>-->
 
     <c:BusyAreaControl Classes="card"
                        MinWidth="300"

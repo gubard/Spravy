@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.27.2" />
+        <PackageReference Include="Google.Protobuf" Version="3.27.3" />
         <PackageReference Include="Grpc.Core.Api" Version="$(GrpcVersion)" />
         <PackageReference Include="Jab" Version="0.10.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
