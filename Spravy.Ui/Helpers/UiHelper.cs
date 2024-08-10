@@ -140,6 +140,9 @@ public static class UiHelper
     public static ReadOnlyMemory<ToDoItemViewType> ToDoItemViewTypes =
         new([ToDoItemViewType.List, ToDoItemViewType.Card,]);
 
+    public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
+        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
+
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
         if (typeof(ToDoItemStatus) == type)
@@ -165,6 +168,11 @@ public static class UiHelper
         if (typeof(ToDoItemViewType) == type)
         {
             return new(ToDoItemViewTypes.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(DescriptionType) == type)
+        {
+            return new(DescriptionTypes.ToArray().OfType<object>().ToArray());
         }
 
         throw new ArgumentOutOfRangeException(type.ToString());
