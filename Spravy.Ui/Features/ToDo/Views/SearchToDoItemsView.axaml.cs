@@ -24,11 +24,6 @@ public partial class SearchToDoItemsView : MainUserControl<SearchToDoItemsViewMo
         };
     }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
