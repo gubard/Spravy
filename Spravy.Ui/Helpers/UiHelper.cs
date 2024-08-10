@@ -146,6 +146,16 @@ public static class UiHelper
     public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
         new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);
 
+    public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys =
+        new(
+            [
+                TypeOfPeriodicity.Daily,
+                TypeOfPeriodicity.Weekly,
+                TypeOfPeriodicity.Monthly,
+                TypeOfPeriodicity.Annually,
+            ]
+        );
+
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
         if (typeof(ToDoItemStatus) == type)
@@ -181,6 +191,11 @@ public static class UiHelper
         if (typeof(ToDoItemChildrenType) == type)
         {
             return new(ToDoItemChildrenTypes.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(TypeOfPeriodicity) == type)
+        {
+            return new(TypeOfPeriodicitys.ToArray().OfType<object>().ToArray());
         }
 
         throw new ArgumentOutOfRangeException(type.ToString());
