@@ -35,11 +35,11 @@ public interface IAuthenticationClientModule
     }
 
     static GrpcAuthenticationServiceOptions GrpcAuthenticationServiceOptionsFactory(
-        ISerializer serializer
+        ISerializer serializer,
+        IConfigurationLoader configurationLoader
     )
     {
-        var file = new FileInfo("appsettings.json");
-        using var stream = file.OpenRead();
+        using var stream = configurationLoader.GetStream();
 
         var configuration = serializer.Deserialize<GrpcAuthenticationServiceOptionsConfiguration>(
             stream

@@ -22,6 +22,7 @@ namespace Spravy.Ui.Android.Modules;
     typeof(IFactory<ISingleViewTopLevelControl>),
     typeof(AndroidSingleViewTopLevelControlFactory)
 )]
+[Singleton(typeof(IConfigurationLoader), typeof(EmbeddedConfigurationLoader))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]

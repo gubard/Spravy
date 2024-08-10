@@ -32,10 +32,12 @@ public interface IToDoClientModule
         );
     }
 
-    static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(ISerializer serializer)
+    static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(
+        ISerializer serializer,
+        IConfigurationLoader configurationLoader
+    )
     {
-        var file = new FileInfo("appsettings.json");
-        using var stream = file.OpenRead();
+        using var stream = configurationLoader.GetStream();
         var configuration = serializer.Deserialize<GrpcToDoServiceOptionsConfiguration>(stream);
 
         return configuration.ThrowIfError().GrpcToDoService.ThrowIfNull();
