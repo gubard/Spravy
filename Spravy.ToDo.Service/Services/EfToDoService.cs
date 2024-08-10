@@ -1213,25 +1213,24 @@ public class EfToDoService : IToDoService
                     context
                         .Set<ToDoItemEntity>()
                         .AsNoTracking()
-                        .Where(x =>
-                            x.ParentId == null
-                            && !list.Contains(x.Id)
-                            && x.Type != ToDoItemType.Reference
-                        )
+                        .Where(x => !list.Contains(x.Id) && x.Type != ToDoItemType.Reference)
                         .OrderBy(x => x.OrderIndex)
                         .ToArrayEntitiesAsync(ct)
-                        .IfSuccessForEachAsync(
-                            item =>
-                                GetToDoSelectorItemsAsync(context, item.Id, list, ct)
-                                    .IfSuccessAsync(
-                                        children =>
-                                            new ToDoSelectorItem(
-                                                item.Id,
-                                                item.Name,
-                                                item.OrderIndex,
-                                                children
-                                            ).ToResult(),
-                                        ct
+                        .IfSuccessAsync(
+                            items =>
+                                items
+                                    .Where(x => x.ParentId is null)
+                                    .ToResult()
+                                    .IfSuccessForEach(x =>
+                                        GetToDoSelectorItems(items, x.Id)
+                                            .IfSuccess(children =>
+                                                new ToDoSelectorItem(
+                                                    x.Id,
+                                                    x.Name,
+                                                    x.OrderIndex,
+                                                    children
+                                                ).ToResult()
+                                            )
                                     ),
                             ct
                         ),
@@ -2093,37 +2092,24 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<ToDoSelectorItem>>
-    > GetToDoSelectorItemsAsync(
-        SpravyDbToDoDbContext context,
-        Guid id,
-        List<Guid> ignoreIds,
-        CancellationToken ct
+    private Result<ReadOnlyMemory<ToDoSelectorItem>> GetToDoSelectorItems(
+        ReadOnlyMemory<ToDoItemEntity> items,
+        Guid id
     )
     {
-        return context
-            .Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x =>
-                x.ParentId == id && !ignoreIds.Contains(x.Id) && x.Type != ToDoItemType.Reference
-            )
+        return items
+            .Where(x => x.ParentId == id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayEntitiesAsync(ct)
-            .IfSuccessForEachAsync(
-                item =>
-                    GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, ct)
-                        .IfSuccessAsync(
-                            children =>
-                                new ToDoSelectorItem(
-                                    item.Id,
-                                    item.Name,
-                                    item.OrderIndex,
-                                    children
-                                ).ToResult(),
-                            ct
-                        ),
-                ct
+            .IfSuccessForEach(item =>
+                GetToDoSelectorItems(items, item.Id)
+                    .IfSuccess(children =>
+                        new ToDoSelectorItem(
+                            item.Id,
+                            item.Name,
+                            item.OrderIndex,
+                            children
+                        ).ToResult()
+                    )
             );
     }
 
