@@ -13,9 +13,10 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
         <RunAOTCompilation>true</RunAOTCompilation>
-        <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
-        <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
-        <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
+        <!--<AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>-->
+        <!--<AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>-->
+        <!--<AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>-->
+        
         <!--<PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>-->
         <!--<PublishAot>true</PublishAot>-->
     </PropertyGroup>
