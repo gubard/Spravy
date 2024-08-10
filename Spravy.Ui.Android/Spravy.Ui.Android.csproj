@@ -16,7 +16,7 @@
         <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
         <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
         <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
-        <PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
+        <!--<PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>-->
         <!--<PublishAot>true</PublishAot>-->
     </PropertyGroup>
 
