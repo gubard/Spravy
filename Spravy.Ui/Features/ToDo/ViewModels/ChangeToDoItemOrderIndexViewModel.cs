@@ -2,8 +2,7 @@
 
 public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
     private ToDoItemEntityNotify? selectedItem;
@@ -12,14 +11,13 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     private bool isAfter = true;
 
     public ChangeToDoItemOrderIndexViewModel(
-        IToDoService toDoService,
-        IToDoCache toDoCache,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
     {
-        this.toDoService = toDoService;
-        this.toDoCache = toDoCache;
+        this.toDoUiService = toDoUiService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
@@ -36,45 +34,14 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
         if (Items.IsEmpty())
         {
             return Item.IfNotNull(nameof(Item))
-                .IfSuccessAsync(i => toDoService.GetSiblingsAsync(i.Id, ct), ct)
+                .IfSuccessAsync(i => toDoUiService.GetSiblingsAsync(i, ct), ct)
                 .IfSuccessAsync(
-                    items =>
-                        this.PostUiBackground(
-                            () =>
-                            {
-                                Items.Clear();
-
-                                return items
-                                    .ToResult()
-                                    .IfSuccessForEach(item =>
-                                        toDoCache
-                                            .UpdateUi(item)
-                                            .IfSuccess(i =>
-                                            {
-                                                Items.Add(i);
-
-                                                return Result.Success;
-                                            })
-                                    );
-                            },
-                            ct
-                        ),
+                    items => this.PostUiBackground(() => Items.UpdateUi(items), ct),
                     ct
                 );
         }
 
-        return this.PostUiBackground(
-                () =>
-                {
-                    Items.Update(Items);
-
-                    return Result.Success;
-                },
-                ct
-            )
-            .IfSuccess(() => Items.Select(x => x.Id).ToArray().ToReadOnlyMemory().ToResult())
-            .IfSuccessForEachAsync(id => toDoService.GetToDoItemAsync(id, ct), ct)
-            .IfSuccessForEachAsync(id => toDoCache.UpdateUi(id), ct)
-            .ToResultOnlyAsync();
+        return this.PostUiBackground(() => Items.UpdateUi(Items), ct)
+            .IfSuccessAsync(() => toDoUiService.UpdateItemsAsync(Items.ToArray(), ct), ct);
     }
 }

@@ -122,7 +122,7 @@ public partial class SearchToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.Update(spravyCommandNotifyService.SearchToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.SearchToDoItemsMulti);
             }
             else
             {

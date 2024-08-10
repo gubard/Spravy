@@ -80,7 +80,7 @@ public class TodayToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.Update(spravyCommandNotifyService.TodayToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.TodayToDoItemsMulti);
             }
             else
             {

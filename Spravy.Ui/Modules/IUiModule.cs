@@ -149,6 +149,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(CreateUserView))]
 [Transient(typeof(PolicyViewModel))]
 [Transient(typeof(PolicyView))]
+[Transient(typeof(IToDoUiService), typeof(ToDoUiService))]
 [Transient(typeof(IPropertyValidator), typeof(PropertyValidator))]
 [Transient(typeof(JsonSerializerContext), typeof(SpravyJsonSerializerContext))]
 [Transient(typeof(IErrorHandler), typeof(ErrorHandler))]

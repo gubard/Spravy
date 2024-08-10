@@ -53,7 +53,7 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
                 this.PostUiBackground(
                     () =>
                     {
-                        Roots.Update(items);
+                        Roots.UpdateUi(items);
 
                         return SetupUi();
                     },
@@ -70,7 +70,7 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
                     this.PostUiBackground(
                         () =>
                         {
-                            Roots.Update(items);
+                            Roots.UpdateUi(items);
                             Roots.BinarySort();
 
                             return SetupUi();

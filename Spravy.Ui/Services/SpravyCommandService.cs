@@ -229,7 +229,7 @@ public class SpravyCommandService
                                         ),
                                 viewModel =>
                                 {
-                                    viewModel.Items.Update(
+                                    viewModel.Items.UpdateUi(
                                         view.ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(
                                             x => !x.IsSelected
                                         )
@@ -269,7 +269,7 @@ public class SpravyCommandService
                                             () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
                                         ),
-                                viewModel => viewModel.Items.Update(selected),
+                                viewModel => viewModel.Items.UpdateUi(selected),
                                 ct
                             ),
                         ct
@@ -386,7 +386,7 @@ public class SpravyCommandService
                     .IfSuccessAsync(
                         selected =>
                             navigator.NavigateToAsync<LeafToDoItemsViewModel>(
-                                vm => vm.Items.Update(selected),
+                                vm => vm.Items.UpdateUi(selected),
                                 ct
                             ),
                         ct
@@ -502,7 +502,7 @@ public class SpravyCommandService
                                         ),
                                 vm =>
                                 {
-                                    vm.DeleteItems.Update(selected);
+                                    vm.DeleteItems.UpdateUi(selected);
                                 },
                                 ct
                             ),
@@ -1324,7 +1324,7 @@ public class SpravyCommandService
                                 vm =>
                                 {
                                     vm.Item = item;
-                                    vm.DeleteItems.Update(selected);
+                                    vm.DeleteItems.UpdateUi(selected);
                                 },
                                 ct
                             ),
@@ -1343,7 +1343,7 @@ public class SpravyCommandService
                                 vm =>
                                 {
                                     vm.Item = item;
-                                    vm.Items.Update(selectedIds);
+                                    vm.Items.UpdateUi(selectedIds);
                                 },
                                 ct
                             ),
@@ -1485,7 +1485,7 @@ public class SpravyCommandService
                                 viewModel =>
                                 {
                                     viewModel.Item = item;
-                                    viewModel.Items.Update(selected);
+                                    viewModel.Items.UpdateUi(selected);
                                 },
                                 ct
                             ),
@@ -1538,7 +1538,9 @@ public class SpravyCommandService
                                 viewModel =>
                                 {
                                     viewModel.Item = item;
-                                    viewModel.Items.Update(item.Children.Where(x => !x.IsSelected));
+                                    viewModel.Items.UpdateUi(
+                                        item.Children.Where(x => !x.IsSelected)
+                                    );
                                 },
                                 ct
                             ),

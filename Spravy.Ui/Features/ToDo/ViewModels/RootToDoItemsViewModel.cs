@@ -136,7 +136,7 @@ public class RootToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.Update(spravyCommandNotifyService.RootToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.RootToDoItemsMulti);
             }
             else
             {

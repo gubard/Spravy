@@ -161,7 +161,7 @@ public partial class LeafToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.Update(spravyCommandNotifyService.LeafToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.LeafToDoItemsMulti);
             }
             else
             {

@@ -2,25 +2,29 @@ namespace Spravy.Ui.Extensions;
 
 public static class AvaloniaListExtension
 {
-    public static void Update(
+    public static Result UpdateUi(
         this AvaloniaList<ToDoItemEntityNotify> list,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
         list.RemoveAll(list.Where(x => !items.Span.Contains(x)));
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
+
+        return Result.Success;
     }
 
-    public static void Update(
+    public static Result UpdateUi(
         this AvaloniaList<ToDoItemEntityNotify> list,
         AvaloniaList<ToDoItemEntityNotify> items
     )
     {
         list.RemoveAll(list.Where(x => !items.Contains(x)));
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
+
+        return Result.Success;
     }
 
-    public static void Update(
+    public static void UpdateUi(
         this AvaloniaList<ToDoItemEntityNotify> list,
         IEnumerable<ToDoItemEntityNotify> items
     )
@@ -29,7 +33,7 @@ public static class AvaloniaListExtension
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
     }
 
-    public static void Update<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)
+    public static void UpdateUi<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)
     {
         list.Clear();
         list.AddRange(items.ToArray());
