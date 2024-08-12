@@ -8,7 +8,6 @@ public class ViewFactory : IViewFactory
     private readonly IToDoUiService toDoUiService;
     private readonly IToDoCache toDoCache;
     private readonly IObjectStorage objectStorage;
-    private readonly IServiceFactory serviceFactory;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -16,8 +15,7 @@ public class ViewFactory : IViewFactory
         ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService,
         IToDoCache toDoCache,
-        IObjectStorage objectStorage,
-        IServiceFactory serviceFactory
+        IObjectStorage objectStorage
     )
     {
         this.toDoService = toDoService;
@@ -26,7 +24,6 @@ public class ViewFactory : IViewFactory
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
-        this.serviceFactory = serviceFactory;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -34,7 +31,6 @@ public class ViewFactory : IViewFactory
         return new(
             item,
             CreateToDoItemContentViewModel(),
-            serviceFactory,
             toDoService,
             errorHandler,
             taskProgressService,
@@ -59,6 +55,60 @@ public class ViewFactory : IViewFactory
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
     {
         return new();
+    }
+
+    public ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService);
+    }
+
+    public GroupToDoItemSettingsViewModel CreateGroupToDoItemSettingsViewModel()
+    {
+        return new();
+    }
+
+    public ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+    }
+
+    public ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+    }
+
+    public ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+    }
+
+    public PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+    }
+
+    public PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService, this);
+    }
+
+    public PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
     }
 
     public InfoViewModel CreateInfoViewModel(

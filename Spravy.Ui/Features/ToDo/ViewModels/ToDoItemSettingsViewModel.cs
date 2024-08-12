@@ -3,7 +3,6 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
     private readonly IToDoService toDoService;
-    private readonly IServiceFactory serviceFactory;
     private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
@@ -12,7 +11,6 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
     public ToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         ToDoItemContentViewModel toDoItemContent,
-        IServiceFactory serviceFactory,
         IToDoService toDoService,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
@@ -21,7 +19,6 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
         : base(true)
     {
         ToDoItemContent = toDoItemContent;
-        this.serviceFactory = serviceFactory;
         this.toDoService = toDoService;
         this.viewFactory = viewFactory;
         Item = item;
@@ -51,8 +48,8 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return Item.IfNotNull(nameof(Item))
-            .IfSuccessAsync(i => toDoService.GetToDoItemAsync(i.Id, ct), ct)
+        return toDoService
+            .GetToDoItemAsync(Item.Id, ct)
             .IfSuccessAsync(
                 toDoItem =>
                     this.PostUiBackground(
@@ -94,39 +91,17 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
     {
         if (e.PropertyName == nameof(ToDoItemContent.Type))
         {
-            if (Item is null)
-            {
-                return;
-            }
-
             Settings = ToDoItemContent.Type switch
             {
-                ToDoItemType.Value
-                    => serviceFactory
-                        .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
-                ToDoItemType.Planned
-                    => serviceFactory
-                        .CreateService<PlannedToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Item = Item),
+                ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+                ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
                 ToDoItemType.Periodicity
-                    => serviceFactory
-                        .CreateService<PeriodicityToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Item = Item),
+                    => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
                 ToDoItemType.PeriodicityOffset
-                    => serviceFactory
-                        .CreateService<PeriodicityOffsetToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Item = Item),
-                ToDoItemType.Circle
-                    => serviceFactory
-                        .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
-                ToDoItemType.Step
-                    => serviceFactory
-                        .CreateService<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
-                ToDoItemType.Group
-                    => serviceFactory.CreateService<GroupToDoItemSettingsViewModel>(),
+                    => viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
+                ToDoItemType.Circle => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+                ToDoItemType.Step => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+                ToDoItemType.Group => viewFactory.CreateGroupToDoItemSettingsViewModel(),
                 ToDoItemType.Reference
                     => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
                 _ => throw new ArgumentOutOfRangeException(),

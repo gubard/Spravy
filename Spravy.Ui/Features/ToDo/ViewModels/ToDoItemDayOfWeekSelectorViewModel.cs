@@ -3,14 +3,19 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     public ToDoItemDayOfWeekSelectorViewModel(
+        ToDoItemEntityNotify item,
         IToDoService toDoService,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
     {
         this.toDoService = toDoService;
+        Item = item;
+        this.toDoUiService = toDoUiService;
 
         Items = new(
             UiHelper.DayOfWeeks.ToArray().Select(x => new DayOfWeekSelectItem { DayOfWeek = x, })
@@ -25,12 +30,12 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 
     public AvaloniaList<DayOfWeekSelectItem> Items { get; }
     public SpravyCommand InitializedCommand { get; }
-    public Guid ToDoItemId { get; set; }
+    public ToDoItemEntityNotify Item { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-            ToDoItemId,
+            Item.Id,
             new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
             ct
         );
@@ -38,37 +43,6 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetWeeklyPeriodicityAsync(ToDoItemId, ct)
-            .IfSuccessAsync(
-                weeklyPeriodicity =>
-                    Result.AwaitableSuccess.IfSuccessAllAsync(
-                        ct,
-                        Items
-                            .Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
-                            .Select<
-                                DayOfWeekSelectItem,
-                                Func<ConfiguredValueTaskAwaitable<Result>>
-                            >(x =>
-                            {
-                                var y = x;
-
-                                return () =>
-                                    this.PostUiBackground(
-                                            () =>
-                                            {
-                                                y.IsSelected = true;
-
-                                                return Result.Success;
-                                            },
-                                            ct
-                                        )
-                                        .ToValueTaskResult()
-                                        .ConfigureAwait(false);
-                            })
-                            .ToArray()
-                    ),
-                ct
-            );
+        return toDoUiService.UpdateItemAsync(Item, ct);
     }
 }

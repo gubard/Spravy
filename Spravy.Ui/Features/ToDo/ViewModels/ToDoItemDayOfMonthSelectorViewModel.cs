@@ -3,14 +3,19 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     public ToDoItemDayOfMonthSelectorViewModel(
+        ToDoItemEntityNotify item,
         IToDoService toDoService,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
     {
         this.toDoService = toDoService;
+        this.toDoUiService = toDoUiService;
+        Item = item;
         SelectedDays = new();
 
         InitializedCommand = SpravyCommand.Create(
@@ -22,12 +27,12 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 
     public AvaloniaList<int> SelectedDays { get; }
     public SpravyCommand InitializedCommand { get; }
-    public Guid ToDoItemId { get; set; }
+    public ToDoItemEntityNotify Item { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
-            ToDoItemId,
+            Item.Id,
             new(SelectedDays.Select(x => (byte)x).ToArray()),
             ct
         );
@@ -35,22 +40,6 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetMonthlyPeriodicityAsync(ToDoItemId, ct)
-            .IfSuccessAsync(
-                monthlyPeriodicity =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            SelectedDays.AddRange(
-                                monthlyPeriodicity.Days.Select(x => (int)x).ToArray()
-                            );
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
+        return toDoUiService.UpdateItemAsync(Item, ct);
     }
 }

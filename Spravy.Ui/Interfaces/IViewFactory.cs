@@ -17,6 +17,32 @@ public interface IViewFactory
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item);
     AddRootToDoItemViewModel CreateAddRootToDoItemViewModel();
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
+    ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
+    GroupToDoItemSettingsViewModel CreateGroupToDoItemSettingsViewModel();
+
+    ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item
+    );
 
     InfoViewModel CreateInfoViewModel(
         object content,

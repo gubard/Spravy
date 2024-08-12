@@ -1,14 +1,12 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
     private readonly IToDoUiService toDoUiService;
 
-    [ObservableProperty]
-    private ToDoItemEntityNotify? item;
-
     public PeriodicityOffsetToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item,
         IToDoService toDoService,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
@@ -17,6 +15,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     {
         this.toDoService = toDoService;
         this.toDoUiService = toDoUiService;
+        Item = item;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -25,64 +24,47 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         );
     }
 
+    public ToDoItemEntityNotify Item { get; }
     public SpravyCommand InitializedCommand { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return Item.IfNotNull(nameof(Item))
+        return toDoService
+            .UpdateToDoItemDaysOffsetAsync(Item.Id, Item.DaysOffset, ct)
             .IfSuccessAsync(
-                i =>
-                    toDoService
-                        .UpdateToDoItemDaysOffsetAsync(i.Id, i.DaysOffset, ct)
-                        .IfSuccessAsync(
-                            () =>
-                                toDoService.UpdateToDoItemWeeksOffsetAsync(i.Id, i.WeeksOffset, ct),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () =>
-                                toDoService.UpdateToDoItemYearsOffsetAsync(i.Id, i.YearsOffset, ct),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () =>
-                                toDoService.UpdateToDoItemMonthsOffsetAsync(
-                                    i.Id,
-                                    i.MonthsOffset,
-                                    ct
-                                ),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () =>
-                                toDoService.UpdateToDoItemChildrenTypeAsync(
-                                    i.Id,
-                                    i.ChildrenType,
-                                    ct
-                                ),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () => toDoService.UpdateToDoItemDueDateAsync(i.Id, i.DueDate, ct),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () =>
-                                toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                                    i.Id,
-                                    i.IsRequiredCompleteInDueDate,
-                                    ct
-                                ),
-                            ct
-                        ),
+                () => toDoService.UpdateToDoItemWeeksOffsetAsync(Item.Id, Item.WeeksOffset, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                () => toDoService.UpdateToDoItemYearsOffsetAsync(Item.Id, Item.YearsOffset, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                () => toDoService.UpdateToDoItemMonthsOffsetAsync(Item.Id, Item.MonthsOffset, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                () => toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, Item.ChildrenType, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                () => toDoService.UpdateToDoItemDueDateAsync(Item.Id, Item.DueDate, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                () =>
+                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                        Item.Id,
+                        Item.IsRequiredCompleteInDueDate,
+                        ct
+                    ),
                 ct
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return Item.IfNotNull(nameof(Item))
-            .IfSuccessAsync(i => toDoUiService.UpdateItemAsync(i, ct), ct);
+        return toDoUiService.UpdateItemAsync(Item, ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
