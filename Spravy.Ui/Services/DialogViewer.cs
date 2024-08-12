@@ -9,202 +9,24 @@ public class DialogViewer : IDialogViewer
         this.serviceFactory = serviceFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ShowContentDialogAsync<TView>(
-        Action<TView> setupView,
+    public ConfiguredValueTaskAwaitable<Result> ShowDialogAsync(
+        DialogViewLayer layer,
+        ViewModelBase viewModel,
         CancellationToken ct
     )
-        where TView : ViewModelBase
     {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                    ShowView(
-                        content,
-                        serviceFactory.CreateService<MainView>().ContentDialogControl
-                    ),
-                ct
-            );
+        return GetDialogControl(layer)
+            .IfSuccessAsync(dialogControl => ShowViewAsync(viewModel, dialogControl), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ShowProgressDialogAsync<TView>(
-        Action<TView> setupView,
+    public ConfiguredValueTaskAwaitable<Result> CloseDialogAsync(
+        DialogViewLayer layer,
         CancellationToken ct
     )
-        where TView : ViewModelBase
     {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                    ShowView(
-                        content,
-                        serviceFactory.CreateService<MainView>().ProgressDialogControl
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowErrorDialogAsync<TView>(
-        Action<TView> setupView,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                    ShowView(content, serviceFactory.CreateService<MainView>().ErrorDialogControl),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowInfoErrorDialogAsync<TView>(
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
-        Action<TView> setupView,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                {
-                    var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
-                    infoViewModel.Content = content;
-                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-
-                    return ShowView(
-                        infoViewModel,
-                        serviceFactory.CreateService<MainView>().ErrorDialogControl
-                    );
-                },
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowInfoInputDialogAsync<TView>(
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
-        Action<TView> setupView,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                {
-                    var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
-                    infoViewModel.Content = content;
-                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-
-                    return ShowView(
-                        infoViewModel,
-                        serviceFactory.CreateService<MainView>().InputDialogControl
-                    );
-                },
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowInfoContentDialogAsync<TView>(
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
-        Action<TView> setupView,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                {
-                    var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
-                    infoViewModel.Content = content;
-                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-
-                    return ShowView(
-                        infoViewModel,
-                        serviceFactory.CreateService<MainView>().ContentDialogControl
-                    );
-                },
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowInputDialogAsync<TView>(
-        Action<TView> setupView,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-
-        if (content is null)
-        {
-            return new Result(new NotFoundTypeError(typeof(TView)))
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
-        }
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                setupView.Invoke(content);
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                    ShowView(content, serviceFactory.CreateService<MainView>().InputDialogControl),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> CloseProgressDialogAsync(CancellationToken ct)
-    {
-        return this.PostUiBackground(
-                () =>
-                    SafeCloseUi(serviceFactory.CreateService<MainView>().ProgressDialogControl, ct),
-                ct
+        return GetDialogControl(layer)
+            .IfSuccess(dialogControl =>
+                this.PostUiBackground(() => SafeCloseUi(dialogControl, ct), ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);
@@ -248,99 +70,8 @@ public class DialogViewer : IDialogViewer
         });
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ShowConfirmContentDialogAsync<TView>(
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
-        Action<TView> setupView,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-        var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
-        confirmViewModel.Content = content;
-        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-        confirmViewModel.Initialized = view => initialized.Invoke((TView)view);
-
-        return this.PostUiBackground(
-                () =>
-                {
-                    setupView.Invoke(content);
-
-                    return Result.Success;
-                },
-                ct
-            )
-            .IfSuccessAsync(
-                () =>
-                    ShowView(
-                        confirmViewModel,
-                        serviceFactory.CreateService<MainView>().ContentDialogControl
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ShowConfirmInputDialogAsync<TView>(
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
-        Action<TView> setupView,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> initialized,
-        CancellationToken ct
-    )
-        where TView : ViewModelBase
-    {
-        var content = serviceFactory.CreateService<TView>();
-        var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
-        confirmViewModel.Content = content;
-        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-        confirmViewModel.Initialized = view => initialized.Invoke((TView)view);
-
-        return this.PostUiBackground(
-                () =>
-                {
-                    setupView.Invoke(content);
-
-                    return Result.Success;
-                },
-                ct
-            )
-            .IfSuccessAsync(
-                () =>
-                    ShowView(
-                        confirmViewModel,
-                        serviceFactory.CreateService<MainView>().InputDialogControl
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> CloseContentDialogAsync(CancellationToken ct)
-    {
-        return this.InvokeUiBackgroundAsync(
-            () => SafeCloseUi(serviceFactory.CreateService<MainView>().ContentDialogControl, ct)
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> CloseErrorDialogAsync(CancellationToken ct)
-    {
-        return this.InvokeUiBackgroundAsync(
-            () => SafeCloseUi(serviceFactory.CreateService<MainView>().ErrorDialogControl, ct)
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> CloseInputDialogAsync(CancellationToken ct)
-    {
-        return this.InvokeUiBackgroundAsync(
-            () => SafeCloseUi(serviceFactory.CreateService<MainView>().InputDialogControl, ct)
-        );
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> ShowView(
-        object content,
+    private ConfiguredValueTaskAwaitable<Result> ShowViewAsync(
+        ViewModelBase viewModel,
         DialogControl dialogControl
     )
     {
@@ -351,7 +82,7 @@ public class DialogViewer : IDialogViewer
                 return Result.Success;
             }
 
-            dialogControl.Dialog = content;
+            dialogControl.Dialog = viewModel;
             dialogControl.IsOpen = true;
 
             return Result.Success;
@@ -382,5 +113,21 @@ public class DialogViewer : IDialogViewer
 
                 return Result.Success;
             });
+    }
+
+    public Result<DialogControl> GetDialogControl(DialogViewLayer layer)
+    {
+        return layer switch
+        {
+            DialogViewLayer.Error
+                => serviceFactory.CreateService<MainView>().ErrorDialogControl.ToResult(),
+            DialogViewLayer.Progress
+                => serviceFactory.CreateService<MainView>().ProgressDialogControl.ToResult(),
+            DialogViewLayer.Input
+                => serviceFactory.CreateService<MainView>().InputDialogControl.ToResult(),
+            DialogViewLayer.Content
+                => serviceFactory.CreateService<MainView>().ContentDialogControl.ToResult(),
+            _ => new(new DialogViewLayerOutOfRangeError(layer))
+        };
     }
 }

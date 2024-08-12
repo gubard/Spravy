@@ -35,6 +35,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IPasswordItemCache), typeof(PasswordItemCache))]
 [Singleton(typeof(ISpravyNotificationManager), typeof(NotificationManager))]
 [Singleton(typeof(IManagedNotificationManager), typeof(WindowNotificationManager))]
+[Singleton(typeof(IViewFactory), typeof(ViewFactory))]
 [Singleton(typeof(IDesktopTopLevelControl), Factory = nameof(DesktopTopLevelControlFactory))]
 [Singleton(typeof(ISingleViewTopLevelControl), Factory = nameof(SingleViewTopLevelControlFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
@@ -48,13 +49,11 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(EditDescriptionView))]
 [Transient(typeof(EditDescriptionContentViewModel))]
 [Transient(typeof(EditDescriptionContentView))]
-[Transient(typeof(ConfirmViewModel))]
 [Transient(typeof(ConfirmView))]
 [Transient(typeof(DeleteAccountViewModel))]
 [Transient(typeof(DeleteAccountView))]
 [Transient(typeof(EmailOrLoginInputViewModel))]
 [Transient(typeof(EmailOrLoginInputView))]
-[Transient(typeof(InfoViewModel))]
 [Transient(typeof(InfoView))]
 [Transient(typeof(SettingViewModel))]
 [Transient(typeof(SettingView))]
@@ -71,9 +70,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemsGroupByStatusView))]
 [Transient(typeof(AddRootToDoItemViewModel))]
 [Transient(typeof(AddRootToDoItemView))]
-[Transient(typeof(AddToDoItemViewModel))]
 [Transient(typeof(AddToDoItemView))]
-[Transient(typeof(DeleteToDoItemViewModel))]
 [Transient(typeof(DeleteToDoItemView))]
 [Transient(typeof(MultiToDoItemsViewModel))]
 [Transient(typeof(MultiToDoItemsView))]
@@ -82,7 +79,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemCommands))]
 [Transient(typeof(ToDoItemsGroupByViewModel))]
 [Transient(typeof(ToDoItemsGroupByView))]
-[Transient(typeof(ResetToDoItemViewModel))]
 [Transient(typeof(ResetToDoItemView))]
 [Transient(typeof(RootToDoItemsViewModel))]
 [Transient(typeof(RootToDoItemsView))]
@@ -98,25 +94,18 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ValueToDoItemSettingsView))]
 [Transient(typeof(GroupToDoItemSettingsViewModel))]
 [Transient(typeof(GroupToDoItemSettingsView))]
-[Transient(typeof(ToDoItemToStringSettingsViewModel))]
 [Transient(typeof(ToDoItemToStringSettingsView))]
 [Transient(typeof(ToDoItemDayOfWeekSelectorViewModel))]
 [Transient(typeof(ToDoItemDayOfWeekSelectorView))]
 [Transient(typeof(ToDoItemDayOfYearSelectorViewModel))]
 [Transient(typeof(ToDoItemDayOfYearSelectorView))]
-[Transient(typeof(ToDoItemSelectorViewModel))]
 [Transient(typeof(ToDoItemSelectorView))]
-[Transient(typeof(ToDoItemSettingsViewModel))]
 [Transient(typeof(ToDoItemSettingsView))]
 [Transient(typeof(ToDoSubItemsViewModel))]
 [Transient(typeof(ToDoSubItemsView))]
-[Transient(typeof(ReferenceToDoItemSettingsViewModel))]
 [Transient(typeof(ReferenceToDoItemSettingsView))]
-[Transient(typeof(ChangeToDoItemOrderIndexViewModel))]
 [Transient(typeof(ChangeToDoItemOrderIndexView))]
-[Transient(typeof(MultiToDoItemSettingViewModel))]
 [Transient(typeof(MultiToDoItemSettingView))]
-[Transient(typeof(RandomizeChildrenOrderViewModel))]
 [Transient(typeof(RandomizeChildrenOrderView))]
 [Transient(typeof(SearchToDoItemsViewModel))]
 [Transient(typeof(SearchToDoItemsView))]
@@ -128,15 +117,12 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemDayOfMonthSelectorView))]
 [Transient(typeof(AddPasswordItemViewModel))]
 [Transient(typeof(AddPasswordItemView))]
-[Transient(typeof(DeletePasswordItemViewModel))]
 [Transient(typeof(DeletePasswordItemView))]
 [Transient(typeof(PasswordGeneratorViewModel))]
 [Transient(typeof(PasswordGeneratorView))]
-[Transient(typeof(PasswordItemSettingsViewModel))]
 [Transient(typeof(PasswordItemSettingsView))]
 [Transient(typeof(ErrorViewModel))]
 [Transient(typeof(ErrorView))]
-[Transient(typeof(ExceptionViewModel))]
 [Transient(typeof(ExceptionView))]
 [Transient(typeof(VerificationCodeViewModel))]
 [Transient(typeof(VerificationCodeView))]
@@ -182,10 +168,11 @@ public interface IUiModule
 
     static IEnumerable<IDataTemplate> DataTemplatesFactory(
         IViewSelector viewSelector,
-        IServiceFactory serviceFactory
+        IServiceFactory serviceFactory,
+        IViewFactory viewFactory
     )
     {
-        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory), };
+        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory, viewFactory), };
     }
 
     static Application ApplicationFactory()

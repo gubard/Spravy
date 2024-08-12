@@ -41,15 +41,17 @@ public partial class EditDescriptionContentViewModel : ViewModelBase
             return Result.Success;
         }
 
-        var textBox = editDescriptionContentView.GetControl<TextBox>("DescriptionTextBox");
-        textBox.Focus();
+        editDescriptionContentView.DescriptionTextBox.Focus();
 
-        if (textBox.Text is null)
+        if (editDescriptionContentView.DescriptionTextBox.Text is null)
         {
             return Result.Success;
         }
 
-        textBox.CaretIndex = textBox.Text.Length;
+        editDescriptionContentView.DescriptionTextBox.CaretIndex = editDescriptionContentView
+            .DescriptionTextBox
+            .Text
+            .Length;
 
         return Result.Success;
     }

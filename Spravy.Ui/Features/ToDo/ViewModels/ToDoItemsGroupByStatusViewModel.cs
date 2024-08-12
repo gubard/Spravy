@@ -43,34 +43,34 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             );
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         var result = item.Status switch
         {
             ToDoItemStatus.Miss
                 => Missed
-                    .UpdateItemUi(item)
+                    .AddOrUpdateUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
                     .IfSuccess(() => Completed.RemoveItemUi(item)),
             ToDoItemStatus.ReadyForComplete
                 => Missed
                     .RemoveItemUi(item)
-                    .IfSuccess(() => ReadyForCompleted.UpdateItemUi(item))
+                    .IfSuccess(() => ReadyForCompleted.AddOrUpdateUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
                     .IfSuccess(() => Completed.RemoveItemUi(item)),
             ToDoItemStatus.Planned
                 => Missed
                     .RemoveItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
-                    .IfSuccess(() => Planned.UpdateItemUi(item))
+                    .IfSuccess(() => Planned.AddOrUpdateUi(item))
                     .IfSuccess(() => Completed.RemoveItemUi(item)),
             ToDoItemStatus.Completed
                 => Missed
                     .RemoveItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.UpdateItemUi(item)),
+                    .IfSuccess(() => Completed.AddOrUpdateUi(item)),
             _ => new(new ToDoItemStatusOutOfRangeError(item.Status))
         };
 

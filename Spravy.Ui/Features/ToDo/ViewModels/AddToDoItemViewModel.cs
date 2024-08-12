@@ -9,10 +9,8 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
     [ObservableProperty]
     private object[] path = [];
 
-    [ObservableProperty]
-    private Guid parentId;
-
     public AddToDoItemViewModel(
+        ToDoItemEntityNotify parent,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
         IObjectStorage objectStorage
@@ -22,14 +20,16 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
+        Parent = parent;
     }
 
+    public ToDoItemEntityNotify Parent { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
 
     public override string ViewId
     {
-        get => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
+        get => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{Parent.Id}";
     }
 
     public override Result Stop()
@@ -72,7 +72,7 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
     {
-        return ConverterToAddToDoItemOptions(ParentId);
+        return ConverterToAddToDoItemOptions(Parent.Id);
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId)

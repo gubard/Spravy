@@ -191,7 +191,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, ITo
     {
         if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
         {
-            return ToDoSubItemsViewModel.List.UpdateItemUi(item);
+            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
         }
 
         return Result.Success;

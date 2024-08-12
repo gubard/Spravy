@@ -6,13 +6,31 @@ public static class ToDoSubItemsViewModelPropertyExtension
         this IToDoSubItemsViewModelProperty property
     )
     {
-        ReadOnlyMemory<ToDoItemEntityNotify> selected = property
+        var selected = property
             .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x => x.IsSelected)
-            .ToArray();
+            .ToArray()
+            .ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {
             return new(new NonItemSelectedError());
+        }
+
+        return new(selected);
+    }
+
+    public static Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetNotSelectedItems(
+        this IToDoSubItemsViewModelProperty property
+    )
+    {
+        var selected = property
+            .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x => !x.IsSelected)
+            .ToArray()
+            .ToReadOnlyMemory();
+
+        if (selected.IsEmpty)
+        {
+            return new(new AllItemSelectedError());
         }
 
         return new(selected);

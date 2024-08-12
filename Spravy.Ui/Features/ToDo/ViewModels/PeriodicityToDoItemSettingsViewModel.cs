@@ -1,94 +1,113 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityToDoItemSettingsViewModel
-    : ViewModelBase,
-        IToDoChildrenTypeProperty,
-        IToDoDueDateProperty,
-        IToDoTypeOfPeriodicityProperty,
-        IIsRequiredCompleteInDueDateProperty,
-        IApplySettings
+public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
     private readonly IServiceFactory serviceFactory;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
     private IApplySettings? periodicity;
 
     [ObservableProperty]
-    private bool isRequiredCompleteInDueDate;
-
-    [ObservableProperty]
-    private Guid id;
-
-    [ObservableProperty]
-    private ToDoItemChildrenType childrenType;
-
-    [ObservableProperty]
-    private DateOnly dueDate;
-
-    [ObservableProperty]
-    private TypeOfPeriodicity typeOfPeriodicity;
+    private ToDoItemEntityNotify? item;
 
     public PeriodicityToDoItemSettingsViewModel(
         IToDoService toDoService,
         IServiceFactory serviceFactory,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
     {
         this.toDoService = toDoService;
         this.serviceFactory = serviceFactory;
+        this.toDoUiService = toDoUiService;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
-
-        PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, ct)
-            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Id, DueDate, ct), ct)
+        return Item.IfNotNull(nameof(Item))
             .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        Id,
-                        IsRequiredCompleteInDueDate,
-                        ct
-                    ),
+                i =>
+                    toDoService
+                        .UpdateToDoItemChildrenTypeAsync(i.Id, i.ChildrenType, ct)
+                        .IfSuccessAsync(
+                            () => toDoService.UpdateToDoItemDueDateAsync(i.Id, i.DueDate, ct),
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            () =>
+                                toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                                    i.Id,
+                                    i.IsRequiredCompleteInDueDate,
+                                    ct
+                                ),
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            () =>
+                                toDoService.UpdateToDoItemTypeOfPeriodicityAsync(
+                                    i.Id,
+                                    i.TypeOfPeriodicity,
+                                    ct
+                                ),
+                            ct
+                        )
+                        .IfSuccessAsync(() => Periodicity.ThrowIfNull().ApplySettingsAsync(ct), ct),
                 ct
-            )
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, ct),
-                ct
-            )
-            .IfSuccessAsync(() => Periodicity.ThrowIfNull().ApplySettingsAsync(ct), ct);
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetPeriodicityToDoItemSettingsAsync(Id, ct)
+        return Item.IfNotNull(nameof(Item))
             .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ChildrenType = setting.ChildrenType;
-                            DueDate = setting.DueDate;
-                            TypeOfPeriodicity = setting.TypeOfPeriodicity;
-                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                i =>
+                    toDoUiService
+                        .UpdateItemAsync(i, ct)
+                        .IfSuccessAsync(
+                            () =>
+                                this.PostUiBackground(
+                                    () =>
+                                    {
+                                        Periodicity = i.TypeOfPeriodicity switch
+                                        {
+                                            TypeOfPeriodicity.Daily => new EmptyApplySettings(),
+                                            TypeOfPeriodicity.Weekly
+                                                => serviceFactory
+                                                    .CreateService<ToDoItemDayOfWeekSelectorViewModel>()
+                                                    .Case(y => y.ToDoItemId = i.Id),
+                                            TypeOfPeriodicity.Monthly
+                                                => serviceFactory
+                                                    .CreateService<ToDoItemDayOfMonthSelectorViewModel>()
+                                                    .Case(y => y.ToDoItemId = i.Id),
+                                            TypeOfPeriodicity.Annually
+                                                => serviceFactory
+                                                    .CreateService<ToDoItemDayOfYearSelectorViewModel>()
+                                                    .Case(y => y.ToDoItemId = i.Id),
+                                            _
+                                                => throw new ArgumentOutOfRangeException(
+                                                    nameof(TypeOfPeriodicity),
+                                                    i.TypeOfPeriodicity,
+                                                    null
+                                                ),
+                                        };
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                                        return Result.Success;
+                                    },
+                                    ct
+                                ),
+                            ct
+                        ),
                 ct
             );
     }
@@ -96,34 +115,5 @@ public partial class PeriodicityToDoItemSettingsViewModel
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(TypeOfPeriodicity))
-        {
-            Periodicity = TypeOfPeriodicity switch
-            {
-                TypeOfPeriodicity.Daily => new EmptyApplySettings(),
-                TypeOfPeriodicity.Weekly
-                    => serviceFactory
-                        .CreateService<ToDoItemDayOfWeekSelectorViewModel>()
-                        .Case(y => y.ToDoItemId = Id),
-                TypeOfPeriodicity.Monthly
-                    => serviceFactory
-                        .CreateService<ToDoItemDayOfMonthSelectorViewModel>()
-                        .Case(y => y.ToDoItemId = Id),
-                TypeOfPeriodicity.Annually
-                    => serviceFactory
-                        .CreateService<ToDoItemDayOfYearSelectorViewModel>()
-                        .Case(y => y.ToDoItemId = Id),
-                _
-                    => throw new ArgumentOutOfRangeException(
-                        nameof(TypeOfPeriodicity),
-                        TypeOfPeriodicity,
-                        null
-                    ),
-            };
-        }
     }
 }

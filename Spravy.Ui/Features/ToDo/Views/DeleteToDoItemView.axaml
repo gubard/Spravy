@@ -16,10 +16,10 @@
             <c:GroupBoxControl.Header>
                 <Panel Classes="alignment-left">
                     <TextBlock Classes="text-wrap"
-                               IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
+                               IsVisible="{Binding Items.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />
                     <TextBlock Classes="text-wrap"
-                               IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                               IsVisible="{Binding Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                                Text="{DynamicResource DeleteToDoItemView.Header}" />
                 </Panel>
             </c:GroupBoxControl.Header>

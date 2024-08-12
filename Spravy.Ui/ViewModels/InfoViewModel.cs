@@ -2,21 +2,25 @@ namespace Spravy.Ui.ViewModels;
 
 public partial class InfoViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private object? content;
+    private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> okTask;
 
-    public InfoViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
+    public InfoViewModel(
+        object content,
+        Func<object, ConfiguredValueTaskAwaitable<Result>> okTask,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
+        Content = content;
+        this.okTask = okTask;
         OkCommand = SpravyCommand.Create(OkAsync, errorHandler, taskProgressService);
     }
 
-    public Func<object, ConfiguredValueTaskAwaitable<Result>>? OkTask { get; set; }
     public SpravyCommand OkCommand { get; }
+    public object Content { get; }
 
     private ConfiguredValueTaskAwaitable<Result> OkAsync(CancellationToken ct)
     {
-        var con = Content.ThrowIfNull();
-
-        return OkTask.ThrowIfNull().Invoke(con);
+        return okTask.Invoke(Content);
     }
 }

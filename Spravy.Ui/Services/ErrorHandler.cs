@@ -2,13 +2,15 @@ namespace Spravy.Ui.Services;
 
 public class ErrorHandler : IErrorHandler
 {
-    private static readonly ReadOnlyMemory<Guid> IgnoreIds = new[] { CanceledByUserError.MainId, };
+    private static readonly ReadOnlyMemory<Guid> ignoreIds = new[] { CanceledByUserError.MainId, };
 
     private readonly IDialogViewer dialogViewer;
+    private readonly IServiceFactory serviceFactory;
 
-    public ErrorHandler(IDialogViewer dialogViewer)
+    public ErrorHandler(IDialogViewer dialogViewer, IServiceFactory serviceFactory)
     {
         this.dialogViewer = dialogViewer;
+        this.serviceFactory = serviceFactory;
     }
 
     public ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(
@@ -21,19 +23,20 @@ public class ErrorHandler : IErrorHandler
             return Result.AwaitableSuccess;
         }
 
-        errors = errors.Where(x => !IgnoreIds.Span.Contains(x.Id));
+        errors = errors.Where(x => !ignoreIds.Span.Contains(x.Id));
 
         if (errors.IsEmpty)
         {
             return Result.AwaitableSuccess;
         }
 
-        return dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
-            _ =>
-                dialogViewer
-                    .CloseErrorDialogAsync(ct)
-                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(ct), ct),
-            viewModel => viewModel.Errors.AddRange(errors.ToArray()),
+        Console.WriteLine(errors.Select(x => x.Message).ToArray().JoinString(Environment.NewLine));
+        var viewFactory = serviceFactory.CreateService<IViewFactory>();
+
+        return dialogViewer.ShowInfoDialogAsync(
+            viewFactory,
+            DialogViewLayer.Error,
+            viewFactory.CreateErrorViewModel(errors),
             ct
         );
     }
@@ -67,13 +70,12 @@ public class ErrorHandler : IErrorHandler
         }
 
         Console.WriteLine(exception);
+        var viewFactory = serviceFactory.CreateService<IViewFactory>();
 
-        return dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
-            _ =>
-                dialogViewer
-                    .CloseErrorDialogAsync(ct)
-                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(ct), ct),
-            viewModel => viewModel.Exception = exception,
+        return dialogViewer.ShowInfoDialogAsync(
+            viewFactory,
+            DialogViewLayer.Error,
+            viewFactory.CreateExceptionViewModel(exception),
             ct
         );
     }

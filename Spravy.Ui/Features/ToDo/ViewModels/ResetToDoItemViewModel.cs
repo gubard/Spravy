@@ -3,9 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class ResetToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
-
-    [ObservableProperty]
-    private Guid id;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
     private bool isCompleteCurrentTask;
@@ -20,13 +18,18 @@ public partial class ResetToDoItemViewModel : NavigatableViewModelBase
     private bool isOnlyCompletedTasks;
 
     public ResetToDoItemViewModel(
+        ToDoItemEntityNotify item,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
         : base(true)
     {
         this.objectStorage = objectStorage;
+        this.toDoUiService = toDoUiService;
+        Item = item;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
@@ -34,18 +37,20 @@ public partial class ResetToDoItemViewModel : NavigatableViewModelBase
         );
     }
 
+    public ToDoItemEntityNotify Item { get; }
     public SpravyCommand InitializedCommand { get; }
 
     public override string ViewId
     {
-        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
+        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.Id}";
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return objectStorage
             .GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
+            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
+            .IfSuccessAsync(() => toDoUiService.UpdateItemAsync(Item, ct), ct);
     }
 
     public override Result Stop()

@@ -52,13 +52,13 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
         foreach (var item in items.Span)
         {
-            UpdateItemUi(item);
+            AddOrUpdateUi(item);
         }
 
         return Result.Success;
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         var indexOf = IndexOf(item);
 

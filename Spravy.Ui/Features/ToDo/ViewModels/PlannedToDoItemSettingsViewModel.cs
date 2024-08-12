@@ -1,33 +1,22 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PlannedToDoItemSettingsViewModel
-    : ViewModelBase,
-        IToDoChildrenTypeProperty,
-        IToDoDueDateProperty,
-        IIsRequiredCompleteInDueDateProperty,
-        IApplySettings
+public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
-    private bool isRequiredCompleteInDueDate;
-
-    [ObservableProperty]
-    private Guid id;
-
-    [ObservableProperty]
-    private ToDoItemChildrenType childrenType;
-
-    [ObservableProperty]
-    private DateOnly dueDate;
+    private ToDoItemEntityNotify? item;
 
     public PlannedToDoItemSettingsViewModel(
         IToDoService toDoService,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
     {
         this.toDoService = toDoService;
+        this.toDoUiService = toDoUiService;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -40,39 +29,32 @@ public partial class PlannedToDoItemSettingsViewModel
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, ct)
-            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Id, DueDate, ct), ct)
+        return Item.IfNotNull(nameof(Item))
             .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        Id,
-                        IsRequiredCompleteInDueDate,
-                        ct
-                    ),
+                i =>
+                    toDoService
+                        .UpdateToDoItemChildrenTypeAsync(i.Id, i.ChildrenType, ct)
+                        .IfSuccessAsync(
+                            () => toDoService.UpdateToDoItemDueDateAsync(i.Id, i.DueDate, ct),
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            () =>
+                                toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                                    i.Id,
+                                    i.IsRequiredCompleteInDueDate,
+                                    ct
+                                ),
+                            ct
+                        ),
                 ct
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetPlannedToDoItemSettingsAsync(Id, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ChildrenType = setting.ChildrenType;
-                            DueDate = setting.DueDate;
-                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
+        return Item.IfNotNull(nameof(Item))
+            .IfSuccessAsync(i => toDoUiService.UpdateItemAsync(i, ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)

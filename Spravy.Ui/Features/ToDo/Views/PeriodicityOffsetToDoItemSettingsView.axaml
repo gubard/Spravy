@@ -10,34 +10,34 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.ChildrenTypes}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding Item.ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DueDate}" />
         <CalendarDatePicker
-            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+            SelectedDate="{Binding Item.DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
 
         <Grid ColumnDefinitions="*,*">
             <StackPanel>
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DaysOffset}" />
-                <NumericUpDown Value="{Binding  DaysOffset}" />
+                <NumericUpDown Value="{Binding  Item.DaysOffset}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}" />
-                <NumericUpDown Value="{Binding  MonthsOffset}" />
+                <NumericUpDown Value="{Binding  Item.MonthsOffset}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.WeeksOffset}" />
-                <NumericUpDown Value="{Binding  WeeksOffset}" />
+                <NumericUpDown Value="{Binding  Item.WeeksOffset}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}" />
-                <NumericUpDown Value="{Binding  YearsOffset}" />
+                <NumericUpDown Value="{Binding  Item.YearsOffset}" />
             </StackPanel>
         </Grid>
 
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate}" />
-        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding Item.IsRequiredCompleteInDueDate}" />
     </StackPanel>
 </UserControl>

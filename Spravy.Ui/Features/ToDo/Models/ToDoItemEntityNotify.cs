@@ -58,16 +58,41 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private ToDoItemType type;
 
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private ushort daysOffset;
+
+    [ObservableProperty]
+    private ushort monthsOffset;
+
+    [ObservableProperty]
+    private ushort weeksOffset;
+
+    [ObservableProperty]
+    private ushort yearsOffset;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private TypeOfPeriodicity typeOfPeriodicity;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
-        Path = [RootItem.Default, this,];
+        path = [RootItem.Default, this,];
         Id = id;
-        Description = "Loading...";
-        Name = "Loading...";
-        Link = string.Empty;
-        Status = ToDoItemStatus.ReadyForComplete;
-        OrderIndex = uint.MaxValue;
+        description = "Loading...";
+        name = "Loading...";
+        link = string.Empty;
+        status = ToDoItemStatus.ReadyForComplete;
+        orderIndex = uint.MaxValue;
+        isRequiredCompleteInDueDate = true;
         CompactCommands = new();
         SingleCommands = new();
         Children = new();
@@ -121,11 +146,23 @@ public partial class ToDoItemEntityNotify
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
     {
-        ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+        var selected = Children.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {
             return new(new NonItemSelectedError());
+        }
+
+        return new(selected);
+    }
+
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetNotSelectedItems()
+    {
+        var selected = Children.Where(x => !x.IsSelected).ToArray().ToReadOnlyMemory();
+
+        if (selected.IsEmpty)
+        {
+            return new(new AllItemSelectedError());
         }
 
         return new(selected);

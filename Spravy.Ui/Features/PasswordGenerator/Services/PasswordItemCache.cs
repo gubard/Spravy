@@ -32,6 +32,14 @@ public class PasswordItemCache : IPasswordItemCache
             .IfSuccess(item =>
             {
                 item.Name = passwordItem.Name;
+                item.IsAvailableNumber = passwordItem.IsAvailableNumber;
+                item.IsAvailableUpperLatin = passwordItem.IsAvailableUpperLatin;
+                item.Regex = passwordItem.Regex;
+                item.Key = passwordItem.Key;
+                item.Length = passwordItem.Length;
+                item.IsAvailableLowerLatin = passwordItem.IsAvailableLowerLatin;
+                item.CustomAvailableCharacters = passwordItem.CustomAvailableCharacters;
+                item.IsAvailableSpecialSymbols = passwordItem.IsAvailableSpecialSymbols;
 
                 return Result.Success;
             });

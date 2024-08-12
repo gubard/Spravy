@@ -96,7 +96,7 @@ public static class WindowExtension
         switch (controls.ErrorDialogHost.Dialog)
         {
             case InfoViewModel { Content: ExceptionViewModel exception, }:
-                Console.WriteLine(exception.Exception?.ToString());
+                Console.WriteLine(exception.ToString());
 
                 break;
             case InfoViewModel { Content: ErrorViewModel error, }:

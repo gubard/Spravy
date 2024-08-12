@@ -4,25 +4,27 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
     private readonly IToDoService toDoService;
     private readonly IServiceFactory serviceFactory;
+    private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
     private IApplySettings? settings;
 
-    [ObservableProperty]
-    private ToDoItemEntityNotify? item;
-
     public ToDoItemSettingsViewModel(
+        ToDoItemEntityNotify item,
         ToDoItemContentViewModel toDoItemContent,
         IServiceFactory serviceFactory,
         IToDoService toDoService,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IViewFactory viewFactory
     )
         : base(true)
     {
         ToDoItemContent = toDoItemContent;
         this.serviceFactory = serviceFactory;
         this.toDoService = toDoService;
+        this.viewFactory = viewFactory;
+        Item = item;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -33,13 +35,14 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
         ToDoItemContent.PropertyChanged += OnPropertyChanged;
     }
 
+    public ToDoItemEntityNotify Item { get; }
+    public SpravyCommand InitializedCommand { get; }
+    public ToDoItemContentViewModel ToDoItemContent { get; }
+
     public override string ViewId
     {
         get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
     }
-
-    public SpravyCommand InitializedCommand { get; }
-    public ToDoItemContentViewModel ToDoItemContent { get; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
@@ -105,15 +108,15 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 ToDoItemType.Planned
                     => serviceFactory
                         .CreateService<PlannedToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
+                        .Case(vm => vm.Item = Item),
                 ToDoItemType.Periodicity
                     => serviceFactory
                         .CreateService<PeriodicityToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
+                        .Case(vm => vm.Item = Item),
                 ToDoItemType.PeriodicityOffset
                     => serviceFactory
                         .CreateService<PeriodicityOffsetToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = Item.Id),
+                        .Case(vm => vm.Item = Item),
                 ToDoItemType.Circle
                     => serviceFactory
                         .CreateService<ValueToDoItemSettingsViewModel>()
@@ -125,9 +128,7 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 ToDoItemType.Group
                     => serviceFactory.CreateService<GroupToDoItemSettingsViewModel>(),
                 ToDoItemType.Reference
-                    => serviceFactory
-                        .CreateService<ReferenceToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Item = Item),
+                    => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }

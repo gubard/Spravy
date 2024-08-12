@@ -59,7 +59,7 @@
     <sys:String x:Key="ToDoItemsGroupByNoneView.Header">Items</sys:String>
 
     <!--DeletePasswordItemView-->
-    <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{PasswordItemName}"?</sys:String>
+    <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{Name}"?</sys:String>
 
     <!--PasswordGeneratorView-->
     <sys:String x:Key="PasswordGeneratorView.Header">Password generator</sys:String>

@@ -2,14 +2,19 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemToStringSettingsViewModel : ViewModelBase
 {
-    public ToDoItemToStringSettingsViewModel()
+    private readonly AvaloniaList<CheckedItem<ToDoItemStatus>> statuses = new();
+
+    public ToDoItemToStringSettingsViewModel(ToDoItemEntityNotify item)
     {
+        Item = item;
+
         var items = UiHelper
             .ToDoItemStatuses.ToArray()
             .Select(x => new CheckedItem<ToDoItemStatus> { Item = x, IsChecked = true, });
 
-        Statuses.AddRange(items);
+        statuses.AddRange(items);
     }
 
-    public AvaloniaList<CheckedItem<ToDoItemStatus>> Statuses { get; } = new();
+    public ToDoItemEntityNotify Item { get; }
+    public IEnumerable<CheckedItem<ToDoItemStatus>> Statuses => statuses;
 }

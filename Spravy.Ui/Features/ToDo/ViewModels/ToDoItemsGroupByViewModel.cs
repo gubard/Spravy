@@ -33,12 +33,12 @@ public partial class ToDoItemsGroupByViewModel : ViewModelBase
             .IfSuccess(() => GroupByType.ClearExceptUi(ids));
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         return GroupByNone
-            .UpdateItemUi(item)
-            .IfSuccess(() => GroupByStatus.UpdateItemUi(item))
-            .IfSuccess(() => GroupByType.UpdateItemUi(item));
+            .AddOrUpdateUi(item)
+            .IfSuccess(() => GroupByStatus.AddOrUpdateUi(item))
+            .IfSuccess(() => GroupByType.AddOrUpdateUi(item));
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

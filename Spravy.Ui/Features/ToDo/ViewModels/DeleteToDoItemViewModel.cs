@@ -2,20 +2,22 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class DeleteToDoItemViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private ToDoItemEntityNotify? item;
+    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
 
     [ObservableProperty]
     private string childrenText = string.Empty;
 
     public DeleteToDoItemViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
         IToDoService toDoService,
-        IToDoCache toDoCache,
+        IToDoUiService toDoUiService,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )
     {
-        DeleteItems = new();
+        Item = item;
+        this.items.AddRange(items.ToArray());
 
         InitializedCommand = SpravyCommand.Create(
             ct =>
@@ -24,51 +26,16 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
 
                 return Result.AwaitableSuccess.IfSuccessAllAsync(
                     ct,
+                    () => toDoUiService.UpdateItemAsync(Item, ct),
                     () =>
                     {
-                        if (Item is null)
-                        {
-                            return Result.AwaitableSuccess;
-                        }
-
-                        return toDoService
-                            .GetToDoItemAsync(Item.Id, ct)
-                            .IfSuccessAsync(
-                                i =>
-                                    this.PostUiBackground(
-                                        () => toDoCache.UpdateUi(i).ToResultOnly(),
-                                        ct
-                                    ),
-                                ct
-                            );
-                    },
-                    () =>
-                    {
-                        if (Item is null)
-                        {
-                            return Result.AwaitableSuccess;
-                        }
-
-                        return toDoService
-                            .GetParentsAsync(Item.Id, ct)
-                            .IfSuccessAsync(
-                                parents =>
-                                    this.PostUiBackground(
-                                        () => toDoCache.UpdateParentsUi(Item.Id, parents),
-                                        ct
-                                    ),
-                                ct
-                            );
-                    },
-                    () =>
-                    {
-                        if (DeleteItems.IsEmpty())
+                        if (Items.IsEmpty())
                         {
                             return Item.IfNotNull(nameof(Item))
                                 .IfSuccessAsync(
-                                    item =>
+                                    i =>
                                         toDoService
-                                            .ToDoItemToStringAsync(new(statuses, item.Id), ct)
+                                            .ToDoItemToStringAsync(new(statuses, i.Id), ct)
                                             .IfSuccessAsync(
                                                 text =>
                                                     this.PostUiBackground(
@@ -86,7 +53,8 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
                                 );
                         }
 
-                        return DeleteItems
+                        return Items
+                            .ToArray()
                             .ToReadOnlyMemory()
                             .ToResult()
                             .IfSuccessForEachAsync(
@@ -103,15 +71,12 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
                             .IfSuccessAsync(
                                 values =>
                                 {
-                                    var childrenText = string.Join(
-                                        Environment.NewLine,
-                                        values.ToArray()
-                                    );
+                                    var text = string.Join(Environment.NewLine, values.ToArray());
 
                                     return this.PostUiBackground(
                                         () =>
                                         {
-                                            ChildrenText = childrenText;
+                                            ChildrenText = text;
 
                                             return Result.Success;
                                         },
@@ -128,6 +93,7 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
         );
     }
 
+    public ToDoItemEntityNotify Item { get; }
     public SpravyCommand InitializedCommand { get; }
-    public AvaloniaList<ToDoItemEntityNotify> DeleteItems { get; }
+    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
 }

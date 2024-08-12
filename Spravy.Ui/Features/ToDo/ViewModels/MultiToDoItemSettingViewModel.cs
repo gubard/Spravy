@@ -20,13 +20,14 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     [ObservableProperty]
     private ToDoItemType type;
 
-    public MultiToDoItemSettingViewModel()
+    public MultiToDoItemSettingViewModel(ToDoItemEntityNotify item)
     {
+        Item = item;
         Name = string.Empty;
         Link = string.Empty;
         ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
     }
 
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
-    public Guid ToDoItemId { get; set; }
+    public ToDoItemEntityNotify Item { get; }
 }

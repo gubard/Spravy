@@ -1,10 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class SearchToDoItemsViewModel
-    : NavigatableViewModelBase,
-        IToDoItemUpdater,
-        IToDoSubItemsViewModelProperty,
-        IRefresh
+public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoService toDoService;
@@ -110,7 +106,7 @@ public partial class SearchToDoItemsViewModel
     {
         if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
         {
-            return ToDoSubItemsViewModel.List.UpdateItemUi(item);
+            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
         }
 
         return Result.Success;

@@ -15,8 +15,8 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         return Items.ClearExceptUi(ids);
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
-        return Items.UpdateItemUi(item);
+        return Items.AddOrUpdateUi(item);
     }
 }

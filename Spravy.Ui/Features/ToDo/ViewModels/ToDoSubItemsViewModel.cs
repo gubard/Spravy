@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoSubItemsViewModel : ViewModelBase
+public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
@@ -82,7 +82,8 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 }
 
                 var result = this.PostUiBackground(
-                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi), ct
+                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi),
+                    ct
                 );
 
                 if (result.IsHasError)
@@ -115,6 +116,11 @@ public class ToDoSubItemsViewModel : ViewModelBase
         return List.ClearExceptUi(items);
     }
 
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    {
+        return List.AddOrUpdateUi(item);
+    }
+
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsCore(
         ReadOnlyMemory<ToDoItemEntityNotify> entities,
         bool autoOrder,
@@ -144,12 +150,15 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                     {
                                         var oi = orderIndex;
 
-                                        return this.PostUiBackground(() =>
-                                        {
-                                            item.OrderIndex = oi;
+                                        return this.PostUiBackground(
+                                            () =>
+                                            {
+                                                item.OrderIndex = oi;
 
-                                            return Result.Success;
-                                        }, ct);
+                                                return Result.Success;
+                                            },
+                                            ct
+                                        );
                                     }
 
                                     return Result.Success;
@@ -171,9 +180,11 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                             itemsNotify
                                                 .ToResult()
                                                 .IfSuccessForEach(i =>
-                                                    List.UpdateItemUi(i).IfSuccess(item.IncreaseUi)
-                                                ), ct
-                                    ), ct
+                                                    List.AddOrUpdateUi(i).IfSuccess(item.IncreaseUi)
+                                                ),
+                                        ct
+                                    ),
+                                ct
                             )
                         ),
                 ct

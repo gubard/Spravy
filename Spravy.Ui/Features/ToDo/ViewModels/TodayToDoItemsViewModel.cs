@@ -1,9 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel
-    : NavigatableViewModelBase,
-        IRefresh,
-        IToDoSubItemsViewModelProperty
+public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;

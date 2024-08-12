@@ -4,11 +4,17 @@ public class ModuleDataTemplate : IDataTemplate
 {
     private readonly IViewSelector viewSelector;
     private readonly IServiceFactory serviceFactory;
+    private readonly IViewFactory viewFactory;
 
-    public ModuleDataTemplate(IViewSelector viewSelector, IServiceFactory serviceFactory)
+    public ModuleDataTemplate(
+        IViewSelector viewSelector,
+        IServiceFactory serviceFactory,
+        IViewFactory viewFactory
+    )
     {
         this.viewSelector = viewSelector;
         this.serviceFactory = serviceFactory;
+        this.viewFactory = viewFactory;
     }
 
     public Control Build(object? param)
@@ -35,8 +41,7 @@ public class ModuleDataTemplate : IDataTemplate
     private ErrorView CreateErrorView(ReadOnlyMemory<Error> errors)
     {
         var errorView = serviceFactory.CreateService<ErrorView>();
-        var viewModel = serviceFactory.CreateService<ErrorViewModel>();
-        viewModel.Errors.AddRange(errors.ToArray());
+        var viewModel = viewFactory.CreateErrorViewModel(errors);
         errorView.DataContext = viewModel;
 
         return errorView;

@@ -10,13 +10,13 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PlannedToDoItemSettingsView.ChildrenTypes}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding Item.ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PlannedToDoItemSettingsView.DueDate}" />
         <CalendarDatePicker
-            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+            SelectedDate="{Binding Item.DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PlannedToDoItemSettingsView.RequiredCompleteInDueDate}" />
-        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding Item.IsRequiredCompleteInDueDate}" />
     </StackPanel>
 </UserControl>

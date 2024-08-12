@@ -57,6 +57,53 @@ public class ToDoCache : IToDoCache
             });
     }
 
+    public Result<ToDoItemEntityNotify> UpdateUi(
+        Guid id,
+        PeriodicityOffsetToDoItemSettings settings
+    )
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+            {
+                item.ChildrenType = settings.ChildrenType;
+                item.DueDate = settings.DueDate;
+                item.MonthsOffset = settings.MonthsOffset;
+                item.YearsOffset = settings.YearsOffset;
+                item.DaysOffset = settings.DaysOffset;
+                item.WeeksOffset = settings.WeeksOffset;
+                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
+
+                return item.ToResult();
+            });
+    }
+
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, PeriodicityToDoItemSettings settings)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+            {
+                item.ChildrenType = settings.ChildrenType;
+                item.DueDate = settings.DueDate;
+                item.TypeOfPeriodicity = settings.TypeOfPeriodicity;
+                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
+
+                return item.ToResult();
+            });
+    }
+
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, PlannedToDoItemSettings settings)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+            {
+                item.ChildrenType = settings.ChildrenType;
+                item.DueDate = settings.DueDate;
+                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
+
+                return item.ToResult();
+            });
+    }
+
     public Result<ToDoItemEntityNotify> UpdateUi(ActiveToDoItem activeToDoItem)
     {
         return GetToDoItem(activeToDoItem.Id)

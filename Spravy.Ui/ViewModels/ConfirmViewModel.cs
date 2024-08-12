@@ -1,54 +1,28 @@
 namespace Spravy.Ui.ViewModels;
 
-public partial class ConfirmViewModel : ViewModelBase, ISaveState
+public class ConfirmViewModel : ViewModelBase, ISaveState
 {
-    [ObservableProperty]
-    private object? content;
+    private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask;
+    private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask;
 
-    public ConfirmViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
+    public ConfirmViewModel(
+        object content,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService,
+        Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask,
+        Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask
+    )
     {
-        ConfirmCommand = SpravyCommand.Create(
-            ct =>
-                ConfirmTask
-                    .IfNotNull(nameof(ConfirmTask))
-                    .IfSuccessAsync(
-                        confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, ct),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
+        this.confirmTask = confirmTask;
+        this.cancelTask = cancelTask;
+        Content = content;
+        ConfirmCommand = SpravyCommand.Create(ConfirmAsync, errorHandler, taskProgressService);
         CancelCommand = SpravyCommand.Create(CancelAsync, errorHandler, taskProgressService);
     }
 
-    public Func<object, ConfiguredValueTaskAwaitable<Result>>? ConfirmTask { get; set; }
-    public Func<object, ConfiguredValueTaskAwaitable<Result>>? CancelTask { get; set; }
-    public Func<object, ConfiguredValueTaskAwaitable<Result>>? Initialized { get; set; }
     public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
-    public SpravyCommand InitializedCommand { get; }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        if (Initialized is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        if (Content is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        return Initialized.Invoke(Content);
-    }
+    public object Content { get; }
 
     public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
@@ -62,15 +36,22 @@ public partial class ConfirmViewModel : ViewModelBase, ISaveState
 
     private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken ct)
     {
-        var con = Content.ThrowIfNull();
-
-        return CancelTask.ThrowIfNull().Invoke(con);
+        return Content
+            .IfNotNull(nameof(Content))
+            .IfSuccessAsync(
+                c => cancelTask.IfNotNull(nameof(cancelTask)).IfSuccessAsync(x => x.Invoke(c), ct),
+                ct
+            );
     }
 
-    private async ValueTask<Result> ConfirmAsync()
+    private ConfiguredValueTaskAwaitable<Result> ConfirmAsync(CancellationToken ct)
     {
-        var con = Content.ThrowIfNull();
-
-        return await ConfirmTask.ThrowIfNull().Invoke(con);
+        return Content
+            .IfNotNull(nameof(Content))
+            .IfSuccessAsync(
+                c =>
+                    confirmTask.IfNotNull(nameof(confirmTask)).IfSuccessAsync(x => x.Invoke(c), ct),
+                ct
+            );
     }
 }

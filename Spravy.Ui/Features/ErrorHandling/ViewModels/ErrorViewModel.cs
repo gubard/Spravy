@@ -2,15 +2,20 @@ namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
 public class ErrorViewModel : NavigatableViewModelBase
 {
-    public ErrorViewModel()
-        : base(true) { }
+    private readonly AvaloniaList<Error> errors = new();
+
+    public ErrorViewModel(IEnumerable<Error> errors)
+        : base(true)
+    {
+        this.errors.AddRange(errors);
+    }
 
     public override string ViewId
     {
         get => TypeCache<ErrorViewModel>.Type.Name;
     }
 
-    public AvaloniaList<Error> Errors { get; } = new();
+    public IEnumerable<Error> Errors => errors;
 
     public override Result Stop()
     {

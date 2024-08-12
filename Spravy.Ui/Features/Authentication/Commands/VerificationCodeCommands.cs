@@ -5,6 +5,7 @@ public class VerificationCodeCommands
     private readonly IAuthenticationService authenticationService;
     private readonly IDialogViewer dialogViewer;
     private readonly INavigator navigator;
+    private readonly IViewFactory viewFactory;
 
     public VerificationCodeCommands(
         IAuthenticationService authenticationService,
@@ -12,12 +13,15 @@ public class VerificationCodeCommands
         IErrorHandler errorHandler,
         IDialogViewer dialogViewer,
         INavigator navigator,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IViewFactory viewFactory
     )
     {
         this.authenticationService = authenticationService;
         this.dialogViewer = dialogViewer;
         this.navigator = navigator;
+        this.viewFactory = viewFactory;
+
         Initialized = SpravyCommand.Create<VerificationCodeViewModel>(
             InitializedAsync,
             errorHandler,
@@ -80,25 +84,27 @@ public class VerificationCodeCommands
         CancellationToken ct
     )
     {
-        return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            newEmail =>
-                dialogViewer
-                    .CloseInputDialogAsync(ct)
+        return dialogViewer.ShowConfirmDialogAsync(
+            viewFactory,
+            DialogViewLayer.Input,
+            viewFactory.CreateTextViewModel(),
+            obj =>
+                obj.CastObject<TextViewModel>()
                     .IfSuccessAsync(
-                        () =>
+                        text =>
                         {
                             switch (verificationEmail.IdentifierType)
                             {
                                 case UserIdentifierType.Email:
                                     return authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
                                         verificationEmail.Identifier,
-                                        newEmail,
+                                        text.Text,
                                         ct
                                     );
                                 case UserIdentifierType.Login:
                                     return authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
                                         verificationEmail.Identifier,
-                                        newEmail,
+                                        text.Text,
                                         ct
                                     );
                                 default:

@@ -68,13 +68,13 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
             );
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         switch (item.Type)
         {
             case ToDoItemType.Value:
                 return Values
-                    .UpdateItemUi(item)
+                    .AddOrUpdateUi(item)
                     .IfSuccess(() => Groups.RemoveItemUi(item))
                     .IfSuccess(() => Planneds.RemoveItemUi(item))
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
@@ -85,7 +85,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
             case ToDoItemType.Group:
                 return Values
                     .RemoveItemUi(item)
-                    .IfSuccess(() => Groups.UpdateItemUi(item))
+                    .IfSuccess(() => Groups.AddOrUpdateUi(item))
                     .IfSuccess(() => Planneds.RemoveItemUi(item))
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
@@ -96,7 +96,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 return Values
                     .RemoveItemUi(item)
                     .IfSuccess(() => Groups.RemoveItemUi(item))
-                    .IfSuccess(() => Planneds.UpdateItemUi(item))
+                    .IfSuccess(() => Planneds.AddOrUpdateUi(item))
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
                     .IfSuccess(() => Circles.RemoveItemUi(item))
@@ -107,7 +107,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                     .RemoveItemUi(item)
                     .IfSuccess(() => Groups.RemoveItemUi(item))
                     .IfSuccess(() => Planneds.RemoveItemUi(item))
-                    .IfSuccess(() => Periodicitys.UpdateItemUi(item))
+                    .IfSuccess(() => Periodicitys.AddOrUpdateUi(item))
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
                     .IfSuccess(() => Circles.RemoveItemUi(item))
                     .IfSuccess(() => Steps.RemoveItemUi(item))
@@ -118,7 +118,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                     .IfSuccess(() => Groups.RemoveItemUi(item))
                     .IfSuccess(() => Planneds.RemoveItemUi(item))
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
-                    .IfSuccess(() => PeriodicityOffsets.UpdateItemUi(item))
+                    .IfSuccess(() => PeriodicityOffsets.AddOrUpdateUi(item))
                     .IfSuccess(() => Circles.RemoveItemUi(item))
                     .IfSuccess(() => Steps.RemoveItemUi(item))
                     .IfSuccess(() => References.RemoveItemUi(item));
@@ -129,7 +129,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                     .IfSuccess(() => Planneds.RemoveItemUi(item))
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
-                    .IfSuccess(() => Circles.UpdateItemUi(item))
+                    .IfSuccess(() => Circles.AddOrUpdateUi(item))
                     .IfSuccess(() => Steps.RemoveItemUi(item))
                     .IfSuccess(() => References.RemoveItemUi(item));
             case ToDoItemType.Step:
@@ -140,7 +140,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                     .IfSuccess(() => Periodicitys.RemoveItemUi(item))
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
                     .IfSuccess(() => Circles.RemoveItemUi(item))
-                    .IfSuccess(() => Steps.UpdateItemUi(item))
+                    .IfSuccess(() => Steps.AddOrUpdateUi(item))
                     .IfSuccess(() => References.RemoveItemUi(item));
             case ToDoItemType.Reference:
                 return Values
@@ -151,7 +151,7 @@ public partial class ToDoItemsGroupByTypeViewModel : ViewModelBase
                     .IfSuccess(() => PeriodicityOffsets.RemoveItemUi(item))
                     .IfSuccess(() => Circles.RemoveItemUi(item))
                     .IfSuccess(() => Steps.RemoveItemUi(item))
-                    .IfSuccess(() => References.UpdateItemUi(item));
+                    .IfSuccess(() => References.AddOrUpdateUi(item));
             default:
                 return new(new ToDoItemTypeOutOfRangeError(item.Type));
         }

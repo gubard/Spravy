@@ -37,12 +37,12 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
 
     public Result UpdateFavoriteItemUi(ToDoItemEntityNotify item)
     {
-        return Favorite.UpdateItemUi(item);
+        return Favorite.AddOrUpdateUi(item);
     }
 
-    public Result UpdateItemUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
-        return ToDoItems.UpdateItemUi(item);
+        return ToDoItems.AddOrUpdateUi(item);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

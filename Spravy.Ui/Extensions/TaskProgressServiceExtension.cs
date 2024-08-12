@@ -100,7 +100,9 @@ public static class TaskProgressServiceExtension
     )
         where TTaskProgressServiceProperty : ITaskProgressService
     {
-        return property.AddItem(impact, ct).IfSuccessTryFinallyAsync(func, item => item.Finish(), ct);
+        return property
+            .AddItem(impact, ct)
+            .IfSuccessTryFinallyAsync(func, item => item.Finish(), ct);
     }
 
     public static Result RunProgress<TTaskProgressServiceProperty>(
@@ -120,6 +122,22 @@ public static class TaskProgressServiceExtension
         CancellationToken ct
     )
         where TTaskProgressServiceProperty : ITaskProgressService
+    {
+        return property
+            .AddItem(1, ct)
+            .IfSuccessTryFinallyAsync(_ => func.Invoke(ct), item => item.Finish(), ct);
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> RunProgressAsync<
+        TTaskProgressServiceProperty,
+        TReturn
+    >(
+        this TTaskProgressServiceProperty property,
+        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
+        where TReturn : notnull
     {
         return property
             .AddItem(1, ct)

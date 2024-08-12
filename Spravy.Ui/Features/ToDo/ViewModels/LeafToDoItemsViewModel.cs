@@ -11,8 +11,7 @@ public partial class LeafToDoItemsViewModel
 
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     [ObservableProperty]
@@ -20,21 +19,19 @@ public partial class LeafToDoItemsViewModel
 
     public LeafToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        IToDoService toDoService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        IToDoCache toDoCache,
         ITaskProgressService taskProgressService,
-        SpravyCommandNotifyService spravyCommandNotifyService
+        SpravyCommandNotifyService spravyCommandNotifyService,
+        IToDoUiService toDoUiService
     )
         : base(true)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
+        this.toDoUiService = toDoUiService;
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        this.toDoService = toDoService;
         this.objectStorage = objectStorage;
-        this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
         InitializedCommand = SpravyCommand.Create(
@@ -79,27 +76,19 @@ public partial class LeafToDoItemsViewModel
         {
             return Item.IfNotNull(nameof(Item))
                 .IfSuccessAsync(
-                    i =>
-                        toDoService
-                            .GetLeafToDoItemIdsAsync(i.Id, ct)
-                            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-                            .IfSuccessAsync(
-                                items => ToDoSubItemsViewModel.UpdateItemsAsync(items, true, ct),
-                                ct
-                            ),
+                    i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
                     ct
                 );
         }
 
         return Items
-            .Select(x => x.Id)
             .ToArray()
             .ToReadOnlyMemory()
             .ToResult()
-            .IfSuccessForEachAsync(id => toDoService.GetLeafToDoItemIdsAsync(id, ct), ct)
-            .IfSuccessAsync(items => items.SelectMany().ToResult(), ct)
-            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, true, ct), ct);
+            .IfSuccessForEachAllAsync(
+                i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
+                ct
+            );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
@@ -149,7 +138,7 @@ public partial class LeafToDoItemsViewModel
     {
         if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
         {
-            return ToDoSubItemsViewModel.List.UpdateItemUi(item);
+            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
         }
 
         return Result.Success;

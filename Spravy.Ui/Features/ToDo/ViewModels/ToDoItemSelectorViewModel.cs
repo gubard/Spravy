@@ -4,6 +4,7 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
+    private readonly ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems;
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -12,6 +13,8 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     private ToDoItemEntityNotify? selectedItem;
 
     public ToDoItemSelectorViewModel(
+        ToDoItemEntityNotify? selectedItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoService toDoService,
         IToDoCache toDoCache,
         IErrorHandler errorHandler,
@@ -20,6 +23,8 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+        this.ignoreItems = ignoreItems;
+        SelectedItem = selectedItem;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -36,8 +41,6 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
 
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public SpravyCommand InitializedCommand { get; }
-    public ReadOnlyMemory<Guid> IgnoreIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
-    public Guid DefaultSelectedItemId { get; set; }
     public SpravyCommand SearchCommand { get; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
@@ -60,7 +63,10 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
                     ct
                 )
             )
-            .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds, ct), ct)
+            .IfSuccessAsync(
+                () => toDoService.GetToDoSelectorItemsAsync(ignoreItems.Select(x => x.Id), ct),
+                ct
+            )
             .IfSuccessAsync(
                 items => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(items)),
                 ct
@@ -83,14 +89,13 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
 
     private Result SetupUi(ToDoItemEntityNotify item)
     {
-        if (IgnoreIds.Span.Contains(item.Id))
+        if (ignoreItems.Span.Contains(item))
         {
             item.IsIgnore = true;
         }
 
-        if (DefaultSelectedItemId == item.Id)
+        if (SelectedItem is not null && SelectedItem.Id == item.Id)
         {
-            SelectedItem = item;
             var result = ExpandParentsUi(item);
 
             if (result.IsHasError)

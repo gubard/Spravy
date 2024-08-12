@@ -2,99 +2,39 @@ namespace Spravy.Ui.Extensions;
 
 public static class DialogViewerExtension
 {
-    public static ConfiguredValueTaskAwaitable<Result> ShowConfirmContentDialogAsync<TView>(
+    public static ConfiguredValueTaskAwaitable<Result> ShowConfirmDialogAsync<TViewModel>(
         this IDialogViewer dialogViewer,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
+        IViewFactory viewFactory,
+        DialogViewLayer layer,
+        TViewModel viewModel,
+        Func<TViewModel, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         CancellationToken ct
     )
-        where TView : ViewModelBase
+        where TViewModel : ViewModelBase
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
-            confirmTask,
-            _ => dialogViewer.CloseContentDialogAsync(ct),
-            ActionHelper<TView>.Empty,
-            Result<TView>.EmptyFunc,
-            ct
+        var confirm = viewFactory.CreateConfirmViewModel(
+            viewModel,
+            obj => obj.CastObject<TViewModel>().IfSuccessAsync(confirmTask.Invoke, ct),
+            _ => dialogViewer.CloseDialogAsync(layer, ct)
         );
+
+        return dialogViewer.ShowDialogAsync(layer, confirm, ct);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> ShowConfirmContentDialogAsync<TView>(
+    public static ConfiguredValueTaskAwaitable<Result> ShowInfoDialogAsync<TViewModel>(
         this IDialogViewer dialogViewer,
-        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<TView> setup,
+        IViewFactory viewFactory,
+        DialogViewLayer layer,
+        TViewModel viewModel,
         CancellationToken ct
     )
-        where TView : ViewModelBase
+        where TViewModel : ViewModelBase
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
-            confirmTask,
-            _ => dialogViewer.CloseContentDialogAsync(ct),
-            setup,
-            Result<TView>.EmptyFunc,
-            ct
+        var info = viewFactory.CreateInfoViewModel(
+            viewModel,
+            _ => dialogViewer.CloseDialogAsync(layer, ct)
         );
-    }
 
-    public static ConfiguredValueTaskAwaitable<Result> ShowSingleStringConfirmDialogAsync(
-        this IDialogViewer dialogViewer,
-        Func<string, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<TextViewModel> setup,
-        Func<TextViewModel, ConfiguredValueTaskAwaitable<Result>> initialized,
-        CancellationToken ct
-    )
-    {
-        return dialogViewer.ShowConfirmInputDialogAsync(
-            view => confirmTask.Invoke(view.Text.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(ct),
-            setup,
-            initialized,
-            ct
-        );
-    }
-
-    public static ConfiguredValueTaskAwaitable<Result> ShowSingleStringConfirmDialogAsync(
-        this IDialogViewer dialogViewer,
-        Func<string, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        CancellationToken ct
-    )
-    {
-        return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            confirmTask,
-            ActionHelper<TextViewModel>.Empty,
-            Result<TextViewModel>.EmptyFunc,
-            ct
-        );
-    }
-
-    public static ConfiguredValueTaskAwaitable<Result> ShowToDoItemSelectorConfirmDialogAsync(
-        this IDialogViewer dialogViewer,
-        Func<ToDoItemEntityNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<ToDoItemSelectorViewModel> setup,
-        Func<ToDoItemSelectorViewModel, ConfiguredValueTaskAwaitable<Result>> initialized,
-        CancellationToken ct
-    )
-    {
-        return dialogViewer.ShowConfirmInputDialogAsync(
-            view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(ct),
-            setup,
-            initialized,
-            ct
-        );
-    }
-
-    public static ConfiguredValueTaskAwaitable<Result> ShowToDoItemSelectorConfirmDialogAsync(
-        this IDialogViewer dialogViewer,
-        Func<ToDoItemEntityNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<ToDoItemSelectorViewModel> setup,
-        CancellationToken ct
-    )
-    {
-        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            confirmTask,
-            setup,
-            Result<ToDoItemSelectorViewModel>.EmptyFunc,
-            ct
-        );
+        return dialogViewer.ShowDialogAsync(layer, info, ct);
     }
 }

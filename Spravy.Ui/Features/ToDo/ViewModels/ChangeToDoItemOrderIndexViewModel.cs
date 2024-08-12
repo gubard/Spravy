@@ -2,6 +2,7 @@
 
 public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
+    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
     private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
@@ -11,11 +12,13 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     private bool isAfter = true;
 
     public ChangeToDoItemOrderIndexViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService
     )
     {
+        this.items.AddRange(items.ToArray());
         this.toDoUiService = toDoUiService;
 
         InitializedCommand = SpravyCommand.Create(
@@ -26,22 +29,10 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     }
 
     public SpravyCommand InitializedCommand { get; }
-    public ToDoItemEntityNotify? Item { get; set; }
-    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
+    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        if (Items.IsEmpty())
-        {
-            return Item.IfNotNull(nameof(Item))
-                .IfSuccessAsync(i => toDoUiService.GetSiblingsAsync(i, ct), ct)
-                .IfSuccessAsync(
-                    items => this.PostUiBackground(() => Items.UpdateUi(items), ct),
-                    ct
-                );
-        }
-
-        return this.PostUiBackground(() => Items.UpdateUi(Items), ct)
-            .IfSuccessAsync(() => toDoUiService.UpdateItemsAsync(Items.ToArray(), ct), ct);
+        return toDoUiService.UpdateItemsAsync(Items.ToArray(), ct);
     }
 }
