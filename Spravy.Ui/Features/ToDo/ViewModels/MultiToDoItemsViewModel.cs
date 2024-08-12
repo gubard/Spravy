@@ -19,6 +19,7 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
         favorite.Header = new("MultiToDoItemsView.Favorite");
         Favorite = favorite;
         ToDoItems = toDoItems;
+        PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoItemsViewModel Favorite { get; }
