@@ -9,6 +9,7 @@ public class ViewFactory : IViewFactory
     private readonly IToDoCache toDoCache;
     private readonly IObjectStorage objectStorage;
     private readonly ToDoItemCommands toDoItemCommands;
+    private readonly AppOptions appOptions;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -17,7 +18,8 @@ public class ViewFactory : IViewFactory
         IToDoUiService toDoUiService,
         IToDoCache toDoCache,
         IObjectStorage objectStorage,
-        ToDoItemCommands toDoItemCommands
+        ToDoItemCommands toDoItemCommands,
+        AppOptions appOptions
     )
     {
         this.toDoService = toDoService;
@@ -27,6 +29,7 @@ public class ViewFactory : IViewFactory
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
         this.toDoItemCommands = toDoItemCommands;
+        this.appOptions = appOptions;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -74,7 +77,13 @@ public class ViewFactory : IViewFactory
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel()
     {
-        return new(toDoService, toDoCache, CreateMultiToDoItemsViewModel(), taskProgressService);
+        return new(
+            toDoService,
+            toDoCache,
+            CreateMultiToDoItemsViewModel(),
+            taskProgressService,
+            appOptions
+        );
     }
 
     public ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(

@@ -5,18 +5,21 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
     private readonly ITaskProgressService taskProgressService;
+    private readonly AppOptions appOptions;
 
     public ToDoSubItemsViewModel(
         IToDoService toDoService,
         IToDoCache toDoCache,
         MultiToDoItemsViewModel list,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        AppOptions appOptions
     )
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
         List = list;
         this.taskProgressService = taskProgressService;
+        this.appOptions = appOptions;
     }
 
     public MultiToDoItemsViewModel List { get; }
@@ -29,7 +32,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
     {
         await foreach (
             var items in toDoService
-                .GetToDoItemsAsync(ids.Select(x => x.Id), UiHelper.ChunkSize, ct)
+                .GetToDoItemsAsync(ids.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
                 .ConfigureAwait(false)
         )
         {

@@ -40,6 +40,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(ISingleViewTopLevelControl), Factory = nameof(SingleViewTopLevelControlFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(Application), Factory = nameof(ApplicationFactory))]
+[Singleton(typeof(AppOptions), Factory = nameof(AppOptionsFactory))]
 [Transient(typeof(TokenHttpHeaderFactory))]
 [Transient(typeof(TimeZoneHttpHeaderFactory))]
 [Transient(typeof(PaneViewModel))]
@@ -135,6 +136,18 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
 {
+    static AppOptions AppOptionsFactory(
+        ISerializer serializer,
+        IConfigurationLoader configurationLoader
+    )
+    {
+        using var stream = configurationLoader.GetStream();
+
+        var configuration = serializer.Deserialize<AppOptionsConfiguration>(stream);
+
+        return configuration.ThrowIfError().AppOptions.ThrowIfNull();
+    }
+
     static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainWindowModel mainWindowModel)
     {
         return new MainWindow { DataContext = mainWindowModel, };

@@ -5,16 +5,19 @@ public class ToDoUiService : IToDoUiService
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
     private readonly ITaskProgressService taskProgressService;
+    private readonly AppOptions appOptions;
 
     public ToDoUiService(
         IToDoService toDoService,
         IToDoCache toDoCache,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        AppOptions appOptions
     )
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
         this.taskProgressService = taskProgressService;
+        this.appOptions = appOptions;
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(
@@ -63,7 +66,7 @@ public class ToDoUiService : IToDoUiService
             (ushort)items.Length,
             item =>
                 toDoService
-                    .GetToDoItemsAsync(items.Select(x => x.Id), UiHelper.ChunkSize, ct)
+                    .GetToDoItemsAsync(items.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
                     .IfSuccessForEachAsync(
                         x =>
                             x.IfSuccessForEach(i =>
@@ -134,7 +137,7 @@ public class ToDoUiService : IToDoUiService
                     .IfSuccessAsync(
                         ids =>
                             toDoService
-                                .GetToDoItemsAsync(ids, UiHelper.ChunkSize, ct)
+                                .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
                                         x.IfSuccessForEach(i =>
@@ -176,7 +179,7 @@ public class ToDoUiService : IToDoUiService
                     .IfSuccessAsync(
                         ids =>
                             toDoService
-                                .GetToDoItemsAsync(ids, UiHelper.ChunkSize, ct)
+                                .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
                                         x.IfSuccessForEach(i =>
@@ -219,7 +222,7 @@ public class ToDoUiService : IToDoUiService
                     .IfSuccessAsync(
                         ids =>
                             toDoService
-                                .GetToDoItemsAsync(ids, UiHelper.ChunkSize, ct)
+                                .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
                                         x.IfSuccessForEach(i =>
@@ -263,7 +266,7 @@ public class ToDoUiService : IToDoUiService
                     .IfSuccessAsync(
                         ids =>
                             toDoService
-                                .GetToDoItemsAsync(ids, UiHelper.ChunkSize, ct)
+                                .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
                                         x.IfSuccessForEach(i =>
@@ -305,7 +308,7 @@ public class ToDoUiService : IToDoUiService
                     .IfSuccessAsync(
                         ids =>
                             toDoService
-                                .GetToDoItemsAsync(ids, UiHelper.ChunkSize, ct)
+                                .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
                                         x.IfSuccessForEach(i =>
