@@ -368,7 +368,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<FullToDoItem>> GetToDoItemAsync(
         Guid id,
         CancellationToken ct
     )
@@ -380,6 +380,76 @@ public class EfToDoService : IToDoService
                     context
                         .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
+                            item =>
+                                getterToDoItemParametersService
+                                    .GetToDoItemParametersAsync(
+                                        context,
+                                        item,
+                                        httpContextAccessor
+                                            .HttpContext.ThrowIfNull()
+                                            .GetTimeZoneOffset(),
+                                        ct
+                                    )
+                                    .IfSuccessAsync(
+                                        parameters =>
+                                        {
+                                            if (
+                                                item.Type == ToDoItemType.Reference
+                                                && item.ReferenceId.HasValue
+                                            )
+                                            {
+                                                return context
+                                                    .GetEntityAsync<ToDoItemEntity>(
+                                                        item.ReferenceId.Value
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        i =>
+                                                            (
+                                                                i with
+                                                                {
+                                                                    Id = item.Id,
+                                                                    ReferenceId = item.ReferenceId,
+                                                                    ParentId = item.ParentId,
+                                                                    Type = ToDoItemType.Reference,
+                                                                    OrderIndex = item.OrderIndex,
+                                                                    Name = item.Name,
+                                                                }
+                                                            )
+                                                                .ToFullToDoItem(parameters)
+                                                                .ToResult(),
+                                                        ct
+                                                    );
+                                            }
+
+                                            return item.ToFullToDoItem(parameters)
+                                                .ToResult()
+                                                .ToValueTaskResult()
+                                                .ConfigureAwait(false);
+                                        },
+                                        ct
+                                    ),
+                            ct
+                        ),
+                ct
+            );
+    }
+
+    private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
+        ReadOnlyMemory<Guid> ids,
+        CancellationToken ct
+    )
+    {
+        return dbContextFactory
+            .Create()
+            .IfSuccessDisposeAsync(
+                context =>
+                    context
+                        .Set<ToDoItemEntity>()
+                        .AsNoTracking()
+                        .Where(x => ids.ToArray().Contains(x.Id))
+                        .OrderBy(x => x.OrderIndex)
+                        .ToArrayEntitiesAsync(ct)
+                        .IfSuccessForEachAsync(
                             item =>
                                 getterToDoItemParametersService
                                     .GetToDoItemParametersAsync(
@@ -1716,44 +1786,31 @@ public class EfToDoService : IToDoService
         [EnumeratorCancellation] CancellationToken ct
     )
     {
-        var items = new List<ToDoItem>();
-
-        for (var i = 0; i < ids.Length; i++)
+        if (ids.IsEmpty)
         {
-            if (ct.IsCancellationRequested)
-            {
-                yield return Result<ReadOnlyMemory<ToDoItem>>.CanceledByUserError;
-
-                yield break;
-            }
-
-            if (i % chunkSize == 0)
-            {
-                if (items.Count > 0)
-                {
-                    yield return items.ToArray().ToReadOnlyMemory().ToResult();
-
-                    items.Clear();
-                }
-            }
-
-            var item = await GetToDoItemAsync(ids.Span[i], ct);
-
-            if (!item.TryGetValue(out var a))
-            {
-                yield return new(item.Errors);
-
-                yield break;
-            }
-
-            items.Add(a);
+            yield break;
         }
 
-        if (items.Count > 0)
+        for (uint i = 0; i < ids.Length; i += chunkSize)
         {
-            yield return items.ToArray().ToReadOnlyMemory().ToResult();
+            var size = i + chunkSize > ids.Length ? (int)(ids.Length - i) : (int)chunkSize;
+            var range = ids.Slice((int)i, size);
 
-            items.Clear();
+            if (range.IsEmpty)
+            {
+                yield break;
+            }
+
+            var items = await GetToDoItemsAsync(range, ct);
+
+            if (items.IsHasError)
+            {
+                yield return items;
+
+                yield break;
+            }
+
+            yield return items;
         }
     }
 

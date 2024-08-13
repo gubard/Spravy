@@ -69,9 +69,9 @@ public static partial class ToDoMapper
 
     public static partial ReadOnlyMemory<ToDoItem> ToToDoItem(this IEnumerable<ToDoItemGrpc> value);
 
-    public static partial ToDoItem ToToDoItem(this GetToDoItemReply value);
+    public static partial FullToDoItem ToFullToDoItem(this GetToDoItemReply value);
 
-    public static partial GetToDoItemReply ToGetToDoItemReply(this ToDoItem value);
+    public static partial GetToDoItemReply ToGetToDoItemReply(this FullToDoItem value);
 
     public static partial ValueToDoItemSettings ToValueToDoItemSettings(
         this GetValueToDoItemSettingsReply value

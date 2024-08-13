@@ -227,6 +227,17 @@ message GetToDoItemReply {
   bytes parent_id = 11;
   DescriptionTypeGrpc description_type = 12;
   bytes referenceId = 13;
+  repeated DayOfYearGrpc annually_days = 14;
+  repeated uint32 monthly_days = 15;
+  ToDoItemChildrenTypeGrpc children_type = 16;
+  google.protobuf.Timestamp due_date = 17;
+  uint32 DaysOffset = 18;
+  uint32 MonthsOffset= 19;
+  uint32 WeeksOffset= 20;
+  uint32 YearsOffset = 21;
+  bool IsRequiredCompleteInDueDate= 22;
+  TypeOfPeriodicityGrpc TypeOfPeriodicity= 23;
+  repeated DayOfWeekGrpc WeeklyDays = 24;
 }
 
 message GetChildrenToDoItemIdsRequest {

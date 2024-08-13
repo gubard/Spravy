@@ -9,7 +9,7 @@ public static class UiHelper
 
     public static bool IsDrag;
     public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
-    public const uint ChunkSize = 10;
+    public const uint ChunkSize = 5;
     public static object? DragData;
     public static Control? DragControl;
     public static Panel? DragPanel;

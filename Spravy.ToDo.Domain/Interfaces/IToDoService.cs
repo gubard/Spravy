@@ -8,15 +8,20 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
-    ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
-        Guid id,
-        CancellationToken ct
-    );
     ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken ct);
+
+    ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
+        Guid id,
+        CancellationToken ct
+    );
+
+    ConfiguredValueTaskAwaitable<Result<FullToDoItem>> GetToDoItemAsync(
+        Guid id,
+        CancellationToken ct
+    );
 
     ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
         Guid id,

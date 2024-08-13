@@ -303,7 +303,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<FullToDoItem>> GetToDoItemAsync(
         Guid id,
         CancellationToken ct
     )
@@ -323,7 +323,7 @@ public class GrpcToDoService
                                 )
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
-                                .IfSuccessAsync(reply => reply.ToToDoItem().ToResult(), ct),
+                                .IfSuccessAsync(reply => reply.ToFullToDoItem().ToResult(), ct),
                         ct
                     ),
             ct

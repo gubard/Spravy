@@ -57,6 +57,75 @@ public class ToDoCache : IToDoCache
             });
     }
 
+    public Result<ToDoItemEntityNotify> UpdateUi(FullToDoItem toDoItem)
+    {
+        return GetToDoItem(toDoItem.Id)
+            .IfSuccess(item =>
+            {
+                item.ChildrenType = toDoItem.ChildrenType;
+                item.DueDate = toDoItem.DueDate;
+                item.MonthsOffset = toDoItem.MonthsOffset;
+                item.YearsOffset = toDoItem.YearsOffset;
+                item.DaysOffset = toDoItem.DaysOffset;
+                item.WeeksOffset = toDoItem.WeeksOffset;
+                item.IsRequiredCompleteInDueDate = toDoItem.IsRequiredCompleteInDueDate;
+                item.TypeOfPeriodicity = toDoItem.TypeOfPeriodicity;
+                item.DaysOfWeek.UpdateUi(toDoItem.WeeklyDays);
+                item.DaysOfYear.UpdateUi(toDoItem.AnnuallyDays);
+                item.DaysOfMonth.UpdateUi(toDoItem.MonthlyDays.Select(x => (int)x));
+                item.Description = toDoItem.Description;
+                item.DescriptionType = toDoItem.DescriptionType;
+                item.Type = toDoItem.Type;
+                item.Name = toDoItem.Name;
+                item.Link = toDoItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
+                item.Status = toDoItem.Status;
+                item.IsCan = toDoItem.IsCan;
+                item.IsFavorite = toDoItem.IsFavorite;
+                item.OrderIndex = toDoItem.OrderIndex;
+                item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
+
+                if (toDoItem.Active.TryGetValue(out var v))
+                {
+                    var result = UpdateUi(v)
+                        .IfSuccess(i =>
+                        {
+                            item.Active = i;
+
+                            return Result.Success;
+                        });
+
+                    if (result.IsHasError)
+                    {
+                        return new(result.Errors);
+                    }
+                }
+                else
+                {
+                    item.Active = null;
+                }
+
+                if (toDoItem.ParentId.TryGetValue(out var value))
+                {
+                    var parent = GetToDoItem(value);
+
+                    if (parent.TryGetValue(out var p))
+                    {
+                        item.Parent = p;
+                    }
+                    else
+                    {
+                        return parent;
+                    }
+                }
+                else
+                {
+                    item.Parent = null;
+                }
+
+                return item.UpdateCommandsUi();
+            });
+    }
+
     public Result<ToDoItemEntityNotify> UpdateUi(
         Guid id,
         PeriodicityOffsetToDoItemSettings settings
