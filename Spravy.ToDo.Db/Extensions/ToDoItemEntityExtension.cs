@@ -58,7 +58,7 @@ public static class ToDoItemEntityExtension
             });
     }
 
-    public static void SetDaysOfYear(this ToDoItemEntity item, IEnumerable<DayOfYear> daysOfYear)
+    public static void SetDaysOfYear(this ToDoItemEntity item, ReadOnlyMemory<DayOfYear> daysOfYear)
     {
         item.DaysOfYear = daysOfYear.Select(x => $"{x.Month}.{x.Day}").JoinString(";");
     }
@@ -68,7 +68,7 @@ public static class ToDoItemEntityExtension
         item.DaysOfMonth = daysOfMonth.JoinString(";");
     }
 
-    public static void SetDaysOfWeek(this ToDoItemEntity item, IEnumerable<DayOfWeek> daysOfWeek)
+    public static void SetDaysOfWeek(this ToDoItemEntity item, ReadOnlyMemory<DayOfWeek> daysOfWeek)
     {
         item.DaysOfWeek = daysOfWeek.JoinString(";");
     }

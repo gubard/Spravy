@@ -6,8 +6,6 @@ namespace Spravy.Ui;
 
 public class App : Application
 {
-    public const string RootToDoItemButtonName = "root-to-do-item-button";
-
     private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
 
     public override void Initialize()
@@ -114,7 +112,7 @@ public class App : Application
             return;
         }
 
-        var button = control.FindVisualParent<Button>(App.RootToDoItemButtonName);
+        var button = control.FindVisualParent<Button>("RootToDoItemButton");
 
         if (button is null)
         {

@@ -15,7 +15,7 @@ public class AddToDoItemViewModelSetting : IViewModelSetting<AddToDoItemViewMode
         Type = viewModel.ToDoItemContent.Type;
         Link = viewModel.ToDoItemContent.Link;
         Description = viewModel.DescriptionContent.Description;
-        DescriptionType = viewModel.DescriptionContent.Type;
+        DescriptionType = viewModel.DescriptionContent.DescriptionType;
     }
 
     public string Name { get; set; } = string.Empty;

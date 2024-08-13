@@ -22,4 +22,26 @@ public interface IToDoUiService
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
+
+    ConfiguredValueTaskAwaitable<Result> UpdateRootItemsAsync(
+        IToDoItemsView toDoItemsView,
+        CancellationToken ct
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdateSearchToDoItemsAsync(
+        string searchText,
+        IToDoItemsView toDoItemsView,
+        CancellationToken ct
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdateItemChildrenAsync(
+        ToDoItemEntityNotify item,
+        IToDoItemsView toDoItemsView,
+        CancellationToken ct
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdateTodayItemsAsync(
+        IToDoItemsView toDoItemsView,
+        CancellationToken ct
+    );
 }

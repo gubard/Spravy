@@ -5,14 +5,12 @@ public class ToDoItemCommands
     private readonly IObjectStorage objectStorage;
 
     public ToDoItemCommands(
-        SpravyCommandService spravyCommandService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
         ITaskProgressService taskProgressService
     )
     {
         this.objectStorage = objectStorage;
-        NavigateToCurrentToDo = spravyCommandService.NavigateToCurrentToDoItem;
 
         InitializedCommand = SpravyCommand.Create<ToDoItemViewModel>(
             InitializedAsync,
@@ -22,7 +20,6 @@ public class ToDoItemCommands
     }
 
     public SpravyCommand InitializedCommand { get; }
-    public SpravyCommand NavigateToCurrentToDo { get; }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
         ToDoItemViewModel viewModel,

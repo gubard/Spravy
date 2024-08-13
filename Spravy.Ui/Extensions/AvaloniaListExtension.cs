@@ -33,10 +33,12 @@ public static class AvaloniaListExtension
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
     }
 
-    public static void UpdateUi<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)
+    public static Result UpdateUi<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)
     {
         list.Clear();
         list.AddRange(items.ToArray());
+
+        return Result.Success;
     }
 
     public static bool IsEmpty<T>(this AvaloniaList<T> list)

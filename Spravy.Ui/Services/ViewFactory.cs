@@ -8,6 +8,7 @@ public class ViewFactory : IViewFactory
     private readonly IToDoUiService toDoUiService;
     private readonly IToDoCache toDoCache;
     private readonly IObjectStorage objectStorage;
+    private readonly ToDoItemCommands toDoItemCommands;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -15,7 +16,8 @@ public class ViewFactory : IViewFactory
         ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService,
         IToDoCache toDoCache,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        ToDoItemCommands toDoItemCommands
     )
     {
         this.toDoService = toDoService;
@@ -24,23 +26,29 @@ public class ViewFactory : IViewFactory
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
+        this.toDoItemCommands = toDoItemCommands;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
-        return new(
-            item,
-            CreateToDoItemContentViewModel(),
-            toDoService,
-            errorHandler,
-            taskProgressService,
-            this
-        );
+        return new(item, CreateToDoItemContentViewModel(), this);
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item)
     {
         return CreateToDoItemSelectorViewModel(item, ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+    }
+
+    public ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item)
+    {
+        return new(
+            item,
+            objectStorage,
+            toDoItemCommands,
+            CreateToDoSubItemsViewModel(),
+            errorHandler,
+            toDoUiService
+        );
     }
 
     public AddRootToDoItemViewModel CreateAddRootToDoItemViewModel()
@@ -64,51 +72,51 @@ public class ViewFactory : IViewFactory
         return new(item, toDoService, errorHandler, taskProgressService);
     }
 
-    public GroupToDoItemSettingsViewModel CreateGroupToDoItemSettingsViewModel()
+    public ToDoSubItemsViewModel CreateToDoSubItemsViewModel()
     {
-        return new();
+        return new(toDoService, toDoCache, CreateMultiToDoItemsViewModel(), taskProgressService);
     }
 
     public ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+        return new(item, toDoService);
     }
 
     public ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+        return new(item, toDoService);
     }
 
     public ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+        return new(item, toDoService);
     }
 
     public PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+        return new(item, toDoService);
     }
 
     public PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService, this);
+        return new(item, toDoService, this);
     }
 
     public PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService, errorHandler, taskProgressService, toDoUiService);
+        return new(item, toDoService);
     }
 
     public InfoViewModel CreateInfoViewModel(
@@ -133,10 +141,50 @@ public class ViewFactory : IViewFactory
         return new(
             item,
             CreateToDoItemSelectorViewModel(item, item.ToReadOnlyMemory()),
-            toDoService,
-            errorHandler,
-            taskProgressService,
-            toDoUiService
+            toDoService
+        );
+    }
+
+    public ToDoItemsGroupByNoneViewModel CreateToDoItemsGroupByNoneViewModel()
+    {
+        return new(CreateToDoItemsViewModel());
+    }
+
+    public ToDoItemsGroupByStatusViewModel CreateToDoItemsGroupByStatusViewModel()
+    {
+        return new(
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel()
+        );
+    }
+
+    public ToDoItemsGroupByTypeViewModel CreateToDoItemsGroupByTypeViewModel()
+    {
+        return new(
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsViewModel()
+        );
+    }
+
+    public ToDoItemsViewModel CreateToDoItemsViewModel()
+    {
+        return new(errorHandler, taskProgressService);
+    }
+
+    public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()
+    {
+        return new(
+            CreateToDoItemsGroupByNoneViewModel(),
+            CreateToDoItemsGroupByStatusViewModel(),
+            CreateToDoItemsGroupByTypeViewModel()
         );
     }
 
@@ -149,6 +197,14 @@ public class ViewFactory : IViewFactory
             toDoCache,
             errorHandler,
             taskProgressService
+        );
+    }
+
+    public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel()
+    {
+        return new MultiToDoItemsViewModel(
+            CreateToDoItemsViewModel(),
+            CreateToDoItemsGroupByViewModel()
         );
     }
 

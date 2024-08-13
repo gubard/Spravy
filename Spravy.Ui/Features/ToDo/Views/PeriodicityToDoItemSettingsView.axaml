@@ -10,17 +10,17 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.ChildrenTypes}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding Item.ChildrenType}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}" />
         <CalendarDatePicker
-            SelectedDate="{Binding Item.DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
-        <ToggleSwitch IsChecked="{Binding Item.IsRequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding Item.TypeOfPeriodicity}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding TypeOfPeriodicity}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.Periodicity}" />
         <ContentControl Content="{Binding Periodicity}" />

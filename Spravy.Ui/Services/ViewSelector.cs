@@ -159,11 +159,6 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ValueToDoItemSettingsView>());
         }
 
-        if (typeof(GroupToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<GroupToDoItemSettingsView>());
-        }
-
         if (typeof(ToDoItemToStringSettingsViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<ToDoItemToStringSettingsView>());

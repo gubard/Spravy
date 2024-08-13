@@ -80,7 +80,7 @@ public static partial class UiMapper
             value.ToDoItemContent.Type,
             value.ToDoItemContent.Link.ToOptionUri(),
             value.DescriptionContent.Description,
-            value.DescriptionContent.Type
+            value.DescriptionContent.DescriptionType
         );
     }
 }

@@ -21,39 +21,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     public MultiToDoItemsViewModel List { get; }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken ct)
-    {
-        return toDoService
-            .GetFavoriteToDoItemIdsAsync(ct)
-            .IfSuccessAsync(
-                items =>
-                    taskProgressService.RunProgressAsync(
-                        (ushort)items.Length,
-                        item =>
-                            items
-                                .ToResult()
-                                .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                                .IfSuccessAsync(
-                                    itemsNotify =>
-                                        List.ClearFavoriteExceptUi(itemsNotify)
-                                            .IfSuccessAsync(
-                                                () =>
-                                                    RefreshFavoriteToDoItemsCore(
-                                                            itemsNotify,
-                                                            item,
-                                                            ct
-                                                        )
-                                                        .ConfigureAwait(false),
-                                                ct
-                                            ),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
         TaskProgressItem progressItem,
@@ -96,21 +63,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> entities,
-        bool autoOrder,
-        TaskProgressItem progressItem,
-        CancellationToken ct
-    )
-    {
-        return this.PostUiBackground(() => ClearExceptUi(entities), ct)
-            .IfSuccessAllAsync(
-                ct,
-                () => RefreshFavoriteToDoItemsAsync(ct),
-                () => RefreshToDoItemListsCore(entities, autoOrder, progressItem, ct)
-            );
-    }
-
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return List.ClearExceptUi(items);
@@ -121,86 +73,36 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
         return List.AddOrUpdateUi(item);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsCore(
-        ReadOnlyMemory<ToDoItemEntityNotify> entities,
-        bool autoOrder,
-        TaskProgressItem progressItem,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        uint orderIndex = 1;
-
         return toDoService
-            .GetToDoItemsAsync(entities.Select(x => x.Id), UiHelper.ChunkSize, ct)
-            .IfSuccessForEachAsync(
+            .GetFavoriteToDoItemIdsAsync(ct)
+            .IfSuccessAsync(
                 items =>
-                    items
-                        .ToResult()
-                        .IfSuccessForEach(item =>
-                            this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly(), ct)
-                        )
-                        .IfSuccess(
-                            () => items.IfSuccessForEach(item => toDoCache.GetToDoItem(item.Id))
-                        )
-                        .IfSuccessForEach(item =>
-                            Result
-                                .Success.IfSuccess(() =>
-                                {
-                                    if (autoOrder)
-                                    {
-                                        var oi = orderIndex;
-
-                                        return this.PostUiBackground(
-                                            () =>
-                                            {
-                                                item.OrderIndex = oi;
-
-                                                return Result.Success;
-                                            },
-                                            ct
-                                        );
-                                    }
-
-                                    return Result.Success;
-                                })
-                                .IfSuccess(() =>
-                                {
-                                    orderIndex++;
-
-                                    return this.PostUiBackground(progressItem.IncreaseUi, ct);
-                                })
-                                .IfSuccess(item.ToResult)
-                        )
-                        .IfSuccess(itemsNotify =>
-                            taskProgressService.RunProgress(
-                                (ushort)itemsNotify.Length,
-                                item =>
-                                    this.PostUiBackground(
-                                        () =>
-                                            itemsNotify
-                                                .ToResult()
-                                                .IfSuccessForEach(i =>
-                                                    List.AddOrUpdateUi(i).IfSuccess(item.IncreaseUi)
-                                                ),
-                                        ct
-                                    ),
-                                ct
-                            )
-                        ),
+                    taskProgressService.RunProgressAsync(
+                        (ushort)items.Length,
+                        item =>
+                            items
+                                .ToResult()
+                                .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                                .IfSuccessAsync(
+                                    itemsNotify =>
+                                        List.ClearFavoriteExceptUi(itemsNotify)
+                                            .IfSuccessAsync(
+                                                () =>
+                                                    RefreshFavoriteToDoItemsCore(
+                                                            itemsNotify,
+                                                            item,
+                                                            ct
+                                                        )
+                                                        .ConfigureAwait(false),
+                                                ct
+                                            ),
+                                    ct
+                                ),
+                        ct
+                    ),
                 ct
             );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> ids,
-        bool autoOrder,
-        CancellationToken ct
-    )
-    {
-        return taskProgressService.RunProgressAsync(
-            (ushort)ids.Length,
-            item => RefreshToDoItemListsAsync(ids, autoOrder, item, ct),
-            ct
-        );
     }
 }

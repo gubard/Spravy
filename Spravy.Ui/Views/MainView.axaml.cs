@@ -116,7 +116,7 @@ public partial class MainView : UserControl
             return;
         }
 
-        var button = control.FindVisualParent<Button>(App.RootToDoItemButtonName);
+        var button = control.FindVisualParent<Button>("RootToDoItemButton");
 
         if (button is null)
         {

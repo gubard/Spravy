@@ -8,7 +8,7 @@ public partial class EditDescriptionContentViewModel : ViewModelBase
     private string description = string.Empty;
 
     [ObservableProperty]
-    private DescriptionType type;
+    private DescriptionType descriptionType;
 
     public EditDescriptionContentViewModel(
         IErrorHandler errorHandler,

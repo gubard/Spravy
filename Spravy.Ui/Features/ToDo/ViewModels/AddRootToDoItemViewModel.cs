@@ -39,21 +39,6 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         CancellationToken ct
     )
     {
-        return setting
-            .CastObject<AddRootToDoItemViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    ToDoItemContent.Name = s.Name;
-                    ToDoItemContent.Type = s.Type;
-                    ToDoItemContent.Link = s.Link;
-                    DescriptionContent.Description = s.Description;
-                    DescriptionContent.Type = s.DescriptionType;
-
-                    return Result.Success;
-                }, ct)
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+        return Result.AwaitableSuccess;
     }
 }

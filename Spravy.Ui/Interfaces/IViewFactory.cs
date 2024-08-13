@@ -2,7 +2,13 @@ namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
 {
+    ToDoItemsGroupByNoneViewModel CreateToDoItemsGroupByNoneViewModel();
+    ToDoItemsGroupByStatusViewModel CreateToDoItemsGroupByStatusViewModel();
+    ToDoItemsGroupByTypeViewModel CreateToDoItemsGroupByTypeViewModel();
+    ToDoItemsViewModel CreateToDoItemsViewModel();
+    ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel();
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel();
+    MultiToDoItemsViewModel CreateMultiToDoItemsViewModel();
     TextViewModel CreateTextViewModel();
     ErrorViewModel CreateErrorViewModel(ReadOnlyMemory<Error> errors);
     ExceptionViewModel CreateExceptionViewModel(Exception exception);
@@ -10,15 +16,16 @@ public interface IViewFactory
     DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item);
     AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent);
     ToDoItemContentViewModel CreateToDoItemContentViewModel();
-    EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();
     DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item);
     MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(ToDoItemEntityNotify item);
     ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item);
+    ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item);
     AddRootToDoItemViewModel CreateAddRootToDoItemViewModel();
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
     ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
-    GroupToDoItemSettingsViewModel CreateGroupToDoItemSettingsViewModel();
+    EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();
+    ToDoSubItemsViewModel CreateToDoSubItemsViewModel();
 
     ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
         ToDoItemEntityNotify item

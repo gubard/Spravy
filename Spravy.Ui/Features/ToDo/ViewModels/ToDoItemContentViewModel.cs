@@ -2,17 +2,17 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemContentViewModel : NavigatableViewModelBase
 {
-    public ToDoItemContentViewModel()
-        : base(true) { }
-
     [ObservableProperty]
     private string name = string.Empty;
 
     [ObservableProperty]
-    private ToDoItemType type;
+    private string link = string.Empty;
 
     [ObservableProperty]
-    private string link = string.Empty;
+    private ToDoItemType type;
+
+    public ToDoItemContentViewModel()
+        : base(true) { }
 
     public override string ViewId
     {

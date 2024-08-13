@@ -8,7 +8,6 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -28,7 +27,7 @@
 
     <Application.DataTemplates>
         <DataTemplate DataType="tm:ToDoItemEntityNotify">
-            <Button Name="{x:Static ui:App.RootToDoItemButtonName}"
+            <Button x:Name="RootToDoItemButton"
                     Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"
                     Classes="alignment-stretch content-alignment-stretch to-do-item"
@@ -206,10 +205,6 @@
 
         <DataTemplate x:DataType="m:DayOfMonthSelectItem">
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding Day}" />
-        </DataTemplate>
-
-        <DataTemplate x:DataType="m:DayOfWeekSelectItem">
-            <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding DayOfWeek}" />
         </DataTemplate>
 
         <DataTemplate DataType="m:RootItem">

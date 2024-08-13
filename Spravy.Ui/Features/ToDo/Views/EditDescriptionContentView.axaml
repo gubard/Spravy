@@ -10,7 +10,7 @@
     <Grid RowDefinitions="Auto,Auto,*">
         <TextBlock Classes="field"
                    Text="{DynamicResource EditDescriptionView.Description}" />
-        <c:EnumSelectorControl Grid.Row="1" SelectedEnum="{Binding Type}" />
+        <c:EnumSelectorControl Grid.Row="1" SelectedEnum="{Binding DescriptionType}" />
 
         <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <TextBox x:Name="DescriptionTextBox"

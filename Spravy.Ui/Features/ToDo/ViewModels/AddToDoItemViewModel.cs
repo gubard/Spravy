@@ -2,12 +2,9 @@ using Spravy.Core.Mappers;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class AddToDoItemViewModel : NavigatableViewModelBase
+public class AddToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
-
-    [ObservableProperty]
-    private object[] path = [];
 
     public AddToDoItemViewModel(
         ToDoItemEntityNotify parent,
@@ -49,25 +46,7 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
         CancellationToken ct
     )
     {
-        return setting
-            .CastObject<AddToDoItemViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        ToDoItemContent.Name = s.Name;
-                        ToDoItemContent.Type = s.Type;
-                        ToDoItemContent.Link = s.Link;
-                        DescriptionContent.Description = s.Description;
-                        DescriptionContent.Type = s.DescriptionType;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+        return Result.AwaitableSuccess;
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
@@ -84,7 +63,7 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
                 ToDoItemContent.Name,
                 ToDoItemContent.Type,
                 DescriptionContent.Description,
-                DescriptionContent.Type,
+                DescriptionContent.DescriptionType,
                 new()
             ).ToResult();
         }
@@ -94,7 +73,7 @@ public partial class AddToDoItemViewModel : NavigatableViewModelBase
             ToDoItemContent.Name,
             ToDoItemContent.Type,
             DescriptionContent.Description,
-            DescriptionContent.Type,
+            DescriptionContent.DescriptionType,
             ToDoItemContent.Link.ToOptionUri()
         ).ToResult();
     }

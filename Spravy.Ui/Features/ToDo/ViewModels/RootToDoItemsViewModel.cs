@@ -4,18 +4,16 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public RootToDoItemsViewModel(
         SpravyCommandNotifyService spravyCommandNotifyService,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        IToDoCache toDoCache,
         IObjectStorage objectStorage,
-        IToDoService toDoService,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
         : base(true)
     {
@@ -23,9 +21,8 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         Commands = new();
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
-        this.toDoService = toDoService;
+        this.toDoUiService = toDoUiService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
         InitializedCommand = SpravyCommand.Create(
@@ -71,14 +68,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoCache
-            .GetRootItems()
-            .IfSuccess(items =>
-                this.PostUiBackground(() => ToDoSubItemsViewModel.ClearExceptUi(items), ct)
-            )
-            .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(ct), ct)
-            .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), ct)
-            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, false, ct), ct);
+        return toDoUiService.UpdateRootItemsAsync(ToDoSubItemsViewModel, ct);
     }
 
     public override Result Stop()

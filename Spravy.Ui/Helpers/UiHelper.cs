@@ -41,7 +41,6 @@ public static class UiHelper
         LoginViewInitialized = commands.LoginViewInitialized.Command;
         LoginViewEnter = commands.LoginViewEnter.Command;
         Login = commands.Login.Command;
-        AddToDoItemViewInitialized = commands.AddToDoItemViewInitialized.Command;
         AddRootToDoItemViewInitialized = commands.AddRootToDoItemViewInitialized.Command;
         PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
         GeneratePassword = commands.GeneratePassword.Command;
@@ -87,7 +86,6 @@ public static class UiHelper
     public static readonly ICommand Login;
     public static readonly ICommand PasswordGeneratorViewInitialized;
     public static readonly ICommand AddRootToDoItemViewInitialized;
-    public static readonly ICommand AddToDoItemViewInitialized;
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
     public static readonly ICommand MultiToDoItemsViewInitialized;

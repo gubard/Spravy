@@ -3,8 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly TaskWork refreshWork;
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
     private readonly IObjectStorage objectStorage;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
@@ -13,20 +12,18 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
 
     public SearchToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        IToDoService toDoService,
         SpravyCommandNotifyService spravyCommandNotifyService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        IToDoCache toDoCache,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
         : base(true)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        this.toDoService = toDoService;
         this.objectStorage = objectStorage;
-        this.toDoCache = toDoCache;
+        this.toDoUiService = toDoUiService;
         Commands = new();
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
@@ -62,10 +59,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
 
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoService
-            .SearchToDoItemIdsAsync(SearchText, ct)
-            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids, false, ct), ct);
+        return toDoUiService.UpdateSearchToDoItemsAsync(SearchText, ToDoSubItemsViewModel, ct);
     }
 
     public override Result Stop()

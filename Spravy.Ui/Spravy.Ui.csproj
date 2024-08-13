@@ -45,4 +45,11 @@
     <ItemGroup>
         <UpToDateCheckInput Remove="Features\Localizations\Styles\Resources.axaml" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Features\ToDo\Views\EditDescriptionContentView.axaml.cs">
+        <DependentUpon>EditDescriptionContentView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

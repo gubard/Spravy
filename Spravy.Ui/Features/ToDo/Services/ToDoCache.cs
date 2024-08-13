@@ -104,6 +104,38 @@ public class ToDoCache : IToDoCache
             });
     }
 
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, ValueToDoItemSettings settings)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+            {
+                item.ChildrenType = settings.ChildrenType;
+
+                return item.ToResult();
+            });
+    }
+
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, WeeklyPeriodicity periodicity)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item => item.DaysOfWeek.UpdateUi(periodicity.Days).IfSuccess(item.ToResult));
+    }
+
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, MonthlyPeriodicity periodicity)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+                item.DaysOfMonth.UpdateUi(periodicity.Days.Select(x => (int)x))
+                    .IfSuccess(item.ToResult)
+            );
+    }
+
+    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, AnnuallyPeriodicity periodicity)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item => item.DaysOfYear.UpdateUi(periodicity.Days).IfSuccess(item.ToResult));
+    }
+
     public Result<ToDoItemEntityNotify> UpdateUi(ActiveToDoItem activeToDoItem)
     {
         return GetToDoItem(activeToDoItem.Id)

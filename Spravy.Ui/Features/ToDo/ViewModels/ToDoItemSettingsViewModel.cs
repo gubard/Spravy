@@ -2,71 +2,34 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
-    private readonly IToDoService toDoService;
     private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
-    private IApplySettings? settings;
+    private IApplySettings settings;
 
     public ToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         ToDoItemContentViewModel toDoItemContent,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
         IViewFactory viewFactory
     )
         : base(true)
     {
-        ToDoItemContent = toDoItemContent;
-        this.toDoService = toDoService;
-        this.viewFactory = viewFactory;
         Item = item;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
+        ToDoItemContent = toDoItemContent;
+        this.viewFactory = viewFactory;
+        ToDoItemContent.Type = Item.Type;
+        ToDoItemContent.Name = Item.Name;
+        ToDoItemContent.Link = Item.Link;
+        settings = CreateSettings();
         ToDoItemContent.PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoItemEntityNotify Item { get; }
-    public SpravyCommand InitializedCommand { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
 
     public override string ViewId
     {
         get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
-    {
-        return toDoService
-            .GetToDoItemAsync(Item.Id, ct)
-            .IfSuccessAsync(
-                toDoItem =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ToDoItemContent.Name = toDoItem.Name;
-                            ToDoItemContent.Link = toDoItem.Link.TryGetValue(out var uri)
-                                ? uri.AbsoluteUri
-                                : string.Empty;
-                            ToDoItemContent.Type = toDoItem.Type;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
     }
 
     public override Result Stop()
@@ -87,25 +50,29 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return Result.AwaitableSuccess;
     }
 
+    private IApplySettings CreateSettings()
+    {
+        return ToDoItemContent.Type switch
+        {
+            ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+            ToDoItemType.Group => new EmptyApplySettings(),
+            ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
+            ToDoItemType.Periodicity
+                => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
+            ToDoItemType.PeriodicityOffset
+                => viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
+            ToDoItemType.Circle => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+            ToDoItemType.Step => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
+            ToDoItemType.Reference => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ToDoItemContent.Type))
         {
-            Settings = ToDoItemContent.Type switch
-            {
-                ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-                ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
-                ToDoItemType.Periodicity
-                    => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
-                ToDoItemType.PeriodicityOffset
-                    => viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
-                ToDoItemType.Circle => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-                ToDoItemType.Step => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-                ToDoItemType.Group => viewFactory.CreateGroupToDoItemSettingsViewModel(),
-                ToDoItemType.Reference
-                    => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
+            Settings = CreateSettings();
         }
     }
 }

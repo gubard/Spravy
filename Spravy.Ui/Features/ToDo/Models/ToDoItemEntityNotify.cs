@@ -1,3 +1,5 @@
+using Spravy.Core.Helpers;
+
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public partial class ToDoItemEntityNotify
@@ -97,6 +99,9 @@ public partial class ToDoItemEntityNotify
         SingleCommands = new();
         Children = new();
         MultiCommands = new();
+        DaysOfWeek = new();
+        DaysOfMonth = new();
+        DaysOfYear = new();
 
         MultiCommands.AddRange(
             [
@@ -123,11 +128,13 @@ public partial class ToDoItemEntityNotify
     }
 
     public Guid Id { get; }
-
     public AvaloniaList<SpravyCommandNotify> CompactCommands { get; }
     public AvaloniaList<SpravyCommandNotify> SingleCommands { get; }
     public AvaloniaList<SpravyCommandNotify> MultiCommands { get; }
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
+    public AvaloniaList<DayOfWeek> DaysOfWeek { get; }
+    public AvaloniaList<int> DaysOfMonth { get; }
+    public AvaloniaList<DayOfYear> DaysOfYear { get; }
 
     public bool IsDescriptionPlainText
     {
@@ -275,14 +282,17 @@ public partial class ToDoItemEntityNotify
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ReferenceId))
+        switch (e.PropertyName)
         {
-            OnPropertyChanged(nameof(CurrentId));
-        }
-        else if (e.PropertyName == nameof(DescriptionType))
-        {
-            OnPropertyChanged(nameof(IsDescriptionPlainText));
-            OnPropertyChanged(nameof(IsDescriptionMarkdownText));
+            case nameof(ReferenceId):
+                OnPropertyChanged(nameof(CurrentId));
+
+                break;
+            case nameof(DescriptionType):
+                OnPropertyChanged(nameof(IsDescriptionPlainText));
+                OnPropertyChanged(nameof(IsDescriptionMarkdownText));
+
+                break;
         }
     }
 }

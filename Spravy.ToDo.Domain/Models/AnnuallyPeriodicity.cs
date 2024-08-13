@@ -7,8 +7,8 @@ public readonly struct AnnuallyPeriodicity : IPeriodicity
 {
     public AnnuallyPeriodicity(IEnumerable<DayOfYear> days)
     {
-        Days = new SortedSet<DayOfYear>(days);
+        Days = days.ToArray();
     }
 
-    public IReadOnlySet<DayOfYear> Days { get; }
+    public ReadOnlyMemory<DayOfYear> Days { get; }
 }

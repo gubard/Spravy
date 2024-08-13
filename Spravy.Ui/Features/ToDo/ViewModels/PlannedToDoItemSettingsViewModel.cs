@@ -1,31 +1,28 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly IToDoUiService toDoUiService;
 
-    public PlannedToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
-    )
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
     {
         Item = item;
         this.toDoService = toDoService;
-        this.toDoUiService = toDoUiService;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
+        DueDate = item.DueDate;
+        IsRequiredCompleteInDueDate = Item.IsRequiredCompleteInDueDate;
+        ChildrenType = item.ChildrenType;
     }
 
     private ToDoItemEntityNotify Item { get; }
-    public SpravyCommand InitializedCommand { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
@@ -44,15 +41,5 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySettings
                     ),
                 ct
             );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
-    {
-        return toDoUiService.UpdateItemAsync(Item, ct);
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
     }
 }

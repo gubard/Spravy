@@ -3,33 +3,36 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly IToDoUiService toDoUiService;
 
-    public ToDoItemDayOfYearSelectorViewModel(
-        ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
-    )
+    public ToDoItemDayOfYearSelectorViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
     {
         this.toDoService = toDoService;
-        this.toDoUiService = toDoUiService;
         Item = item;
 
-        Items = new(
+        DaysOfYear = new(
             Enumerable.Range(1, 12).Select(x => new DayOfYearSelectItem { Month = (byte)x, })
         );
 
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
+        var months = item.DaysOfYear.Select(x => x.Month).Distinct().ToArray();
+
+        foreach (var daysOfYear in DaysOfYear)
+        {
+            if (months.Contains(daysOfYear.Month))
+            {
+                var days = item
+                    .DaysOfYear.Where(x => x.Month == daysOfYear.Month)
+                    .Select(x => x.Day)
+                    .ToArray();
+
+                foreach (var day in daysOfYear.Days.Where(x => days.Contains(x.Day)))
+                {
+                    day.IsSelected = true;
+                }
+            }
+        }
     }
 
-    public AvaloniaList<DayOfYearSelectItem> Items { get; }
-    public SpravyCommand InitializedCommand { get; }
+    public AvaloniaList<DayOfYearSelectItem> DaysOfYear { get; }
     public ToDoItemEntityNotify Item { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
@@ -37,16 +40,11 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
         return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             Item.Id,
             new(
-                Items.SelectMany(x =>
+                DaysOfYear.SelectMany(x =>
                     x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
                 )
             ),
             ct
         );
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return toDoUiService.UpdateItemAsync(Item, ct);
     }
 }

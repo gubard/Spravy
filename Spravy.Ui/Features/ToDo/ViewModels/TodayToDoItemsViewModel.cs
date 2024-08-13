@@ -2,25 +2,22 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public TodayToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        IToDoService toDoService,
         IErrorHandler errorHandler,
-        IToDoCache toDoCache,
         SpravyCommandNotifyService spravyCommandNotifyService,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
     )
         : base(true)
     {
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        this.toDoService = toDoService;
-        this.toDoCache = toDoCache;
         this.spravyCommandNotifyService = spravyCommandNotifyService;
+        this.toDoUiService = toDoUiService;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -42,10 +39,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService
-            .GetTodayToDoItemsAsync(ct)
-            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids, false, ct), ct);
+        return toDoUiService.UpdateTodayItemsAsync(ToDoSubItemsViewModel, ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)

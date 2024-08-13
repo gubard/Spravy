@@ -4,6 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSettingsView"
              x:DataType="vm:ToDoItemSettingsViewModel">
@@ -15,6 +18,18 @@
             </c:GroupBoxControl.Header>
 
             <StackPanel>
+                <c:PathControl Segments="{Binding Item.Path}" HorizontalAlignment="Center">
+                    <c:PathControl.DataTemplates>
+                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                        </DataTemplate>
+
+                        <DataTemplate DataType="m:RootItem">
+                            <mi:MaterialIcon Kind="Home" Margin="5" />
+                        </DataTemplate>
+                    </c:PathControl.DataTemplates>
+                </c:PathControl>
+
                 <ContentControl Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding Settings}" />
             </StackPanel>

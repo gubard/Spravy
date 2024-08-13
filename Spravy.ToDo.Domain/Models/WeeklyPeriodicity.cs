@@ -6,8 +6,8 @@ public readonly struct WeeklyPeriodicity : IPeriodicity
 {
     public WeeklyPeriodicity(IEnumerable<DayOfWeek> days)
     {
-        Days = new SortedSet<DayOfWeek>(days);
+        Days = days.ToArray();
     }
 
-    public IReadOnlySet<DayOfWeek> Days { get; }
+    public ReadOnlyMemory<DayOfWeek> Days { get; }
 }

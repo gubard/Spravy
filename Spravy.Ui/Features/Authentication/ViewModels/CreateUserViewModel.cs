@@ -1,9 +1,6 @@
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
-public partial class CreateUserViewModel
-    : NavigatableViewModelBase,
-        ICreateUserProperties,
-        INotifyDataErrorInfo
+public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
 {
     private readonly IPropertyValidator propertyValidator;
 

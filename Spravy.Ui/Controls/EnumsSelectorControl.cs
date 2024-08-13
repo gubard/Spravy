@@ -2,57 +2,28 @@ using System.Collections.Specialized;
 
 namespace Spravy.Ui.Controls;
 
-public class IntegersSelectorControl : TemplatedControl
+public class EnumsSelectorControl : TemplatedControl
 {
-    public static readonly StyledProperty<IEnumerable<int>?> SelectedIntegersProperty =
-        AvaloniaProperty.Register<IntegersSelectorControl, IEnumerable<int>?>(
-            nameof(SelectedIntegers)
+    public static readonly StyledProperty<IEnumerable<ValueType>?> SelectedEnumsProperty =
+        AvaloniaProperty.Register<EnumsSelectorControl, IEnumerable<ValueType>?>(
+            nameof(SelectedEnums)
         );
 
-    public static readonly StyledProperty<int> MinProperty = AvaloniaProperty.Register<
-        IntegersSelectorControl,
-        int
-    >(nameof(Min));
-
-    public static readonly StyledProperty<int> MaxProperty = AvaloniaProperty.Register<
-        IntegersSelectorControl,
-        int
-    >(nameof(Max));
-
-    private readonly List<IntegerSelectorItemControl> integerControls = new();
+    private readonly List<EnumSelectorItemControl> enumControls = new();
     private ItemsControl? itemsControl;
-    private IEnumerable<int>? selectedIntegers;
+    private IEnumerable<ValueType>? selectedIntegers;
 
-    static IntegersSelectorControl()
+    static EnumsSelectorControl()
     {
-        MaxProperty.Changed.AddClassHandler<IntegersSelectorControl>(
-            (control, _) => control.UpdateIntegers()
-        );
-        MinProperty.Changed.AddClassHandler<IntegersSelectorControl>(
-            (control, _) => control.UpdateIntegers()
-        );
-
-        SelectedIntegersProperty.Changed.AddClassHandler<IntegersSelectorControl>(
+        SelectedEnumsProperty.Changed.AddClassHandler<EnumsSelectorControl>(
             (control, _) => control.UpdateSelectedIntegers()
         );
     }
 
-    public IEnumerable<int>? SelectedIntegers
+    public IEnumerable<ValueType>? SelectedEnums
     {
-        get => GetValue(SelectedIntegersProperty);
-        set => SetValue(SelectedIntegersProperty, value);
-    }
-
-    public int Max
-    {
-        get => GetValue(MaxProperty);
-        set => SetValue(MaxProperty, value);
-    }
-
-    public int Min
-    {
-        get => GetValue(MinProperty);
-        set => SetValue(MinProperty, value);
+        get => GetValue(SelectedEnumsProperty);
+        set => SetValue(SelectedEnumsProperty, value);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -64,7 +35,7 @@ public class IntegersSelectorControl : TemplatedControl
 
     private void UpdateSelectedIntegers()
     {
-        if (SelectedIntegers is null)
+        if (SelectedEnums is null)
         {
             if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
             {
@@ -73,7 +44,7 @@ public class IntegersSelectorControl : TemplatedControl
 
             selectedIntegers = null;
 
-            foreach (var integerControl in integerControls)
+            foreach (var integerControl in enumControls)
             {
                 if (integerControl.IsSelected)
                 {
@@ -83,7 +54,7 @@ public class IntegersSelectorControl : TemplatedControl
         }
         else
         {
-            if (!Equals(selectedIntegers, SelectedIntegers))
+            if (selectedIntegers != SelectedEnums)
             {
                 if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
                 {
@@ -91,7 +62,7 @@ public class IntegersSelectorControl : TemplatedControl
                         SelectedIntegersChangedEventHandler;
                 }
 
-                selectedIntegers = SelectedIntegers;
+                selectedIntegers = SelectedEnums;
 
                 if (selectedIntegers is INotifyCollectionChanged changed)
                 {
@@ -99,9 +70,9 @@ public class IntegersSelectorControl : TemplatedControl
                 }
             }
 
-            foreach (var integerControl in integerControls)
+            foreach (var integerControl in enumControls)
             {
-                var value = SelectedIntegers.Contains(integerControl.Value);
+                var value = SelectedEnums.Contains(integerControl.Value);
 
                 if (value != integerControl.IsSelected)
                 {
@@ -116,7 +87,7 @@ public class IntegersSelectorControl : TemplatedControl
         NotifyCollectionChangedEventArgs e
     )
     {
-        if (sender is not IEnumerable<int> enumerable)
+        if (sender is not IEnumerable<ValueType> enumerable)
         {
             return;
         }
@@ -137,7 +108,7 @@ public class IntegersSelectorControl : TemplatedControl
                 throw new ArgumentOutOfRangeException();
         }
 
-        foreach (var integerControl in integerControls)
+        foreach (var integerControl in enumControls)
         {
             var value = enumerable.Contains(integerControl.Value);
 
@@ -150,39 +121,41 @@ public class IntegersSelectorControl : TemplatedControl
 
     private void Clear()
     {
-        foreach (var integerControl in integerControls)
+        foreach (var integerControl in enumControls)
         {
             integerControl.PropertyChanged -= OnPropertyChanged;
         }
 
-        integerControls.Clear();
+        enumControls.Clear();
         itemsControl?.Items.Clear();
     }
 
     private void UpdateIntegers()
     {
+        if (SelectedEnums is null)
+        {
+            return;
+        }
+
         if (itemsControl is null)
         {
             return;
         }
 
         Clear();
-
-        if (Min > Max)
-        {
-            return;
-        }
-
-        integerControls.AddRange(
-            Enumerable.Range(Min, Max).Select(x => new IntegerSelectorItemControl { Value = x, })
+        enumControls.AddRange(
+            UiHelper
+                .GetEnumValues(SelectedEnums.GetType().GetGenericArguments()[0])
+                .Select(x => new EnumSelectorItemControl { Value = (ValueType)x, })
+                .ToArray()
         );
 
-        foreach (var integerControl in integerControls)
+        foreach (var integerControl in enumControls)
         {
             integerControl.PropertyChanged += OnPropertyChanged;
         }
 
-        foreach (var integer in integerControls)
+        foreach (var integer in enumControls)
         {
             itemsControl.Items.Add(integer);
         }
@@ -192,12 +165,12 @@ public class IntegersSelectorControl : TemplatedControl
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        if (sender is not IntegerSelectorItemControl integerControl)
+        if (sender is not EnumSelectorItemControl integerControl)
         {
             return;
         }
 
-        if (e.Property.Name == nameof(IntegerSelectorItemControl.IsSelected))
+        if (e.Property.Name == nameof(EnumSelectorItemControl.IsSelected))
         {
             if (selectedIntegers is null)
             {
@@ -211,7 +184,7 @@ public class IntegersSelectorControl : TemplatedControl
                     return;
                 }
 
-                if (selectedIntegers is ICollection<int> collection)
+                if (selectedIntegers is ICollection<ValueType> collection)
                 {
                     collection.Add(integerControl.Value);
                 }
@@ -223,7 +196,7 @@ public class IntegersSelectorControl : TemplatedControl
                     return;
                 }
 
-                if (selectedIntegers is ICollection<int> collection)
+                if (selectedIntegers is ICollection<ValueType> collection)
                 {
                     collection.Remove(integerControl.Value);
                 }

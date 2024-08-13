@@ -3,46 +3,37 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly IToDoUiService toDoUiService;
 
-    public ToDoItemDayOfWeekSelectorViewModel(
-        ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
-    )
+    public ToDoItemDayOfWeekSelectorViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
     {
         this.toDoService = toDoService;
         Item = item;
-        this.toDoUiService = toDoUiService;
-
-        Items = new(
-            UiHelper.DayOfWeeks.ToArray().Select(x => new DayOfWeekSelectItem { DayOfWeek = x, })
-        );
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
+        DayOfWeeks = new(UiHelper.DayOfWeeks.Select(x => new Selected<DayOfWeek>(x)).ToArray());
+        Update();
     }
 
-    public AvaloniaList<DayOfWeekSelectItem> Items { get; }
-    public SpravyCommand InitializedCommand { get; }
+    public AvaloniaList<Selected<DayOfWeek>> DayOfWeeks { get; }
     public ToDoItemEntityNotify Item { get; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             Item.Id,
-            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
+            new(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value)),
             ct
         );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Result Update()
     {
-        return toDoUiService.UpdateItemAsync(Item, ct);
+        foreach (var dayOfWeek in DayOfWeeks)
+        {
+            if (Item.DaysOfWeek.Contains(dayOfWeek.Value))
+            {
+                dayOfWeek.IsSelect = true;
+            }
+        }
+
+        return Result.Success;
     }
 }

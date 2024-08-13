@@ -28,7 +28,8 @@ public class SpravyCommandService
         INavigator navigator,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
-        IViewFactory viewFactory
+        IViewFactory viewFactory,
+        IToDoUiService toDoUiService
     )
     {
         createNavigateToCache = new();
@@ -38,7 +39,16 @@ public class SpravyCommandService
 
         NavigateToToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = item.CurrentId, ct),
+                toDoCache
+                    .GetToDoItem(item.CurrentId)
+                    .IfSuccessAsync(
+                        parent =>
+                            navigator.NavigateToAsync(
+                                viewFactory.CreateToDoItemViewModel(parent),
+                                ct
+                            ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -690,10 +700,16 @@ public class SpravyCommandService
                             {
                                 if (value.ParentId.TryGetValue(out var parentId))
                                 {
-                                    return navigator.NavigateToAsync<ToDoItemViewModel>(
-                                        viewModel => viewModel.Id = parentId,
-                                        ct
-                                    );
+                                    return toDoCache
+                                        .GetToDoItem(parentId)
+                                        .IfSuccessAsync(
+                                            parent =>
+                                                navigator.NavigateToAsync(
+                                                    viewFactory.CreateToDoItemViewModel(parent),
+                                                    ct
+                                                ),
+                                            ct
+                                        );
                                 }
                             }
 
@@ -900,8 +916,8 @@ public class SpravyCommandService
                                         );
                                     }
 
-                                    return navigator.NavigateToAsync<ToDoItemViewModel>(
-                                        viewModel => viewModel.Id = item.Parent.Id,
+                                    return navigator.NavigateToAsync(
+                                        viewFactory.CreateToDoItemViewModel(item.Parent),
                                         ct
                                     );
                                 },
@@ -919,50 +935,60 @@ public class SpravyCommandService
 
         ShowSetting = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateToDoItemSettingsViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.UpdateToDoItemNameAsync(
-                                        item.Id,
-                                        vm.ToDoItemContent.Name,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.UpdateToDoItemLinkAsync(
-                                        item.Id,
-                                        vm.ToDoItemContent.Link.ToOptionUri(),
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.UpdateToDoItemTypeAsync(
-                                        item.Id,
-                                        vm.ToDoItemContent.Type,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => vm.Settings.ThrowIfNull().ApplySettingsAsync(ct),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                toDoUiService
+                    .UpdateItemAsync(item, ct)
+                    .IfSuccessAsync(
+                        () =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateToDoItemSettingsViewModel(item),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(
+                                            () =>
+                                                toDoService.UpdateToDoItemNameAsync(
+                                                    item.Id,
+                                                    vm.ToDoItemContent.Name,
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () =>
+                                                toDoService.UpdateToDoItemLinkAsync(
+                                                    item.Id,
+                                                    vm.ToDoItemContent.Link.ToOptionUri(),
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () =>
+                                                toDoService.UpdateToDoItemTypeAsync(
+                                                    item.Id,
+                                                    vm.ToDoItemContent.Type,
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => vm.Settings.ApplySettingsAsync(ct),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => toDoUiService.UpdateItemAsync(item, ct),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
-                    ct
-                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -1986,7 +2012,7 @@ public class SpravyCommandService
                                 () =>
                                     toDoService.UpdateToDoItemDescriptionTypeAsync(
                                         item.Id,
-                                        vm.Type,
+                                        vm.DescriptionType,
                                         ct
                                     ),
                                 ct
@@ -2139,10 +2165,16 @@ public class SpravyCommandService
                             {
                                 if (value.ParentId.TryGetValue(out var parentId))
                                 {
-                                    return navigator.NavigateToAsync<ToDoItemViewModel>(
-                                        vm => vm.Id = parentId,
-                                        ct
-                                    );
+                                    return toDoCache
+                                        .GetToDoItem(parentId)
+                                        .IfSuccessAsync(
+                                            parent =>
+                                                navigator.NavigateToAsync(
+                                                    viewFactory.CreateToDoItemViewModel(parent),
+                                                    ct
+                                                ),
+                                            ct
+                                        );
                                 }
 
                                 return navigator.NavigateToAsync<RootToDoItemsViewModel>(ct);
@@ -2564,40 +2596,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        AddToDoItemViewInitialized = SpravyCommand.Create<AddToDoItemViewModel>(
-            (vm, ct) =>
-                objectStorage
-                    .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(vm.ViewId, ct)
-                    .IfSuccessAsync(obj => vm.SetStateAsync(obj, ct), ct)
-                    .IfSuccessAsync(
-                        () =>
-                            toDoService
-                                .GetParentsAsync(vm.Parent.Id, ct)
-                                .IfSuccessAsync(
-                                    parents =>
-                                    {
-                                        var path = MaterialIconKind
-                                            .Home.As<object>()
-                                            .ToEnumerable()
-                                            .Concat(parents.ToArray().Select(x => x.Name))
-                                            .Select(x => x.ThrowIfNull())
-                                            .ToArray();
-
-                                        return this.InvokeUiBackgroundAsync(() =>
-                                        {
-                                            vm.Path = path;
-
-                                            return Result.Success;
-                                        });
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
         MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
             (view, _) =>
                 view
@@ -2687,7 +2685,6 @@ public class SpravyCommandService
     public SpravyCommand LoginViewInitialized { get; }
     public SpravyCommand PasswordGeneratorViewInitialized { get; }
     public SpravyCommand AddRootToDoItemViewInitialized { get; }
-    public SpravyCommand AddToDoItemViewInitialized { get; }
     public SpravyCommand MultiToDoItemsViewInitialized { get; }
 
     public SpravyCommand ForgotPassword { get; }
