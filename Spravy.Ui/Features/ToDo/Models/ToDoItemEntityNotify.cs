@@ -153,7 +153,11 @@ public partial class ToDoItemEntityNotify
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
     {
-        var selected = Children.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
+        var selected = Children
+            .Where(x => x.IsSelected)
+            .OrderBy(x => x.OrderIndex)
+            .ToArray()
+            .ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {
@@ -165,7 +169,11 @@ public partial class ToDoItemEntityNotify
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetNotSelectedItems()
     {
-        var selected = Children.Where(x => !x.IsSelected).ToArray().ToReadOnlyMemory();
+        var selected = Children
+            .Where(x => !x.IsSelected)
+            .OrderBy(x => x.OrderIndex)
+            .ToArray()
+            .ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {

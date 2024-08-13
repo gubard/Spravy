@@ -93,6 +93,15 @@ public interface IViewFactory
     );
 
     ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item
+    );
+
+    ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 }

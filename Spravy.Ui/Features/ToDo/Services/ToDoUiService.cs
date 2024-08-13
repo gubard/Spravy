@@ -81,35 +81,28 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<ToDoItemEntityNotify>>
-    > UpdateSiblingsAsync(ToDoItemEntityNotify item, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> UpdateSiblingsAsync(
+        ToDoItemEntityNotify item,
+        IToDoItemsView toDoItemsView,
+        CancellationToken ct
+    )
     {
-        Result<ReadOnlyMemory<ToDoShortItem>>? items = null;
-
-        return Result
-            .AwaitableSuccess.IfSuccessAllAsync(
-                ct,
-                () => UpdateItemAsync(item, ct),
-                () =>
-                    toDoService
-                        .GetSiblingsAsync(item.Id, ct)
-                        .IfSuccessAsync(i => items = i.ToResult(), ct)
-                        .IfSuccessAsync(
-                            s =>
-                                this.PostUiBackground(
-                                    () =>
-                                        s.IfSuccessForEach(x => toDoCache.UpdateUi(x))
-                                            .ToResultOnly(),
-                                    ct
+        return Result.AwaitableSuccess.IfSuccessAllAsync(
+            ct,
+            () => toDoItemsView.RefreshAsync(ct),
+            () => UpdateItemAsync(item, ct),
+            () =>
+                toDoService
+                    .GetSiblingsAsync(item.Id, ct)
+                    .IfSuccessAsync(
+                        ids =>
+                            ids.IfSuccessForEach(i => toDoCache.UpdateUi(i))
+                                .IfSuccess(x =>
+                                    this.PostUiBackground(() => toDoItemsView.ClearExceptUi(x), ct)
                                 ),
-                            ct
-                        )
-            )
-            .IfSuccessAsync(
-                () => items.ThrowIfNull().IfSuccessForEach(x => toDoCache.GetToDoItem(x.Id)),
-                ct
-            );
+                        ct
+                    )
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateLeafToDoItemsAsync(
@@ -258,7 +251,20 @@ public class ToDoUiService : IToDoUiService
                         ids =>
                             ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
                                 .IfSuccess(x =>
-                                    this.PostUiBackground(() => toDoItemsView.ClearExceptUi(x), ct)
+                                    this.PostUiBackground(
+                                        () =>
+                                            toDoItemsView
+                                                .ClearExceptUi(x)
+                                                .IfSuccess(
+                                                    () =>
+                                                        toDoCache.UpdateChildrenItemsUi(
+                                                            item.Id,
+                                                            ids
+                                                        )
+                                                )
+                                                .ToResultOnly(),
+                                        ct
+                                    )
                                 )
                                 .IfSuccess(() => ids.ToResult()),
                         ct

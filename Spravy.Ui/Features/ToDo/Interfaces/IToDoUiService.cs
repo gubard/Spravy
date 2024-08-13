@@ -12,8 +12,9 @@ public interface IToDoUiService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItemEntityNotify>>> UpdateSiblingsAsync(
+    ConfiguredValueTaskAwaitable<Result> UpdateSiblingsAsync(
         ToDoItemEntityNotify item,
+        IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
 

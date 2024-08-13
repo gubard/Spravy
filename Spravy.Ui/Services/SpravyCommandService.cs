@@ -1104,64 +1104,45 @@ public class SpravyCommandService
 
         ChangeOrder = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                Result
-                    .Success.IfSuccess(() =>
-                    {
-                        if (item.Parent is null)
-                        {
-                            return toDoCache.GetRootItems();
-                        }
+                dialogViewer.ShowConfirmDialogAsync(
+                    viewFactory,
+                    DialogViewLayer.Content,
+                    viewFactory.CreateChangeToDoItemOrderIndexViewModel(item),
+                    vm =>
+                        dialogViewer
+                            .CloseDialogAsync(DialogViewLayer.Content, ct)
+                            .IfSuccessAsync(
+                                () => vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                selectedItem =>
+                                {
+                                    var options = new UpdateOrderIndexToDoItemOptions(
+                                        item.Id,
+                                        selectedItem.Id,
+                                        vm.IsAfter
+                                    );
 
-                        return item
-                            .Parent.Children.Where(x => x.Id != item.Id)
-                            .ToArray()
-                            .ToReadOnlyMemory()
-                            .ToResult();
-                    })
-                    .IfSuccessAsync(
-                        items =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateChangeToDoItemOrderIndexViewModel(items),
-                                vm =>
-                                    dialogViewer
+                                    return dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
                                         .IfSuccessAsync(
                                             () =>
-                                            {
-                                                var targetId = vm.SelectedItem.ThrowIfNull().Id;
-
-                                                var options = new UpdateOrderIndexToDoItemOptions(
-                                                    item.Parent.ThrowIfNull().Id,
-                                                    targetId,
-                                                    vm.IsAfter
-                                                );
-
-                                                return dialogViewer
-                                                    .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            toDoService.UpdateToDoItemOrderIndexAsync(
-                                                                options,
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    );
-                                            },
+                                                toDoService.UpdateToDoItemOrderIndexAsync(
+                                                    options,
+                                                    ct
+                                                ),
                                             ct
-                                        ),
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        );
+                                },
                                 ct
                             ),
-                        ct
-                    ),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
@@ -1634,6 +1615,7 @@ public class SpravyCommandService
                                             viewFactory,
                                             DialogViewLayer.Content,
                                             viewFactory.CreateChangeToDoItemOrderIndexViewModel(
+                                                item,
                                                 noSelected
                                             ),
                                             vm =>

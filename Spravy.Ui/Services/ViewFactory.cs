@@ -323,9 +323,30 @@ public class ViewFactory : IViewFactory
     }
 
     public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(
+            item,
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
+            errorHandler,
+            taskProgressService,
+            toDoUiService
+        );
+    }
+
+    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(items, errorHandler, taskProgressService, toDoUiService);
+        return new(item, items, errorHandler, taskProgressService, toDoUiService);
+    }
+
+    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(null, items, errorHandler, taskProgressService, toDoUiService);
     }
 }

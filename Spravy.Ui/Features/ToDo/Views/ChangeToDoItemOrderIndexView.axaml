@@ -4,12 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-             xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
              x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
     <Grid RowDefinitions="Auto,*">
         <StackPanel Orientation="Horizontal">
+            <c:PathControl Segments="{Binding Item.Path}">
+                <c:PathControl.DataTemplates>
+                    <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                        <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                    </DataTemplate>
+
+                    <DataTemplate DataType="m:RootItem">
+                        <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                    </DataTemplate>
+                </c:PathControl.DataTemplates>
+            </c:PathControl>
+
             <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
             <ToggleSwitch IsChecked="{Binding IsAfter}" />
             <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
@@ -21,7 +36,7 @@
                      SelectionMode="Single"
                      SelectedItem="{Binding SelectedItem}">
                 <ListBox.DataTemplates>
-                    <DataTemplate DataType="m:ToDoItemEntityNotify">
+                    <DataTemplate DataType="tm:ToDoItemEntityNotify">
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ListBox.DataTemplates>
