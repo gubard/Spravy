@@ -5,7 +5,7 @@ namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct AnnuallyPeriodicity : IPeriodicity
 {
-    public AnnuallyPeriodicity(IEnumerable<DayOfYear> days)
+    public AnnuallyPeriodicity(ReadOnlyMemory<DayOfYear> days)
     {
         Days = days.ToArray();
     }

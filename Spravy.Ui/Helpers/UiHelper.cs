@@ -150,6 +150,9 @@ public static class UiHelper
             ]
         );
 
+    public static ReadOnlyMemory<ThemeType> ThemeTypes =
+        new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
+
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
         if (typeof(ToDoItemStatus) == type)
@@ -185,6 +188,11 @@ public static class UiHelper
         if (typeof(ToDoItemChildrenType) == type)
         {
             return new(ToDoItemChildrenTypes.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(ThemeType) == type)
+        {
+            return new(ThemeTypes.ToArray().OfType<object>().ToArray());
         }
 
         if (typeof(TypeOfPeriodicity) == type)

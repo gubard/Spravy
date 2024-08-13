@@ -2,6 +2,18 @@
 
 public static class MemoryExtension
 {
+    public static ReadOnlyMemory<TSource> OrderByDefault<TSource, TValue>(
+        this ReadOnlyMemory<TSource> source,
+        Func<TSource, TValue> keySelector
+    )
+    {
+        var result = new Memory<TSource>(new TSource[source.Length]);
+        source.CopyTo(result);
+        result.Span.BinarySortDefault(keySelector);
+
+        return result;
+    }
+
     public static ReadOnlyMemory<TSource> SelectMany<TSource>(
         this ReadOnlyMemory<ReadOnlyMemory<TSource>> memory
     )
@@ -47,6 +59,19 @@ public static class MemoryExtension
         this ReadOnlyMemory<TSource> source,
         Func<TSource, uint> keySelector
     )
+    {
+        var result = new Memory<TSource>(new TSource[source.Length]);
+        source.CopyTo(result);
+        result.Span.BinarySort(keySelector);
+
+        return result;
+    }
+
+    public static ReadOnlyMemory<TSource> OrderBy<TSource, TValue>(
+        this ReadOnlyMemory<TSource> source,
+        Func<TSource, TValue> keySelector
+    )
+        where TValue : IComparable<TValue>
     {
         var result = new Memory<TSource>(new TSource[source.Length]);
         source.CopyTo(result);

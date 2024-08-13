@@ -96,4 +96,42 @@ public static partial class ToDoDbMapper
     {
         return value.ToOptionGuid();
     }
+
+    public static FullToDoItem ToFullToDoItem(
+        this ToDoItemEntity entity,
+        ToDoItemParameters parameters
+    )
+    {
+        var referenceId =
+            entity.Type == ToDoItemType.Reference
+                ? entity.ReferenceId.ToOptionGuid()
+                : OptionStruct<Guid>.Default;
+
+        return new(
+            entity.Id,
+            entity.Name,
+            entity.IsFavorite,
+            entity.Type,
+            entity.Description,
+            entity.Link.ToOptionUri(),
+            entity.OrderIndex,
+            parameters.Status,
+            parameters.ActiveItem,
+            parameters.IsCan,
+            entity.ParentId.ToOption(),
+            entity.DescriptionType,
+            referenceId,
+            entity.GetDaysOfYear(),
+            entity.GetDaysOfMonth(),
+            entity.ChildrenType,
+            entity.DueDate,
+            entity.DaysOffset,
+            entity.MonthsOffset,
+            entity.WeeksOffset,
+            entity.YearsOffset,
+            entity.IsRequiredCompleteInDueDate,
+            entity.TypeOfPeriodicity,
+            entity.GetDaysOfWeek()
+        );
+    }
 }

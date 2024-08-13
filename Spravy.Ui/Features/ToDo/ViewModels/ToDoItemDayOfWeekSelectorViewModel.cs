@@ -19,7 +19,7 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     {
         return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             Item.Id,
-            new(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value)),
+            new(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value).ToArray()),
             ct
         );
     }

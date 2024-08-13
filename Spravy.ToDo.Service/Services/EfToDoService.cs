@@ -2313,9 +2313,8 @@ public class EfToDoService : IToDoService
                 var dayOfWeek = item.DueDate.DayOfWeek;
 
                 var daysOfWeek = item.GetDaysOfWeek()
-                    .Order()
+                    .OrderByDefault(x => x)
                     .Select(x => (DayOfWeek?)x)
-                    .ThrowIfEmpty()
                     .ToArray();
 
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
@@ -2362,9 +2361,8 @@ public class EfToDoService : IToDoService
                 var now = item.DueDate;
 
                 var daysOfYear = item.GetDaysOfYear()
-                    .Order()
+                    .OrderBy(x => x)
                     .Select(x => (DayOfYear?)x)
-                    .ThrowIfEmpty()
                     .ToArray();
 
                 var nextDay = daysOfYear.FirstOrDefault(x =>

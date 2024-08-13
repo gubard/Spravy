@@ -4,7 +4,7 @@ namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct WeeklyPeriodicity : IPeriodicity
 {
-    public WeeklyPeriodicity(IEnumerable<DayOfWeek> days)
+    public WeeklyPeriodicity(ReadOnlyMemory<DayOfWeek> days)
     {
         Days = days.ToArray();
     }

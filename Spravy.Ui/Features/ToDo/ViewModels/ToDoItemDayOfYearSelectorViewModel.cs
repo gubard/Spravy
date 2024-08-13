@@ -40,9 +40,11 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
         return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             Item.Id,
             new(
-                DaysOfYear.SelectMany(x =>
-                    x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
-                )
+                DaysOfYear
+                    .SelectMany(x =>
+                        x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
+                    )
+                    .ToArray()
             ),
             ct
         );

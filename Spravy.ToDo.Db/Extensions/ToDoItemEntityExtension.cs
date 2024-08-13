@@ -31,21 +31,21 @@ public static class ToDoItemEntityExtension
         return result;
     }
 
-    public static IEnumerable<DayOfWeek> GetDaysOfWeek(this ToDoItemEntity item)
+    public static ReadOnlyMemory<DayOfWeek> GetDaysOfWeek(this ToDoItemEntity item)
     {
         if (item.DaysOfWeek.IsNullOrWhiteSpace())
         {
-            return Enumerable.Empty<DayOfWeek>();
+            return ReadOnlyMemory<DayOfWeek>.Empty;
         }
 
-        return item.DaysOfWeek.Split(";").Select(Enum.Parse<DayOfWeek>);
+        return item.DaysOfWeek.Split(";").Select(Enum.Parse<DayOfWeek>).ToArray();
     }
 
-    public static IEnumerable<DayOfYear> GetDaysOfYear(this ToDoItemEntity item)
+    public static ReadOnlyMemory<DayOfYear> GetDaysOfYear(this ToDoItemEntity item)
     {
         if (item.DaysOfYear.IsNullOrWhiteSpace())
         {
-            return Enumerable.Empty<DayOfYear>();
+            return ReadOnlyMemory<DayOfYear>.Empty;
         }
 
         return item
@@ -55,7 +55,8 @@ public static class ToDoItemEntityExtension
                 var value = x.Split(".");
 
                 return new DayOfYear(byte.Parse(value[1]), byte.Parse(value[0]));
-            });
+            })
+            .ToArray();
     }
 
     public static void SetDaysOfYear(this ToDoItemEntity item, ReadOnlyMemory<DayOfYear> daysOfYear)

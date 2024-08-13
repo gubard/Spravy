@@ -4,7 +4,7 @@
     <ControlTheme x:Key="IntegerSelectorControlStyle" TargetType="c:IntegerSelectorItemControl">
         <Setter Property="Template">
             <ControlTemplate>
-                <ToggleButton IsChecked="{TemplateBinding IsSelected}" Content="{TemplateBinding Value}" />
+                <ToggleButton x:Name="PART_ToggleButton" Content="{TemplateBinding Value}" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>

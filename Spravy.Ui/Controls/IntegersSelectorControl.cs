@@ -197,6 +197,8 @@ public class IntegersSelectorControl : TemplatedControl
             return;
         }
 
+        Console.WriteLine(e.Property.Name);
+
         if (e.Property.Name == nameof(IntegerSelectorItemControl.IsSelected))
         {
             if (selectedIntegers is null)
