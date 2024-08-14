@@ -43,4 +43,5 @@
     <StyleInclude Source="MenuItem.axaml" />
     <StyleInclude Source="TreeViewItem.axaml" />
     <StyleInclude Source="ToggleSwitch.axaml" />
+    <StyleInclude Source="StackPanel.axaml" />
 </Styles>

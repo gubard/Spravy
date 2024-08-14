@@ -6,32 +6,33 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemSettingView"
              x:DataType="vm:MultiToDoItemSettingViewModel">
-    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
-        <ToggleSwitch IsChecked="{Binding IsName}" />
-
-        <StackPanel Grid.Column="1">
-            <TextBlock Classes="field"
-                       Text="{DynamicResource ToDoItemSettingsView.Name}" />
-            <TextBox Text="{Binding Name}" />
+    <StackPanel>
+        <StackPanel Classes="horizontal">
+            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
+            <ToggleSwitch Classes="field" IsChecked="{Binding IsName}" />
         </StackPanel>
 
-        <ToggleSwitch Grid.Row="1" IsChecked="{Binding IsLink}" />
+        <TextBox Text="{Binding Name}" />
 
-        <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock Classes="field"
-                       Text="{DynamicResource ToDoItemSettingsView.Url}" />
-            <TextBox Classes="content-type-url"
-                     Text="{Binding Link}" />
+        <StackPanel Classes="horizontal">
+            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
+            <ToggleSwitch Classes="field" IsChecked="{Binding IsLink}" />
         </StackPanel>
 
-        <ToggleSwitch Grid.Row="2" IsChecked="{Binding IsType}" />
+        <TextBox Classes="content-type-url" Text="{Binding Link}" />
 
-        <StackPanel Grid.Row="2" Grid.Column="1">
-            <TextBlock Classes="field"
-                       Text="{DynamicResource ToDoItemSettingsView.Type}" />
-            <ListBox Classes="wrap-panel"
-                     SelectedItem="{Binding Type}"
-                     ItemsSource="{Binding ToDoItemTypes}" />
+        <StackPanel Classes="horizontal">
+            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Type}" />
+            <ToggleSwitch Classes="field" IsChecked="{Binding IsType}" />
         </StackPanel>
-    </Grid>
+
+        <ListBox Classes="wrap-panel" SelectedItem="{Binding Type}" ItemsSource="{Binding ToDoItemTypes}" />
+        
+        <StackPanel Classes="horizontal">
+            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
+            <ToggleSwitch Classes="field" IsChecked="{Binding IsDueDate}" />
+        </StackPanel>
+
+        <CalendarDatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+    </StackPanel>
 </UserControl>

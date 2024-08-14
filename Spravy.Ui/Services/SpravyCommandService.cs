@@ -480,6 +480,22 @@ public class SpravyCommandService
                                                             .IfSuccessAsync(
                                                                 () =>
                                                                 {
+                                                                    if (vm.IsDueDate)
+                                                                    {
+                                                                        return toDoService.UpdateToDoItemDueDateAsync(
+                                                                            item.Id,
+                                                                            vm.DueDate,
+                                                                            ct
+                                                                        );
+                                                                    }
+
+                                                                    return Result.AwaitableSuccess;
+                                                                },
+                                                                ct
+                                                            )
+                                                            .IfSuccessAsync(
+                                                                () =>
+                                                                {
                                                                     if (vm.IsType)
                                                                     {
                                                                         return toDoService.UpdateToDoItemTypeAsync(
@@ -1364,6 +1380,22 @@ public class SpravyCommandService
                                                                         return toDoService.UpdateToDoItemNameAsync(
                                                                             i.Id,
                                                                             vm.Name,
+                                                                            ct
+                                                                        );
+                                                                    }
+
+                                                                    return Result.AwaitableSuccess;
+                                                                },
+                                                                ct
+                                                            )
+                                                            .IfSuccessAsync(
+                                                                () =>
+                                                                {
+                                                                    if (vm.IsDueDate)
+                                                                    {
+                                                                        return toDoService.UpdateToDoItemDueDateAsync(
+                                                                            i.Id,
+                                                                            vm.DueDate,
                                                                             ct
                                                                         );
                                                                     }

@@ -20,6 +20,12 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     [ObservableProperty]
     private ToDoItemType type;
 
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private bool isDueDate;
+
     public MultiToDoItemSettingViewModel(ToDoItemEntityNotify item)
     {
         Item = item;

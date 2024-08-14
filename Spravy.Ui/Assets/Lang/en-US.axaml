@@ -19,6 +19,12 @@
     <sys:String x:Key="Command.Clone">Clone</sys:String>
     <sys:String x:Key="Command.CreateReference">Create reference</sys:String>
     <sys:String x:Key="Command.OpenCurrent">Open current to-do item</sys:String>
+    
+    <!--MultiToDoItemSettingView-->
+    <sys:String x:Key="MultiToDoItemSettingView.Name">Name</sys:String>
+    <sys:String x:Key="MultiToDoItemSettingView.Url">URL</sys:String>
+    <sys:String x:Key="MultiToDoItemSettingView.Type">Type</sys:String>
+    <sys:String x:Key="MultiToDoItemSettingView.DueDate">Due date</sys:String>
 
     <!--TodayToDoItemsView-->
     <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>

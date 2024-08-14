@@ -7,4 +7,9 @@
     <Style Selector="ToggleSwitch /template/ ContentPresenter#PART_OnContentPresenter">
         <Setter Property="IsVisible" Value="False" />
     </Style>
+
+    <Style Selector="ToggleSwitch.field">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Margin" Value="6,0,0,3" />
+    </Style>
 </Styles>
