@@ -16,7 +16,7 @@
                        Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
         </c:GroupBoxControl.Header>
 
-        <c:PathControl Segments="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">
+        <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
             <c:PathControl.DataTemplates>
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />

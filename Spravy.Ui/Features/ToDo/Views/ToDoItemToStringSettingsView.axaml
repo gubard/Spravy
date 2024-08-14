@@ -13,7 +13,7 @@
              x:DataType="vm:ToDoItemToStringSettingsViewModel">
     <v:GroupBoxControl Header="{Binding Item.Name}">
         <StackPanel>
-            <v:PathControl Segments="{Binding Item.Path}">
+            <v:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
                 <v:PathControl.DataTemplates>
                     <DataTemplate DataType="models:ToDoItemEntityNotify">
                         <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />

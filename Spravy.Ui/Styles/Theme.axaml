@@ -10,7 +10,6 @@
                 <MergeResourceInclude Source="GroupBoxControl.axaml" />
                 <MergeResourceInclude Source="PathControl.axaml" />
                 <MergeResourceInclude Source="BusyAreaControl.axaml" />
-                <MergeResourceInclude Source="CopiedTextControl.axaml" />
                 <MergeResourceInclude Source="AdaptiveResources.axaml" />
                 <MergeResourceInclude Source="ViewSelectorControl.axaml" />
                 <MergeResourceInclude Source="ViewSelectorItemControl.axaml" />

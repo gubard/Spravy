@@ -93,7 +93,7 @@
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
-            <controls:PathControl Segments="{Binding Item.Path}" HorizontalAlignment="Center">
+            <controls:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
                 <controls:PathControl.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
                         <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"

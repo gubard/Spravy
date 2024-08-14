@@ -19,7 +19,7 @@
             <StackPanel>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Disabled">
-                    <controls:PathControl Segments="{Binding Parent.Path}" HorizontalAlignment="Left">
+                    <controls:PathControl Classes="alignment-center" Segments="{Binding Parent.Path}">
                         <controls:PathControl.DataTemplates>
                             <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                 <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
