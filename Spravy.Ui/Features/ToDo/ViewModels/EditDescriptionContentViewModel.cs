@@ -1,4 +1,6 @@
-namespace Spravy.Ui.ViewModels;
+using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
+
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class EditDescriptionContentViewModel : ViewModelBase
 {

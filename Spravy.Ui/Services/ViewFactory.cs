@@ -1,3 +1,5 @@
+using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
+
 namespace Spravy.Ui.Services;
 
 public class ViewFactory : IViewFactory
@@ -73,6 +75,11 @@ public class ViewFactory : IViewFactory
     )
     {
         return new(item, toDoService, errorHandler, taskProgressService);
+    }
+
+    public EditDescriptionViewModel CreateEditDescriptionViewModel(ToDoItemEntityNotify item)
+    {
+        return new(item, CreateEditDescriptionContentViewModel());
     }
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel()

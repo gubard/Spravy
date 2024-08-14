@@ -1,4 +1,4 @@
-namespace Spravy.Ui.Features.ToDo.ViewModels;
+namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsViewModelSetting>
 {

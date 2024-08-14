@@ -2,20 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Spravy.Ui.Views.EditDescriptionContentView"
-             x:DataType="vm:EditDescriptionContentViewModel">
-    <Grid RowDefinitions="Auto,Auto,*">
+             x:Class="Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView"
+             x:DataType="viewModels:EditDescriptionContentViewModel">
+    <StackPanel>
+        <TextBlock Classes="field"
+                   Text="{DynamicResource EditDescriptionView.DescriptionType}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource EditDescriptionView.Description}" />
-        <c:EnumSelectorControl Grid.Row="1" SelectedEnum="{Binding DescriptionType}" />
-
-        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-            <TextBox x:Name="DescriptionTextBox"
-                     Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
-                     Text="{Binding Description}" />
-        </ScrollViewer>
-    </Grid>
+        <TextBox x:Name="DescriptionTextBox"
+                 Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
+                 Text="{Binding Description}" />
+    </StackPanel>
 </UserControl>

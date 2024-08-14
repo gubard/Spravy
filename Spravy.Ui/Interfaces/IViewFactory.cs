@@ -1,3 +1,5 @@
+using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
+
 namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
@@ -25,6 +27,7 @@ public interface IViewFactory
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
     ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();
+    EditDescriptionViewModel CreateEditDescriptionViewModel(ToDoItemEntityNotify item);
     ToDoSubItemsViewModel CreateToDoSubItemsViewModel();
 
     ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(

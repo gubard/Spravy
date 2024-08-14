@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
              xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"

@@ -110,6 +110,7 @@
 
     <!--EditDescriptionView-->
     <sys:String x:Key="EditDescriptionView.Description">Description</sys:String>
+    <sys:String x:Key="EditDescriptionView.DescriptionType">Description type</sys:String>
 
     <!--DeleteToDoItemView-->
     <sys:String x:Key="DeleteToDoItemView.NamedHeader">Are you sure you want to delete "{Name}"?</sys:String>

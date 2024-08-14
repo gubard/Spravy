@@ -7,6 +7,8 @@ using Spravy.PasswordGenerator.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
 using Spravy.Ui.Features.PasswordGenerator.Views;
 using Spravy.Ui.Features.ToDo.Views;
+using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
+using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
 
 namespace Spravy.Ui.Modules;
 

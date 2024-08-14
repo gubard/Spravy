@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+             x:Class="Spravy.Ui.Features.ToDo.Views.EditDescriptionView"
+             x:DataType="viewModels:EditDescriptionViewModel">
+    <c:GroupBoxControl>
+        <c:GroupBoxControl.Header>
+            <TextBlock Classes="alignment-left text-wrap" Text="{Binding Item.Name}" />
+        </c:GroupBoxControl.Header>
+
+        <ScrollViewer>
+            <StackPanel>
+                <c:PathControl Segments="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">
+                    <c:PathControl.DataTemplates>
+                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                        </DataTemplate>
+
+                        <DataTemplate DataType="m:RootItem">
+                            <mi:MaterialIcon Kind="Home" Margin="5" />
+                        </DataTemplate>
+                    </c:PathControl.DataTemplates>
+                </c:PathControl>
+
+                <ContentControl Content="{Binding Content}" />
+            </StackPanel>
+        </ScrollViewer>
+    </c:GroupBoxControl>
+</UserControl>

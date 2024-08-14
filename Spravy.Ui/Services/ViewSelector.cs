@@ -1,5 +1,9 @@
 using Spravy.Ui.Features.PasswordGenerator.Views;
 using Spravy.Ui.Features.ToDo.Views;
+using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
+using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
+using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
+using EditDescriptionViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionViewModel;
 
 namespace Spravy.Ui.Services;
 

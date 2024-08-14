@@ -1977,7 +1977,7 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmDialogAsync(
                     viewFactory,
                     DialogViewLayer.Content,
-                    viewFactory.CreateEditDescriptionContentViewModel(),
+                    viewFactory.CreateEditDescriptionViewModel(item),
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Content, ct)
@@ -1985,7 +1985,7 @@ public class SpravyCommandService
                                 () =>
                                     toDoService.UpdateToDoItemDescriptionAsync(
                                         item.Id,
-                                        vm.Description,
+                                        vm.Content.Description,
                                         ct
                                     ),
                                 ct
@@ -1994,7 +1994,7 @@ public class SpravyCommandService
                                 () =>
                                     toDoService.UpdateToDoItemDescriptionTypeAsync(
                                         item.Id,
-                                        vm.DescriptionType,
+                                        vm.Content.DescriptionType,
                                         ct
                                     ),
                                 ct
