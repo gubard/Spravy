@@ -27,16 +27,13 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Item.Id, Item.ChildrenType, ct)
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemDueDateAsync(Item.Id, Item.DueDate, ct),
-                ct
-            )
+            .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
+            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
             .IfSuccessAsync(
                 () =>
                     toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
                         Item.Id,
-                        Item.IsRequiredCompleteInDueDate,
+                        IsRequiredCompleteInDueDate,
                         ct
                     ),
                 ct
