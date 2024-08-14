@@ -240,7 +240,7 @@ public class SpravyCommandNotifyService
         CopyToClipboard = new(
             MaterialIconKind.Clipboard,
             new("Command.CopyToClipboard"),
-            commandService.CopyToClipboard
+            commandService.ToDoItemCopyToClipboard
         );
 
         RandomizeChildrenOrder = new(

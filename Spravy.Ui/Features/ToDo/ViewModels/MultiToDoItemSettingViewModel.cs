@@ -2,7 +2,7 @@ using Spravy.Core.Mappers;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class MultiToDoItemSettingViewModel : ViewModelBase
+public partial class MultiToDoItemSettingViewModel(ToDoItemEntityNotify item) : ViewModelBase
 {
     [ObservableProperty]
     private bool isName;
@@ -28,12 +28,7 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     [ObservableProperty]
     private bool isDueDate;
 
-    public MultiToDoItemSettingViewModel(ToDoItemEntityNotify item)
-    {
-        Item = item;
-        ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
-    }
-
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
-    public ToDoItemEntityNotify Item { get; }
+    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } =
+        new(UiHelper.ToDoItemTypes.ToArray());
+    public ToDoItemEntityNotify Item { get; } = item;
 }

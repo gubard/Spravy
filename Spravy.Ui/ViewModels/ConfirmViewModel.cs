@@ -36,22 +36,11 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
 
     private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken ct)
     {
-        return Content
-            .IfNotNull(nameof(Content))
-            .IfSuccessAsync(
-                c => cancelTask.IfNotNull(nameof(cancelTask)).IfSuccessAsync(x => x.Invoke(c), ct),
-                ct
-            );
+        return cancelTask.Invoke(Content);
     }
 
     private ConfiguredValueTaskAwaitable<Result> ConfirmAsync(CancellationToken ct)
     {
-        return Content
-            .IfNotNull(nameof(Content))
-            .IfSuccessAsync(
-                c =>
-                    confirmTask.IfNotNull(nameof(confirmTask)).IfSuccessAsync(x => x.Invoke(c), ct),
-                ct
-            );
+        return confirmTask.Invoke(Content);
     }
 }

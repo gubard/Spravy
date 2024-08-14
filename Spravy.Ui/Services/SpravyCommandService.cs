@@ -1060,7 +1060,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        CopyToClipboard = SpravyCommand.Create<ToDoItemEntityNotify>(
+        ToDoItemCopyToClipboard = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
                 dialogViewer.ShowConfirmDialogAsync(
                     viewFactory,
@@ -2626,6 +2626,12 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        CopyToClipboard = SpravyCommand.Create<string>(
+            (str, _) => clipboardService.SetTextAsync(str),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2645,6 +2651,7 @@ public class SpravyCommandService
     public SpravyCommand MultiCloneToDoItem { get; }
     public SpravyCommand MultiCreateReferenceToDoItem { get; }
 
+    public SpravyCommand CopyToClipboard { get; }
     public SpravyCommand Complete { get; }
     public SpravyCommand AddToFavorite { get; }
     public SpravyCommand RemoveFromFavorite { get; }
@@ -2655,7 +2662,7 @@ public class SpravyCommandService
     public SpravyCommand OpenLeaf { get; }
     public SpravyCommand ChangeParent { get; }
     public SpravyCommand MakeAsRoot { get; }
-    public SpravyCommand CopyToClipboard { get; }
+    public SpravyCommand ToDoItemCopyToClipboard { get; }
     public SpravyCommand RandomizeChildrenOrder { get; }
     public SpravyCommand ChangeOrder { get; }
     public SpravyCommand Reset { get; }

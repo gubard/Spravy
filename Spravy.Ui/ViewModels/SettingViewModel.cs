@@ -1,4 +1,5 @@
 using Spravy.Ui.Mappers;
+using AppConst = Spravy.Domain.Helpers.AppConst;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -57,23 +58,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
 
     public string Version
     {
-        get
-        {
-            var versionString =
-                Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
-
-            if (versionString.IsNullOrWhiteSpace())
-            {
-                return "1.0.0.0(0)";
-            }
-
-            if (!SpravyVersion.TryParse(versionString, out var version))
-            {
-                return "1.0.0.0(0)";
-            }
-
-            return $"{version}({version.Code})";
-        }
+        get => $"{AppConst.Version}({AppConst.Version.Code})";
     }
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)

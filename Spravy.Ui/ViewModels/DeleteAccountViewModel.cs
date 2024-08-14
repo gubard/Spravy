@@ -69,25 +69,25 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
         return Result
             .AwaitableSuccess.IfSuccessAsync(
                 () =>
-                {
-                    switch (IdentifierType)
+                    IdentifierType switch
                     {
-                        case UserIdentifierType.Email:
-                            return authenticationService.DeleteUserByEmailAsync(
+                        UserIdentifierType.Email
+                            => authenticationService.DeleteUserByEmailAsync(
                                 Identifier,
                                 VerificationCode.ToUpperInvariant(),
                                 ct
-                            );
-                        case UserIdentifierType.Login:
-                            return authenticationService.DeleteUserByEmailAsync(
+                            ),
+                        UserIdentifierType.Login
+                            => authenticationService.DeleteUserByEmailAsync(
                                 Identifier,
                                 VerificationCode.ToUpperInvariant(),
                                 ct
-                            );
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                },
+                            ),
+                        _
+                            => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
+                                .ToValueTaskResult()
+                                .ConfigureAwait(false),
+                    },
                 ct
             )
             .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct);
@@ -101,7 +101,10 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
                 => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier, ct),
             UserIdentifierType.Login
                 => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier, ct),
-            _ => throw new ArgumentOutOfRangeException(),
+            _
+                => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false),
         };
     }
 }

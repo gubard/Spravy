@@ -52,9 +52,11 @@ public static class UiHelper
         NavigateToCreateUser = commands.GetNavigateTo<CreateUserViewModel>().Command;
         NavigateToEmailOrLoginInput = commands.GetNavigateTo<EmailOrLoginInputViewModel>().Command;
         MultiToDoItemsViewInitialized = commands.MultiToDoItemsViewInitialized.Command;
+        CopyToClipboard = commands.CopyToClipboard.Command;
     }
 
     public static readonly ICommand Back;
+    public static readonly ICommand CopyToClipboard;
     public static readonly ICommand NavigateToToDoItem;
     public static readonly ICommand Complete;
     public static readonly ICommand RemoveFromFavorite;

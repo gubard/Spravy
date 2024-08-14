@@ -61,7 +61,15 @@
                                 <StackPanel>
                                     <TextBlock Classes="field"
                                                Text="{DynamicResource SettingView.Login}" />
-                                    <c:CopiedTextControl Text="{Binding AccountNotify.Login}" />
+
+                                    <StackPanel Classes="horizontal">
+                                        <TextBlock Text="{Binding AccountNotify.Login}" />
+
+                                        <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
+                                                CommandParameter="{Binding AccountNotify.Login}">
+                                            <ai:MaterialIcon Kind="ContentCopy" />
+                                        </Button>
+                                    </StackPanel>
 
                                     <Grid ColumnDefinitions="*,*">
                                         <Button Classes="mode-press"
@@ -88,7 +96,15 @@
                                 <StackPanel>
                                     <TextBlock Classes="field"
                                                Text="{DynamicResource SettingView.Version}" />
-                                    <c:CopiedTextControl Text="{Binding Version}" />
+
+                                    <StackPanel Classes="horizontal">
+                                        <TextBlock Text="{Binding Version}" />
+
+                                        <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
+                                                CommandParameter="{Binding Version}">
+                                            <ai:MaterialIcon Kind="ContentCopy" />
+                                        </Button>
+                                    </StackPanel>
                                 </StackPanel>
                             </c:GroupBoxControl>
                         </Border>
