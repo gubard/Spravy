@@ -2628,7 +2628,17 @@ public class SpravyCommandService
         );
 
         CopyToClipboard = SpravyCommand.Create<string>(
-            (str, _) => clipboardService.SetTextAsync(str),
+            (str, ct) =>
+                clipboardService
+                    .SetTextAsync(str)
+                    .IfSuccessAsync(
+                        () =>
+                            spravyNotificationManager.ShowAsync(
+                                new TextLocalization("Notification.CopyToClipboard"),
+                                ct
+                            ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );

@@ -57,7 +57,7 @@
 
                     <ItemsControl Classes="adaptive-items-control">
                         <Border Classes="adaptive">
-                            <c:GroupBoxControl Header="Account Setting">
+                            <c:GroupBoxControl Header="{StaticResource SettingView.AccountSetting}">
                                 <StackPanel>
                                     <TextBlock Classes="field"
                                                Text="{DynamicResource SettingView.Login}" />
@@ -85,15 +85,12 @@
                         </Border>
 
                         <Border Classes="adaptive">
-                            <c:GroupBoxControl Header="Base Theme">
-                                <c:EnumSelectorControl Classes="alignment-center"
-                                                       SelectedEnum="{Binding SelectedTheme}" />
-                            </c:GroupBoxControl>
-                        </Border>
-
-                        <Border Classes="adaptive">
-                            <c:GroupBoxControl Header="Application Info">
+                            <c:GroupBoxControl Header="{StaticResource SettingView.ApplicationInfo}">
                                 <StackPanel>
+                                    <TextBlock Classes="field"
+                                               Text="{StaticResource SettingView.BaseTheme}" />
+                                    <c:EnumSelectorControl Classes="alignment-center"
+                                                           SelectedEnum="{Binding SelectedTheme}" />
                                     <TextBlock Classes="field"
                                                Text="{DynamicResource SettingView.Version}" />
 
