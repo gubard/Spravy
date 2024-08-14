@@ -1,3 +1,5 @@
+using Spravy.Core.Mappers;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class MultiToDoItemSettingViewModel : ViewModelBase
@@ -12,16 +14,16 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     private bool isType;
 
     [ObservableProperty]
-    private string name;
+    private string name = string.Empty;
 
     [ObservableProperty]
-    private string link;
+    private string link = string.Empty;
 
     [ObservableProperty]
     private ToDoItemType type;
 
     [ObservableProperty]
-    private DateOnly dueDate;
+    private DateOnly dueDate = DateTime.Now.ToDateOnly();
 
     [ObservableProperty]
     private bool isDueDate;
@@ -29,8 +31,6 @@ public partial class MultiToDoItemSettingViewModel : ViewModelBase
     public MultiToDoItemSettingViewModel(ToDoItemEntityNotify item)
     {
         Item = item;
-        Name = string.Empty;
-        Link = string.Empty;
         ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
     }
 
