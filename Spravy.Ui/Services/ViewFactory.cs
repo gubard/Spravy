@@ -308,7 +308,9 @@ public class ViewFactory : IViewFactory
             parent,
             CreateToDoItemContentViewModel(),
             CreateEditDescriptionContentViewModel(),
-            objectStorage
+            objectStorage,
+            errorHandler,
+            taskProgressService
         );
     }
 

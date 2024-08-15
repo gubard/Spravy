@@ -10,7 +10,9 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         ToDoItemEntityNotify parent,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
         : base(true)
     {
@@ -18,11 +20,21 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
         Parent = parent;
+
+        Initialized = SpravyCommand.Create(
+            ct =>
+                objectStorage
+                    .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, ct)
+                    .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public ToDoItemEntityNotify Parent { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
+    public SpravyCommand Initialized { get; }
 
     public override string ViewId
     {
@@ -46,7 +58,25 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         CancellationToken ct
     )
     {
-        return Result.AwaitableSuccess;
+        return setting
+            .CastObject<AddToDoItemViewModelSetting>()
+            .IfSuccess(x =>
+                this.PostUiBackground(
+                    () =>
+                    {
+                        DescriptionContent.DescriptionType = x.DescriptionType;
+                        DescriptionContent.Description = x.Description;
+                        ToDoItemContent.Link = x.Link;
+                        ToDoItemContent.Name = x.Name;
+                        ToDoItemContent.Type = x.Type;
+
+                        return Result.Success;
+                    },
+                    ct
+                )
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
