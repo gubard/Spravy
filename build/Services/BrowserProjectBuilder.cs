@@ -33,20 +33,12 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             throw new($"Not exists {appBundleFolder}");
         }
 
-        var rootFolder = appBundleFolder.Combine("..");
-
-        foreach (var file in appBundleFolder.GetFiles())
-        {
-            file.MoveTo(rootFolder.ToFile(file.Name).FullName);
-        }
-
-        appBundleFolder.Delete();
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
-        ftpClient.UploadDirectory(rootFolder.FullName, Options.GetAppFolder().FullName);
+        ftpClient.UploadDirectory(appBundleFolder.FullName, Options.GetAppFolder().FullName);
         var urlFolder = PathHelper.WwwFolder.Combine(Options.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
