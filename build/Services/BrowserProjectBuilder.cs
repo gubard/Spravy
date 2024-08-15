@@ -18,33 +18,6 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
     public void Publish()
     {
-        /*if (Options.Runtimes.IsEmpty)
-        {
-            DotNetTasks.DotNetPublish(setting =>
-                setting
-                    .SetConfiguration(Options.Configuration)
-                    .SetProject(Options.CsprojFile.FullName)
-                    .SetOutput(Options.PublishFolder.FullName)
-                    .EnableNoBuild()
-                    .EnableNoRestore()
-            );
-        }
-        else
-        {
-            foreach (var runtime in Options.Runtimes.Span)
-            {
-                DotNetTasks.DotNetPublish(setting =>
-                    setting
-                        .SetConfiguration(Options.Configuration)
-                        .SetProject(Options.CsprojFile.FullName)
-                        .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
-                        .EnableNoBuild()
-                        .EnableNoRestore()
-                        .SetRuntime(runtime.Name)
-                );
-            }
-        }*/
-
         var appBundlePath = "bin/Release/net8.0-browser/browser-wasm/AppBundle";
 
         if (Options.CsprojFile.Directory is null)
@@ -60,12 +33,20 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             throw new($"Not exists {appBundleFolder}");
         }
 
+        var rootFolder = appBundleFolder.Combine("..");
+
+        foreach (var file in appBundleFolder.GetFiles())
+        {
+            file.MoveTo(rootFolder.ToFile(file.Name).FullName);
+        }
+
+        appBundleFolder.Delete();
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
-        ftpClient.UploadDirectory(appBundleFolder.FullName, Options.GetAppFolder().FullName);
+        ftpClient.UploadDirectory(rootFolder.FullName, Options.GetAppFolder().FullName);
         var urlFolder = PathHelper.WwwFolder.Combine(Options.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
