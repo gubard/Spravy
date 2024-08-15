@@ -17,7 +17,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     )
         : base(true)
     {
-        this.spravyCommandNotifyService = spravyCommandNotifyService;
         Commands = new();
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
@@ -43,20 +42,14 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<RootToDoItemsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
-            .IfSuccessAsync(
-                () => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false),
-                ct
-            );
+        return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
     public async ValueTask<Result> RefreshCore()
@@ -66,7 +59,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
+    private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateRootItemsAsync(ToDoSubItemsViewModel, ct);
     }
@@ -78,32 +71,29 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this), ct);
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return setting
-            .CastObject<RootToDoItemsViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+        return objectStorage
+            .GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                s =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

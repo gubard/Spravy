@@ -24,7 +24,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
 
     private ToDoItemEntityNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService
             .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)

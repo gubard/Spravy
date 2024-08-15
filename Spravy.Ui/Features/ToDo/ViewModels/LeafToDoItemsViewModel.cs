@@ -1,23 +1,19 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class LeafToDoItemsViewModel
-    : NavigatableViewModelBase,
-        IRefresh,
-        IToDoItemUpdater,
-        IToDoSubItemsViewModelProperty,
-        IObjectParameters
+public partial class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
+
+    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
 
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
-    [ObservableProperty]
-    private ToDoItemEntityNotify? item;
-
     public LeafToDoItemsViewModel(
+        ToDoItemEntityNotify? item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
@@ -27,6 +23,8 @@ public partial class LeafToDoItemsViewModel
     )
         : base(true)
     {
+        Item = item;
+        this.items.AddRange(items.ToArray());
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
         Commands = new();
@@ -44,7 +42,8 @@ public partial class LeafToDoItemsViewModel
     }
 
     public SpravyCommand InitializedCommand { get; }
-    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
+    public ToDoItemEntityNotify? Item { get; }
+    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
@@ -58,7 +57,7 @@ public partial class LeafToDoItemsViewModel
         get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore(ct).ConfigureAwait(false);
     }
@@ -70,7 +69,7 @@ public partial class LeafToDoItemsViewModel
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
+    private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         if (Items.IsEmpty())
         {
@@ -91,12 +90,9 @@ public partial class LeafToDoItemsViewModel
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
-            .IfSuccessAsync(() => RefreshAsync(ct), ct);
+        return RefreshAsync(ct);
     }
 
     public override Result Stop()
@@ -106,42 +102,29 @@ public partial class LeafToDoItemsViewModel
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return objectStorage
+            .GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ToDoSubItemsViewModel.List.IsMulti = setting.IsMulti;
+                            ToDoSubItemsViewModel.List.GroupBy = setting.GroupBy;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new LeafToDoItemsViewModelSetting(this), ct);
-    }
-
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
-    {
-        return setting
-            .CastObject<LeafToDoItemsViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
-    }
-
-    public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)
-    {
-        if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
-        {
-            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
-        }
-
-        return Result.Success;
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

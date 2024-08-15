@@ -5,7 +5,7 @@ public class TaskWork
     private readonly Delegate del;
     private readonly IErrorHandler errorHandler;
     private CancellationTokenSource cancellationTokenSource = new();
-    private ConfiguredValueTaskAwaitable<Result>? current;
+    private Cvtar? current;
 
     private TaskWork(Delegate del, IErrorHandler errorHandler)
     {
@@ -13,7 +13,7 @@ public class TaskWork
         this.errorHandler = errorHandler;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> Current
+    public Cvtar Current
     {
         get => current.ThrowIfNullStruct();
     }
@@ -22,7 +22,7 @@ public class TaskWork
     {
         Cancel();
         var value = del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
-        current = (ConfiguredValueTaskAwaitable<Result>)value;
+        current = (Cvtar)value;
         var result = await Current;
         await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }
@@ -31,7 +31,7 @@ public class TaskWork
     {
         Cancel();
         var v = del.DynamicInvoke(value, cancellationTokenSource.Token).ThrowIfNull();
-        current = (ConfiguredValueTaskAwaitable<Result>)v;
+        current = (Cvtar)v;
         var result = await Current;
         await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }

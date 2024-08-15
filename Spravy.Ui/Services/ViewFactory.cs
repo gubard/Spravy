@@ -5,6 +5,7 @@ namespace Spravy.Ui.Services;
 public class ViewFactory : IViewFactory
 {
     private readonly IToDoService toDoService;
+    private readonly INavigator navigator;
     private readonly IErrorHandler errorHandler;
     private readonly ITaskProgressService taskProgressService;
     private readonly IToDoUiService toDoUiService;
@@ -12,6 +13,13 @@ public class ViewFactory : IViewFactory
     private readonly IObjectStorage objectStorage;
     private readonly ToDoItemCommands toDoItemCommands;
     private readonly AppOptions appOptions;
+    private readonly IAuthenticationService authenticationService;
+    private readonly IPropertyValidator propertyValidator;
+    private readonly IServiceFactory serviceFactory;
+    private readonly IPasswordService passwordService;
+    private readonly IPasswordItemCache passwordItemCache;
+    private readonly AccountNotify accountNotify;
+    private readonly Application application;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -21,7 +29,15 @@ public class ViewFactory : IViewFactory
         IToDoCache toDoCache,
         IObjectStorage objectStorage,
         ToDoItemCommands toDoItemCommands,
-        AppOptions appOptions
+        AppOptions appOptions,
+        INavigator navigator,
+        IAuthenticationService authenticationService,
+        IPropertyValidator propertyValidator,
+        IPasswordService passwordService,
+        IPasswordItemCache passwordItemCache,
+        AccountNotify accountNotify,
+        Application application,
+        IServiceFactory serviceFactory
     )
     {
         this.toDoService = toDoService;
@@ -32,6 +48,14 @@ public class ViewFactory : IViewFactory
         this.objectStorage = objectStorage;
         this.toDoItemCommands = toDoItemCommands;
         this.appOptions = appOptions;
+        this.navigator = navigator;
+        this.authenticationService = authenticationService;
+        this.propertyValidator = propertyValidator;
+        this.passwordService = passwordService;
+        this.passwordItemCache = passwordItemCache;
+        this.accountNotify = accountNotify;
+        this.application = application;
+        this.serviceFactory = serviceFactory;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -91,6 +115,159 @@ public class ViewFactory : IViewFactory
             taskProgressService,
             appOptions
         );
+    }
+
+    public LoginViewModel CreateLoginViewModel()
+    {
+        return new(objectStorage, propertyValidator);
+    }
+
+    public RootToDoItemsViewModel CreateRootToDoItemsViewModel()
+    {
+        return new(
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            CreateToDoSubItemsViewModel(),
+            objectStorage,
+            errorHandler,
+            taskProgressService,
+            toDoUiService
+        );
+    }
+
+    public TodayToDoItemsViewModel CreateTodayToDoItemsViewModel()
+    {
+        return new(
+            CreateToDoSubItemsViewModel(),
+            errorHandler,
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            taskProgressService,
+            toDoUiService
+        );
+    }
+
+    public SearchToDoItemsViewModel CreateSearchToDoItemsViewModel()
+    {
+        return new(
+            CreateToDoSubItemsViewModel(),
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            errorHandler,
+            objectStorage,
+            toDoUiService
+        );
+    }
+
+    public PasswordGeneratorViewModel CreatePasswordGeneratorViewModel()
+    {
+        return new(passwordService, passwordItemCache);
+    }
+
+    public SettingViewModel CreateSettingViewModel()
+    {
+        return new(
+            errorHandler,
+            navigator,
+            accountNotify,
+            taskProgressService,
+            application,
+            objectStorage,
+            this
+        );
+    }
+
+    public EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel()
+    {
+        return new(
+            errorHandler,
+            navigator,
+            objectStorage,
+            authenticationService,
+            taskProgressService,
+            this
+        );
+    }
+
+    public CreateUserViewModel CreateCreateUserViewModel()
+    {
+        return new(propertyValidator);
+    }
+
+    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(
+            null,
+            items,
+            CreateToDoSubItemsViewModel(),
+            errorHandler,
+            objectStorage,
+            taskProgressService,
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            toDoUiService
+        );
+    }
+
+    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item)
+    {
+        return new(
+            item,
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
+            CreateToDoSubItemsViewModel(),
+            errorHandler,
+            objectStorage,
+            taskProgressService,
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            toDoUiService
+        );
+    }
+
+    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(
+            item,
+            items,
+            CreateToDoSubItemsViewModel(),
+            errorHandler,
+            objectStorage,
+            taskProgressService,
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            toDoUiService
+        );
+    }
+
+    public DeleteAccountViewModel CreateDeleteAccountViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    )
+    {
+        return new(
+            emailOrLogin,
+            identifierType,
+            errorHandler,
+            navigator,
+            authenticationService,
+            taskProgressService,
+            this
+        );
+    }
+
+    public VerificationCodeViewModel CreateVerificationCodeViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    )
+    {
+        return new(emailOrLogin, identifierType);
+    }
+
+    public ForgotPasswordViewModel CreateForgotPasswordViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    )
+    {
+        return new(emailOrLogin, identifierType);
     }
 
     public ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
@@ -308,9 +485,7 @@ public class ViewFactory : IViewFactory
             parent,
             CreateToDoItemContentViewModel(),
             CreateEditDescriptionContentViewModel(),
-            objectStorage,
-            errorHandler,
-            taskProgressService
+            objectStorage
         );
     }
 

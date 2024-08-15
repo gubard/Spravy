@@ -76,7 +76,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
         return List.AddOrUpdateUi(item);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoService
             .GetFavoriteToDoItemIdsAsync(ct)

@@ -9,25 +9,29 @@ public static class ObjectExtension
         return Result.Success;
     }
 
-    public static Result PostUiBackground<TObject>(this TObject _, Func<Result> func, CancellationToken ct)
+    public static Result PostUiBackground<TObject>(
+        this TObject _,
+        Func<Result> func,
+        CancellationToken ct
+    )
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            if (ct.IsCancellationRequested)
+        Dispatcher.UIThread.Post(
+            () =>
             {
-                return;
-            }
+                if (ct.IsCancellationRequested)
+                {
+                    return;
+                }
 
-            func.Invoke();
-        }, DispatcherPriority.Background);
+                func.Invoke();
+            },
+            DispatcherPriority.Background
+        );
 
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> InvokeUiAsync<TObject>(
-        this TObject _,
-        Func<Result> callback
-    )
+    public static Cvtar InvokeUiAsync<TObject>(this TObject _, Func<Result> callback)
     {
         return _.InvokeUiCore(callback).ConfigureAwait(false);
     }
@@ -42,10 +46,7 @@ public static class ObjectExtension
         return result;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> InvokeUiBackgroundAsync<TObject>(
-        this TObject _,
-        Func<Result> callback
-    )
+    public static Cvtar InvokeUiBackgroundAsync<TObject>(this TObject _, Func<Result> callback)
     {
         return _.InvokeUiBackgroundCore(callback).ConfigureAwait(false);
     }

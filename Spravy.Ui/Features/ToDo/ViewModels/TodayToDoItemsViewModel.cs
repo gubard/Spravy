@@ -37,12 +37,12 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateTodayItemsAsync(ToDoSubItemsViewModel, ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);
     }
@@ -52,15 +52,12 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

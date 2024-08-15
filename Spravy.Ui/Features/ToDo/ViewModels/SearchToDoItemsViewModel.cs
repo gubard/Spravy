@@ -15,7 +15,6 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
         SpravyCommandNotifyService spravyCommandNotifyService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService
     )
         : base(true)
@@ -26,17 +25,9 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
         this.toDoUiService = toDoUiService;
         Commands = new();
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
-    public SpravyCommand InitializedCommand { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
@@ -45,19 +36,12 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
         get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return objectStorage
-            .GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
+    private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateSearchToDoItemsAsync(SearchText, ToDoSubItemsViewModel, ct);
     }
@@ -69,41 +53,28 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IRefre
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return objectStorage
+            .GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                s =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            SearchText = s.SearchText;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this), ct);
-    }
-
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
-    {
-        return setting
-            .CastObject<SearchViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        SearchText = s.SearchText;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
-    }
-
-    public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)
-    {
-        if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
-        {
-            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
-        }
-
-        return Result.Success;
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

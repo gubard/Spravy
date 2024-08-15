@@ -9,7 +9,7 @@ public class DialogViewer : IDialogViewer
         this.serviceFactory = serviceFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ShowDialogAsync(
+    public Cvtar ShowDialogAsync(
         DialogViewLayer layer,
         ViewModelBase viewModel,
         CancellationToken ct
@@ -19,10 +19,7 @@ public class DialogViewer : IDialogViewer
             .IfSuccessAsync(dialogControl => ShowViewAsync(viewModel, dialogControl), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> CloseDialogAsync(
-        DialogViewLayer layer,
-        CancellationToken ct
-    )
+    public Cvtar CloseDialogAsync(DialogViewLayer layer, CancellationToken ct)
     {
         return GetDialogControl(layer)
             .IfSuccess(dialogControl =>
@@ -70,10 +67,7 @@ public class DialogViewer : IDialogViewer
         });
     }
 
-    private ConfiguredValueTaskAwaitable<Result> ShowViewAsync(
-        ViewModelBase viewModel,
-        DialogControl dialogControl
-    )
+    private Cvtar ShowViewAsync(ViewModelBase viewModel, DialogControl dialogControl)
     {
         return this.InvokeUiBackgroundAsync(() =>
         {
@@ -100,7 +94,7 @@ public class DialogViewer : IDialogViewer
             .Dialog.IfNotNull(nameof(dialogControl.Dialog))
             .IfSuccess(content =>
             {
-                if (content is ISaveState saveState)
+                if (content is IStateHolder saveState)
                 {
                     return saveState.SaveStateAsync(ct).GetAwaiter().GetResult();
                 }

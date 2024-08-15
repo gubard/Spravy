@@ -2,7 +2,7 @@ namespace Spravy.Ui.Services;
 
 public class CodeClipboardService : IClipboardService
 {
-    public ConfiguredValueTaskAwaitable<Result> SetTextAsync(string? text)
+    public Cvtar SetTextAsync(string? text)
     {
         return Result.AwaitableSuccess;
     }

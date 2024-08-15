@@ -2,7 +2,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class DialogViewerExtension
 {
-    public static ConfiguredValueTaskAwaitable<Result> ShowConfirmDialogAsync<TViewModel>(
+    public static Cvtar ShowConfirmDialogAsync<TViewModel>(
         this IDialogViewer dialogViewer,
         IViewFactory viewFactory,
         DialogViewLayer layer,
@@ -21,7 +21,7 @@ public static class DialogViewerExtension
         return dialogViewer.ShowDialogAsync(layer, confirm, ct);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> ShowInfoDialogAsync<TViewModel>(
+    public static Cvtar ShowInfoDialogAsync<TViewModel>(
         this IDialogViewer dialogViewer,
         IViewFactory viewFactory,
         DialogViewLayer layer,

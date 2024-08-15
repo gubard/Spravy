@@ -26,10 +26,7 @@ public partial class EditDescriptionContentViewModel : ViewModelBase
 
     public SpravyCommand InitializedCommand { get; }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
-        EditDescriptionContentView view,
-        CancellationToken ct
-    )
+    private Cvtar InitializedAsync(EditDescriptionContentView view, CancellationToken ct)
     {
         editDescriptionContentView = view;
 

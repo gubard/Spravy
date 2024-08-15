@@ -43,7 +43,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public ToDoItemEntityNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService
             .UpdateToDoItemDaysOffsetAsync(Item.Id, DaysOffset, ct)

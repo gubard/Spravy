@@ -29,6 +29,36 @@ public interface IViewFactory
     EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();
     EditDescriptionViewModel CreateEditDescriptionViewModel(ToDoItemEntityNotify item);
     ToDoSubItemsViewModel CreateToDoSubItemsViewModel();
+    LoginViewModel CreateLoginViewModel();
+    RootToDoItemsViewModel CreateRootToDoItemsViewModel();
+    TodayToDoItemsViewModel CreateTodayToDoItemsViewModel();
+    SearchToDoItemsViewModel CreateSearchToDoItemsViewModel();
+    PasswordGeneratorViewModel CreatePasswordGeneratorViewModel();
+    SettingViewModel CreateSettingViewModel();
+    EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel();
+    CreateUserViewModel CreateCreateUserViewModel();
+    LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
+    LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item);
+
+    LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    DeleteAccountViewModel CreateDeleteAccountViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    );
+
+    VerificationCodeViewModel CreateVerificationCodeViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    );
+
+    ForgotPasswordViewModel CreateForgotPasswordViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType
+    );
 
     ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
         ToDoItemEntityNotify item

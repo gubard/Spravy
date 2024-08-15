@@ -1,6 +1,6 @@
 namespace Spravy.Ui.ViewModels;
 
-public class ConfirmViewModel : ViewModelBase, ISaveState
+public class ConfirmViewModel : ViewModelBase, IStateHolder
 {
     private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask;
     private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask;
@@ -24,9 +24,19 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     public SpravyCommand ConfirmCommand { get; }
     public object Content { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public Cvtar LoadStateAsync(CancellationToken ct)
     {
-        if (Content is ISaveState saveState)
+        if (Content is IStateHolder saveState)
+        {
+            return saveState.LoadStateAsync(ct);
+        }
+
+        return Result.AwaitableSuccess;
+    }
+
+    public Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        if (Content is IStateHolder saveState)
         {
             return saveState.SaveStateAsync(ct);
         }
@@ -34,12 +44,12 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
         return Result.AwaitableSuccess;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken ct)
+    private Cvtar CancelAsync(CancellationToken ct)
     {
         return cancelTask.Invoke(Content);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> ConfirmAsync(CancellationToken ct)
+    private Cvtar ConfirmAsync(CancellationToken ct)
     {
         return confirmTask.Invoke(Content);
     }

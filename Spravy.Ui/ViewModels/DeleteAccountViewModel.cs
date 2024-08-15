@@ -3,6 +3,7 @@ namespace Spravy.Ui.ViewModels;
 public partial class DeleteAccountViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
+    private readonly IViewFactory viewFactory;
     private readonly IAuthenticationService authenticationService;
 
     [ObservableProperty]
@@ -12,18 +13,24 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
     private string verificationCode = string.Empty;
 
     [ObservableProperty]
-    private string identifier = string.Empty;
+    private string emailOrLogin;
 
     public DeleteAccountViewModel(
+        string emailOrLogin,
+        UserIdentifierType identifierType,
         IErrorHandler errorHandler,
         INavigator navigator,
         IAuthenticationService authenticationService,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IViewFactory viewFactory
     )
         : base(true)
     {
+        this.emailOrLogin = emailOrLogin;
+        this.identifierType = identifierType;
         this.navigator = navigator;
         this.authenticationService = authenticationService;
+        this.viewFactory = viewFactory;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -51,20 +58,17 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
+    private Cvtar DeleteAccountAsync(CancellationToken ct)
     {
         return Result
             .AwaitableSuccess.IfSuccessAsync(
@@ -73,13 +77,13 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
                     {
                         UserIdentifierType.Email
                             => authenticationService.DeleteUserByEmailAsync(
-                                Identifier,
+                                EmailOrLogin,
                                 VerificationCode.ToUpperInvariant(),
                                 ct
                             ),
                         UserIdentifierType.Login
                             => authenticationService.DeleteUserByEmailAsync(
-                                Identifier,
+                                EmailOrLogin,
                                 VerificationCode.ToUpperInvariant(),
                                 ct
                             ),
@@ -90,17 +94,20 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
                     },
                 ct
             )
-            .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct);
+            .IfSuccessAsync(
+                () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
+                ct
+            );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
         return IdentifierType switch
         {
             UserIdentifierType.Email
-                => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier, ct),
+                => authenticationService.UpdateVerificationCodeByEmailAsync(EmailOrLogin, ct),
             UserIdentifierType.Login
-                => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier, ct),
+                => authenticationService.UpdateVerificationCodeByLoginAsync(EmailOrLogin, ct),
             _
                 => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
                     .ToValueTaskResult()

@@ -43,12 +43,12 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand SearchCommand { get; }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
         return Refresh(ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken ct)
+    private Cvtar Refresh(CancellationToken ct)
     {
         return this.PostUiBackground(() => toDoCache.ResetItemsUi(), ct)
             .IfSuccess(() => toDoCache.GetRootItems())

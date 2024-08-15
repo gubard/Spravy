@@ -15,7 +15,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     public ToDoItemEntityNotify Item { get; }
     public AvaloniaList<int> DaysOfMonth { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
             Item.Id,

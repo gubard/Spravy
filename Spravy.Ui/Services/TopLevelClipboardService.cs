@@ -9,7 +9,7 @@ public class TopLevelClipboardService : IClipboardService
         this.clipboard = clipboard;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SetTextAsync(string? text)
+    public Cvtar SetTextAsync(string? text)
     {
         return SetTextCore(text).ConfigureAwait(false);
     }

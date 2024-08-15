@@ -7,9 +7,7 @@ namespace Spravy.Ui.Services;
 public class SpravyCommandService
 {
     private readonly INavigator navigator;
-    private readonly IErrorHandler errorHandler;
-    private readonly ITaskProgressService taskProgressService;
-    private readonly Dictionary<Type, SpravyCommand> createNavigateToCache;
+    private readonly IViewFactory viewFactory;
 
     public SpravyCommandService(
         IUiApplicationService uiApplicationService,
@@ -32,10 +30,8 @@ public class SpravyCommandService
         IToDoUiService toDoUiService
     )
     {
-        createNavigateToCache = new();
         this.navigator = navigator;
-        this.errorHandler = errorHandler;
-        this.taskProgressService = taskProgressService;
+        this.viewFactory = viewFactory;
 
         NavigateToToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
@@ -417,8 +413,8 @@ public class SpravyCommandService
                 view.GetSelectedItems()
                     .IfSuccessAsync(
                         selected =>
-                            navigator.NavigateToAsync<LeafToDoItemsViewModel>(
-                                vm => vm.Items.UpdateUi(selected),
+                            navigator.NavigateToAsync(
+                                viewFactory.CreateLeafToDoItemsViewModel(selected),
                                 ct
                             ),
                         ct
@@ -729,7 +725,10 @@ public class SpravyCommandService
                                 }
                             }
 
-                            return navigator.NavigateToAsync<RootToDoItemsViewModel>(ct);
+                            return navigator.NavigateToAsync(
+                                viewFactory.CreateRootToDoItemsViewModel(),
+                                ct
+                            );
                         },
                         ct
                     ),
@@ -749,12 +748,12 @@ public class SpravyCommandService
                 {
                     UserIdentifierType.Email
                         => authenticationService.UpdateVerificationCodeByEmailAsync(
-                            verificationEmail.Identifier,
+                            verificationEmail.EmailOrLogin,
                             ct
                         ),
                     UserIdentifierType.Login
                         => authenticationService.UpdateVerificationCodeByLoginAsync(
-                            verificationEmail.Identifier,
+                            verificationEmail.EmailOrLogin,
                             ct
                         ),
                     _
@@ -826,9 +825,7 @@ public class SpravyCommandService
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.Completed;
 
-                                            return uiApplicationService
-                                                .GetCurrentView<IToDoItemUpdater>()
-                                                .IfSuccess(u => u.UpdateInListToDoItemUi(item));
+                                            return Result.Success;
                                         })
                                         .IfSuccessAsync(
                                             () =>
@@ -845,9 +842,7 @@ public class SpravyCommandService
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.ReadyForComplete;
 
-                                            return uiApplicationService
-                                                .GetCurrentView<IToDoItemUpdater>()
-                                                .IfSuccess(u => u.UpdateInListToDoItemUi(item));
+                                            return Result.Success;
                                         })
                                         .IfSuccessAsync(
                                             () =>
@@ -927,7 +922,8 @@ public class SpravyCommandService
 
                                     if (item.Parent is null)
                                     {
-                                        return navigator.NavigateToAsync<RootToDoItemsViewModel>(
+                                        return navigator.NavigateToAsync(
+                                            viewFactory.CreateRootToDoItemsViewModel(),
                                             ct
                                         );
                                     }
@@ -1011,7 +1007,7 @@ public class SpravyCommandService
 
         OpenLeaf = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Item = item, ct),
+                navigator.NavigateToAsync(viewFactory.CreateLeafToDoItemsViewModel(item), ct),
             errorHandler,
             taskProgressService
         );
@@ -1053,7 +1049,11 @@ public class SpravyCommandService
                 toDoService
                     .ToDoItemToRootAsync(item.Id, ct)
                     .IfSuccessAsync(
-                        () => navigator.NavigateToAsync<RootToDoItemsViewModel>(ct),
+                        () =>
+                            navigator.NavigateToAsync(
+                                viewFactory.CreateRootToDoItemsViewModel(),
+                                ct
+                            ),
                         ct
                     ),
             errorHandler,
@@ -1473,13 +1473,9 @@ public class SpravyCommandService
             (item, ct) =>
                 item.GetSelectedItems()
                     .IfSuccessAsync(
-                        selectedIds =>
-                            navigator.NavigateToAsync<LeafToDoItemsViewModel>(
-                                vm =>
-                                {
-                                    vm.Item = item;
-                                    vm.Items.UpdateUi(selectedIds);
-                                },
+                        selected =>
+                            navigator.NavigateToAsync(
+                                viewFactory.CreateLeafToDoItemsViewModel(item, selected),
                                 ct
                             ),
                         ct
@@ -1983,7 +1979,10 @@ public class SpravyCommandService
                         },
                         ct
                     )
-                    .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct)
+                    .IfSuccessAsync(
+                        () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
+                        ct
+                    )
                     .IfSuccessAsync(
                         () =>
                             ct.InvokeUiBackgroundAsync(() =>
@@ -2191,7 +2190,10 @@ public class SpravyCommandService
                                         );
                                 }
 
-                                return navigator.NavigateToAsync<RootToDoItemsViewModel>(ct);
+                                return navigator.NavigateToAsync(
+                                    viewFactory.CreateRootToDoItemsViewModel(),
+                                    ct
+                                );
                             }
 
                             return uiApplicationService.RefreshCurrentViewAsync(ct);
@@ -2208,12 +2210,12 @@ public class SpravyCommandService
                 {
                     UserIdentifierType.Email
                         => authenticationService.UpdateVerificationCodeByEmailAsync(
-                            vm.Identifier,
+                            vm.EmailOrLogin,
                             ct
                         ),
                     UserIdentifierType.Login
                         => authenticationService.UpdateVerificationCodeByLoginAsync(
-                            vm.Identifier,
+                            vm.EmailOrLogin,
                             ct
                         ),
                     _
@@ -2234,14 +2236,14 @@ public class SpravyCommandService
                             {
                                 UserIdentifierType.Email
                                     => authenticationService.UpdatePasswordByEmailAsync(
-                                        vm.Identifier,
+                                        vm.EmailOrLogin,
                                         vm.VerificationCode.ToUpperInvariant(),
                                         vm.NewPassword,
                                         ct
                                     ),
                                 UserIdentifierType.Login
                                     => authenticationService.UpdatePasswordByLoginAsync(
-                                        vm.Identifier,
+                                        vm.EmailOrLogin,
                                         vm.VerificationCode.ToUpperInvariant(),
                                         vm.NewPassword,
                                         ct
@@ -2255,7 +2257,10 @@ public class SpravyCommandService
                             },
                         ct
                     )
-                    .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct),
+                    .IfSuccessAsync(
+                        () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -2375,116 +2380,93 @@ public class SpravyCommandService
                                     () =>
                                     {
                                         return objectStorage
-                                            .GetObjectOrDefaultAsync<LoginViewModelSetting>(
-                                                viewModel.ViewId,
-                                                ct
-                                            )
+                                            .IsExistsAsync(StorageIds.LoginId, ct)
                                             .IfSuccessAsync(
-                                                setting =>
+                                                value =>
                                                 {
-                                                    return viewModel
-                                                        .SetStateAsync(setting, ct)
-                                                        .IfSuccessAsync(
-                                                            () =>
-                                                                objectStorage.IsExistsAsync(
-                                                                    StorageIds.LoginId,
-                                                                    ct
-                                                                ),
+                                                    if (!value)
+                                                    {
+                                                        return this.PostUiBackground(
+                                                                () =>
+                                                                {
+                                                                    var textBox =
+                                                                        view.GetControl<TextBox>(
+                                                                            LoginView.LoginTextBoxName
+                                                                        );
+
+                                                                    textBox.Focus();
+
+                                                                    if (textBox.Text is null)
+                                                                    {
+                                                                        return Result.Success;
+                                                                    }
+
+                                                                    textBox.CaretIndex = textBox
+                                                                        .Text
+                                                                        .Length;
+
+                                                                    return Result.Success;
+                                                                },
+                                                                ct
+                                                            )
+                                                            .ToValueTaskResult()
+                                                            .ConfigureAwait(false);
+                                                    }
+
+                                                    return objectStorage
+                                                        .GetObjectAsync<LoginStorageItem>(
+                                                            StorageIds.LoginId,
                                                             ct
                                                         )
                                                         .IfSuccessAsync(
-                                                            value =>
+                                                            item =>
                                                             {
-                                                                if (!value)
-                                                                {
-                                                                    return this.PostUiBackground(
-                                                                            () =>
-                                                                            {
-                                                                                var textBox =
-                                                                                    view.GetControl<TextBox>(
-                                                                                        LoginView.LoginTextBoxName
-                                                                                    );
+                                                                var jwtHandler =
+                                                                    new JwtSecurityTokenHandler();
+                                                                var jwtToken =
+                                                                    jwtHandler.ReadJwtToken(
+                                                                        item.Token
+                                                                    );
+                                                                var l = jwtToken
+                                                                    .Claims.Single(x =>
+                                                                        x.Type == ClaimTypes.Name
+                                                                    )
+                                                                    .Value;
+                                                                accountNotify.Login = l;
 
-                                                                                textBox.Focus();
-
-                                                                                if (
-                                                                                    textBox.Text
-                                                                                    is null
-                                                                                )
-                                                                                {
-                                                                                    return Result.Success;
-                                                                                }
-
-                                                                                textBox.CaretIndex =
-                                                                                    textBox
-                                                                                        .Text
-                                                                                        .Length;
-
-                                                                                return Result.Success;
-                                                                            },
-                                                                            ct
-                                                                        )
-                                                                        .ToValueTaskResult()
-                                                                        .ConfigureAwait(false);
-                                                                }
-
-                                                                return objectStorage
-                                                                    .GetObjectAsync<LoginStorageItem>(
-                                                                        StorageIds.LoginId,
+                                                                return tokenService
+                                                                    .LoginAsync(
+                                                                        item.Token.ThrowIfNullOrWhiteSpace(),
                                                                         ct
                                                                     )
                                                                     .IfSuccessAsync(
-                                                                        item =>
-                                                                        {
-                                                                            var jwtHandler =
-                                                                                new JwtSecurityTokenHandler();
-                                                                            var jwtToken =
-                                                                                jwtHandler.ReadJwtToken(
-                                                                                    item.Token
-                                                                                );
-                                                                            var l = jwtToken
-                                                                                .Claims.Single(x =>
-                                                                                    x.Type
-                                                                                    == ClaimTypes.Name
-                                                                                )
-                                                                                .Value;
-                                                                            accountNotify.Login = l;
+                                                                        () =>
+                                                                            toDoService.GetToDoSelectorItemsAsync(
+                                                                                ReadOnlyMemory<Guid>.Empty,
+                                                                                ct
+                                                                            ),
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        items =>
+                                                                            this.InvokeUiBackgroundAsync(
+                                                                                () =>
+                                                                                {
+                                                                                    toDoCache.UpdateUi(
+                                                                                        items
+                                                                                    );
 
-                                                                            return tokenService
-                                                                                .LoginAsync(
-                                                                                    item.Token.ThrowIfNullOrWhiteSpace(),
-                                                                                    ct
-                                                                                )
-                                                                                .IfSuccessAsync(
-                                                                                    () =>
-                                                                                        toDoService.GetToDoSelectorItemsAsync(
-                                                                                            ReadOnlyMemory<Guid>.Empty,
-                                                                                            ct
-                                                                                        ),
-                                                                                    ct
-                                                                                )
-                                                                                .IfSuccessAsync(
-                                                                                    items =>
-                                                                                        this.InvokeUiBackgroundAsync(
-                                                                                            () =>
-                                                                                            {
-                                                                                                toDoCache.UpdateUi(
-                                                                                                    items
-                                                                                                );
-
-                                                                                                return Result.Success;
-                                                                                            }
-                                                                                        ),
-                                                                                    ct
-                                                                                )
-                                                                                .IfSuccessAsync(
-                                                                                    () =>
-                                                                                        navigator.NavigateToAsync<RootToDoItemsViewModel>(
-                                                                                            ct
-                                                                                        ),
-                                                                                    ct
-                                                                                );
-                                                                        },
+                                                                                    return Result.Success;
+                                                                                }
+                                                                            ),
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        () =>
+                                                                            navigator.NavigateToAsync(
+                                                                                viewFactory.CreateRootToDoItemsViewModel(),
+                                                                                ct
+                                                                            ),
                                                                         ct
                                                                     );
                                                             },
@@ -2601,15 +2583,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        AddRootToDoItemViewInitialized = SpravyCommand.Create<AddRootToDoItemViewModel>(
-            (vm, ct) =>
-                objectStorage
-                    .GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(vm.ViewId, ct)
-                    .IfSuccessAsync(obj => vm.SetStateAsync(obj, ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
         MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
             (view, _) =>
                 view
@@ -2639,6 +2612,152 @@ public class SpravyCommandService
                             ),
                         ct
                     ),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToRootToDoItems = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateRootToDoItemsViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToTodayToDoItems = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateTodayToDoItemsViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToSearchToDoItems = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateSearchToDoItemsViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToPasswordGenerator = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreatePasswordGeneratorViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToSetting = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateSettingViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToCreateUser = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateCreateUserViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        NavigateToEmailOrLoginInput = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateEmailOrLoginInputViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        VerificationCodeViewModelInitialized = SpravyCommand.Create<VerificationCodeViewModel>(
+            (vm, ct) =>
+                vm.IdentifierType switch
+                {
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
+                            vm.EmailOrLogin,
+                            ct
+                        ),
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
+                            vm.EmailOrLogin,
+                            ct
+                        ),
+                    _
+                        => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false)
+                },
+            errorHandler,
+            taskProgressService
+        );
+
+        UpdateEmail = SpravyCommand.Create<IVerificationEmail>(
+            (verificationEmail, ct) =>
+                dialogViewer.ShowConfirmDialogAsync(
+                    viewFactory,
+                    DialogViewLayer.Input,
+                    viewFactory.CreateTextViewModel(),
+                    text =>
+                        verificationEmail.IdentifierType switch
+                        {
+                            UserIdentifierType.Email
+                                => authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+                                    verificationEmail.EmailOrLogin,
+                                    text.Text,
+                                    ct
+                                ),
+                            UserIdentifierType.Login
+                                => authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+                                    verificationEmail.EmailOrLogin,
+                                    text.Text,
+                                    ct
+                                ),
+                            _
+                                => new Result(
+                                    new UserIdentifierTypeOutOfRangeError(
+                                        verificationEmail.IdentifierType
+                                    )
+                                )
+                                    .ToValueTaskResult()
+                                    .ConfigureAwait(false)
+                        },
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
+
+        VerificationEmail = SpravyCommand.Create<IVerificationEmail>(
+            (verificationEmail, ct) =>
+                verificationEmail.IdentifierType switch
+                {
+                    UserIdentifierType.Email
+                        => authenticationService
+                            .VerifiedEmailByEmailAsync(
+                                verificationEmail.EmailOrLogin,
+                                verificationEmail.VerificationCode.ToUpperInvariant(),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                    navigator.NavigateToAsync(
+                                        viewFactory.CreateLoginViewModel(),
+                                        ct
+                                    ),
+                                ct
+                            ),
+                    UserIdentifierType.Login
+                        => authenticationService
+                            .VerifiedEmailByLoginAsync(
+                                verificationEmail.EmailOrLogin,
+                                verificationEmail.VerificationCode.ToUpperInvariant(),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                    navigator.NavigateToAsync(
+                                        viewFactory.CreateLoginViewModel(),
+                                        ct
+                                    ),
+                                ct
+                            ),
+                    _
+                        => new Result(
+                            new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
+                        )
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false)
+                },
             errorHandler,
             taskProgressService
         );
@@ -2715,7 +2834,6 @@ public class SpravyCommandService
     public SpravyCommand ForgotPasswordViewInitialized { get; }
     public SpravyCommand LoginViewInitialized { get; }
     public SpravyCommand PasswordGeneratorViewInitialized { get; }
-    public SpravyCommand AddRootToDoItemViewInitialized { get; }
     public SpravyCommand MultiToDoItemsViewInitialized { get; }
 
     public SpravyCommand ForgotPassword { get; }
@@ -2726,25 +2844,19 @@ public class SpravyCommandService
     public SpravyCommand Login { get; }
     public SpravyCommand LoginViewEnter { get; }
 
-    public SpravyCommand GetNavigateTo<TViewModel>()
-        where TViewModel : INavigatable
-    {
-        if (createNavigateToCache.TryGetValue(typeof(TViewModel), out var command))
-        {
-            return command;
-        }
+    public SpravyCommand NavigateToRootToDoItems { get; }
+    public SpravyCommand NavigateToTodayToDoItems { get; }
+    public SpravyCommand NavigateToSearchToDoItems { get; }
+    public SpravyCommand NavigateToPasswordGenerator { get; }
+    public SpravyCommand NavigateToSetting { get; }
+    public SpravyCommand NavigateToCreateUser { get; }
+    public SpravyCommand NavigateToEmailOrLoginInput { get; }
 
-        var result = SpravyCommand.Create(
-            navigator.NavigateToAsync<TViewModel>,
-            errorHandler,
-            taskProgressService
-        );
-        createNavigateToCache.Add(typeof(TViewModel), result);
+    public SpravyCommand VerificationCodeViewModelInitialized { get; }
+    public SpravyCommand UpdateEmail { get; }
+    public SpravyCommand VerificationEmail { get; }
 
-        return result;
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
+    private Cvtar CreateUserAsync(
         CreateUserViewModel viewModel,
         IAuthenticationService authenticationService,
         CancellationToken ct
@@ -2767,12 +2879,11 @@ public class SpravyCommandService
                         .CreateUserAsync(viewModel.ToCreateUserOptions(), ct)
                         .IfSuccessAsync(
                             () =>
-                                navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                    vm =>
-                                    {
-                                        vm.Identifier = viewModel.Email;
-                                        vm.IdentifierType = UserIdentifierType.Email;
-                                    },
+                                navigator.NavigateToAsync(
+                                    viewFactory.CreateVerificationCodeViewModel(
+                                        viewModel.Email,
+                                        UserIdentifierType.Email
+                                    ),
                                     ct
                                 ),
                             ct
@@ -2790,7 +2901,7 @@ public class SpravyCommandService
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> LoginAsync(
+    private Cvtar LoginAsync(
         LoginViewModel viewModel,
         IAuthenticationService authenticationService,
         ITokenService tokenService,
@@ -2821,12 +2932,11 @@ public class SpravyCommandService
                             {
                                 if (!isVerified)
                                 {
-                                    return navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                        vm =>
-                                        {
-                                            vm.Identifier = viewModel.Login;
-                                            vm.IdentifierType = UserIdentifierType.Login;
-                                        },
+                                    return navigator.NavigateToAsync(
+                                        viewFactory.CreateVerificationCodeViewModel(
+                                            viewModel.Login,
+                                            UserIdentifierType.Login
+                                        ),
                                         ct
                                     );
                                 }
@@ -2871,7 +2981,8 @@ public class SpravyCommandService
                                                 )
                                                 .IfSuccessAsync(
                                                     () =>
-                                                        navigator.NavigateToAsync<RootToDoItemsViewModel>(
+                                                        navigator.NavigateToAsync(
+                                                            viewFactory.CreateRootToDoItemsViewModel(),
                                                             ct
                                                         ),
                                                     ct
@@ -2894,7 +3005,7 @@ public class SpravyCommandService
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RememberMeAsync(
+    private Cvtar RememberMeAsync(
         LoginViewModel viewModel,
         ITokenService tokenService,
         IObjectStorage objectStorage,

@@ -29,34 +29,31 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this), ct);
+        return objectStorage
+            .GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            DescriptionContent.DescriptionType = setting.DescriptionType;
+                            DescriptionContent.Description = setting.Description;
+                            ToDoItemContent.Type = setting.Type;
+                            ToDoItemContent.Link = setting.Link;
+                            ToDoItemContent.Name = setting.Name;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return setting
-            .CastObject<AddRootToDoItemViewModelSetting>()
-            .IfSuccess(x =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        DescriptionContent.DescriptionType = x.DescriptionType;
-                        DescriptionContent.Description = x.Description;
-                        ToDoItemContent.Link = x.Link;
-                        ToDoItemContent.Name = x.Name;
-                        ToDoItemContent.Type = x.Type;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+        return objectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this), ct);
     }
 }

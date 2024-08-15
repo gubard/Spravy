@@ -21,7 +21,7 @@ public partial class VerificationCodeView : UserControl
                 return;
             }
 
-            viewModel.Commands.Initialized.Command.Execute(viewModel);
+            UiHelper.VerificationCodeViewModelInitialized.Execute(viewModel);
         };
     }
 }

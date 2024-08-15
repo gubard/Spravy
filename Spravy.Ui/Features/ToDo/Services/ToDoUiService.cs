@@ -20,10 +20,7 @@ public class ToDoUiService : IToDoUiService
         this.appOptions = appOptions;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(
-        ToDoItemEntityNotify item,
-        CancellationToken ct
-    )
+    public Cvtar UpdateItemAsync(ToDoItemEntityNotify item, CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
@@ -57,10 +54,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        CancellationToken ct
-    )
+    public Cvtar UpdateItemsAsync(ReadOnlyMemory<ToDoItemEntityNotify> items, CancellationToken ct)
     {
         return taskProgressService.RunProgressAsync(
             (ushort)items.Length,
@@ -81,7 +75,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateSiblingsAsync(
+    public Cvtar UpdateSiblingsAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
@@ -105,7 +99,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateLeafToDoItemsAsync(
+    public Cvtar UpdateLeafToDoItemsAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
@@ -149,10 +143,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateRootItemsAsync(
-        IToDoItemsView toDoItemsView,
-        CancellationToken ct
-    )
+    public Cvtar UpdateRootItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
@@ -191,7 +182,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateSearchToDoItemsAsync(
+    public Cvtar UpdateSearchToDoItemsAsync(
         string searchText,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
@@ -234,7 +225,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemChildrenAsync(
+    public Cvtar UpdateItemChildrenAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
@@ -291,10 +282,7 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateTodayItemsAsync(
-        IToDoItemsView toDoItemsView,
-        CancellationToken ct
-    )
+    public Cvtar UpdateTodayItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,

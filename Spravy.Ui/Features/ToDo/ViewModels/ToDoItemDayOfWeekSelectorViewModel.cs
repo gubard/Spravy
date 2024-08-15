@@ -15,7 +15,7 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     public AvaloniaList<Selected<DayOfWeek>> DayOfWeeks { get; }
     public ToDoItemEntityNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             Item.Id,

@@ -9,7 +9,7 @@ public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerifi
     private string newRepeatPassword = string.Empty;
 
     [ObservableProperty]
-    private string identifier = string.Empty;
+    private string emailOrLogin;
 
     [ObservableProperty]
     private UserIdentifierType identifierType;
@@ -17,8 +17,12 @@ public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerifi
     [ObservableProperty]
     private string verificationCode = string.Empty;
 
-    public ForgotPasswordViewModel()
-        : base(true) { }
+    public ForgotPasswordViewModel(string emailOrLogin, UserIdentifierType identifierType)
+        : base(true)
+    {
+        this.emailOrLogin = emailOrLogin;
+        this.identifierType = identifierType;
+    }
 
     public override string ViewId
     {
@@ -30,15 +34,12 @@ public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerifi
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

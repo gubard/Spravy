@@ -34,7 +34,7 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase, IToDoIte
     public SpravyCommand InitializedCommand { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
         if (Item is not null && items.IsEmpty())
         {
@@ -44,7 +44,7 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase, IToDoIte
         return toDoUiService.UpdateItemsAsync(items.ToArray(), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

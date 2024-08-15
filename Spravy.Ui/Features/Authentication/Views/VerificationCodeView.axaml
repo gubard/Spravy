@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.Authentication.Views.VerificationCodeView"
              x:DataType="vm:VerificationCodeViewModel">
@@ -16,9 +17,9 @@
 
             <StackPanel>
                 <Panel>
-                    <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
+                    <TextBlock Text="{Binding EmailOrLogin, StringFormat=Send verification code to email \{0\}}"
                                IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeEmailToTrue}}" />
-                    <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to user \{0\}}"
+                    <TextBlock Text="{Binding EmailOrLogin, StringFormat=Send verification code to user \{0\}}"
                                IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeLoginToTrue}}" />
                 </Panel>
 
@@ -29,23 +30,23 @@
 
                 <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                     <Button Classes="mode-press"
-                            Command="{Binding Commands.SendNewVerificationCode.Command}"
+                            Command="{x:Static h:UiHelper.SendNewVerificationCode}"
                             CommandParameter="{Binding}"
                             Content="{DynamicResource VerificationCodeView.SendNewCode}" />
                     <Button Grid.Column="1"
                             Classes="mode-press"
-                            Command="{Binding Commands.UpdateEmail.Command}"
+                            Command="{x:Static h:UiHelper.UpdateEmail}"
                             CommandParameter="{Binding}"
                             Content="{DynamicResource VerificationCodeView.ChangeEmail}" />
                     <Button Grid.Row="1"
                             Classes="mode-press"
-                            Command="{Binding Commands.Back.Command}"
+                            Command="{x:Static h:UiHelper.Back}"
                             Content="{DynamicResource VerificationCodeView.Back}" />
                     <Button Grid.Row="1"
                             Grid.Column="1"
                             Name="{x:Static v:VerificationCodeView.VerificationEmailButtonName}"
                             Classes="mode-press"
-                            Command="{Binding Commands.VerificationEmail.Command}"
+                            Command="{x:Static h:UiHelper.VerificationEmail}"
                             CommandParameter="{Binding }"
                             Content="{DynamicResource VerificationCodeView.SubmitCode}" />
                 </Grid>

@@ -27,12 +27,12 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
     public ToDoItemEntityNotify Item { get; }
     public SpravyCommand InitializedCommand { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoService
             .GetValueToDoItemSettingsAsync(Item.Id, ct)
@@ -51,7 +51,7 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);
     }

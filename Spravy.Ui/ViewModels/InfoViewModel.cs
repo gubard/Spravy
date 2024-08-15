@@ -19,7 +19,7 @@ public partial class InfoViewModel : ViewModelBase
     public SpravyCommand OkCommand { get; }
     public object Content { get; }
 
-    private ConfiguredValueTaskAwaitable<Result> OkAsync(CancellationToken ct)
+    private Cvtar OkAsync(CancellationToken ct)
     {
         return okTask.Invoke(Content);
     }

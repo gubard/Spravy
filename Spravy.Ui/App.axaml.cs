@@ -42,7 +42,7 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private ConfiguredValueTaskAwaitable<Result> SetTheme()
+    private Cvtar SetTheme()
     {
         var objectStorage = serviceFactory.CreateService<IObjectStorage>();
         var ct = CancellationToken.None;

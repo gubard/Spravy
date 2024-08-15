@@ -37,10 +37,7 @@ public static class TaskProgressServiceExtension
             );
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<
-        TTaskProgressServiceProperty,
-        TItem
-    >(
+    public static Cvtar RunProgressAsync<TTaskProgressServiceProperty, TItem>(
         this TTaskProgressServiceProperty property,
         ReadOnlyMemory<TItem> items,
         Func<TItem, ConfiguredValueTaskAwaitable<Result>> func,
@@ -92,7 +89,7 @@ public static class TaskProgressServiceExtension
             );
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
+    public static Cvtar RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
         ushort impact,
         Func<TaskProgressItem, ConfiguredValueTaskAwaitable<Result>> func,
@@ -116,7 +113,7 @@ public static class TaskProgressServiceExtension
         return property.AddItem(impact, ct).IfSuccessTryFinally(func, item => item.Finish());
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
+    public static Cvtar RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken ct
@@ -144,10 +141,7 @@ public static class TaskProgressServiceExtension
             .IfSuccessTryFinallyAsync(_ => func.Invoke(ct), item => item.Finish(), ct);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<
-        TTaskProgressServiceProperty,
-        TParam
-    >(
+    public static Cvtar RunProgressAsync<TTaskProgressServiceProperty, TParam>(
         this TTaskProgressServiceProperty property,
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         TParam param,

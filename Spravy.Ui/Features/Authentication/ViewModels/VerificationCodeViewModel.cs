@@ -3,21 +3,17 @@ namespace Spravy.Ui.Features.Authentication.ViewModels;
 public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
 {
     [ObservableProperty]
-    private string identifier = string.Empty;
-
-    [ObservableProperty]
-    private UserIdentifierType identifierType;
-
-    [ObservableProperty]
     private string verificationCode = string.Empty;
 
-    public VerificationCodeViewModel(VerificationCodeCommands commands)
+    public VerificationCodeViewModel(string emailOrLogin, UserIdentifierType identifierType)
         : base(true)
     {
-        Commands = commands;
+        EmailOrLogin = emailOrLogin;
+        IdentifierType = identifierType;
     }
 
-    public VerificationCodeCommands Commands { get; }
+    public string EmailOrLogin { get; }
+    public UserIdentifierType IdentifierType { get; }
 
     public override string ViewId
     {
@@ -29,15 +25,12 @@ public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVeri
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

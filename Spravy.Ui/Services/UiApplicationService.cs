@@ -9,7 +9,7 @@ public class UiApplicationService : IUiApplicationService
         this.mainSplitViewModel = mainSplitViewModel;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken ct)
+    public Cvtar RefreshCurrentViewAsync(CancellationToken ct)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {

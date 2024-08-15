@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUpdater
+public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
@@ -36,7 +36,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Item.Id}";
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
     }
@@ -48,7 +48,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
+    private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return toDoUiService
             .UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
@@ -73,32 +73,29 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this), ct);
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return setting
-            .CastObject<ToDoItemViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+        return objectStorage
+            .GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                s =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

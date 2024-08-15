@@ -39,7 +39,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
 
     public ToDoItemEntityNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService
             .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)

@@ -8,6 +8,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
     private readonly INavigator navigator;
     private readonly IObjectStorage objectStorage;
     private readonly Application application;
+    private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
     private ThemeType selectedTheme;
@@ -21,7 +22,8 @@ public partial class SettingViewModel : NavigatableViewModelBase
         AccountNotify accountNotify,
         ITaskProgressService taskProgressService,
         Application application,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        IViewFactory viewFactory
     )
         : base(true)
     {
@@ -29,6 +31,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
         this.navigator = navigator;
         AccountNotify = accountNotify;
         this.objectStorage = objectStorage;
+        this.viewFactory = viewFactory;
         SaveCommand = SpravyCommand.Create(SaveStateAsync, errorHandler, taskProgressService);
 
         ChangePasswordCommand = SpravyCommand.Create(
@@ -61,26 +64,21 @@ public partial class SettingViewModel : NavigatableViewModelBase
         get => $"{AppConst.Version}({AppConst.Version.Code})";
     }
 
-    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
+    private Cvtar DeleteAccountAsync(CancellationToken ct)
     {
-        return navigator.NavigateToAsync<DeleteAccountViewModel>(
-            vm =>
-            {
-                vm.Identifier = AccountNotify.Login;
-                vm.IdentifierType = UserIdentifierType.Login;
-            },
+        return navigator.NavigateToAsync(
+            viewFactory.CreateDeleteAccountViewModel(AccountNotify.Login, UserIdentifierType.Login),
             ct
         );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken ct)
+    private Cvtar ChangePasswordAsync(CancellationToken ct)
     {
-        return navigator.NavigateToAsync<ForgotPasswordViewModel>(
-            vm =>
-            {
-                vm.Identifier = AccountNotify.Login;
-                vm.IdentifierType = UserIdentifierType.Login;
-            },
+        return navigator.NavigateToAsync(
+            viewFactory.CreateForgotPasswordViewModel(
+                AccountNotify.Login,
+                UserIdentifierType.Login
+            ),
             ct
         );
     }
@@ -90,31 +88,28 @@ public partial class SettingViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new Setting.Setting(this), ct);
+        return objectStorage
+            .GetObjectOrDefaultAsync<Setting.Setting>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            SelectedTheme = setting.Theme;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return setting
-            .CastObject<Setting.Setting>()
-            .IfSuccess(s =>
-                s.PostUiBackground(
-                    () =>
-                    {
-                        SelectedTheme = s.Theme;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+        return objectStorage.SaveObjectAsync(ViewId, new Setting.Setting(this), ct);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

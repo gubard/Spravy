@@ -7,20 +7,5 @@ public partial class AddRootToDoItemView : UserControl
     public AddRootToDoItemView()
     {
         InitializeComponent();
-
-        Initialized += (s, e) =>
-        {
-            if (s is not AddRootToDoItemView view)
-            {
-                return;
-            }
-
-            if (view.DataContext is not AddRootToDoItemViewModel viewModel)
-            {
-                return;
-            }
-
-            UiHelper.AddRootToDoItemViewInitialized.Execute(viewModel);
-        };
     }
 }

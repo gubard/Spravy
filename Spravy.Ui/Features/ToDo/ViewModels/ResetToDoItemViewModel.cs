@@ -45,12 +45,9 @@ public partial class ResetToDoItemViewModel : NavigatableViewModelBase
         get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.Id}";
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
+    private Cvtar InitializedAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
-            .IfSuccessAsync(() => toDoUiService.UpdateItemAsync(Item, ct), ct);
+        return toDoUiService.UpdateItemAsync(Item, ct);
     }
 
     public override Result Stop()
@@ -58,32 +55,29 @@ public partial class ResetToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return setting
-            .CastObject<ResetToDoItemViewModelSetting>()
-            .IfSuccess(s =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        IsCompleteChildrenTask = s.IsCompleteChildrenTask;
-                        IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
-                        IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
-                        IsCompleteCurrentTask = s.IsCompleteCurrentTask;
+        return objectStorage
+            .GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                s =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            IsCompleteChildrenTask = s.IsCompleteChildrenTask;
+                            IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
+                            IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
+                            IsCompleteCurrentTask = s.IsCompleteCurrentTask;
 
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
     }

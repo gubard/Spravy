@@ -3,82 +3,15 @@ namespace Spravy.Ui.Services;
 public class Navigator : INavigator
 {
     private readonly QueryList<NavigatorItem> list = new(5);
-    private readonly IServiceFactory serviceFactory;
     private readonly IDialogViewer dialogViewer;
     private readonly MainSplitViewModel mainSplitViewModel;
 
     private Action<object> lastSetup = ActionHelper<object>.Empty;
 
-    public Navigator(
-        IDialogViewer dialogViewer,
-        IServiceFactory serviceFactory,
-        MainSplitViewModel mainSplitViewModel
-    )
+    public Navigator(IDialogViewer dialogViewer, MainSplitViewModel mainSplitViewModel)
     {
         this.dialogViewer = dialogViewer;
-        this.serviceFactory = serviceFactory;
         this.mainSplitViewModel = mainSplitViewModel;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
-        Action<TViewModel> setup,
-        CancellationToken ct
-    )
-        where TViewModel : INavigatable
-    {
-        return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), ct)
-            .IfSuccessAsync(
-                () =>
-                {
-                    if (
-                        mainSplitViewModel.Content is IRefresh refresh
-                        && mainSplitViewModel.Content is TViewModel vm
-                    )
-                    {
-                        return this.InvokeUiBackgroundAsync(() =>
-                            {
-                                setup.Invoke(vm);
-
-                                return Result.Success;
-                            })
-                            .IfSuccessAsync(() => refresh.RefreshAsync(ct), ct);
-                    }
-
-                    if (mainSplitViewModel.Content is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                    }
-
-                    var viewModel = serviceFactory.CreateService<TViewModel>();
-
-                    return this.InvokeUiBackgroundAsync(() =>
-                    {
-                        setup.Invoke(viewModel);
-                        mainSplitViewModel.Content = viewModel;
-
-                        return Result.Success;
-                    });
-                },
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken ct)
-        where TViewModel : INavigatable
-    {
-        var viewModel = serviceFactory.CreateService<TViewModel>();
-
-        return AddCurrentContentAsync(ActionHelper<object>.Empty, ct)
-            .IfSuccessAsync(
-                () =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        mainSplitViewModel.Content = viewModel;
-
-                        return Result.Success;
-                    }),
-                ct
-            );
     }
 
     public ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(
@@ -150,11 +83,7 @@ public class Navigator : INavigator
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
-        TViewModel parameter,
-        CancellationToken ct
-    )
-        where TViewModel : INavigatable
+    public Cvtar NavigateToAsync(INavigatable parameter, CancellationToken ct)
     {
         return AddCurrentContentAsync(ActionHelper<object>.Empty, ct)
             .IfSuccessAsync(
@@ -169,10 +98,7 @@ public class Navigator : INavigator
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> AddCurrentContentAsync(
-        Action<object> setup,
-        CancellationToken ct
-    )
+    private Cvtar AddCurrentContentAsync(Action<object> setup, CancellationToken ct)
     {
         if (mainSplitViewModel.Content is null)
         {

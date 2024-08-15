@@ -22,21 +22,27 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 
     public AvaloniaList<PasswordItemEntityNotify> Items { get; } = new();
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
+    public Cvtar RefreshAsync(CancellationToken ct)
     {
         Items.Clear();
 
         return passwordService
             .GetPasswordItemsAsync(ct)
             .IfSuccessForEachAsync(
-                item => passwordItemCache.GetPasswordItem(item.Id).IfSuccessAsync(i=>this.InvokeUiBackgroundAsync(() =>
-                {
-                    Items.Add(i);
-                    passwordItemCache.UpdateUi(item);
+                item =>
+                    passwordItemCache
+                        .GetPasswordItem(item.Id)
+                        .IfSuccessAsync(
+                            i =>
+                                this.InvokeUiBackgroundAsync(() =>
+                                {
+                                    Items.Add(i);
+                                    passwordItemCache.UpdateUi(item);
 
-                    return Result.Success;
-                }), ct)
-                    ,
+                                    return Result.Success;
+                                }),
+                            ct
+                        ),
                 ct
             );
     }
@@ -46,15 +52,12 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

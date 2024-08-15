@@ -2,47 +2,35 @@ namespace Spravy.Ui.Features.ToDo.Interfaces;
 
 public interface IToDoUiService
 {
-    ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(
-        ToDoItemEntityNotify item,
-        CancellationToken ct
-    );
+    Cvtar UpdateItemAsync(ToDoItemEntityNotify item, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        CancellationToken ct
-    );
+    Cvtar UpdateItemsAsync(ReadOnlyMemory<ToDoItemEntityNotify> items, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result> UpdateSiblingsAsync(
+    Cvtar UpdateSiblingsAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateLeafToDoItemsAsync(
+    Cvtar UpdateLeafToDoItemsAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateRootItemsAsync(
-        IToDoItemsView toDoItemsView,
-        CancellationToken ct
-    );
+    Cvtar UpdateRootItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result> UpdateSearchToDoItemsAsync(
+    Cvtar UpdateSearchToDoItemsAsync(
         string searchText,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateItemChildrenAsync(
+    Cvtar UpdateItemChildrenAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateTodayItemsAsync(
-        IToDoItemsView toDoItemsView,
-        CancellationToken ct
-    );
+    Cvtar UpdateTodayItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct);
 }

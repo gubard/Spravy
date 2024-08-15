@@ -18,7 +18,7 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     public ToDoItemEntityNotify Item { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return ToDoItemSelector
             .SelectedItem.IfNotNull(nameof(ToDoItemSelector.SelectedItem))

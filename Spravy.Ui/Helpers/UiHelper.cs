@@ -23,6 +23,9 @@ public static class UiHelper
         AddToFavorite = commands.AddToFavorite.Command;
         OpenLink = commands.OpenLink.Command;
         SendNewVerificationCode = commands.SendNewVerificationCode.Command;
+        VerificationCodeViewModelInitialized = commands
+            .VerificationCodeViewModelInitialized
+            .Command;
         NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
         Back = commands.Back.Command;
         SwitchPane = commands.SwitchPane.Command;
@@ -40,21 +43,25 @@ public static class UiHelper
         LoginViewInitialized = commands.LoginViewInitialized.Command;
         LoginViewEnter = commands.LoginViewEnter.Command;
         Login = commands.Login.Command;
-        AddRootToDoItemViewInitialized = commands.AddRootToDoItemViewInitialized.Command;
         PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
         GeneratePassword = commands.GeneratePassword.Command;
         DeletePasswordItem = commands.DeletePasswordItem.Command;
-        NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
-        NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
-        NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
-        NavigateToPasswordGenerator = commands.GetNavigateTo<PasswordGeneratorViewModel>().Command;
-        NavigateToSetting = commands.GetNavigateTo<SettingViewModel>().Command;
-        NavigateToCreateUser = commands.GetNavigateTo<CreateUserViewModel>().Command;
-        NavigateToEmailOrLoginInput = commands.GetNavigateTo<EmailOrLoginInputViewModel>().Command;
+        NavigateToRootToDoItems = commands.NavigateToRootToDoItems.Command;
+        NavigateToTodayToDoItems = commands.NavigateToTodayToDoItems.Command;
+        NavigateToSearchToDoItems = commands.NavigateToSearchToDoItems.Command;
+        NavigateToPasswordGenerator = commands.NavigateToPasswordGenerator.Command;
+        NavigateToSetting = commands.NavigateToSetting.Command;
+        NavigateToCreateUser = commands.NavigateToCreateUser.Command;
+        NavigateToEmailOrLoginInput = commands.NavigateToEmailOrLoginInput.Command;
         MultiToDoItemsViewInitialized = commands.MultiToDoItemsViewInitialized.Command;
         CopyToClipboard = commands.CopyToClipboard.Command;
+        UpdateEmail = commands.UpdateEmail.Command;
+        VerificationEmail = commands.VerificationEmail.Command;
     }
 
+    public static readonly ICommand UpdateEmail;
+    public static readonly ICommand VerificationEmail;
+    public static readonly ICommand VerificationCodeViewModelInitialized;
     public static readonly ICommand Back;
     public static readonly ICommand CopyToClipboard;
     public static readonly ICommand NavigateToToDoItem;
@@ -86,7 +93,6 @@ public static class UiHelper
     public static readonly ICommand LoginViewEnter;
     public static readonly ICommand Login;
     public static readonly ICommand PasswordGeneratorViewInitialized;
-    public static readonly ICommand AddRootToDoItemViewInitialized;
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
     public static readonly ICommand MultiToDoItemsViewInitialized;

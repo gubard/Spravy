@@ -1,20 +1,11 @@
 namespace Spravy.Ui.Models;
 
-public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
+public abstract class NavigatableViewModelBase(bool isPooled) : ViewModelBase, INavigatable
 {
-    protected NavigatableViewModelBase(bool isPooled)
-    {
-        IsPooled = isPooled;
-    }
-
-    public bool IsPooled { get; }
+    public bool IsPooled { get; } = isPooled;
     public abstract string ViewId { get; }
 
     public abstract Result Stop();
-    public abstract ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct);
-
-    public abstract ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    );
+    public abstract Cvtar LoadStateAsync(CancellationToken ct);
+    public abstract Cvtar SaveStateAsync(CancellationToken ct);
 }

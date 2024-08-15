@@ -10,9 +10,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         ToDoItemEntityNotify parent,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
-        IObjectStorage objectStorage,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        IObjectStorage objectStorage
     )
         : base(true)
     {
@@ -20,21 +18,11 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
         Parent = parent;
-
-        Initialized = SpravyCommand.Create(
-            ct =>
-                objectStorage
-                    .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, ct)
-                    .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct),
-            errorHandler,
-            taskProgressService
-        );
     }
 
     public ToDoItemEntityNotify Parent { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
-    public SpravyCommand Initialized { get; }
 
     public override string ViewId
     {
@@ -46,37 +34,34 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return objectStorage
+            .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            DescriptionContent.DescriptionType = setting.DescriptionType;
+                            DescriptionContent.Description = setting.Description;
+                            ToDoItemContent.Type = setting.Type;
+                            ToDoItemContent.Link = setting.Link;
+                            ToDoItemContent.Name = setting.Name;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         var setting = new AddToDoItemViewModelSetting(this);
 
         return objectStorage.SaveObjectAsync(ViewId, setting, ct);
-    }
-
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
-    {
-        return setting
-            .CastObject<AddToDoItemViewModelSetting>()
-            .IfSuccess(x =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        DescriptionContent.DescriptionType = x.DescriptionType;
-                        DescriptionContent.Description = x.Description;
-                        ToDoItemContent.Link = x.Link;
-                        ToDoItemContent.Name = x.Name;
-                        ToDoItemContent.Type = x.Type;
-
-                        return Result.Success;
-                    },
-                    ct
-                )
-            )
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()

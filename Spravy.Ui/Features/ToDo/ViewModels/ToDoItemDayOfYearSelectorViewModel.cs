@@ -35,7 +35,7 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     public AvaloniaList<DayOfYearSelectItem> DaysOfYear { get; }
     public ToDoItemEntityNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             Item.Id,

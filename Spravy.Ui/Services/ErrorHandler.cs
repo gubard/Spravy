@@ -13,10 +13,7 @@ public class ErrorHandler : IErrorHandler
         this.serviceFactory = serviceFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(
-        ReadOnlyMemory<Error> errors,
-        CancellationToken ct
-    )
+    public Cvtar ErrorsHandleAsync(ReadOnlyMemory<Error> errors, CancellationToken ct)
     {
         if (errors.IsEmpty)
         {
@@ -41,10 +38,7 @@ public class ErrorHandler : IErrorHandler
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(
-        Exception exception,
-        CancellationToken ct
-    )
+    public Cvtar ExceptionHandleAsync(Exception exception, CancellationToken ct)
     {
         if (exception is TaskCanceledException)
         {

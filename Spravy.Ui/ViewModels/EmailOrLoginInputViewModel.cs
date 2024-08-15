@@ -13,19 +13,22 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
     private readonly INavigator navigator;
     private readonly IObjectStorage objectStorage;
     private readonly IAuthenticationService authenticationService;
+    private readonly IViewFactory viewFactory;
 
     public EmailOrLoginInputViewModel(
         IErrorHandler errorHandler,
         INavigator navigator,
         IObjectStorage objectStorage,
         IAuthenticationService authenticationService,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IViewFactory viewFactory
     )
         : base(true)
     {
         this.navigator = navigator;
         this.objectStorage = objectStorage;
         this.authenticationService = authenticationService;
+        this.viewFactory = viewFactory;
 
         ForgotPasswordCommand = SpravyCommand.Create(
             ForgotPasswordAsync,
@@ -41,7 +44,7 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
         get => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken ct)
+    private Cvtar ForgotPasswordAsync(CancellationToken ct)
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -61,22 +64,20 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                 {
                                     if (value)
                                     {
-                                        return navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                                            vm =>
-                                            {
-                                                vm.Identifier = EmailOrLogin;
-                                                vm.IdentifierType = UserIdentifierType.Email;
-                                            },
+                                        return navigator.NavigateToAsync(
+                                            viewFactory.CreateForgotPasswordViewModel(
+                                                EmailOrLogin,
+                                                UserIdentifierType.Email
+                                            ),
                                             ct
                                         );
                                     }
 
-                                    return navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                        vm =>
-                                        {
-                                            vm.IdentifierType = UserIdentifierType.Email;
-                                            vm.Identifier = EmailOrLogin;
-                                        },
+                                    return navigator.NavigateToAsync(
+                                        viewFactory.CreateVerificationCodeViewModel(
+                                            EmailOrLogin,
+                                            UserIdentifierType.Email
+                                        ),
                                         ct
                                     );
                                 },
@@ -91,22 +92,20 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
                             {
                                 if (value)
                                 {
-                                    return navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                                        vm =>
-                                        {
-                                            vm.Identifier = EmailOrLogin;
-                                            vm.IdentifierType = UserIdentifierType.Login;
-                                        },
+                                    return navigator.NavigateToAsync(
+                                        viewFactory.CreateForgotPasswordViewModel(
+                                            EmailOrLogin,
+                                            UserIdentifierType.Email
+                                        ),
                                         ct
                                     );
                                 }
 
-                                return navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                    vm =>
-                                    {
-                                        vm.IdentifierType = UserIdentifierType.Login;
-                                        vm.Identifier = EmailOrLogin;
-                                    },
+                                return navigator.NavigateToAsync(
+                                    viewFactory.CreateVerificationCodeViewModel(
+                                        EmailOrLogin,
+                                        UserIdentifierType.Email
+                                    ),
                                     ct
                                 );
                             },
@@ -131,7 +130,7 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(
             ViewId,
@@ -140,18 +139,8 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
         );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
-        object setting,
-        CancellationToken ct
-    )
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
-
-        return this.InvokeUiBackgroundAsync(() =>
-        {
-            EmailOrLogin = s.Identifier;
-
-            return Result.Success;
-        });
+        return Result.AwaitableSuccess;
     }
 }

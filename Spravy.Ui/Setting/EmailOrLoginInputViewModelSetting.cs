@@ -1,13 +1,16 @@
 namespace Spravy.Ui.Setting;
 
 public class EmailOrLoginInputViewModelSetting
+    : IViewModelSetting<EmailOrLoginInputViewModelSetting>
 {
+    public static EmailOrLoginInputViewModelSetting Default { get; } = new();
+
     public EmailOrLoginInputViewModelSetting() { }
 
     public EmailOrLoginInputViewModelSetting(EmailOrLoginInputViewModel viewModel)
     {
-        Identifier = viewModel.EmailOrLogin;
+        EmailOrLogin = viewModel.EmailOrLogin;
     }
 
-    public string Identifier { get; set; } = string.Empty;
+    public string EmailOrLogin { get; set; } = string.Empty;
 }
