@@ -2761,6 +2761,12 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        MainSplitViewModelInitialized = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2853,6 +2859,7 @@ public class SpravyCommandService
     public SpravyCommand NavigateToEmailOrLoginInput { get; }
 
     public SpravyCommand VerificationCodeViewModelInitialized { get; }
+    public SpravyCommand MainSplitViewModelInitialized { get; }
     public SpravyCommand UpdateEmail { get; }
     public SpravyCommand VerificationEmail { get; }
 

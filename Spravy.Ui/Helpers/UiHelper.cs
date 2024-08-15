@@ -57,8 +57,10 @@ public static class UiHelper
         CopyToClipboard = commands.CopyToClipboard.Command;
         UpdateEmail = commands.UpdateEmail.Command;
         VerificationEmail = commands.VerificationEmail.Command;
+        MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
     }
 
+    public static readonly ICommand MainSplitViewModelInitialized;
     public static readonly ICommand UpdateEmail;
     public static readonly ICommand VerificationEmail;
     public static readonly ICommand VerificationCodeViewModelInitialized;

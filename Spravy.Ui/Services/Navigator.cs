@@ -85,7 +85,8 @@ public class Navigator : INavigator
 
     public Cvtar NavigateToAsync(INavigatable parameter, CancellationToken ct)
     {
-        return AddCurrentContentAsync(ActionHelper<object>.Empty, ct)
+        return AddCurrentContentAsync(ct)
+            .IfSuccessAsync(() => parameter.LoadStateAsync(ct), ct)
             .IfSuccessAsync(
                 () =>
                     this.InvokeUiBackgroundAsync(() =>
@@ -98,7 +99,7 @@ public class Navigator : INavigator
             );
     }
 
-    private Cvtar AddCurrentContentAsync(Action<object> setup, CancellationToken ct)
+    private Cvtar AddCurrentContentAsync(CancellationToken ct)
     {
         if (mainSplitViewModel.Content is null)
         {
@@ -116,15 +117,6 @@ public class Navigator : INavigator
         return content
             .SaveStateAsync(ct)
             .IfSuccessAsync(() => list.Add(new(content, lastSetup)), ct)
-            .IfSuccessAsync(
-                () =>
-                {
-                    lastSetup = setup;
-
-                    return Result.AwaitableSuccess;
-                },
-                ct
-            )
             .IfSuccessAsync(
                 () =>
                     this.InvokeUiBackgroundAsync(() =>

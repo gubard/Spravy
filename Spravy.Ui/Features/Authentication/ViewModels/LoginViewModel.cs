@@ -51,6 +51,7 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
                 {
                     yield return validLength;
                 }
+
                 break;
             }
             case nameof(Password):
@@ -99,6 +100,20 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return objectStorage
+            .GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            Login = setting.Login;
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 }
