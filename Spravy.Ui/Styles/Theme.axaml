@@ -16,6 +16,7 @@
                 <MergeResourceInclude Source="DialogControl.axaml" />
                 <MergeResourceInclude Source="EnumsSelectorControl.axaml" />
                 <MergeResourceInclude Source="EnumSelectorItemControl.axaml" />
+                <MergeResourceInclude Source="Colors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

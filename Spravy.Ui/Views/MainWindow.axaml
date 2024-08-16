@@ -12,22 +12,6 @@
         Height="600"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <Color x:Key="TintColor">#FFFFFFFF</Color>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="TintColor">#FF000000</Color>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Default">
-                    <Color x:Key="TintColor">#FF000000</Color>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
-
     <Panel x:Name="PART_Panel">
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
