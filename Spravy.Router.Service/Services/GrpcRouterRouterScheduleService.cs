@@ -26,8 +26,10 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         ServerCallContext context
     )
     {
-        var parameters = request.Parameters.ToAddTimerParameters();
-        await scheduleService.AddTimerAsync(parameters, context.CancellationToken);
+        await scheduleService.AddTimerAsync(
+            request.ToAddTimerParameters(),
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -43,18 +45,18 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         return new();
     }
 
-    public override Task<GetListTimesReply> GetListTimes(
-        GetListTimesRequest request,
+    public override Task<GetTimersReply> GetTimers(
+        GetTimersRequest request,
         ServerCallContext context
     )
     {
         return scheduleService
-            .GetListTimesAsync(context.CancellationToken)
+            .GetTimersAsync(context.CancellationToken)
             .HandleAsync(
                 serializer,
                 items =>
                 {
-                    var reply = new GetListTimesReply();
+                    var reply = new GetTimersReply();
                     reply.Items.AddRange(items.ToTimerItemGrpc().ToArray());
 
                     return reply;

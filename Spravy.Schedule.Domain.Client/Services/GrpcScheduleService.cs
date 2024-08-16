@@ -22,14 +22,6 @@ public class GrpcScheduleService
 {
     private readonly IMetadataFactory metadataFactory;
 
-    static GrpcScheduleService()
-    {
-        GrpcClientFactoryHelper.ClientFactories.Add(
-            typeof(ScheduleService.ScheduleServiceClient),
-            new ScheduleServiceClientFactory()
-        );
-    }
-
     public GrpcScheduleService(
         IFactory<Uri, ScheduleService.ScheduleServiceClient> grpcClientFactory,
         Uri host,
@@ -64,7 +56,7 @@ public class GrpcScheduleService
                         metadata =>
                             client
                                 .AddTimerAsync(
-                                    new() { Parameters = parameters.ToAddTimerParametersGrpc(), },
+                                    parameters.ToAddTimerRequest(),
                                     metadata,
                                     cancellationToken: ct
                                 )
@@ -76,7 +68,7 @@ public class GrpcScheduleService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
         CancellationToken ct
     )
     {
@@ -87,7 +79,7 @@ public class GrpcScheduleService
                     .IfSuccessAsync(
                         value =>
                             client
-                                .GetListTimesAsync(new(), value)
+                                .GetTimersAsync(new(), value)
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(

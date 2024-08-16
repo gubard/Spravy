@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.Schedule.Views.TimersView"
+             x:DataType="vm:TimersViewModel">
+    <Grid RowDefinitions=" Auto,*">
+        <StackPanel Classes="horizontal alignment-left">
+            <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
+                <mi:MaterialIcon Kind="Menu" />
+            </Button>
+
+            <TextBlock Text="{StaticResource TimersView.Header}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Timers}" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>

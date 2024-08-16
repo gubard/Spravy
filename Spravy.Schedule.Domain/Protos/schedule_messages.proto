@@ -13,24 +13,21 @@ message RemoveTimerRequest {
 message RemoveTimerReply {
 }
 
-message GetListTimesRequest {
+message GetTimersRequest {
 }
 
-message GetListTimesReply {
+message GetTimersReply {
     repeated TimerItemGrpc items = 1;
 }
 
 message AddTimerRequest {
-    AddTimerParametersGrpc parameters = 1;
+  bytes event_id = 1;
+  bytes content = 2;
+  google.protobuf.Timestamp due_date_time = 3;
+  string Name = 4;
 }
 
 message AddTimerReply {
-}
-
-message AddTimerParametersGrpc {
-    bytes event_id = 1;
-    bytes content = 2;
-    google.protobuf.Timestamp due_date_time = 3;
 }
 
 message TimerItemGrpc {
@@ -38,4 +35,5 @@ message TimerItemGrpc {
     bytes event_id = 2;
     bytes content = 3;
     google.protobuf.Timestamp due_date_time = 4;
+    string Name = 5;
 }

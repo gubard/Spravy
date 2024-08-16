@@ -6,4 +6,5 @@ public class TimerEntity
     public DateTime DueDateTime { get; set; }
     public Guid EventId { get; set; }
     public byte[] Content { get; set; } = [];
+    public string Name { get; set; } = string.Empty;
 }

@@ -50,7 +50,7 @@ public class EfScheduleService : IScheduleService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
         CancellationToken ct
     )
     {

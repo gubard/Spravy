@@ -11,7 +11,7 @@ public interface IScheduleService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
         CancellationToken ct
     );
 

@@ -1,3 +1,5 @@
+using Spravy.Schedule.Domain.Interfaces;
+using Spravy.Ui.Features.Schedule.ViewModels;
 using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
 
 namespace Spravy.Ui.Services;
@@ -20,6 +22,7 @@ public class ViewFactory : IViewFactory
     private readonly IPasswordItemCache passwordItemCache;
     private readonly AccountNotify accountNotify;
     private readonly Application application;
+    private readonly IScheduleService scheduleService;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -37,7 +40,8 @@ public class ViewFactory : IViewFactory
         IPasswordItemCache passwordItemCache,
         AccountNotify accountNotify,
         Application application,
-        IServiceFactory serviceFactory
+        IServiceFactory serviceFactory,
+        IScheduleService scheduleService
     )
     {
         this.toDoService = toDoService;
@@ -56,6 +60,7 @@ public class ViewFactory : IViewFactory
         this.accountNotify = accountNotify;
         this.application = application;
         this.serviceFactory = serviceFactory;
+        this.scheduleService = scheduleService;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -172,6 +177,11 @@ public class ViewFactory : IViewFactory
             objectStorage,
             this
         );
+    }
+
+    public TimersViewModel CreateTimersViewModel()
+    {
+        return new(scheduleService, errorHandler, taskProgressService);
     }
 
     public EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel()

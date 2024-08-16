@@ -8,6 +8,6 @@ import "Protos/schedule_messages.proto";
 
 service ScheduleService {
     rpc AddTimer (AddTimerRequest) returns (AddTimerReply);
-    rpc GetListTimes (GetListTimesRequest) returns (GetListTimesReply);
+    rpc GetTimers (GetTimersRequest) returns (GetTimersReply);
     rpc RemoveTimer (RemoveTimerRequest) returns (RemoveTimerReply);
 }

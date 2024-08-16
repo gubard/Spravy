@@ -6,7 +6,6 @@ using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Errors;
 
 namespace Spravy.Schedule.Service.Services;
 
@@ -59,78 +58,6 @@ public class RpcExceptionHandler : IRpcExceptionHandler
     )
     {
         await using var stream = new MemoryStream(trailer.ValueBytes);
-
-        if (ToDoItemIsCanOutOfRangeError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<ToDoItemIsCanOutOfRangeError>(
-                stream,
-                ct
-            );
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
-
-        if (ToDoItemAlreadyCompleteError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<ToDoItemAlreadyCompleteError>(
-                stream,
-                ct
-            );
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
-
-        if (ToDoItemStatusOutOfRangeError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<ToDoItemStatusOutOfRangeError>(
-                stream,
-                ct
-            );
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
-
-        if (ToDoItemTypeOutOfRangeError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<ToDoItemTypeOutOfRangeError>(stream, ct);
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
-
-        if (ToDoItemChildrenTypeOutOfRangeError.MainId == id)
-        {
-            var result = await serializer.DeserializeAsync<ToDoItemChildrenTypeOutOfRangeError>(
-                stream,
-                ct
-            );
-
-            if (!result.TryGetValue(out var value))
-            {
-                return result.Errors;
-            }
-
-            return new([value,]);
-        }
 
         if (UserWithEmailExistsError.MainId == id)
         {

@@ -1,5 +1,7 @@
 using Riok.Mapperly.Abstractions;
 using Spravy.Core.Mappers;
+using Spravy.Schedule.Domain.Models;
+using Spravy.Ui.Features.Schedule.Models;
 
 namespace Spravy.Ui.Mappers;
 
@@ -20,6 +22,8 @@ public static partial class UiMapper
     {
         return new(value.Login, value.Password);
     }
+
+    public static partial TimerItemNotify ToTimerItemNotify(this TimerItem value);
 
     public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemViewModel value)
     {

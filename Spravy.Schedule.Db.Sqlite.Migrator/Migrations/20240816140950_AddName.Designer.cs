@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.Schedule.Db.Contexts;
 
@@ -10,9 +11,11 @@ using Spravy.Schedule.Db.Contexts;
 namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
 {
     [DbContext(typeof(SpravyDbScheduleDbContext))]
-    partial class SpravyScheduleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240816140950_AddName")]
+    partial class AddName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");

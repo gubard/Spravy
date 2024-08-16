@@ -1,3 +1,4 @@
+using Spravy.Ui.Features.Schedule.ViewModels;
 using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
 
 namespace Spravy.Ui.Interfaces;
@@ -35,6 +36,7 @@ public interface IViewFactory
     SearchToDoItemsViewModel CreateSearchToDoItemsViewModel();
     PasswordGeneratorViewModel CreatePasswordGeneratorViewModel();
     SettingViewModel CreateSettingViewModel();
+    TimersViewModel CreateTimersViewModel();
     EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel();
     CreateUserViewModel CreateCreateUserViewModel();
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);

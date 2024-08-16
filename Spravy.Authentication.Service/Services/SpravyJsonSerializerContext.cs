@@ -1,15 +1,10 @@
 using System.Text.Json.Serialization;
 using Spravy.Db.Errors;
 using Spravy.Domain.Errors;
-using Spravy.ToDo.Domain.Errors;
 
 namespace Spravy.Authentication.Service.Services;
 
 [JsonSourceGenerationOptions]
-[JsonSerializable(typeof(ToDoItemIsCanOutOfRangeError))]
-[JsonSerializable(typeof(ToDoItemAlreadyCompleteError))]
-[JsonSerializable(typeof(ToDoItemStatusOutOfRangeError))]
-[JsonSerializable(typeof(ToDoItemTypeOutOfRangeError))]
 [JsonSerializable(typeof(UserWithEmailExistsError))]
 [JsonSerializable(typeof(UnknownError))]
 [JsonSerializable(typeof(UserWithLoginExistsError))]

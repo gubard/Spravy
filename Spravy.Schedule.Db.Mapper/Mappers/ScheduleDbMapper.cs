@@ -17,7 +17,7 @@ public static partial class ScheduleDbMapper
 
     public static TimerItem ToTimerItem(this TimerEntity entity)
     {
-        return new(entity.DueDateTime, entity.EventId, entity.Content, entity.Id);
+        return new(entity.DueDateTime, entity.EventId, entity.Content, entity.Id, entity.Name);
     }
 
     private static ByteString ToByteString(Guid id)

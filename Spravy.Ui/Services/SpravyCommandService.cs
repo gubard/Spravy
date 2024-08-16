@@ -2771,6 +2771,12 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        NavigateToTimers = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreateTimersViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2857,6 +2863,7 @@ public class SpravyCommandService
     public SpravyCommand NavigateToRootToDoItems { get; }
     public SpravyCommand NavigateToTodayToDoItems { get; }
     public SpravyCommand NavigateToSearchToDoItems { get; }
+    public SpravyCommand NavigateToTimers { get; }
     public SpravyCommand NavigateToPasswordGenerator { get; }
     public SpravyCommand NavigateToSetting { get; }
     public SpravyCommand NavigateToCreateUser { get; }

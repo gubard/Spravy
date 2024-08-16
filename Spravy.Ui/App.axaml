@@ -7,7 +7,8 @@
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -26,7 +27,15 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+        <DataTemplate DataType="sm:TimerItemNotify">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding DueDateTime}" />
+                <Control />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="tdm:ToDoItemEntityNotify">
             <Button x:Name="RootToDoItemButton"
                     Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"

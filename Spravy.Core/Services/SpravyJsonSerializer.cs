@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Spravy.Domain.Errors;
 
 namespace Spravy.Core.Services;
 
@@ -46,9 +47,16 @@ public class SpravyJsonSerializer : ISerializer
     )
         where TObject : notnull
     {
+        var typeInfo = context.GetTypeInfo(typeof(TObject));
+
+        if (typeInfo is null)
+        {
+            return new(new NotFoundTypeError(typeof(TObject)));
+        }
+
         var result = await JsonSerializer.DeserializeAsync(
             stream,
-            (JsonTypeInfo<TObject>)context.GetTypeInfo(typeof(TObject)).ThrowIfNull(),
+            (JsonTypeInfo<TObject>)typeInfo,
             ct
         );
 
@@ -59,10 +67,14 @@ public class SpravyJsonSerializer : ISerializer
         where TObject : notnull
     {
         var document = JsonDocument.Parse(stream);
+        var typeInfo = context.GetTypeInfo(typeof(TObject));
 
-        var result = document.Deserialize(
-            (JsonTypeInfo<TObject>)context.GetTypeInfo(typeof(TObject)).ThrowIfNull()
-        );
+        if (typeInfo is null)
+        {
+            return new(new NotFoundTypeError(typeof(TObject)));
+        }
+
+        var result = document.Deserialize((JsonTypeInfo<TObject>)typeInfo);
 
         return result.ThrowIfNull().ToResult();
     }

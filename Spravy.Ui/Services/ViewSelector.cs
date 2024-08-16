@@ -1,4 +1,6 @@
 using Spravy.Ui.Features.PasswordGenerator.Views;
+using Spravy.Ui.Features.Schedule.ViewModels;
+using Spravy.Ui.Features.Schedule.Views;
 using Spravy.Ui.Features.ToDo.Views;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
@@ -281,6 +283,11 @@ public class ViewSelector : IViewSelector
         if (typeof(CreateUserViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<CreateUserView>());
+        }
+
+        if (typeof(TimersViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<TimersView>());
         }
 
         return new(new NotViewForViewModelError(viewModelType.Name));

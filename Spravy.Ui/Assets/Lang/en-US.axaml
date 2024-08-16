@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
     <!--App-->
     <sys:String x:Key="Notification.CopyToClipboard">Copy to clipboard</sys:String>
-    
+
     <!--Command-->
     <sys:String x:Key="Command.Complete">Complete</sys:String>
     <sys:String x:Key="Command.AddChildToDoItem">Add child to-do item</sys:String>
@@ -22,7 +22,7 @@
     <sys:String x:Key="Command.Clone">Clone</sys:String>
     <sys:String x:Key="Command.CreateReference">Create reference</sys:String>
     <sys:String x:Key="Command.OpenCurrent">Open current to-do item</sys:String>
-    
+
     <!--MultiToDoItemSettingView-->
     <sys:String x:Key="MultiToDoItemSettingView.Name">Name</sys:String>
     <sys:String x:Key="MultiToDoItemSettingView.Url">URL</sys:String>
@@ -31,6 +31,9 @@
 
     <!--TodayToDoItemsView-->
     <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>
+
+    <!--TimersView-->
+    <sys:String x:Key="TimersView.Header">Timers</sys:String>
 
     <!--LeafToDoItemsView-->
     <sys:String x:Key="LeafToDoItemsView.Header">Leaf {Header}</sys:String>

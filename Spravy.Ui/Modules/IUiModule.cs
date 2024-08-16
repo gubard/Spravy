@@ -4,8 +4,10 @@ using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
 using Spravy.Core.Interfaces;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
+using Spravy.Schedule.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
 using Spravy.Ui.Features.PasswordGenerator.Views;
+using Spravy.Ui.Features.Schedule.Views;
 using Spravy.Ui.Features.ToDo.Views;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
@@ -17,6 +19,7 @@ namespace Spravy.Ui.Modules;
 [Import(typeof(IClientModule))]
 [Import(typeof(IToDoClientModule))]
 [Import(typeof(IPasswordGeneratorClientModule))]
+[Import(typeof(IScheduleClientModule))]
 [Singleton(typeof(AccountNotify))]
 [Singleton(typeof(SingleViewModel))]
 [Singleton(typeof(MainWindowModel))]
@@ -73,6 +76,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(DeleteToDoItemView))]
 [Transient(typeof(MultiToDoItemsViewModel))]
 [Transient(typeof(MultiToDoItemsView))]
+[Transient(typeof(TimersView))]
 [Transient(typeof(ToDoItemView))]
 [Transient(typeof(ToDoItemCommands))]
 [Transient(typeof(ToDoItemsGroupByViewModel))]

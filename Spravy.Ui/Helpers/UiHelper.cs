@@ -58,6 +58,7 @@ public static class UiHelper
         UpdateEmail = commands.UpdateEmail.Command;
         VerificationEmail = commands.VerificationEmail.Command;
         MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
+        NavigateToTimers = commands.NavigateToTimers.Command;
     }
 
     public static readonly ICommand MainSplitViewModelInitialized;
@@ -76,6 +77,7 @@ public static class UiHelper
     public static readonly ICommand NavigateToTodayToDoItems;
     public static readonly ICommand NavigateToSearchToDoItems;
     public static readonly ICommand NavigateToPasswordGenerator;
+    public static readonly ICommand NavigateToTimers;
     public static readonly ICommand NavigateToEmailOrLoginInput;
     public static readonly ICommand NavigateToCreateUser;
     public static readonly ICommand NavigateToSetting;

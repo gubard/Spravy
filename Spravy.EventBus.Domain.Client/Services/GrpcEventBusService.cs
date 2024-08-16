@@ -23,14 +23,6 @@ public class GrpcEventBusService
 {
     private readonly IMetadataFactory metadataFactory;
 
-    static GrpcEventBusService()
-    {
-        GrpcClientFactoryHelper.ClientFactories.Add(
-            typeof(EventBusServiceClient),
-            new EventBusServiceClientFactory()
-        );
-    }
-
     public GrpcEventBusService(
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
