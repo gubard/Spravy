@@ -11,36 +11,43 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
              x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
-    <Grid RowDefinitions="Auto,*">
-        <StackPanel Orientation="Horizontal">
-            <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                <c:PathControl.DataTemplates>
-                    <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                        <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                    </DataTemplate>
+    <ScrollViewer>
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
+                <TextBlock Text="{Binding Item.Name}" Classes="alignment-left" />
+            </c:GroupBoxControl.Header>
+            
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
+                        <c:PathControl.DataTemplates>
+                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                            </DataTemplate>
 
-                    <DataTemplate DataType="m:RootItem">
-                        <avalonia:MaterialIcon Kind="Home" Margin="5" />
-                    </DataTemplate>
-                </c:PathControl.DataTemplates>
-            </c:PathControl>
+                            <DataTemplate DataType="m:RootItem">
+                                <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                            </DataTemplate>
+                        </c:PathControl.DataTemplates>
+                    </c:PathControl>
 
-            <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
-            <ToggleSwitch IsChecked="{Binding IsAfter}" />
-            <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
-        </StackPanel>
+                    <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
+                    <ToggleSwitch IsChecked="{Binding IsAfter}" />
+                    <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
+                </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
-            <ListBox Name="{x:Static v:ChangeToDoItemOrderIndexView.ItemsListBoxName}"
-                     ItemsSource="{Binding Items}"
-                     SelectionMode="Single"
-                     SelectedItem="{Binding SelectedItem}">
-                <ListBox.DataTemplates>
-                    <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </ListBox.DataTemplates>
-            </ListBox>
-        </ScrollViewer>
-    </Grid>
+
+                <ListBox Name="{x:Static v:ChangeToDoItemOrderIndexView.ItemsListBoxName}"
+                         ItemsSource="{Binding Items}"
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedItem}">
+                    <ListBox.DataTemplates>
+                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ListBox.DataTemplates>
+                </ListBox>
+            </StackPanel>
+        </c:GroupBoxControl>
+    </ScrollViewer>
 </UserControl>
