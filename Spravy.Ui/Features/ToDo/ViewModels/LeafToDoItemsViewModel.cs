@@ -1,6 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IObjectParameters
+public partial class LeafToDoItemsViewModel
+    : NavigatableViewModelBase,
+        IObjectParameters,
+        IToDoItemsView
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
 
@@ -155,5 +158,15 @@ public partial class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
     {
         return new(new NotImplementedError(nameof(SetParameter)));
+    }
+
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    {
+        return ToDoSubItemsViewModel.ClearExceptUi(items);
+    }
+
+    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.AddOrUpdateUi(item);
     }
 }

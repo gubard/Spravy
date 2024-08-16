@@ -825,7 +825,9 @@ public class SpravyCommandService
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.Completed;
 
-                                            return Result.Success;
+                                            return uiApplicationService
+                                                .GetCurrentView<IToDoItemsView>()
+                                                .IfSuccess(x => x.AddOrUpdateUi(item));
                                         })
                                         .IfSuccessAsync(
                                             () =>
@@ -842,7 +844,9 @@ public class SpravyCommandService
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.ReadyForComplete;
 
-                                            return Result.Success;
+                                            return uiApplicationService
+                                                .GetCurrentView<IToDoItemsView>()
+                                                .IfSuccess(x => x.AddOrUpdateUi(item));
                                         })
                                         .IfSuccessAsync(
                                             () =>

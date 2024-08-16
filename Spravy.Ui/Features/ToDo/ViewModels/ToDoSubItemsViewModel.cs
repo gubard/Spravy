@@ -1,28 +1,14 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
+public class ToDoSubItemsViewModel(
+    IToDoService toDoService,
+    IToDoCache toDoCache,
+    MultiToDoItemsViewModel list,
+    ITaskProgressService taskProgressService,
+    AppOptions appOptions
+) : ViewModelBase, IToDoItemsView
 {
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
-    private readonly ITaskProgressService taskProgressService;
-    private readonly AppOptions appOptions;
-
-    public ToDoSubItemsViewModel(
-        IToDoService toDoService,
-        IToDoCache toDoCache,
-        MultiToDoItemsViewModel list,
-        ITaskProgressService taskProgressService,
-        AppOptions appOptions
-    )
-    {
-        this.toDoService = toDoService;
-        this.toDoCache = toDoCache;
-        List = list;
-        this.taskProgressService = taskProgressService;
-        this.appOptions = appOptions;
-    }
-
-    public MultiToDoItemsViewModel List { get; }
+    public MultiToDoItemsViewModel List { get; } = list;
 
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,

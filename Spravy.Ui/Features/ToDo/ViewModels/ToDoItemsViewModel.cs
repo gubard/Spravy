@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemsViewModel : ViewModelBase
+public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
 {
     [ObservableProperty]
     private TextLocalization? header;
@@ -130,5 +130,10 @@ public partial class ToDoItemsViewModel : ViewModelBase
         Items.Remove(item);
 
         return Result.Success;
+    }
+
+    public Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }
