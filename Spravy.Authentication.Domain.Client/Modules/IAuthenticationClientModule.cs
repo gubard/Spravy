@@ -1,12 +1,10 @@
 using Grpc.Net.Client;
 using Jab;
-using Microsoft.Extensions.Configuration;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Client.Helpers;
 using Spravy.Client.Models;
-using Spravy.Core.Extensions;
 using Spravy.Core.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;

@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Configuration;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
-using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Android.Services;
 

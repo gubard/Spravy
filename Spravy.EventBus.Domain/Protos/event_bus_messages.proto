@@ -20,20 +20,6 @@ message GetEventsReply {
     repeated Event events = 1;
 }
 
-message SubscribeEventsRequest {
-    repeated bytes event_ids = 1;
-}
-
-message SubscribeEventsReply {
-    bytes event_id = 1;
-    bytes content = 2;
-}
-
-message ChangeToDoItemIsFavoriteEvent {
-    bytes to_do_item_id = 1;
-    bool is_favorite = 2;
-}
-
 message AddRootToDoItemEvent {
     bytes to_do_item_id = 1;
 }

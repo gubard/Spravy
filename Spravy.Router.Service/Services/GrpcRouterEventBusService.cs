@@ -1,7 +1,6 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Core.Mappers;
-using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Mapper.Mappers;
@@ -26,24 +25,6 @@ public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
         this.logger = logger;
         this.eventBusService = eventBusService;
         this.serializer = serializer;
-    }
-
-    public override async Task SubscribeEvents(
-        SubscribeEventsRequest request,
-        IServerStreamWriter<SubscribeEventsReply> responseStream,
-        ServerCallContext context
-    )
-    {
-        var eventIds = request.EventIds.ToGuid();
-        var userId = context.GetHttpContext().GetUserId();
-        logger.LogInformation("{UserId} subscribe events {EventIds}", userId, eventIds);
-        var events = eventBusService.SubscribeEventsAsync(eventIds, context.CancellationToken);
-
-        await foreach (var @event in events)
-        {
-            var subscribeEventsReply = @event.ThrowIfError().ToSubscribeEventsReply();
-            await responseStream.WriteAsync(subscribeEventsReply, context.CancellationToken);
-        }
     }
 
     public override async Task<PublishEventReply> PublishEvent(

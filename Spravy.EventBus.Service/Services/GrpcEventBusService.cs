@@ -1,4 +1,3 @@
-using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Core.Mappers;
@@ -11,52 +10,9 @@ using Spravy.Service.Extensions;
 namespace Spravy.EventBus.Service.Services;
 
 [Authorize]
-public class GrpcEventBusService : EventBusService.EventBusServiceBase
+public class GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
+    : EventBusService.EventBusServiceBase
 {
-    private readonly EventStorage eventStorage;
-    private readonly ILogger<GrpcEventBusService> logger;
-
-    public GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
-    {
-        this.eventStorage = eventStorage;
-        this.logger = logger;
-    }
-
-    public override async Task SubscribeEvents(
-        SubscribeEventsRequest request,
-        IServerStreamWriter<SubscribeEventsReply> responseStream,
-        ServerCallContext context
-    )
-    {
-        var eventIds = request.EventIds.ToGuid();
-        var userId = context.GetHttpContext().GetUserId();
-        logger.LogInformation("{UserId} subscribe events {EventIds}", userId, eventIds);
-
-        while (!context.CancellationToken.IsCancellationRequested)
-        {
-            var eventValues = await WaitAnyEventAsync(eventIds, context.CancellationToken);
-
-            if (!eventValues.IsSuccess)
-            {
-                return;
-            }
-
-            for (var index = 0; index < eventValues.Value.Length; index++)
-            {
-                var eventValue = eventValues.Value.Span[index];
-
-                var reply = new SubscribeEventsReply
-                {
-                    EventId = eventValue.Id.ToByteString(),
-                    Content = ByteString.CopyFrom(eventValue.Content.Span),
-                };
-
-                logger.LogInformation("Send event {Id}", eventValue.Id);
-                await responseStream.WriteAsync(reply);
-            }
-        }
-    }
-
     public override async Task<PublishEventReply> PublishEvent(
         PublishEventRequest request,
         ServerCallContext context

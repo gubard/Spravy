@@ -1,5 +1,3 @@
-using Spravy.Core.Helpers;
-
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public partial class ToDoItemEntityNotify

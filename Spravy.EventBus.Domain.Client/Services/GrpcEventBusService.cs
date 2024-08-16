@@ -42,18 +42,6 @@ public class GrpcEventBusService
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredCancelableAsyncEnumerable<Result<EventValue>> SubscribeEventsAsync(
-        ReadOnlyMemory<Guid> eventIds,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            (client, token) =>
-                SubscribeEventsAsyncCore(client, eventIds, token).ConfigureAwait(false),
-            ct
-        );
-    }
-
     public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
         Guid eventId,
         ReadOnlyMemory<byte> content,
@@ -122,34 +110,5 @@ public class GrpcEventBusService
     )
     {
         return new(grpcClientFactory, host, metadataFactory, handler);
-    }
-
-    private async IAsyncEnumerable<Result<EventValue>> SubscribeEventsAsyncCore(
-        EventBusServiceClient client,
-        ReadOnlyMemory<Guid> eventIds,
-        [EnumeratorCancellation] CancellationToken ct
-    )
-    {
-        var request = new SubscribeEventsRequest();
-        var eventIdsByteString = eventIds.ToByteString();
-        request.EventIds.AddRange(eventIdsByteString.ToArray());
-        var metadata = await metadataFactory.CreateAsync(ct);
-
-        if (!metadata.TryGetValue(out var value))
-        {
-            yield return new(metadata.Errors);
-
-            yield break;
-        }
-
-        using var response = client.SubscribeEvents(request, value, cancellationToken: ct);
-
-        while (await response.ResponseStream.MoveNext(ct))
-        {
-            var reply = response.ResponseStream.Current;
-            var eventValue = reply.ToEventValue();
-
-            yield return eventValue.ToResult();
-        }
     }
 }

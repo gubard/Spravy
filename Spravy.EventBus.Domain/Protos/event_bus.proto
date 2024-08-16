@@ -7,7 +7,6 @@ package spravy.event_bus;
 import "Protos/event_bus_messages.proto";
 
 service EventBusService {
-    rpc SubscribeEvents (SubscribeEventsRequest) returns (stream SubscribeEventsReply);
     rpc PublishEvent (PublishEventRequest) returns (PublishEventReply);
     rpc GetEvents (GetEventsRequest) returns (GetEventsReply);
 }

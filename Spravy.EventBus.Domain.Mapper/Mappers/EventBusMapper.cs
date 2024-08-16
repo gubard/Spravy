@@ -15,13 +15,6 @@ public static partial class EventBusMapper
 
     public static partial Event ToEvent(this EventValue value);
 
-    public static partial SubscribeEventsReply ToSubscribeEventsReply(this EventValue value);
-
-    public static EventValue ToEventValue(this SubscribeEventsReply value)
-    {
-        return new(value.EventId.ToGuid(), value.Content.ToByteMemory());
-    }
-
     public static EventValue ToEventValue(this Event value)
     {
         return new(value.EventId.ToGuid(), value.Content.ToByteMemory());

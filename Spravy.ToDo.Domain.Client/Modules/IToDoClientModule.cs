@@ -1,10 +1,8 @@
 using Grpc.Net.Client;
 using Jab;
-using Microsoft.Extensions.Configuration;
 using Spravy.Client.Helpers;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Models;
-using Spravy.Core.Extensions;
 using Spravy.Core.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;

@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
-using Grpc.Core;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 using Spravy.Authentication.Db.Sqlite.Services;
