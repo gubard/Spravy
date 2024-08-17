@@ -223,7 +223,8 @@
     <sys:String x:Key="AddRootToDoItemView.Header">New Task</sys:String>
 
     <!--AddTimerView-->
-    <sys:String x:Key="AddTimerView.Item">Item</sys:String>
+    <sys:String x:Key="AddTimerView.Header">Add timer</sys:String>
+    <sys:String x:Key="AddTimerView.Name">Name</sys:String>
     <sys:String x:Key="AddTimerView.DueDateTime">Due date time</sys:String>
 
     <!--AddToDoItemView-->

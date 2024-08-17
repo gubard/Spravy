@@ -59,9 +59,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        var setting = new AddToDoItemViewModelSetting(this);
-
-        return objectStorage.SaveObjectAsync(ViewId, setting, ct);
+        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
