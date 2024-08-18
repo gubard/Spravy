@@ -42,7 +42,8 @@ var eventBusService = new GrpcEventBusService(
             )
         )
     ),
-    new RpcExceptionHandler(new SpravyJsonSerializer(new SpravyJsonSerializerContext()))
+    new RpcExceptionHandler(new SpravyJsonSerializer(new SpravyJsonSerializerContext())),
+    new RetryService()
 );
 
 var events = await eventBusService.GetEventsAsync(

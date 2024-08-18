@@ -29,6 +29,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterToDo(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddTransient<IRetryService, RetryService>();
         serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbToDoDbContext>>();
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<

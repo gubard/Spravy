@@ -10,7 +10,8 @@ public interface IGrpcServiceCreatorAuth<out TGrpcService, TGrpcClient>
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     );
 }
 
@@ -21,6 +22,7 @@ public interface IGrpcServiceCreator<out TGrpcService, TGrpcClient>
     static abstract TGrpcService CreateGrpcService(
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     );
 }

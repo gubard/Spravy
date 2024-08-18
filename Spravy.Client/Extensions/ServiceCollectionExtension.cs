@@ -49,7 +49,8 @@ public static class ServiceCollectionExtension
             return TGrpcService.CreateGrpcService(
                 sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                 options.Host.ThrowIfNull().ToUri(),
-                sp.GetRequiredService<IRpcExceptionHandler>()
+                sp.GetRequiredService<IRpcExceptionHandler>(),
+                sp.GetRequiredService<IRetryService>()
             );
         });
 
@@ -101,7 +102,8 @@ public static class ServiceCollectionExtension
                 sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                 options.Host.ThrowIfNull().ToUri(),
                 CreateMetadataFactory(options, sp),
-                sp.GetRequiredService<IRpcExceptionHandler>()
+                sp.GetRequiredService<IRpcExceptionHandler>(),
+                sp.GetRequiredService<IRetryService>()
             );
         });
 

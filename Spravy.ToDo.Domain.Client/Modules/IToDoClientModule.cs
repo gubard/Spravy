@@ -67,13 +67,14 @@ public interface IToDoClientModule
         GrpcToDoServiceOptions options,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
         IRpcExceptionHandler handler,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        IRetryService retryService
     )
     {
         return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
             GrpcToDoService,
             ToDoService.ToDoServiceClient,
             GrpcToDoServiceOptions
-        >(options, grpcClientFactory, handler, metadataFactory);
+        >(options, grpcClientFactory, handler, metadataFactory, retryService);
     }
 }

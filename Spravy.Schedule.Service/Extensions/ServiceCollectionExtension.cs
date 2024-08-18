@@ -34,6 +34,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddTransient<IRetryService, RetryService>();
         serviceCollection.AddHostedService<
             FolderMigratorHostedService<SpravyDbScheduleDbContext>
         >();

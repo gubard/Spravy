@@ -53,7 +53,8 @@ public static class GrpcClientFactoryHelper
     public static TGrpcService CreateGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
         where TGrpcService : GrpcServiceBase<TGrpcClient>,
             IGrpcServiceCreator<TGrpcService, TGrpcClient>
@@ -62,14 +63,15 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
 
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, handler);
+        return TGrpcService.CreateGrpcService(grpcClientFactory, host, handler, retryService);
     }
 
     public static TGrpcService CreateGrpcServiceAuth<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         IRpcExceptionHandler handler,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        IRetryService retryService
     )
         where TGrpcService : GrpcServiceBase<TGrpcClient>,
             IGrpcServiceCreatorAuth<TGrpcService, TGrpcClient>
@@ -78,7 +80,13 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
 
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, metadataFactory, handler);
+        return TGrpcService.CreateGrpcService(
+            grpcClientFactory,
+            host,
+            metadataFactory,
+            handler,
+            retryService
+        );
     }
 
     private static IMetadataFactory CreateMetadataFactory<TGrpcOptions>(

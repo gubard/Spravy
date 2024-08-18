@@ -1,3 +1,4 @@
+using Spravy.Client.Errors;
 using Spravy.Core.Interfaces;
 
 namespace Spravy.Client.Services;
@@ -8,16 +9,19 @@ public abstract class GrpcServiceBase<TGrpcClient>
     private readonly IFactory<Uri, TGrpcClient> grpcClientFactory;
     private readonly Uri host;
     private readonly IRpcExceptionHandler handler;
+    private readonly IRetryService retryService;
 
     protected GrpcServiceBase(
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
         this.grpcClientFactory = grpcClientFactory;
         this.host = host;
         this.handler = handler;
+        this.retryService = retryService;
     }
 
     protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
@@ -27,7 +31,9 @@ public abstract class GrpcServiceBase<TGrpcClient>
     {
         try
         {
-            return grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct);
+            return retryService.TryAsync(
+                () => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct)
+            );
         }
         catch (RpcException exception)
         {
@@ -36,7 +42,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
                 case StatusCode.OK:
                     throw;
                 case StatusCode.Cancelled:
-                    throw;
+                    return Result.AwaitableCanceledByUserError;
                 case StatusCode.Unknown:
                     throw;
                 case StatusCode.InvalidArgument:
@@ -70,7 +76,9 @@ public abstract class GrpcServiceBase<TGrpcClient>
                 case StatusCode.DataLoss:
                     throw;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return new Result(new StatusCodeOutOfRangeError(exception.StatusCode))
+                        .ToValueTaskResult()
+                        .ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -96,7 +104,9 @@ public abstract class GrpcServiceBase<TGrpcClient>
     {
         try
         {
-            return await grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct);
+            return await retryService.TryAsync(
+                () => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct)
+            );
         }
         catch (RpcException exception)
         {
@@ -105,7 +115,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
                 case StatusCode.OK:
                     throw;
                 case StatusCode.Cancelled:
-                    throw;
+                    return Result<TValue>.CanceledByUserError;
                 case StatusCode.Unknown:
                     throw;
                 case StatusCode.InvalidArgument:
@@ -139,7 +149,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
                 case StatusCode.DataLoss:
                     throw;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return new(new StatusCodeOutOfRangeError(exception.StatusCode));
             }
         }
         catch (Exception e)

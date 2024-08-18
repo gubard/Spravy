@@ -2,6 +2,22 @@
 
 public static class MemoryExtension
 {
+    public static bool All<TSource>(
+        this ReadOnlyMemory<TSource> source,
+        Func<TSource, bool> predicate
+    )
+    {
+        foreach (var value in source.Span)
+        {
+            if (!predicate.Invoke(value))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static ReadOnlyMemory<TSource> OrderByDefault<TSource, TValue>(
         this ReadOnlyMemory<TSource> source,
         Func<TSource, TValue> keySelector

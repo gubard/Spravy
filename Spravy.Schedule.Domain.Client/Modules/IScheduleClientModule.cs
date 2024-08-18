@@ -67,13 +67,14 @@ public interface IScheduleClientModule
         GrpcScheduleServiceOptions options,
         IFactory<Uri, ScheduleService.ScheduleServiceClient> grpcClientFactory,
         IRpcExceptionHandler handler,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        IRetryService retryService
     )
     {
         return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
             GrpcScheduleService,
             ScheduleService.ScheduleServiceClient,
             GrpcScheduleServiceOptions
-        >(options, grpcClientFactory, handler, metadataFactory);
+        >(options, grpcClientFactory, handler, metadataFactory, retryService);
     }
 }

@@ -17,9 +17,10 @@ public class GrpcPasswordService
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
-        : base(grpcClientFactory, host, handler)
+        : base(grpcClientFactory, host, handler, retryService)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -28,10 +29,11 @@ public class GrpcPasswordService
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, handler);
+        return new(grpcClientFactory, host, metadataFactory, handler, retryService);
     }
 
     public ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(

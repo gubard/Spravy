@@ -37,6 +37,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterRouter(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddTransient<IRetryService, RetryService>();
         serviceCollection.AddGrpcServiceAuth<
             GrpcToDoService,
             ToDoService.ToDoServiceClient,

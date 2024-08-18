@@ -23,9 +23,10 @@ public class GrpcAuthenticationService
     public GrpcAuthenticationService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
-        : base(grpcClientFactory, host, handler) { }
+        : base(grpcClientFactory, host, handler, retryService) { }
 
     public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(
         User user,
@@ -347,9 +348,10 @@ public class GrpcAuthenticationService
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
-        return new(grpcClientFactory, host, handler);
+        return new(grpcClientFactory, host, handler, retryService);
     }
 }

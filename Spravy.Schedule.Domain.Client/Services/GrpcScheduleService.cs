@@ -25,9 +25,10 @@ public class GrpcScheduleService
         IFactory<Uri, ScheduleService.ScheduleServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
-        : base(grpcClientFactory, host, handler)
+        : base(grpcClientFactory, host, handler, retryService)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -36,10 +37,11 @@ public class GrpcScheduleService
         IFactory<Uri, ScheduleService.ScheduleServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, handler);
+        return new(grpcClientFactory, host, metadataFactory, handler, retryService);
     }
 
     public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(

@@ -16,17 +16,20 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         Uri,
         EventBusService.EventBusServiceClient
     > eventBusServiceClientFactory;
+
     private readonly IHttpHeaderFactory httpHeaderFactory;
     private readonly GrpcEventBusServiceOptions options;
     private readonly IRpcExceptionHandler handler;
     private readonly ITokenService tokenService;
+    private readonly IRetryService retryService;
 
     public EventBusServiceFactory(
         IHttpHeaderFactory httpHeaderFactory,
         IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory,
         GrpcEventBusServiceOptions options,
         ITokenService tokenService,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
         this.httpHeaderFactory = httpHeaderFactory;
@@ -34,6 +37,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         this.options = options;
         this.tokenService = tokenService;
         this.handler = handler;
+        this.retryService = retryService;
     }
 
     public Result<IEventBusService> Create(string key)
@@ -57,7 +61,8 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
             eventBusServiceClientFactory,
             host,
             metadataFactory,
-            handler
+            handler,
+            retryService
         ).ToResult<IEventBusService>();
     }
 }

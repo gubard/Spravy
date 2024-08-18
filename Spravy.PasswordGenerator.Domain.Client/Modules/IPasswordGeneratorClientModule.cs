@@ -63,13 +63,14 @@ public interface IPasswordGeneratorClientModule
         GrpcPasswordServiceOptions options,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         IRpcExceptionHandler handler,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        IRetryService retryService
     )
     {
         return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
             GrpcPasswordService,
             PasswordServiceClient,
             GrpcPasswordServiceOptions
-        >(options, grpcClientFactory, handler, metadataFactory);
+        >(options, grpcClientFactory, handler, metadataFactory, retryService);
     }
 }

@@ -39,6 +39,7 @@ public static class ServiceCollectionExtension
         this IServiceCollection serviceCollection
     )
     {
+        serviceCollection.AddTransient<IRetryService, RetryService>();
         serviceCollection.AddHostedService<
             FileMigratorHostedService<SpravyDbAuthenticationDbContext>
         >();

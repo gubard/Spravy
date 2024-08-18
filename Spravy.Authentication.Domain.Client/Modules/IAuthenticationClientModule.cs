@@ -71,13 +71,14 @@ public interface IAuthenticationClientModule
     static IAuthenticationService AuthenticationServiceFactory(
         GrpcAuthenticationServiceOptions options,
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
-        IRpcExceptionHandler handler
+        IRpcExceptionHandler handler,
+        IRetryService retryService
     )
     {
         return GrpcClientFactoryHelper.CreateGrpcService<
             GrpcAuthenticationService,
             AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions
-        >(options, grpcClientFactory, handler);
+        >(options, grpcClientFactory, handler, retryService);
     }
 }
