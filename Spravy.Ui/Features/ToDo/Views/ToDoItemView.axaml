@@ -8,7 +8,9 @@
              xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:sm="clr-namespace:Spravy.Ui.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:e="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
+             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia.Tight"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
              x:DataType="vm:ToDoItemViewModel">
@@ -93,15 +95,15 @@
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
-            <controls:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                <controls:PathControl.DataTemplates>
+            <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
+                <c:PathControl.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
                         <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                                 CommandParameter="{Binding}"
                                 Content="{Binding Name}" />
                     </DataTemplate>
-                </controls:PathControl.DataTemplates>
-            </controls:PathControl>
+                </c:PathControl.DataTemplates>
+            </c:PathControl>
         </ScrollViewer>
 
         <ScrollViewer Grid.Row="2">
@@ -121,9 +123,18 @@
                         </Button>
                     </Expander.Header>
 
-                    <TextBlock Name="{x:Static v:ToDoItemView.PlainTextTextBlockName}"
-                               Classes="alignment-left text-wrap"
-                               Text="{Binding Item.Description}" />
+                    <c:ViewSelectorControl State="{Binding Item.DescriptionType}">
+                        <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
+                            <TextBlock Classes="alignment-left text-wrap"
+                                       Text="{Binding Item.Description}" />
+                        </c:ViewSelectorItemControl>
+
+                        <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
+                            <mdxaml:MarkdownScrollViewer Classes="alignment-left text-wrap"
+                                                         Markdown="{Binding Item.Description}" />
+                        </c:ViewSelectorItemControl>
+                    </c:ViewSelectorControl>
+
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
