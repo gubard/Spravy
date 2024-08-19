@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.Schedule.ViewModels;
-
 namespace Spravy.Ui.Features.Schedule.Views;
 
 public partial class TimersView : UserControl

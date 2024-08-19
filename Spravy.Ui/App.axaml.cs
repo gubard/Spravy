@@ -1,7 +1,3 @@
-using Avalonia.Input;
-using Spravy.Core.Helpers;
-using Spravy.Ui.Mappers;
-
 namespace Spravy.Ui;
 
 public class App : Application

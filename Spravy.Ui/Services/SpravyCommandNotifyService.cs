@@ -1,5 +1,3 @@
-using Avalonia.Input;
-
 namespace Spravy.Ui.Services;
 
 public class SpravyCommandNotifyService

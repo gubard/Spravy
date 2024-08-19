@@ -1,5 +1,3 @@
-using Spravy.Core.Mappers;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class MultiToDoItemSettingViewModel(ToDoItemEntityNotify item) : ViewModelBase

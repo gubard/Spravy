@@ -1,8 +1,4 @@
 using Riok.Mapperly.Abstractions;
-using Spravy.Core.Mappers;
-using Spravy.Schedule.Domain.Models;
-using Spravy.Ui.Features.Schedule.Models;
-using Spravy.Ui.Features.Schedule.ViewModels;
 
 namespace Spravy.Ui.Mappers;
 

@@ -1,5 +1,3 @@
-using Avalonia.Input;
-
 namespace Spravy.Ui.Models;
 
 public class SpravyCommandNotify : NotifyBase

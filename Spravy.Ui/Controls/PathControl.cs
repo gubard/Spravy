@@ -1,4 +1,3 @@
-using Avalonia.Data;
 using Material.Icons.Avalonia;
 
 namespace Spravy.Ui.Controls;

@@ -1,6 +1,3 @@
-using Avalonia.Input;
-using Spravy.Core.Helpers;
-
 namespace Spravy.Ui.Views;
 
 public partial class MainView : UserControl

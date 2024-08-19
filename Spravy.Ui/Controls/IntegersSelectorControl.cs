@@ -1,5 +1,3 @@
-using System.Collections.Specialized;
-
 namespace Spravy.Ui.Controls;
 
 public class IntegersSelectorControl : TemplatedControl

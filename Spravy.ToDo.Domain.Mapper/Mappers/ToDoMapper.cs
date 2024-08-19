@@ -1,12 +1,4 @@
-using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using Riok.Mapperly.Abstractions;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Models;
-using Spravy.ToDo.Protos;
 
 namespace Spravy.ToDo.Domain.Mapper.Mappers;
 

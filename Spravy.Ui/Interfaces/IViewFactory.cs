@@ -1,4 +1,3 @@
-using Spravy.Ui.Features.Schedule.ViewModels;
 using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
 
 namespace Spravy.Ui.Interfaces;

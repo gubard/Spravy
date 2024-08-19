@@ -1,7 +1,3 @@
-using Spravy.Ui.Features.PasswordGenerator.Views;
-using Spravy.Ui.Features.Schedule.ViewModels;
-using Spravy.Ui.Features.Schedule.Views;
-using Spravy.Ui.Features.ToDo.Views;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;

@@ -1,4 +1,3 @@
-using Spravy.Core.Interfaces;
 using Spravy.PasswordGenerator.Domain.Errors;
 
 namespace Spravy.Ui.Services;

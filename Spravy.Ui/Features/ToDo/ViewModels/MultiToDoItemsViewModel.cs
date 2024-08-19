@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.ToDo.Views;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class MultiToDoItemsViewModel : ViewModelBase

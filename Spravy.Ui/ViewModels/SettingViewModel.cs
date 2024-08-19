@@ -1,4 +1,3 @@
-using Spravy.Ui.Mappers;
 using AppConst = Spravy.Domain.Helpers.AppConst;
 
 namespace Spravy.Ui.ViewModels;

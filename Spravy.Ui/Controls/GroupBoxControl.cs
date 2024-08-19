@@ -1,5 +1,3 @@
-using Avalonia.Data;
-
 namespace Spravy.Ui.Controls;
 
 public class GroupBoxControl : ContentControl

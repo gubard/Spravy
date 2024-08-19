@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;

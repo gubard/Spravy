@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.Schedule.Interfaces;
-
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
 public class AddToDoItemToFavoriteEventViewModel : ViewModelBase, IEventViewModel

@@ -1,5 +1,3 @@
-using Spravy.Core.Mappers;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddToDoItemViewModel : NavigatableViewModelBase

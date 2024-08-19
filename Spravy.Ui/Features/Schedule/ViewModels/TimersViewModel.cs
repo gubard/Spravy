@@ -1,7 +1,3 @@
-using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Ui.Features.Schedule.Models;
-using Spravy.Ui.Mappers;
-
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
 public class TimersViewModel : NavigatableViewModelBase

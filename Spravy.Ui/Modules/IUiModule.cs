@@ -1,14 +1,9 @@
-using System.Text.Json.Serialization;
 using Jab;
 using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
-using Spravy.Core.Interfaces;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
 using Spravy.Schedule.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
-using Spravy.Ui.Features.PasswordGenerator.Views;
-using Spravy.Ui.Features.Schedule.Views;
-using Spravy.Ui.Features.ToDo.Views;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
 

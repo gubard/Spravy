@@ -1,5 +1,3 @@
-using Avalonia.Metadata;
-
 namespace Spravy.Ui.Controls;
 
 public class ViewSelectorItemControl : TemplatedControl

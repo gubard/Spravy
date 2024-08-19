@@ -1,8 +1,3 @@
-using Spravy.Core.Mappers;
-using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Ui.Features.ToDo.Views;
-using Spravy.Ui.Mappers;
-
 namespace Spravy.Ui.Services;
 
 public class SpravyCommandService

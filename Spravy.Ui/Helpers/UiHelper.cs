@@ -1,5 +1,3 @@
-using Spravy.Core.Helpers;
-
 namespace Spravy.Ui.Helpers;
 
 public static class UiHelper

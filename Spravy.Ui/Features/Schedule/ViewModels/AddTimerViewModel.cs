@@ -1,6 +1,4 @@
-using Spravy.Schedule.Domain.Models;
 using Spravy.Ui.Features.Schedule.Enums;
-using Spravy.Ui.Features.Schedule.Interfaces;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
