@@ -1476,7 +1476,9 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return func.Invoke(rv);
+        var r = func.Invoke(rv);
+
+        return r;
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessDisposeAsync<

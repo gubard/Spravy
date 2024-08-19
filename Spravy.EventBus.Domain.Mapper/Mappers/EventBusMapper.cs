@@ -1,4 +1,5 @@
 using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Riok.Mapperly.Abstractions;
 using Spravy.Core.Mappers;
 using Spravy.EventBus.Domain.Models;
@@ -9,11 +10,34 @@ namespace Spravy.EventBus.Domain.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class EventBusMapper
 {
-    public static partial ReadOnlyMemory<Event> ToEvent(this ReadOnlyMemory<EventValue> value);
+    public static Event ToEvent(this EventValue value)
+    {
+        return new() { EventId = value.Id.ToByteString(), Content = value.Content.ToByteString(), };
+    }
 
-    public static partial ReadOnlyMemory<EventValue> ToEventValue(this IEnumerable<Event> value);
+    public static ReadOnlyMemory<Event> ToEvent(this ReadOnlyMemory<EventValue> value)
+    {
+        Memory<Event> memory = new Event[value.Length];
 
-    public static partial Event ToEvent(this EventValue value);
+        for (var i = 0; i < value.Length; i++)
+        {
+            memory.Span[i] = value.Span[i].ToEvent();
+        }
+
+        return memory;
+    }
+
+    public static ReadOnlyMemory<EventValue> ToEventValue(this RepeatedField<Event> value)
+    {
+        Memory<EventValue> memory = new EventValue[value.Count];
+
+        for (var i = 0; i < value.Count; i++)
+        {
+            memory.Span[i] = value[i].ToEventValue();
+        }
+
+        return memory;
+    }
 
     public static EventValue ToEventValue(this Event value)
     {
