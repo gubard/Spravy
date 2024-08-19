@@ -290,6 +290,11 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<TimersView>());
         }
 
+        if (typeof(AddTimerViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<AddTimerView>());
+        }
+
         return new(new NotViewForViewModelError(viewModelType.Name));
     }
 }

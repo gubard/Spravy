@@ -59,6 +59,7 @@ public static class UiHelper
         VerificationEmail = commands.VerificationEmail.Command;
         MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
         NavigateToTimers = commands.NavigateToTimers.Command;
+        AddTimer = commands.AddTimer.Command;
     }
 
     public static readonly ICommand MainSplitViewModelInitialized;
@@ -83,6 +84,7 @@ public static class UiHelper
     public static readonly ICommand NavigateToSetting;
     public static readonly ICommand SwitchPane;
     public static readonly ICommand AddRootToDoItem;
+    public static readonly ICommand AddTimer;
     public static readonly ICommand Logout;
     public static readonly ICommand RefreshCurrentView;
     public static readonly ICommand SetToDoItemDescription;

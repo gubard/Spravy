@@ -15,6 +15,10 @@
         <StackPanel>
             <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
             <TextBox Text="{Binding Name}" />
+            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
+            <Calendar SelectedDate="{Binding Date}" />
+            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
+            <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
         </StackPanel>
     </c:GroupBoxControl>
 </UserControl>

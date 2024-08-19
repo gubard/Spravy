@@ -1,4 +1,5 @@
 using Spravy.Core.Mappers;
+using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.Mappers;
 
@@ -27,7 +28,8 @@ public class SpravyCommandService
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
         IViewFactory viewFactory,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IScheduleService scheduleService
     )
     {
         this.navigator = navigator;
@@ -2777,6 +2779,25 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        AddTimer = SpravyCommand.Create(
+            ct =>
+                dialogViewer.ShowConfirmDialogAsync(
+                    viewFactory,
+                    DialogViewLayer.Content,
+                    viewFactory.CreateAddTimerViewModel(),
+                    vm =>
+                        scheduleService
+                            .AddTimerAsync(vm.ToAddTimerParameters(), ct)
+                            .IfSuccessAsync(
+                                () => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct),
+                                ct
+                            ),
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2864,6 +2885,7 @@ public class SpravyCommandService
     public SpravyCommand NavigateToTodayToDoItems { get; }
     public SpravyCommand NavigateToSearchToDoItems { get; }
     public SpravyCommand NavigateToTimers { get; }
+    public SpravyCommand AddTimer { get; }
     public SpravyCommand NavigateToPasswordGenerator { get; }
     public SpravyCommand NavigateToSetting { get; }
     public SpravyCommand NavigateToCreateUser { get; }

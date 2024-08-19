@@ -34,6 +34,7 @@
 
     <!--TimersView-->
     <sys:String x:Key="TimersView.Header">Timers</sys:String>
+    <sys:String x:Key="TimersView.CreateTimer">Create timer</sys:String>
 
     <!--LeafToDoItemsView-->
     <sys:String x:Key="LeafToDoItemsView.Header">Leaf {Header}</sys:String>
@@ -225,7 +226,8 @@
     <!--AddTimerView-->
     <sys:String x:Key="AddTimerView.Header">Add timer</sys:String>
     <sys:String x:Key="AddTimerView.Name">Name</sys:String>
-    <sys:String x:Key="AddTimerView.DueDateTime">Due date time</sys:String>
+    <sys:String x:Key="AddTimerView.DueDate">Due date</sys:String>
+    <sys:String x:Key="AddTimerView.DueTime">Due time</sys:String>
 
     <!--AddToDoItemView-->
     <sys:String x:Key="AddToDoItemView.Name">Name</sys:String>

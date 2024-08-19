@@ -2,12 +2,23 @@ using Riok.Mapperly.Abstractions;
 using Spravy.Core.Mappers;
 using Spravy.Schedule.Domain.Models;
 using Spravy.Ui.Features.Schedule.Models;
+using Spravy.Ui.Features.Schedule.ViewModels;
 
 namespace Spravy.Ui.Mappers;
 
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class UiMapper
 {
+    public static AddTimerParameters ToAddTimerParameters(this AddTimerViewModel value)
+    {
+        return new(
+            value.Date.Date.Add(value.Time),
+            value.Parameters.Id,
+            ReadOnlyMemory<byte>.Empty,
+            value.Name
+        );
+    }
+
     public static CreateUserOptions ToCreateUserOptions(this CreateUserViewModel value)
     {
         return new(value.Login, value.Password, value.Email);

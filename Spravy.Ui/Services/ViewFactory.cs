@@ -382,6 +382,11 @@ public class ViewFactory : IViewFactory
         return new(errorHandler, taskProgressService);
     }
 
+    public AddTimerViewModel CreateAddTimerViewModel()
+    {
+        return new();
+    }
+
     public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()
     {
         return new(
