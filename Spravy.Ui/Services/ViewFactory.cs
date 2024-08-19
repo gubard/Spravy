@@ -395,7 +395,7 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new(this);
+        return new(this, objectStorage);
     }
 
     public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()

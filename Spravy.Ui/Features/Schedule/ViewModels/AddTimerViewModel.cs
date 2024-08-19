@@ -1,10 +1,12 @@
 using Spravy.Ui.Features.Schedule.Enums;
+using Spravy.Ui.Features.Schedule.Settings;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public partial class AddTimerViewModel : ViewModelBase
+public partial class AddTimerViewModel : ViewModelBase, INavigatable
 {
     private readonly IViewFactory viewFactory;
+    private readonly IObjectStorage objectStorage;
 
     [ObservableProperty]
     private string name = string.Empty;
@@ -21,10 +23,19 @@ public partial class AddTimerViewModel : ViewModelBase
     [ObservableProperty]
     private IEventViewModel eventViewModel;
 
-    public AddTimerViewModel(IViewFactory viewFactory)
+    public AddTimerViewModel(IViewFactory viewFactory, IObjectStorage objectStorage)
     {
         this.viewFactory = viewFactory;
+        this.objectStorage = objectStorage;
         eventViewModel = GetEventViewModel();
+    }
+
+    public bool IsPooled => false;
+    public AvaloniaList<string> Names { get; } = new();
+
+    public string ViewId
+    {
+        get => $"{TypeCache<AddTimerViewModel>.Type}";
     }
 
     private IEventViewModel GetEventViewModel()
@@ -53,5 +64,35 @@ public partial class AddTimerViewModel : ViewModelBase
                     ).ToResult(),
                 ct
             );
+    }
+
+    public Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return objectStorage
+            .GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            Name = setting.Name;
+                            Names.AddRange(setting.Names);
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
+    }
+
+    public Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
+    }
+
+    public Result Stop()
+    {
+        return Result.Success;
     }
 }
