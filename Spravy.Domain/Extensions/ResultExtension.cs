@@ -607,6 +607,36 @@ public static class ResultExtension
 
     public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
+        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+    {
+        return IfErrorsCore(task, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfErrorsCore(
+        this ConfiguredValueTaskAwaitable<Result> task,
+        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+    {
+        var result = await task;
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
+        if (result.IsHasError)
+        {
+            return await func.Invoke(result.Errors);
+        }
+
+        return Result.Success;
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync(
+        this ConfiguredValueTaskAwaitable<Result> task,
         Func<ReadOnlyMemory<Error>, Result> func,
         CancellationToken ct
     )

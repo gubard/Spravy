@@ -48,6 +48,16 @@ public class EventUpdater : IEventUpdater
                         return Result.AwaitableSuccess;
                     },
                     ct
+                )
+                .IfErrorsAsync(
+                    errors =>
+                        spravyNotificationManager.ShowAsync(
+                            errors
+                                .Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
+                                .JoinString(Environment.NewLine),
+                            ct
+                        ),
+                    ct
                 );
 
             await Task.Delay(TimeSpan.FromMinutes(1), ct);
