@@ -1,13 +1,3 @@
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Core.Interfaces;
-using Spravy.Db.Errors;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Domain.Errors;
-
 namespace Spravy.PasswordGenerator.Service.Services;
 
 public class RpcExceptionHandler : IRpcExceptionHandler

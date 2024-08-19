@@ -59,4 +59,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(GrpcAuthenticationServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcPasswordServiceOptionsConfiguration))]
 [JsonSerializable(typeof(AppOptionsConfiguration))]
+[JsonSerializable(typeof(AddToDoItemToFavoriteEventOptions))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

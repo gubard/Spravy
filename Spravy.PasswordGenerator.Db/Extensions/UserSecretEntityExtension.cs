@@ -1,11 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Db.Models;
-using Spravy.PasswordGenerator.Domain.Errors;
-
 namespace Spravy.PasswordGenerator.Db.Extensions;
 
 public static class UserSecretEntityExtension

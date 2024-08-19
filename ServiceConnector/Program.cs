@@ -47,7 +47,7 @@ var eventBusService = new GrpcEventBusService(
 );
 
 var events = await eventBusService.GetEventsAsync(
-    new([AddToDoItemToFavoriteEvent.EventId,]),
+    new([AddToDoItemToFavoriteEventOptions.EventId,]),
     CancellationToken.None
 );
 

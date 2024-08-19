@@ -24,6 +24,28 @@ public class SpravyJsonSerializer : ISerializer
         return SerializeCore(obj, stream, ct).ConfigureAwait(false);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> SerializeAsync<T>(
+        T obj,
+        CancellationToken ct
+    )
+        where T : notnull
+    {
+        return SerializeCore(obj, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<byte>>> SerializeCore<T>(
+        T obj,
+        CancellationToken ct
+    )
+        where T : notnull
+    {
+        await using var stream = new MemoryStream();
+        await JsonSerializer.SerializeAsync(stream, obj, obj.GetType(), context, ct);
+        stream.Position = 0;
+
+        return new(stream.ToArray());
+    }
+
     private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct)
         where T : notnull
     {

@@ -1,6 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-
 namespace Spravy.Ui.Browser.Helpers;
 
 [SupportedOSPlatform("browser")]

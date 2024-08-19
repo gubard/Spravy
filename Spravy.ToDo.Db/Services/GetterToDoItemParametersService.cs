@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
 using Spravy.Core.Mappers;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;

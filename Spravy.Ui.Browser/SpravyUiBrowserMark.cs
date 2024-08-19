@@ -1,5 +1,4 @@
 using System.Reflection;
-using Spravy.Domain.Interfaces;
 
 namespace Spravy.Ui.Browser;
 

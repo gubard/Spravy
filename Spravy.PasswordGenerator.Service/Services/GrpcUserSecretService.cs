@@ -1,12 +1,3 @@
-using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Interfaces;
-using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.PasswordGenerator.Protos;
-using Spravy.Service.Extensions;
-using static Spravy.PasswordGenerator.Protos.UserSecretService;
-
 namespace Spravy.PasswordGenerator.Service.Services;
 
 [Authorize]

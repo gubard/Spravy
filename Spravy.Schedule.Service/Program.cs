@@ -1,9 +1,6 @@
 using Serilog;
-using Spravy.Schedule.Db.Contexts;
 using Spravy.Schedule.Service;
 using Spravy.Schedule.Service.Extensions;
-using Spravy.Schedule.Service.Services;
-using Spravy.Service.Extensions;
 using Spravy.Service.Middlewares;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();

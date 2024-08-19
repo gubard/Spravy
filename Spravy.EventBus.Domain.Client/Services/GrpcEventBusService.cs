@@ -1,18 +1,3 @@
-using System.Runtime.CompilerServices;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.EventBus.Domain.Interfaces;
-using Spravy.EventBus.Domain.Mapper.Mappers;
-using Spravy.EventBus.Domain.Models;
-using Spravy.EventBus.Protos;
-using static Spravy.EventBus.Protos.EventBusService;
-
 namespace Spravy.EventBus.Domain.Client.Services;
 
 public class GrpcEventBusService

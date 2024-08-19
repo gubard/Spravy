@@ -1,10 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Authentication.Db.Contexts;
-using Spravy.Db.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Authentication.Db.Sqlite.Migrator;
 
 public class SpravyAuthenticationDbContextFactory

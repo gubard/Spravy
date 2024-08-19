@@ -1,8 +1,6 @@
 using Serilog;
 using Spravy.Router.Service;
 using Spravy.Router.Service.Extensions;
-using Spravy.Router.Service.Services;
-using Spravy.Service.Extensions;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 

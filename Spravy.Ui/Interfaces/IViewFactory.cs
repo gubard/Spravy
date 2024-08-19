@@ -42,6 +42,7 @@ public interface IViewFactory
     CreateUserViewModel CreateCreateUserViewModel();
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item);
+    AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel();
 
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         ToDoItemEntityNotify item,

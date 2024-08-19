@@ -1,9 +1,5 @@
-using Grpc.Core;
-using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Mapper.Mappers;
 using Spravy.Authentication.Protos;
-using Spravy.Domain.Interfaces;
-using Spravy.Service.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
 

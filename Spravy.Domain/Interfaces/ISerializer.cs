@@ -12,6 +12,12 @@ public interface ISerializer
     )
         where T : notnull;
 
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> SerializeAsync<T>(
+        T obj,
+        CancellationToken ct
+    )
+        where T : notnull;
+
     ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(
         Stream stream,
         CancellationToken ct

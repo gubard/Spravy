@@ -23,6 +23,7 @@ public class ViewFactory : IViewFactory
     private readonly AccountNotify accountNotify;
     private readonly Application application;
     private readonly IScheduleService scheduleService;
+    private readonly ISerializer serializer;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -41,7 +42,8 @@ public class ViewFactory : IViewFactory
         AccountNotify accountNotify,
         Application application,
         IServiceFactory serviceFactory,
-        IScheduleService scheduleService
+        IScheduleService scheduleService,
+        ISerializer serializer
     )
     {
         this.toDoService = toDoService;
@@ -61,6 +63,7 @@ public class ViewFactory : IViewFactory
         this.application = application;
         this.serviceFactory = serviceFactory;
         this.scheduleService = scheduleService;
+        this.serializer = serializer;
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -231,6 +234,11 @@ public class ViewFactory : IViewFactory
         );
     }
 
+    public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel()
+    {
+        return new(CreateToDoItemSelectorViewModel(), serializer);
+    }
+
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
@@ -384,7 +392,7 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new();
+        return new(this);
     }
 
     public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()

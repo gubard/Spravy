@@ -1,7 +1,3 @@
-using System.Runtime.CompilerServices;
-using Spravy.Domain.Models;
-using Spravy.EventBus.Domain.Models;
-
 namespace Spravy.EventBus.Domain.Interfaces;
 
 public interface IEventBusService

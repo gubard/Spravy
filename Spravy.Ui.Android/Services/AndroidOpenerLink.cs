@@ -1,7 +1,3 @@
-using System.Runtime.CompilerServices;
-using Android.Content;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Android.Services;
 
 public class AndroidOpenerLink : IOpenerLink

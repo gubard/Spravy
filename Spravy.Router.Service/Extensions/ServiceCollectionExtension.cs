@@ -2,10 +2,8 @@ extern alias AuthenticationToDo;
 extern alias AuthenticationEventBus;
 extern alias AuthenticationSchedule;
 extern alias AuthenticationClient;
-using System.Text.Json.Serialization;
 using AuthenticationClient::Spravy.Authentication.Domain.Client.Models;
 using AuthenticationClient::Spravy.Authentication.Domain.Client.Services;
-using AuthenticationClient::Spravy.Authentication.Protos;
 using AuthenticationEventBus::Spravy.EventBus.Domain.Client.Models;
 using AuthenticationEventBus::Spravy.EventBus.Domain.Client.Services;
 using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Models;
@@ -13,23 +11,9 @@ using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Services;
 using AuthenticationSchedule::Spravy.Schedule.Protos;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Models;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Services;
-using Grpc.Core;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Services;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Services;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.EventBus.Domain.Interfaces;
-using Spravy.Router.Service.Services;
-using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Service.Services;
-using Spravy.ToDo.Domain.Interfaces;
-using Protos_EventBusService = AuthenticationEventBus::Spravy.EventBus.Protos.EventBusService;
-using ToDoService = AuthenticationToDo::Spravy.ToDo.Protos.ToDoService;
+using AuthenticationToDo::Spravy.ToDo.Protos;
+using AuthenticationService = AuthenticationClient::Spravy.Authentication.Protos.AuthenticationService;
+using EventBusService = AuthenticationEventBus::Spravy.EventBus.Protos.EventBusService;
 
 namespace Spravy.Router.Service.Extensions;
 
@@ -84,7 +68,7 @@ public static class ServiceCollectionExtension
 
         serviceCollection.AddGrpcServiceAuth<
             GrpcEventBusService,
-            Protos_EventBusService.EventBusServiceClient,
+            EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions
         >();
 

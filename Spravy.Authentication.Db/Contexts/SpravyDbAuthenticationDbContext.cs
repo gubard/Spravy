@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Contexts;
-using Spravy.Db.Interfaces;
-
 namespace Spravy.Authentication.Db.Contexts;
 
 public class SpravyDbAuthenticationDbContext : SpravyDbContext

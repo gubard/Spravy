@@ -2787,10 +2787,15 @@ public class SpravyCommandService
                     DialogViewLayer.Content,
                     viewFactory.CreateAddTimerViewModel(),
                     vm =>
-                        scheduleService
-                            .AddTimerAsync(vm.ToAddTimerParameters(), ct)
+                        dialogViewer
+                            .CloseDialogAsync(DialogViewLayer.Content, ct)
+                            .IfSuccessAsync(() => vm.ToAddTimerParametersAsync(ct), ct)
                             .IfSuccessAsync(
-                                () => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct),
+                                parameters => scheduleService.AddTimerAsync(parameters, ct),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                 ct
                             ),
                     ct

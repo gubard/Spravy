@@ -1,6 +1,3 @@
-using System.Reflection;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Authentication.Db.Sqlite.Migrator;
 
 public readonly struct SpravyAuthenticationDbSqliteMigratorMark : IAssemblyMark

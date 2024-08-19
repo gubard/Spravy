@@ -1,13 +1,3 @@
-using Spravy.Client.Services;
-using Spravy.Core.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Domain.Services;
-using Spravy.EventBus.Domain.Client.Models;
-using Spravy.EventBus.Domain.Interfaces;
-using Spravy.EventBus.Protos;
-
 namespace Spravy.EventBus.Domain.Client.Services;
 
 public class EventBusServiceFactory : IFactory<string, IEventBusService>

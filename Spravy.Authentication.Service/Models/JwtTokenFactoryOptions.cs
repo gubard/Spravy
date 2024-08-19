@@ -1,5 +1,3 @@
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Authentication.Service.Models;
 
 public class JwtTokenFactoryOptions : IOptionsValue

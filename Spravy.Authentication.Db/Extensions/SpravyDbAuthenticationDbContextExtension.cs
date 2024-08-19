@@ -1,11 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Authentication.Db.Contexts;
-using Spravy.Authentication.Db.Models;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-
 namespace Spravy.Authentication.Db.Extensions;
 
 public static class SpravyDbAuthenticationDbContextExtension

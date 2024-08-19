@@ -1,1 +1,21 @@
 // Global using directives
+global using System.Runtime.CompilerServices;
+global using Android.Content;
+global using Android.Content.PM;
+global using Avalonia;
+global using Avalonia.Controls;
+global using Jab;
+global using Microsoft.Extensions.Configuration;
+global using Spavy.LocalStorage.Sqlite.Services;
+global using Spravy.Client.Models;
+global using Spravy.Core.Helpers;
+global using Spravy.Domain.Extensions;
+global using Spravy.Domain.Helpers;
+global using Spravy.Domain.Interfaces;
+global using Spravy.Domain.Models;
+global using Spravy.Ui.Android.Services;
+global using Spravy.Ui.Extensions;
+global using Spravy.Ui.Interfaces;
+global using Spravy.Ui.Modules;
+global using Spravy.Ui.Services;
+global using Xamarin.Essentials;

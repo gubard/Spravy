@@ -1,12 +1,3 @@
-using Serilog;
-using Spravy.Domain.Extensions;
-using Spravy.PasswordGenerator.Db.Contexts;
-using Spravy.PasswordGenerator.Service;
-using Spravy.PasswordGenerator.Service.Extensions;
-using Spravy.PasswordGenerator.Service.Services;
-using Spravy.Service.Extensions;
-using Spravy.Service.Middlewares;
-
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 try

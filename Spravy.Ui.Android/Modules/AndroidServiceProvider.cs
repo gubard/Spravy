@@ -1,19 +1,3 @@
-using Avalonia.Controls;
-using Jab;
-using Microsoft.Extensions.Configuration;
-using Spavy.LocalStorage.Sqlite.Services;
-using Spravy.Client.Models;
-using Spravy.Core.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Ui.Android.Services;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Modules;
-using Spravy.Ui.Services;
-using Xamarin.Essentials;
-
 namespace Spravy.Ui.Android.Modules;
 
 [ServiceProvider]

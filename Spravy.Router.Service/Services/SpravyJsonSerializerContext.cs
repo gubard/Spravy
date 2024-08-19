@@ -1,8 +1,3 @@
-using System.Text.Json.Serialization;
-using Spravy.Db.Errors;
-using Spravy.Domain.Errors;
-using Spravy.ToDo.Domain.Errors;
-
 namespace Spravy.Router.Service.Services;
 
 [JsonSourceGenerationOptions]

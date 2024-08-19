@@ -1,6 +1,3 @@
-using Spravy.Client.Enums;
-using Spravy.Client.Interfaces;
-
 namespace Spravy.EventBus.Domain.Client.Models;
 
 public class GrpcEventBusServiceOptions : IGrpcOptionsValue

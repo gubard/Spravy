@@ -1,10 +1,6 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Browser;
-using Spravy.Core.Helpers;
 using Spravy.Ui.Browser.Modules;
-using Spravy.Ui.Extensions;
 
 [assembly: SupportedOSPlatform("browser")]
 

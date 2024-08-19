@@ -1,15 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Extensions;
-using Spravy.Db.Sqlite.Extensions;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.EventBus.Domain.Interfaces;
-using Spravy.Schedule.Db.Contexts;
-using Spravy.Schedule.Db.Models;
-
 namespace Spravy.Schedule.Service.HostedServices;
 
 public class ScheduleHostedService : IHostedService

@@ -1,28 +1,3 @@
-using System.Text.Json.Serialization;
-using Grpc.Core;
-using Spravy.Authentication.Domain.Client.Services;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Services;
-using Spravy.Authentication.Protos;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Extensions;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Services;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.Service.Extensions;
-using Spravy.Service.HostedServices;
-using Spravy.Service.Services;
-using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Db.Services;
-using Spravy.ToDo.Db.Sqlite.Migrator;
-using Spravy.ToDo.Db.Sqlite.Services;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Service.Services;
-
 namespace Spravy.ToDo.Service.Extensions;
 
 public static class ServiceCollectionExtension

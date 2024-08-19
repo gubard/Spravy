@@ -16,6 +16,7 @@ public class TimersViewModel : NavigatableViewModelBase
         : base(true)
     {
         this.scheduleService = scheduleService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,

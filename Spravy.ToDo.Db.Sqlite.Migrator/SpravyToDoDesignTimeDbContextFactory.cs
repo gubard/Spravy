@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Db.Sqlite.Services;
-
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
 public class SpravyToDoDesignTimeDbContextFactory

@@ -36,7 +36,7 @@ public static partial class CoreMapper
         return value.Kind switch
         {
             DateTimeKind.Unspecified
-                => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString()),
+                => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
             DateTimeKind.Utc => Timestamp.FromDateTime(value),
             DateTimeKind.Local
                 => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),

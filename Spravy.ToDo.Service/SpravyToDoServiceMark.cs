@@ -1,6 +1,3 @@
-using System.Reflection;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.ToDo.Service;
 
 public struct SpravyToDoServiceMark : IAssemblyMark

@@ -1,10 +1,3 @@
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Ui.Browser.Helpers;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Views;
-
 namespace Spravy.Ui.Browser.Services;
 
 public class BrowserSingleViewTopLevelControlFactory : IFactory<ISingleViewTopLevelControl>

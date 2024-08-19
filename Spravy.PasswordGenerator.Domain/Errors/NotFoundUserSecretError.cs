@@ -1,5 +1,3 @@
-using Spravy.Domain.Errors;
-
 namespace Spravy.PasswordGenerator.Domain.Errors;
 
 public class NotFoundUserSecretError : Error

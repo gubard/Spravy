@@ -1,11 +1,5 @@
-using System.Runtime.CompilerServices;
 using Spravy.Db.Extensions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Models;
-using Spravy.EventBus.Domain.Models;
 
 namespace Spravy.EventBus.Service.Services;
 

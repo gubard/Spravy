@@ -1,7 +1,3 @@
-using System.Text.Json.Serialization;
-using Spravy.Db.Errors;
-using Spravy.Domain.Errors;
-
 namespace Spravy.Authentication.Service.Services;
 
 [JsonSourceGenerationOptions]

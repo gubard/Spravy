@@ -1,18 +1,3 @@
-using Avalonia.Controls;
-using Jab;
-using Microsoft.Extensions.Configuration;
-using Spravy.Client.Models;
-using Spravy.Core.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.Ui.Browser.Services;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Modules;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Browser.Modules;
 
 [ServiceProvider]

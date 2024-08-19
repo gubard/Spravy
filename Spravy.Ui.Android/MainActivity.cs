@@ -1,11 +1,5 @@
-﻿using Android.Content.PM;
-using Avalonia;
-using Avalonia.Android;
-using Spravy.Core.Helpers;
-using Spravy.Domain.Extensions;
+﻿using Avalonia.Android;
 using Spravy.Ui.Android.Modules;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Android;
 

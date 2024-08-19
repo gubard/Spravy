@@ -1,0 +1,21 @@
+// Global using directives
+global using System.Runtime.CompilerServices;
+global using System.Runtime.InteropServices.JavaScript;
+global using System.Runtime.Versioning;
+global using Avalonia.Controls;
+global using Jab;
+global using Microsoft.Extensions.Configuration;
+global using Spravy.Client.Models;
+global using Spravy.Core.Helpers;
+global using Spravy.Domain.Extensions;
+global using Spravy.Domain.Helpers;
+global using Spravy.Domain.Interfaces;
+global using Spravy.Domain.Models;
+global using Spravy.Domain.Services;
+global using Spravy.Ui.Browser.Helpers;
+global using Spravy.Ui.Browser.Services;
+global using Spravy.Ui.Extensions;
+global using Spravy.Ui.Interfaces;
+global using Spravy.Ui.Modules;
+global using Spravy.Ui.Services;
+global using Spravy.Ui.Views;

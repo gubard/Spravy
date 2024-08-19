@@ -295,6 +295,11 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<AddTimerView>());
         }
 
+        if (typeof(AddToDoItemToFavoriteEventViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<AddToDoItemToFavoriteEventView>());
+        }
+
         return new(new NotViewForViewModelError(viewModelType.Name));
     }
 }

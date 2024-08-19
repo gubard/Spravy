@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Contexts;
-using Spravy.Db.Interfaces;
-
 namespace Spravy.Schedule.Db.Contexts;
 
 public class SpravyDbScheduleDbContext

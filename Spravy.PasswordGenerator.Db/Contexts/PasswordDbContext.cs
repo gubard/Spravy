@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Contexts;
-using Spravy.Db.Interfaces;
-
 namespace Spravy.PasswordGenerator.Db.Contexts;
 
 public class PasswordDbContext : SpravyDbContext, IDbContextCreator<PasswordDbContext>

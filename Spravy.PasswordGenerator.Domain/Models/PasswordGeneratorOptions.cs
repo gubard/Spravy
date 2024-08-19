@@ -1,5 +1,3 @@
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.PasswordGenerator.Domain.Models;
 
 public class PasswordGeneratorOptions : IOptionsValue

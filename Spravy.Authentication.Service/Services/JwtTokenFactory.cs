@@ -1,13 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Authentication.Service.Models;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
 
 namespace Spravy.Authentication.Service.Services;
 

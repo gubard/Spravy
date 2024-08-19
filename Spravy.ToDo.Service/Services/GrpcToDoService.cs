@@ -1,15 +1,3 @@
-using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Service.Extensions;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Mapper.Mappers;
-using Spravy.ToDo.Protos;
-
 namespace Spravy.ToDo.Service.Services;
 
 [Authorize]

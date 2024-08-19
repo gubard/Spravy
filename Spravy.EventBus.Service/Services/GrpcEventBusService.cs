@@ -1,11 +1,7 @@
-using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Core.Mappers;
-using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Mapper.Mappers;
-using Spravy.EventBus.Domain.Models;
 using Spravy.EventBus.Protos;
-using Spravy.Service.Extensions;
 
 namespace Spravy.EventBus.Service.Services;
 

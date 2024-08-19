@@ -1,11 +1,5 @@
-using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Interfaces;
-using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Mapper.Mappers;
 using Spravy.Schedule.Protos;
-using Spravy.Service.Extensions;
 
 namespace Spravy.Router.Service.Services;
 

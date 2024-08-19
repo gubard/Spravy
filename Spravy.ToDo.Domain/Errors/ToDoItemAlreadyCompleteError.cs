@@ -1,5 +1,3 @@
-using Spravy.Domain.Errors;
-
 namespace Spravy.ToDo.Domain.Errors;
 
 public class ToDoItemAlreadyCompleteError : Error

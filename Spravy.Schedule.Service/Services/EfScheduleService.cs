@@ -1,13 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Extensions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Schedule.Db.Contexts;
-using Spravy.Schedule.Db.Mapper.Mappers;
-using Spravy.Schedule.Db.Models;
-using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Models;
 
 namespace Spravy.Schedule.Service.Services;
@@ -32,6 +22,7 @@ public class EfScheduleService : IScheduleService
             EventId = parameters.EventId,
             DueDateTime = parameters.DueDateTime,
             Content = parameters.Content.ToArray(),
+            Name = parameters.Name,
         };
 
         return dbContextFactory

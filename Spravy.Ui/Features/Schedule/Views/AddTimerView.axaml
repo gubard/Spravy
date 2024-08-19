@@ -7,18 +7,21 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.Schedule.Views.AddTimerView"
              x:DataType="vm:AddTimerViewModel">
-    <c:GroupBoxControl>
-        <c:GroupBoxControl.Header>
-            <TextBlock Classes="alignment-left" Text="{StaticResource AddTimerView.Header}" />
-        </c:GroupBoxControl.Header>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
+                <TextBlock Classes="alignment-left" Text="{StaticResource AddTimerView.Header}" />
+            </c:GroupBoxControl.Header>
 
-        <StackPanel>
-            <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
-            <TextBox Text="{Binding Name}" />
-            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
-            <Calendar SelectedDate="{Binding Date}" />
-            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
-            <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
-        </StackPanel>
-    </c:GroupBoxControl>
+            <StackPanel>
+                <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
+                <TextBox Text="{Binding Name}" />
+                <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
+                <Calendar SelectedDate="{Binding Date}" />
+                <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
+                <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
+                <ContentControl Content="{Binding EventViewModel}" />
+            </StackPanel>
+        </c:GroupBoxControl>
+    </ScrollViewer>
 </UserControl>

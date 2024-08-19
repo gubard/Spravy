@@ -1,4 +1,3 @@
-using Spravy.Domain.Errors;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Domain.Errors;

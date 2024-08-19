@@ -1,35 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json.Serialization;
-using Spravy.Authentication.Db.Contexts;
-using Spravy.Authentication.Db.Sqlite.Migrator;
-using Spravy.Authentication.Db.Sqlite.Services;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Authentication.Service.Helpers;
-using Spravy.Authentication.Service.Interfaces;
-using Spravy.Authentication.Service.Models;
-using Spravy.Authentication.Service.Services;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Extensions;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Options;
-using Spravy.Core.Services;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Sqlite.Extensions;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Domain.Services;
-using Spravy.EventBus.Domain.Client.Models;
-using Spravy.EventBus.Domain.Client.Services;
-using Spravy.EventBus.Domain.Interfaces;
-using Spravy.EventBus.Protos;
-using Spravy.Service.HostedServices;
-using Spravy.Service.Services;
-using SpravyJsonSerializerContext = Spravy.Authentication.Service.Services.SpravyJsonSerializerContext;
+using TokenService = Spravy.Authentication.Service.Services.TokenService;
 
 namespace Spravy.Authentication.Service.Extensions;
 

@@ -1,8 +1,6 @@
 using Serilog;
 using Spravy.Authentication.Service;
 using Spravy.Authentication.Service.Extensions;
-using Spravy.Authentication.Service.Services;
-using Spravy.Service.Extensions;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 

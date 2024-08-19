@@ -1,12 +1,3 @@
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Core.Interfaces;
-using Spravy.Db.Errors;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Schedule.Service.Services;
 
 public class RpcExceptionHandler : IRpcExceptionHandler
