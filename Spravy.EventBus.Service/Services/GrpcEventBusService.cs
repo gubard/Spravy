@@ -6,39 +6,48 @@ using Spravy.EventBus.Protos;
 namespace Spravy.EventBus.Service.Services;
 
 [Authorize]
-public class GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
-    : EventBusService.EventBusServiceBase
+public class GrpcEventBusService : EventBusService.EventBusServiceBase
 {
-    public override async Task<PublishEventReply> PublishEvent(
+    private readonly EventStorage eventStorage;
+    private readonly ISerializer serializer;
+
+    public GrpcEventBusService(EventStorage eventStorage, ISerializer serializer)
+    {
+        this.eventStorage = eventStorage;
+        this.serializer = serializer;
+    }
+
+    public override Task<PublishEventReply> PublishEvent(
         PublishEventRequest request,
         ServerCallContext context
     )
     {
-        var userId = context.GetHttpContext().GetUserId();
-        var id = request.EventId.ToGuid();
-        logger.LogInformation("{UserId} push event {Id}", userId, id);
-
-        await eventStorage.AddEventAsync(
-            id,
-            request.Content.ToByteArray(),
-            context.CancellationToken
-        );
-
-        return new();
+        return eventStorage
+            .AddEventAsync(
+                request.EventId.ToGuid(),
+                request.Content.ToByteArray(),
+                context.CancellationToken
+            )
+            .HandleAsync<PublishEventReply>(serializer, context.CancellationToken);
     }
 
-    public override async Task<GetEventsReply> GetEvents(
+    public override Task<GetEventsReply> GetEvents(
         GetEventsRequest request,
         ServerCallContext context
     )
     {
-        var userId = context.GetHttpContext().GetUserId();
-        var eventIds = request.EventIds.ToGuid();
-        logger.LogInformation("{UserId} get events {EventIds}", userId, eventIds);
-        var eventValues = await eventStorage.PushEventAsync(eventIds);
-        var reply = new GetEventsReply();
-        reply.Events.AddRange(eventValues.ToEvent().ToArray());
+        return eventStorage
+            .PushEventAsync(request.EventIds.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                events =>
+                {
+                    var reply = new GetEventsReply();
+                    reply.Events.AddRange(events.ToEvent().ToArray());
 
-        return reply;
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 }

@@ -58,6 +58,40 @@ public class SpravyJsonSerializer : ISerializer
         return DeserializeCore<TObject>(stream, ct).ConfigureAwait(false);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(
+        ReadOnlyMemory<byte> content,
+        CancellationToken ct
+    )
+        where TObject : notnull
+    {
+        return DeserializeCore<TObject>(content, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TObject>> DeserializeCore<TObject>(
+        ReadOnlyMemory<byte> content,
+        CancellationToken ct
+    )
+        where TObject : notnull
+    {
+        var typeInfo = context.GetTypeInfo(typeof(TObject));
+
+        if (typeInfo is null)
+        {
+            return new(new NotFoundTypeError(typeof(TObject)));
+        }
+
+        await using var stream = new MemoryStream(content.ToArray());
+        stream.Position = 0;
+
+        var result = await JsonSerializer.DeserializeAsync(
+            stream,
+            (JsonTypeInfo<TObject>)typeInfo,
+            ct
+        );
+
+        return result.ThrowIfNull().ToResult();
+    }
+
     private async ValueTask<Result<TObject>> DeserializeCore<TObject>(
         Stream stream,
         CancellationToken ct

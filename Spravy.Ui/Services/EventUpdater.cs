@@ -3,16 +3,22 @@ namespace Spravy.Ui.Services;
 public class EventUpdater : IEventUpdater
 {
     private readonly IScheduleService scheduleService;
+    private readonly IUiApplicationService uiApplicationService;
+    private readonly IToDoService toDoService;
     private readonly ISpravyNotificationManager spravyNotificationManager;
     private CancellationTokenSource cancellationTokenSource = new();
 
     public EventUpdater(
         IScheduleService scheduleService,
-        ISpravyNotificationManager spravyNotificationManager
+        ISpravyNotificationManager spravyNotificationManager,
+        IToDoService toDoService,
+        IUiApplicationService uiApplicationService
     )
     {
         this.scheduleService = scheduleService;
         this.spravyNotificationManager = spravyNotificationManager;
+        this.toDoService = toDoService;
+        this.uiApplicationService = uiApplicationService;
     }
 
     public void Start()
@@ -37,15 +43,34 @@ public class EventUpdater : IEventUpdater
                 .IfSuccessAsync(
                     isUpdated =>
                     {
-                        if (isUpdated)
+                        if (!isUpdated)
                         {
-                            return spravyNotificationManager.ShowAsync(
-                                new TextLocalization("Notification.UpdateSchedule"),
-                                ct
-                            );
+                            return Result.AwaitableSuccess;
                         }
 
-                        return Result.AwaitableSuccess;
+                        return spravyNotificationManager
+                            .ShowAsync(new TextLocalization("Notification.UpdateSchedule"), ct)
+                            .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
+                            .IfSuccessAsync(
+                                x =>
+                                {
+                                    if (!x)
+                                    {
+                                        return uiApplicationService.RefreshCurrentViewAsync(ct);
+                                    }
+
+                                    return spravyNotificationManager
+                                        .ShowAsync(
+                                            new TextLocalization("Notification.UpdateToDoEvents"),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        );
+                                },
+                                ct
+                            );
                     },
                     ct
                 )

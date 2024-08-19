@@ -32,4 +32,5 @@ namespace Spravy.ToDo.Service.Services;
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
 [JsonSerializable(typeof(NotFoundEntityError))]
+[JsonSerializable(typeof(AddToDoItemToFavoriteEventOptions))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

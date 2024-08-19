@@ -12,6 +12,7 @@ public interface IToDoService
     ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
         Guid id,

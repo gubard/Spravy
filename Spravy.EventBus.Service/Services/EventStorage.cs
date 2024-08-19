@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
 using Spravy.EventBus.Db.Models;
 
@@ -48,52 +49,37 @@ public class EventStorage
             );
     }
 
-    public Task<ReadOnlyMemory<EventValue>> PushEventAsync(ReadOnlyMemory<Guid> eventIds)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<EventValue>>> PushEventAsync(
+        ReadOnlyMemory<Guid> eventIds,
+        CancellationToken ct
+    )
     {
-        return ReadOnlyMemory<EventValue>.Empty.ToTaskResult();
-        /*var file = fileFactory.Create();
-
-        if (!lastWriteTimeUtc.TryGetValue(file.FullName, out var date))
-        {
-            lastWriteTimeUtc[file.FullName] = file.LastWriteTimeUtc;
-        }
-        else if (file.LastWriteTimeUtc == date)
-        {
-            return Enumerable.Empty<EventValue>();
-        }
-
-        await using var context = dbContextFactory.Create();
-
-        var result = await context.AtomicExecuteAsync(
-            async c =>
-            {
-                var removed = await c.Set<EventEntity>()
-                    .Where(x => x.PushedDateTime.HasValue)
-                    .ToArrayAsync();
-
-                if (removed.Length > 0)
-                {
-                    var limit = DateTimeOffset.Now.Add(-EventLiveTime);
-                    c.Set<EventEntity>().RemoveRange(removed.Where(x => x.PushedDateTime < limit).ToArray());
-                }
-
-                var events = await c.Set<EventEntity>()
-                    .Where(x => eventIds.Contains(x.EventId) && !x.PushedDateTime.HasValue)
-                    .ToArrayAsync();
-
-                foreach (var @event in events)
-                {
-                    @event.PushedDateTime = DateTimeOffset.Now;
-                }
-
-                var result = mapper.Map<IEnumerable<EventValue>>(events);
-
-                return result;
-            }
-        );
-
-        lastWriteTimeUtc[file.FullName] = file.LastWriteTimeUtc;
-
-        return result;*/
+        return dbContextFactory
+            .Create()
+            .IfSuccessDisposeAsync(
+                context =>
+                    context.AtomicExecuteAsync(
+                        () =>
+                            context
+                                .Set<EventEntity>()
+                                .AsNoTracking()
+                                .Where(x => eventIds.ToArray().Contains(x.EventId))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessAsync(
+                                    y =>
+                                        y.IfSuccessForEach(x =>
+                                                new EventValue(x.EventId, x.Content).ToResult()
+                                            )
+                                            .IfSuccess(r =>
+                                                context
+                                                    .RemoveRangeEntities(y)
+                                                    .IfSuccess(() => r.ToResult())
+                                            ),
+                                    ct
+                                ),
+                        ct
+                    ),
+                ct
+            );
     }
 }

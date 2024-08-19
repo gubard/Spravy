@@ -194,6 +194,25 @@ public class GrpcToDoService
         );
     }
 
+    public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .UpdateEventsAsync(new(), metadata, cancellationToken: ct)
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(reply => reply.IsUpdated.ToResult(), ct),
+                        ct
+                    ),
+            ct
+        );
+    }
+
     public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
         Guid id,
         CancellationToken ct

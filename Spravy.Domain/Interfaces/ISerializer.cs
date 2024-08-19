@@ -23,4 +23,10 @@ public interface ISerializer
         CancellationToken ct
     )
         where TObject : notnull;
+
+    ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(
+        ReadOnlyMemory<byte> content,
+        CancellationToken ct
+    )
+        where TObject : notnull;
 }

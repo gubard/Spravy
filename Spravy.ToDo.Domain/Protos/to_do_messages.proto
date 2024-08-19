@@ -6,6 +6,13 @@ package spravy.to_do;
 
 import "google/protobuf/timestamp.proto";
 
+message UpdateEventsRequest {
+}
+
+message UpdateEventsReply {
+  bool isUpdated = 1;
+}
+
 message GetActiveToDoItemRequest {
   bytes id = 1;
 }

@@ -12,6 +12,20 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<UpdateEventsReply> UpdateEvents(
+        UpdateEventsRequest request,
+        ServerCallContext context
+    )
+    {
+        return toDoService
+            .UpdateEventsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                isUpdated => new UpdateEventsReply { IsUpdated = isUpdated, },
+                context.CancellationToken
+            );
+    }
+
     public override Task<GetActiveToDoItemReply> GetActiveToDoItem(
         GetActiveToDoItemRequest request,
         ServerCallContext context

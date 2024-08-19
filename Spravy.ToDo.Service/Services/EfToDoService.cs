@@ -1,20 +1,32 @@
+using Spravy.EventBus.Domain.Errors;
+using Spravy.EventBus.Domain.Interfaces;
+
 namespace Spravy.ToDo.Service.Services;
 
 public class EfToDoService : IToDoService
 {
+    private static readonly ReadOnlyMemory<Guid> EventIds =
+        new([AddToDoItemToFavoriteEventOptions.EventId]);
+
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
     private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly IEventBusService eventBusService;
+    private readonly ISerializer serializer;
 
     public EfToDoService(
         IFactory<SpravyDbToDoDbContext> dbContextFactory,
         IHttpContextAccessor httpContextAccessor,
-        GetterToDoItemParametersService getterToDoItemParametersService
+        GetterToDoItemParametersService getterToDoItemParametersService,
+        IEventBusService eventBusService,
+        ISerializer serializer
     )
     {
         this.dbContextFactory = dbContextFactory;
         this.httpContextAccessor = httpContextAccessor;
         this.getterToDoItemParametersService = getterToDoItemParametersService;
+        this.eventBusService = eventBusService;
+        this.serializer = serializer;
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
@@ -188,6 +200,75 @@ public class EfToDoService : IToDoService
                                 ),
                         ct
                     ),
+                ct
+            );
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
+    {
+        return eventBusService
+            .GetEventsAsync(EventIds, ct)
+            .IfSuccessAsync(
+                events =>
+                {
+                    if (events.IsEmpty)
+                    {
+                        return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                    }
+
+                    return dbContextFactory
+                        .Create()
+                        .IfSuccessDisposeAsync(
+                            context =>
+                                context.AtomicExecuteAsync(
+                                    () =>
+                                        events.IfSuccessForEachAsync(
+                                            e =>
+                                            {
+                                                if (
+                                                    e.Id
+                                                    == AddToDoItemToFavoriteEventOptions.EventId
+                                                )
+                                                {
+                                                    return serializer
+                                                        .DeserializeAsync<AddToDoItemToFavoriteEventOptions>(
+                                                            e.Content,
+                                                            ct
+                                                        )
+                                                        .IfSuccessAsync(
+                                                            options =>
+                                                                context
+                                                                    .GetEntityAsync<ToDoItemEntity>(
+                                                                        options.ToDoItemId
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        x =>
+                                                                        {
+                                                                            x.IsFavorite = true;
+
+                                                                            return Result.Success;
+                                                                        },
+                                                                        ct
+                                                                    ),
+                                                            ct
+                                                        );
+                                                }
+
+                                                return new Result(new NotFoundEventError(e.Id))
+                                                    .ToValueTaskResult()
+                                                    .ConfigureAwait(false);
+                                            },
+                                            ct
+                                        ),
+                                    ct
+                                ),
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            () => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                            ct
+                        );
+                },
                 ct
             );
     }

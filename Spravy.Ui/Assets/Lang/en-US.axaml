@@ -4,6 +4,7 @@
     <!--Notification-->
     <sys:String x:Key="Notification.CopyToClipboard">Copy to clipboard</sys:String>
     <sys:String x:Key="Notification.UpdateSchedule">Update schedule</sys:String>
+    <sys:String x:Key="Notification.UpdateToDoEvents">Update to do</sys:String>
 
     <!--Command-->
     <sys:String x:Key="Command.Complete">Complete</sys:String>
@@ -26,7 +27,7 @@
 
     <!--AddToDoItemToFavoriteEventView-->
     <sys:String x:Key="AddToDoItemToFavoriteEventView.ToDoItem">To do item</sys:String>
-    
+
     <!--DeleteTimerView-->
     <sys:String x:Key="DeleteTimerView.Header">Are you sure you want to delete "{Name}"?</sys:String>
 

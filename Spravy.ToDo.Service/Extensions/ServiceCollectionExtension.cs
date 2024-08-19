@@ -1,3 +1,9 @@
+using Spravy.Client.Extensions;
+using Spravy.EventBus.Domain.Client.Models;
+using Spravy.EventBus.Domain.Client.Services;
+using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Protos;
+
 namespace Spravy.ToDo.Service.Extensions;
 
 public static class ServiceCollectionExtension
@@ -6,7 +12,6 @@ public static class ServiceCollectionExtension
     {
         serviceCollection.AddTransient<IRetryService, RetryService>();
         serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbToDoDbContext>>();
-        //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<
             SpravyDbToDoDbContext,
             SpravyToDoDbSqliteMigratorMark
@@ -22,9 +27,6 @@ public static class ServiceCollectionExtension
             AuthenticationClientFactory
         >();
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
-        //serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
-        //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
-        //serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
@@ -32,24 +34,31 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<GetterToDoItemParametersService>();
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
+        serviceCollection.AddTransient<ContextAccessorAuthorizationHttpHeaderFactory>();
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, EventBusService.EventBusServiceClient>,
+            EventBusServiceClientFactory
+        >();
+        serviceCollection.AddTransient<IEventBusService>(sp =>
+            sp.GetRequiredService<GrpcEventBusService>()
+        );
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
-
-        /*serviceCollection.AddGrpcService<GrpcAuthenticationService,
-            Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
-            GrpcAuthenticationServiceOptions>();
-
-        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
-            EventBusService.EventBusServiceClient,
-            GrpcEventBusServiceOptions>();*/
 
         serviceCollection.AddSingleton<IAuthenticationService>(sp =>
             sp.GetRequiredService<GrpcAuthenticationService>()
         );
 
-        serviceCollection.AddSingleton<IHttpHeaderFactory>(sp => new CombineHttpHeaderFactory(
+        serviceCollection.AddTransient<IHttpHeaderFactory>(sp => new CombineHttpHeaderFactory(
+            sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
             sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
-            sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
+            sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>()
         ));
+
+        serviceCollection.AddGrpcServiceAuth<
+            GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions
+        >();
 
         return serviceCollection;
     }
