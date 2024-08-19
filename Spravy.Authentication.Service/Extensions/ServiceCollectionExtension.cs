@@ -20,7 +20,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFileOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
-        serviceCollection.AddSingleton<IEventBusService>(sp =>
+        serviceCollection.AddTransient<IEventBusService>(sp =>
             sp.GetRequiredService<GrpcEventBusService>()
         );
         serviceCollection.AddSingleton<ITokenService, TokenService>();

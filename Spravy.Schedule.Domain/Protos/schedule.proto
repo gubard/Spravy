@@ -10,4 +10,5 @@ service ScheduleService {
     rpc AddTimer (AddTimerRequest) returns (AddTimerReply);
     rpc GetTimers (GetTimersRequest) returns (GetTimersReply);
     rpc RemoveTimer (RemoveTimerRequest) returns (RemoveTimerReply);
+    rpc UpdateEvents (UpdateEventsRequest) returns (UpdateEventsReply);
 }

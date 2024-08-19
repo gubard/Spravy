@@ -16,4 +16,3 @@ global using Spravy.EventBus.Domain.Interfaces;
 global using Spravy.EventBus.Domain.Mapper.Mappers;
 global using Spravy.EventBus.Domain.Models;
 global using Spravy.EventBus.Protos;
-global using static Spravy.EventBus.Protos.EventBusService;

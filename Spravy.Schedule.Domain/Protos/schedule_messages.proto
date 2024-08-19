@@ -6,6 +6,13 @@ package spravy.schedule;
 
 import "google/protobuf/timestamp.proto";
 
+message UpdateEventsRequest {
+}
+
+message UpdateEventsReply {
+  bool isUpdated = 1;
+}
+
 message RemoveTimerRequest {
     bytes id = 1;
 }

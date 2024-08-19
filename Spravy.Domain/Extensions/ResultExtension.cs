@@ -20,6 +20,39 @@ public static class ResultExtension
         return Result.Success;
     }
 
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+    {
+        return IfSuccessForEachCore(values, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+    {
+        foreach (var value in values.ToArray())
+        {
+            var result = await func.Invoke(value);
+
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+        }
+
+        return Result.Success;
+    }
+
     public static Result IfSuccessForEach<TValue>(
         this Result<ReadOnlyMemory<TValue>> values,
         Func<TValue, Result> func

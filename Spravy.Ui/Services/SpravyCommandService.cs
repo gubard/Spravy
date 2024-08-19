@@ -24,7 +24,8 @@ public class SpravyCommandService
         ITaskProgressService taskProgressService,
         IViewFactory viewFactory,
         IToDoUiService toDoUiService,
-        IScheduleService scheduleService
+        IScheduleService scheduleService,
+        IEventUpdater eventUpdater
     )
     {
         this.navigator = navigator;
@@ -2366,7 +2367,10 @@ public class SpravyCommandService
 
         LoginViewInitialized = SpravyCommand.Create<LoginView>(
             (view, ct) =>
-                view
+            {
+                eventUpdater.Stop();
+
+                return view
                     .DataContext.ThrowIfNull()
                     .CastObject<LoginViewModel>()
                     .IfSuccessAsync(
@@ -2394,7 +2398,6 @@ public class SpravyCommandService
                                                                         view.GetControl<TextBox>(
                                                                             LoginView.LoginTextBoxName
                                                                         );
-
                                                                     textBox.Focus();
 
                                                                     if (textBox.Text is null)
@@ -2489,7 +2492,17 @@ public class SpravyCommandService
                                     ct
                                 ),
                         ct
-                    ),
+                    )
+                    .IfSuccessAsync(
+                        () =>
+                        {
+                            eventUpdater.Start();
+
+                            return Result.AwaitableSuccess;
+                        },
+                        ct
+                    );
+            },
             errorHandler,
             taskProgressService
         );
@@ -2497,15 +2510,24 @@ public class SpravyCommandService
         Login = SpravyCommand.Create<LoginViewModel>(
             (vm, ct) =>
                 LoginAsync(
-                    vm,
-                    authenticationService,
-                    tokenService,
-                    objectStorage,
-                    toDoService,
-                    toDoCache,
-                    accountNotify,
-                    ct
-                ),
+                        vm,
+                        authenticationService,
+                        tokenService,
+                        objectStorage,
+                        toDoService,
+                        toDoCache,
+                        accountNotify,
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        () =>
+                        {
+                            eventUpdater.Start();
+
+                            return Result.AwaitableSuccess;
+                        },
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );

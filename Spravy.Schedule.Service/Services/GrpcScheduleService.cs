@@ -12,6 +12,25 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<UpdateEventsReply> UpdateEvents(
+        UpdateEventsRequest request,
+        ServerCallContext context
+    )
+    {
+        return scheduleService
+            .UpdateEventsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                isUpdated =>
+                {
+                    var reply = new UpdateEventsReply { IsUpdated = isUpdated };
+
+                    return reply;
+                },
+                context.CancellationToken
+            );
+    }
+
     public override async Task<AddTimerReply> AddTimer(
         AddTimerRequest request,
         ServerCallContext context

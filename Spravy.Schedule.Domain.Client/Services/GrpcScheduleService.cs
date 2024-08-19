@@ -55,6 +55,25 @@ public class GrpcScheduleService
         );
     }
 
+    public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .UpdateEventsAsync(new(), metadata, cancellationToken: ct)
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(reply => reply.IsUpdated.ToResult(), ct),
+                        ct
+                    ),
+            ct
+        );
+    }
+
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
         CancellationToken ct
     )
@@ -64,9 +83,9 @@ public class GrpcScheduleService
                 metadataFactory
                     .CreateAsync(ct)
                     .IfSuccessAsync(
-                        value =>
+                        metadata =>
                             client
-                                .GetTimersAsync(new(), value)
+                                .GetTimersAsync(new(), metadata, cancellationToken: ct)
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(

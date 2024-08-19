@@ -17,6 +17,7 @@ public class GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBus
         var userId = context.GetHttpContext().GetUserId();
         var id = request.EventId.ToGuid();
         logger.LogInformation("{UserId} push event {Id}", userId, id);
+
         await eventStorage.AddEventAsync(
             id,
             request.Content.ToByteArray(),
@@ -39,21 +40,5 @@ public class GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBus
         reply.Events.AddRange(eventValues.ToEvent().ToArray());
 
         return reply;
-    }
-
-    private async ValueTask<IsSuccessValue<ReadOnlyMemory<EventValue>>> WaitAnyEventAsync(
-        ReadOnlyMemory<Guid> eventIds,
-        CancellationToken ct
-    )
-    {
-        while (!ct.IsCancellationRequested)
-        {
-            var eventValue = await eventStorage.PushEventAsync(eventIds);
-            await Task.Delay(TimeSpan.FromSeconds(1), ct);
-
-            return new(eventValue);
-        }
-
-        return new();
     }
 }

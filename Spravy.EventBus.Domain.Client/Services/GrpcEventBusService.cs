@@ -1,14 +1,14 @@
 namespace Spravy.EventBus.Domain.Client.Services;
 
 public class GrpcEventBusService
-    : GrpcServiceBase<EventBusServiceClient>,
+    : GrpcServiceBase<EventBusService.EventBusServiceClient>,
         IEventBusService,
-        IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
+        IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusService.EventBusServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcEventBusService(
-        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
+        IFactory<Uri, EventBusService.EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
         IRpcExceptionHandler handler,
@@ -80,7 +80,7 @@ public class GrpcEventBusService
     }
 
     public static GrpcEventBusService CreateGrpcService(
-        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
+        IFactory<Uri, EventBusService.EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
         IRpcExceptionHandler handler,

@@ -1,3 +1,5 @@
+using Spravy.Client.Helpers;
+
 namespace Spravy.Schedule.Service.Extensions;
 
 public static class ServiceCollectionExtension
@@ -12,7 +14,6 @@ public static class ServiceCollectionExtension
             SpravyDbScheduleDbContext,
             SpravyScheduleDbSqliteMigratorMark
         >();
-        serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<
             IFactory<string, SpravyDbScheduleDbContext>,
             SpravyScheduleDbContextFactory
@@ -28,15 +29,27 @@ public static class ServiceCollectionExtension
             AuthenticationClientFactory
         >();
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
-        //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
-        serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
-        serviceCollection.AddTransient<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
+        serviceCollection.AddTransient<IHttpHeaderFactory>(sp => new CombineHttpHeaderFactory(
+            sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+            sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
+            sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>()
+        ));
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
+
+        serviceCollection.AddTransient<
+            IFactory<ChannelBase, EventBusService.EventBusServiceClient>,
+            EventBusServiceClientFactory
+        >();
+
+        serviceCollection.AddTransient<IEventBusService>(sp =>
+            sp.GetRequiredService<GrpcEventBusService>()
+        );
 
         serviceCollection.AddGrpcService<
             GrpcAuthenticationService,

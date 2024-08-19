@@ -37,6 +37,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IManagedNotificationManager), typeof(WindowNotificationManager))]
 [Singleton(typeof(IViewFactory), typeof(ViewFactory))]
 [Singleton(typeof(IRetryService), typeof(RetryService))]
+[Singleton(typeof(IEventUpdater), typeof(EventUpdater))]
 [Singleton(typeof(IDesktopTopLevelControl), Factory = nameof(DesktopTopLevelControlFactory))]
 [Singleton(typeof(ISingleViewTopLevelControl), Factory = nameof(SingleViewTopLevelControlFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]

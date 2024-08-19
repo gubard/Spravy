@@ -7,44 +7,28 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         EventBusService.EventBusServiceClient
     > eventBusServiceClientFactory;
 
-    private readonly IHttpHeaderFactory httpHeaderFactory;
+    private readonly IMetadataFactory metadataFactory;
     private readonly GrpcEventBusServiceOptions options;
     private readonly IRpcExceptionHandler handler;
-    private readonly ITokenService tokenService;
     private readonly IRetryService retryService;
 
     public EventBusServiceFactory(
-        IHttpHeaderFactory httpHeaderFactory,
         IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory,
         GrpcEventBusServiceOptions options,
-        ITokenService tokenService,
         IRpcExceptionHandler handler,
-        IRetryService retryService
+        IRetryService retryService,
+        IMetadataFactory metadataFactory
     )
     {
-        this.httpHeaderFactory = httpHeaderFactory;
         this.eventBusServiceClientFactory = eventBusServiceClientFactory;
         this.options = options;
-        this.tokenService = tokenService;
         this.handler = handler;
         this.retryService = retryService;
+        this.metadataFactory = metadataFactory;
     }
 
     public Result<IEventBusService> Create(string key)
     {
-        if (!options.Token.IsNullOrWhiteSpace())
-        {
-            tokenService.LoginAsync(options.Token, CancellationToken.None).GetAwaiter().GetResult();
-        }
-
-        var headers = new[]
-        {
-            httpHeaderFactory,
-            new ValuesHttpHeaderFactory(HttpHeaderItem.CreateUserId(key).ToReadOnlyMemory()),
-            new TokenHttpHeaderFactory(tokenService),
-        };
-
-        var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
         return new GrpcEventBusService(

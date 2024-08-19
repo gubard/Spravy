@@ -101,35 +101,12 @@ public static class ServiceCollectionExtension
             return TGrpcService.CreateGrpcService(
                 sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                 options.Host.ThrowIfNull().ToUri(),
-                CreateMetadataFactory(options, sp),
+                sp.GetRequiredService<IMetadataFactory>(),
                 sp.GetRequiredService<IRpcExceptionHandler>(),
                 sp.GetRequiredService<IRetryService>()
             );
         });
 
         return serviceCollection;
-    }
-
-    private static IMetadataFactory CreateMetadataFactory<TGrpcOptions>(
-        TGrpcOptions options,
-        IServiceProvider serviceProvider
-    )
-        where TGrpcOptions : IGrpcOptionsValue
-    {
-        if (options.Token.IsNullOrWhiteSpace())
-        {
-            return serviceProvider.GetRequiredService<IMetadataFactory>();
-        }
-
-        var tokenService = serviceProvider.GetRequiredService<ITokenService>();
-        tokenService.LoginAsync(options.Token, CancellationToken.None).GetAwaiter().GetResult();
-        var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
-
-        var combineHttpHeaderFactory = new CombineHttpHeaderFactory(
-            serviceProvider.GetRequiredService<IHttpHeaderFactory>(),
-            tokenHttpHeaderFactory
-        );
-
-        return new MetadataFactory(combineHttpHeaderFactory);
     }
 }

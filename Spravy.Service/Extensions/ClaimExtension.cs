@@ -4,7 +4,19 @@ public static class ClaimExtension
 {
     public static Claim GetClaim(this IEnumerable<Claim> claims, string type)
     {
-        return claims.Single(x => x.Type == type);
+        var claimValues = claims.Where(x => x.Type == type).ToArray();
+
+        if (claimValues.Length == 0)
+        {
+            throw new($"Not found claim {type}");
+        }
+
+        if (claimValues.Length > 1)
+        {
+            throw new($"Multi claims {type}");
+        }
+
+        return claimValues[0];
     }
 
     public static Claim GetNameClaim(this IEnumerable<Claim> claims)

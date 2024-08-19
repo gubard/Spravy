@@ -11,6 +11,17 @@ public static class QueryableExtension
         return source.ToArrayEntitiesCore(ct).ConfigureAwait(false);
     }
 
+    public static Result RemoveRangeEntities<TSource>(
+        this DbContext context,
+        ReadOnlyMemory<TSource> items
+    )
+        where TSource : class
+    {
+        context.Set<TSource>().RemoveRange(items.ToArray());
+
+        return Result.Success;
+    }
+
     private static async ValueTask<Result<ReadOnlyMemory<TSource>>> ToArrayEntitiesCore<TSource>(
         this IQueryable<TSource> source,
         CancellationToken ct
