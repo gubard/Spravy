@@ -2798,6 +2798,29 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        DeleteTimer = SpravyCommand.Create<TimerItemNotify>(
+            (item, ct) =>
+                dialogViewer.ShowConfirmDialogAsync(
+                    viewFactory,
+                    DialogViewLayer.Content,
+                    viewFactory.CreateDeleteTimerViewModel(item),
+                    vm =>
+                        dialogViewer
+                            .CloseDialogAsync(DialogViewLayer.Content, ct)
+                            .IfSuccessAsync(
+                                () => scheduleService.RemoveTimerAsync(vm.Item.Id, ct),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                ct
+                            ),
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2886,6 +2909,7 @@ public class SpravyCommandService
     public SpravyCommand NavigateToSearchToDoItems { get; }
     public SpravyCommand NavigateToTimers { get; }
     public SpravyCommand AddTimer { get; }
+    public SpravyCommand DeleteTimer { get; }
     public SpravyCommand NavigateToPasswordGenerator { get; }
     public SpravyCommand NavigateToSetting { get; }
     public SpravyCommand NavigateToCreateUser { get; }

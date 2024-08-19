@@ -9,6 +9,7 @@
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
+             xmlns:controls="clr-namespace:Spravy.Ui.Controls"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -28,11 +29,25 @@
 
     <Application.DataTemplates>
         <DataTemplate DataType="sm:TimerItemNotify">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
-                <TextBlock DockPanel.Dock="Right" Text="{Binding DueDateTime}" />
-                <Control />
-            </DockPanel>
+            <Border Classes="card">
+                <controls:GroupBoxControl Classes="header-alignment-stretch">
+                    <controls:GroupBoxControl.Header>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
+
+                            <Button DockPanel.Dock="Right" 
+                                    Command="{x:Static h:UiHelper.DeleteTimer}"
+                                    CommandParameter="{Binding}">
+                                <mi:MaterialIcon Kind="Delete" />
+                            </Button>
+                            <Control />
+                        </DockPanel>
+                    </controls:GroupBoxControl.Header>
+
+                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center" Text="{Binding DueDateTime}" />
+                </controls:GroupBoxControl>
+            </Border>
+
         </DataTemplate>
 
         <DataTemplate DataType="tdm:ToDoItemEntityNotify">

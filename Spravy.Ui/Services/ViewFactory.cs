@@ -388,6 +388,11 @@ public class ViewFactory : IViewFactory
         return new(errorHandler, taskProgressService);
     }
 
+    public DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item)
+    {
+        return new(item);
+    }
+
     public AddTimerViewModel CreateAddTimerViewModel()
     {
         return new(this);

@@ -8,6 +8,7 @@ public interface IViewFactory
     ToDoItemsGroupByStatusViewModel CreateToDoItemsGroupByStatusViewModel();
     ToDoItemsGroupByTypeViewModel CreateToDoItemsGroupByTypeViewModel();
     ToDoItemsViewModel CreateToDoItemsViewModel();
+    DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item);
     AddTimerViewModel CreateAddTimerViewModel();
     ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel();
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel();

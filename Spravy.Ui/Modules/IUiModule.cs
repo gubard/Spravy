@@ -115,6 +115,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(VerificationCodeView))]
 [Transient(typeof(LoginViewModel))]
 [Transient(typeof(LoginView))]
+[Transient(typeof(DeleteTimerView))]
 [Transient(typeof(AddToDoItemToFavoriteEventView))]
 [Transient(typeof(ForgotPasswordView))]
 [Transient(typeof(CreateUserViewModel))]

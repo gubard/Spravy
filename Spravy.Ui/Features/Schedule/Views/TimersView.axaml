@@ -18,7 +18,7 @@
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Timers}" />
+            <ItemsControl Classes="wrap-panel" ItemsSource="{Binding Timers}" />
         </ScrollViewer>
         
         <Button Grid.Row="2"

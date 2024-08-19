@@ -25,6 +25,9 @@
 
     <!--AddToDoItemToFavoriteEventView-->
     <sys:String x:Key="AddToDoItemToFavoriteEventView.ToDoItem">To do item</sys:String>
+    
+    <!--DeleteTimerView-->
+    <sys:String x:Key="DeleteTimerView.Header">Are you sure you want to delete "{Name}"?</sys:String>
 
     <!--MultiToDoItemSettingView-->
     <sys:String x:Key="MultiToDoItemSettingView.Name">Name</sys:String>

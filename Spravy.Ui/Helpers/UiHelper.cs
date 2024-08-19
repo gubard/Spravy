@@ -58,6 +58,7 @@ public static class UiHelper
         MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
         NavigateToTimers = commands.NavigateToTimers.Command;
         AddTimer = commands.AddTimer.Command;
+        DeleteTimer = commands.DeleteTimer.Command;
     }
 
     public static readonly ICommand MainSplitViewModelInitialized;
@@ -83,6 +84,7 @@ public static class UiHelper
     public static readonly ICommand SwitchPane;
     public static readonly ICommand AddRootToDoItem;
     public static readonly ICommand AddTimer;
+    public static readonly ICommand DeleteTimer;
     public static readonly ICommand Logout;
     public static readonly ICommand RefreshCurrentView;
     public static readonly ICommand SetToDoItemDescription;

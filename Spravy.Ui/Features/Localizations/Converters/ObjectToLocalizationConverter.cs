@@ -33,7 +33,7 @@ public class ObjectToLocalizationConverter : IValueConverter
 
         if (value is not IObjectParameters parameters)
         {
-            return "Parameters must be IParameters.";
+            return $"Parameters must be {nameof(IObjectParameters)}.";
         }
 
         var result = SpravyFormat.Format(template, parameters);

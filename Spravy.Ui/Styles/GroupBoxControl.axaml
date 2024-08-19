@@ -20,6 +20,10 @@
         <Style Selector="^.header-alignment-left /template/ ContentPresenter#HeaderContentPresenter">
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
+        
+        <Style Selector="^.header-alignment-stretch /template/ ContentPresenter#HeaderContentPresenter">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
 
         <Style Selector="^.header-alignment-center /template/ ContentPresenter#HeaderContentPresenter">
             <Setter Property="HorizontalAlignment" Value="Center" />
