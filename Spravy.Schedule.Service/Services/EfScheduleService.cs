@@ -1,5 +1,3 @@
-using Spravy.Schedule.Domain.Models;
-
 namespace Spravy.Schedule.Service.Services;
 
 public class EfScheduleService : IScheduleService

@@ -1,0 +1,21 @@
+// Global using directives
+global using System.Runtime.CompilerServices;
+global using Grpc.Core;
+global using Grpc.Net.Client;
+global using Jab;
+global using Spravy.Client.Enums;
+global using Spravy.Client.Extensions;
+global using Spravy.Client.Helpers;
+global using Spravy.Client.Interfaces;
+global using Spravy.Client.Models;
+global using Spravy.Client.Services;
+global using Spravy.Core.Interfaces;
+global using Spravy.Core.Mappers;
+global using Spravy.Domain.Extensions;
+global using Spravy.Domain.Interfaces;
+global using Spravy.Domain.Models;
+global using Spravy.Schedule.Domain.Client.Models;
+global using Spravy.Schedule.Domain.Interfaces;
+global using Spravy.Schedule.Domain.Mapper.Mappers;
+global using Spravy.Schedule.Domain.Models;
+global using Spravy.Schedule.Protos;

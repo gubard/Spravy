@@ -1,17 +1,3 @@
-using System.Runtime.CompilerServices;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Schedule.Domain.Mapper.Mappers;
-using Spravy.Schedule.Domain.Models;
-using Spravy.Schedule.Protos;
-
 namespace Spravy.Schedule.Domain.Client.Services;
 
 public class GrpcScheduleService

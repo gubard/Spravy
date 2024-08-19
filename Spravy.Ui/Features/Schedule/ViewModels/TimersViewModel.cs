@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public class TimersViewModel : NavigatableViewModelBase
+public class TimersViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly IScheduleService scheduleService;
 
@@ -25,16 +25,7 @@ public class TimersViewModel : NavigatableViewModelBase
 
     private Cvtar InitializedAsync(CancellationToken ct)
     {
-        return scheduleService
-            .GetTimersAsync(ct)
-            .IfSuccessAsync(
-                x =>
-                    this.PostUiBackground(
-                        () => Timers.UpdateUi(x.Select(y => y.ToTimerItemNotify())),
-                        ct
-                    ),
-                ct
-            );
+        return RefreshAsync(ct);
     }
 
     public override string ViewId
@@ -55,5 +46,20 @@ public class TimersViewModel : NavigatableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return scheduleService
+            .GetTimersAsync(ct)
+            .IfSuccessAsync(
+                x =>
+                    this.PostUiBackground(
+                        () => Timers.UpdateUi(x.Select(y => y.ToTimerItemNotify())),
+                        ct
+                    ),
+                ct
+            );
+        ;
     }
 }

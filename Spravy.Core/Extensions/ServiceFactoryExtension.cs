@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-
 namespace Spravy.Core.Extensions;
 
 public static class ServiceFactoryExtension

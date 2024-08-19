@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-using Spravy.Core.Mappers;
-using Spravy.Schedule.Domain.Mapper.Mappers;
-using Spravy.Schedule.Protos;
-
 namespace Spravy.Schedule.Service.Services;
 
 [Authorize]

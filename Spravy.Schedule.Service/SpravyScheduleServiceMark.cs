@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Spravy.Schedule.Service;
 
 public struct SpravyScheduleServiceMark : IAssemblyMark

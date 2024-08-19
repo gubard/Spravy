@@ -1,15 +1,4 @@
-using Grpc.Net.Client;
-using Jab;
-using Spravy.Client.Helpers;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Models;
-using Spravy.Core.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
-using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Schedule.Protos;
 
 namespace Spravy.Schedule.Domain.Client.Modules;
 

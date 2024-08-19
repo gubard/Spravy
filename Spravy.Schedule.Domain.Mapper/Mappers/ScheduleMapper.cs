@@ -1,9 +1,4 @@
-using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using Riok.Mapperly.Abstractions;
-using Spravy.Core.Mappers;
-using Spravy.Schedule.Domain.Models;
-using Spravy.Schedule.Protos;
 
 namespace Spravy.Schedule.Domain.Mapper.Mappers;
 

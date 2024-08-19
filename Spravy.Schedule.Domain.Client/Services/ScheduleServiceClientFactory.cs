@@ -1,8 +1,3 @@
-using Grpc.Core;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Schedule.Protos;
-
 namespace Spravy.Schedule.Domain.Client.Services;
 
 public class ScheduleServiceClientFactory

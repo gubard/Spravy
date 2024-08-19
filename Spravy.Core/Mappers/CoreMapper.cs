@@ -1,6 +1,4 @@
-using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using Riok.Mapperly.Abstractions;
 
 namespace Spravy.Core.Mappers;
 

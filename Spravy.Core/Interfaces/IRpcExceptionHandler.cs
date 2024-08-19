@@ -1,5 +1,3 @@
-using Grpc.Core;
-
 namespace Spravy.Core.Interfaces;
 
 public interface IRpcExceptionHandler
