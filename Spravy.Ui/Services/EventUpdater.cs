@@ -38,52 +38,64 @@ public class EventUpdater : IEventUpdater
 
         while (!ct.IsCancellationRequested)
         {
-            await scheduleService
-                .UpdateEventsAsync(ct)
-                .IfSuccessAsync(
-                    isUpdated =>
-                    {
-                        if (!isUpdated)
+            try
+            {
+                await scheduleService
+                    .UpdateEventsAsync(ct)
+                    .IfSuccessAsync(
+                        isUpdated =>
                         {
-                            return Result.AwaitableSuccess;
-                        }
+                            if (!isUpdated)
+                            {
+                                return Result.AwaitableSuccess;
+                            }
 
-                        return spravyNotificationManager
-                            .ShowAsync(new TextLocalization("Notification.UpdateSchedule"), ct)
-                            .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
-                            .IfSuccessAsync(
-                                x =>
-                                {
-                                    if (!x)
+                            return spravyNotificationManager
+                                .ShowAsync(new TextLocalization("Notification.UpdateSchedule"), ct)
+                                .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
+                                .IfSuccessAsync(
+                                    x =>
                                     {
-                                        return uiApplicationService.RefreshCurrentViewAsync(ct);
-                                    }
+                                        if (!x)
+                                        {
+                                            return uiApplicationService.RefreshCurrentViewAsync(ct);
+                                        }
 
-                                    return spravyNotificationManager
-                                        .ShowAsync(
-                                            new TextLocalization("Notification.UpdateToDoEvents"),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        );
-                                },
+                                        return spravyNotificationManager
+                                            .ShowAsync(
+                                                new TextLocalization(
+                                                    "Notification.UpdateToDoEvents"
+                                                ),
+                                                ct
+                                            )
+                                            .IfSuccessAsync(
+                                                () =>
+                                                    uiApplicationService.RefreshCurrentViewAsync(
+                                                        ct
+                                                    ),
+                                                ct
+                                            );
+                                    },
+                                    ct
+                                );
+                        },
+                        ct
+                    )
+                    .IfErrorsAsync(
+                        errors =>
+                            spravyNotificationManager.ShowAsync(
+                                errors
+                                    .Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
+                                    .JoinString(Environment.NewLine),
                                 ct
-                            );
-                    },
-                    ct
-                )
-                .IfErrorsAsync(
-                    errors =>
-                        spravyNotificationManager.ShowAsync(
-                            errors
-                                .Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
-                                .JoinString(Environment.NewLine),
-                            ct
-                        ),
-                    ct
-                );
+                            ),
+                        ct
+                    );
+            }
+            catch (Exception e)
+            {
+                await spravyNotificationManager.ShowAsync(e.Message, ct);
+            }
 
             await Task.Delay(TimeSpan.FromMinutes(1), ct);
         }
