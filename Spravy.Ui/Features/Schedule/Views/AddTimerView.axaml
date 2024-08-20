@@ -15,7 +15,7 @@
 
             <StackPanel>
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
-                <TextBox Text="{Binding Name}" />
+                <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
                 <Calendar SelectedDate="{Binding Date}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />

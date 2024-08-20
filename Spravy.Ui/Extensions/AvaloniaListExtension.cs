@@ -13,10 +13,7 @@ public static class AvaloniaListExtension
         return Result.Success;
     }
 
-    public static Result UpdateUi(
-        this AvaloniaList<ToDoItemEntityNotify> list,
-        AvaloniaList<ToDoItemEntityNotify> items
-    )
+    public static Result UpdateUi<T>(this AvaloniaList<T> list, List<T> items)
     {
         list.RemoveAll(list.Where(x => !items.Contains(x)));
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
@@ -24,10 +21,15 @@ public static class AvaloniaListExtension
         return Result.Success;
     }
 
-    public static void UpdateUi(
-        this AvaloniaList<ToDoItemEntityNotify> list,
-        IEnumerable<ToDoItemEntityNotify> items
-    )
+    public static Result UpdateUi<T>(this AvaloniaList<T> list, AvaloniaList<T> items)
+    {
+        list.RemoveAll(list.Where(x => !items.Contains(x)));
+        list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
+
+        return Result.Success;
+    }
+
+    public static void UpdateUi<T>(this AvaloniaList<T> list, IEnumerable<T> items)
     {
         list.RemoveAll(list.Where(x => !items.Contains(x)));
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());

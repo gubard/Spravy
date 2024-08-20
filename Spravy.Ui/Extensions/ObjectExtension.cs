@@ -31,6 +31,11 @@ public static class ObjectExtension
         return Result.Success;
     }
 
+    public static TValue GetUiValue<TObject, TValue>(this TObject _, Func<TValue> callback)
+    {
+        return Dispatcher.UIThread.Invoke(callback);
+    }
+
     public static Cvtar InvokeUiAsync<TObject>(this TObject _, Func<Result> callback)
     {
         return _.InvokeUiCore(callback).ConfigureAwait(false);

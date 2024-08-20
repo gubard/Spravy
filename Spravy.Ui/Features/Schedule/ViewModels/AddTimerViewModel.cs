@@ -23,13 +23,25 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
     [ObservableProperty]
     private IEventViewModel eventViewModel;
 
-    public AddTimerViewModel(IViewFactory viewFactory, IObjectStorage objectStorage)
+    public AddTimerViewModel(
+        IViewFactory viewFactory,
+        IObjectStorage objectStorage,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
         eventViewModel = GetEventViewModel();
+
+        InitializedCommand = SpravyCommand.Create(
+            LoadStateAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
+    public SpravyCommand InitializedCommand { get; }
     public bool IsPooled => false;
     public AvaloniaList<string> Names { get; } = new();
 
@@ -76,7 +88,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
                         () =>
                         {
                             Name = setting.Name;
-                            Names.AddRange(setting.Names);
+                            Names.UpdateUi(setting.Names);
 
                             return Result.Success;
                         },
