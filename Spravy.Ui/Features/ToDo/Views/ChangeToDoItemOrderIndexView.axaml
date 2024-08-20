@@ -16,21 +16,21 @@
             <c:GroupBoxControl.Header>
                 <TextBlock Text="{Binding Item.Name}" Classes="alignment-left" />
             </c:GroupBoxControl.Header>
-            
+
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                        <c:PathControl.DataTemplates>
-                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                            </DataTemplate>
+                <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
+                    <c:PathControl.DataTemplates>
+                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                        </DataTemplate>
 
-                            <DataTemplate DataType="m:RootItem">
-                                <avalonia:MaterialIcon Kind="Home" Margin="5" />
-                            </DataTemplate>
-                        </c:PathControl.DataTemplates>
-                    </c:PathControl>
+                        <DataTemplate DataType="m:RootItem">
+                            <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                        </DataTemplate>
+                    </c:PathControl.DataTemplates>
+                </c:PathControl>
 
+                <StackPanel Classes="horizontal">
                     <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
                     <ToggleSwitch IsChecked="{Binding IsAfter}" />
                     <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
