@@ -13,7 +13,7 @@
             <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
                 <mi:MaterialIcon Kind="Menu" />
             </Button>
-
+            <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
             <TextBlock Text="{StaticResource TimersView.Header}" />
         </StackPanel>
 
