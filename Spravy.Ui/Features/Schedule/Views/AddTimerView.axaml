@@ -1,12 +1,15 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Spravy.Ui.Features.Schedule.Views.AddTimerView"
-             x:DataType="vm:AddTimerViewModel">
+<c:MainUserControl x:TypeArguments="vm:AddTimerViewModel"
+                   xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
+                   xmlns:s="clr-namespace:System;assembly=System.Runtime"
+                   xmlns:v="clr-namespace:Spravy.Ui.Features.Schedule.Views"
+                   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                   x:Class="Spravy.Ui.Features.Schedule.Views.AddTimerView"
+                   x:DataType="vm:AddTimerViewModel">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
@@ -15,13 +18,28 @@
 
             <StackPanel>
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
-                <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding}" />
+                <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
                 <Calendar SelectedDate="{Binding Date}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
-                <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
+
+                <StackPanel Classes="horizontal">
+                    <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
+
+                    <ItemsControl Classes="stack-panel-horizontal" ItemsSource="{Binding Times}">
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="s:TimeSpan">
+                                <Button Command="{Binding $parent[v:AddTimerView].ViewModel.AddTime.Command}"
+                                        CommandParameter="{Binding}">
+                                    <TextBlock Text="{Binding}" />
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+                </StackPanel>
+
                 <ContentControl Content="{Binding EventViewModel}" />
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
-</UserControl>
+</c:MainUserControl>

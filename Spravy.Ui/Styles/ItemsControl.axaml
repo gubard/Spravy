@@ -1,5 +1,13 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="ItemsControl.stack-panel-horizontal">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+
     <Style Selector="ItemsControl.virtualizing-stack-panel-vertical">
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>

@@ -33,17 +33,37 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
         eventViewModel = GetEventViewModel();
+        Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
         InitializedCommand = SpravyCommand.Create(
             LoadStateAsync,
             errorHandler,
             taskProgressService
         );
+
+        AddTime = SpravyCommand.Create<TimeSpan>(
+            (t, ct) =>
+                this.PostUiBackground(
+                        () =>
+                        {
+                            Time += t;
+
+                            return Result.Success;
+                        },
+                        ct
+                    )
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
+    public SpravyCommand AddTime { get; }
     public bool IsPooled => false;
     public AvaloniaList<string> Names { get; } = new();
+    public AvaloniaList<TimeSpan> Times { get; }
 
     public string ViewId
     {
