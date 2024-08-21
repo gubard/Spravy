@@ -44,7 +44,7 @@
                         </DockPanel>
                     </controls:GroupBoxControl.Header>
 
-                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center" Text="{Binding DueDateTime}" />
+                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center" Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" />
                 </controls:GroupBoxControl>
             </Border>
 
