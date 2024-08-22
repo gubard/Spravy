@@ -433,10 +433,7 @@ public class ViewFactory : IViewFactory
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel()
     {
-        return new MultiToDoItemsViewModel(
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsGroupByViewModel()
-        );
+        return new(CreateToDoItemsViewModel(), CreateToDoItemsGroupByViewModel());
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
