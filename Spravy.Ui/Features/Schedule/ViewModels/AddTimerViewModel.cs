@@ -70,7 +70,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
 
     public string ViewId
     {
-        get => $"{TypeCache<AddTimerViewModel>.Type}";
+        get => Item.TryGetValue(out var i) ? $"{TypeCache<AddTimerViewModel>.Type}:{i.Id}" : $"{TypeCache<AddTimerViewModel>.Type}";
     }
 
     private IEventViewModel GetEventViewModel()
