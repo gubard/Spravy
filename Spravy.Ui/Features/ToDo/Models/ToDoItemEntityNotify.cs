@@ -255,6 +255,7 @@ public partial class ToDoItemEntityNotify
                 spravyCommandNotifyService.Reset,
                 spravyCommandNotifyService.Clone,
                 spravyCommandNotifyService.CreateReference,
+                spravyCommandNotifyService.CreateTimer,
             ]
         );
 

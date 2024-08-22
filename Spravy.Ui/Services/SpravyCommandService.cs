@@ -2843,6 +2843,30 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        CreateTimer = SpravyCommand.Create<ToDoItemEntityNotify>(
+            (item, ct) =>
+                dialogViewer.ShowConfirmDialogAsync(
+                    viewFactory,
+                    DialogViewLayer.Content,
+                    viewFactory.CreateAddTimerViewModel(item),
+                    vm =>
+                        dialogViewer
+                            .CloseDialogAsync(DialogViewLayer.Content, ct)
+                            .IfSuccessAsync(() => vm.ToAddTimerParametersAsync(ct), ct)
+                            .IfSuccessAsync(
+                                parameters => scheduleService.AddTimerAsync(parameters, ct),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                ct
+                            ),
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2864,6 +2888,7 @@ public class SpravyCommandService
 
     public SpravyCommand CopyToClipboard { get; }
     public SpravyCommand Complete { get; }
+    public SpravyCommand CreateTimer { get; }
     public SpravyCommand AddToFavorite { get; }
     public SpravyCommand RemoveFromFavorite { get; }
     public SpravyCommand OpenLink { get; }

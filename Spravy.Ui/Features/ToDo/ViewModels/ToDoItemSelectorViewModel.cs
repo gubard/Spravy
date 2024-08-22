@@ -13,7 +13,7 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     private ToDoItemEntityNotify? selectedItem;
 
     public ToDoItemSelectorViewModel(
-        ToDoItemEntityNotify? selectedItem,
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoService toDoService,
         IToDoCache toDoCache,
@@ -21,10 +21,10 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
         ITaskProgressService taskProgressService
     )
     {
+        Item = item;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
         this.ignoreItems = ignoreItems;
-        SelectedItem = selectedItem;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -39,9 +39,15 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
         );
     }
 
+    public Option<ToDoItemEntityNotify> Item { get; }
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand SearchCommand { get; }
+
+    public Result<ToDoItemEntityNotify> GetSelectedItem()
+    {
+        return SelectedItem.IfNotNull(nameof(SelectedItem));
+    }
 
     private Cvtar InitializedAsync(CancellationToken ct)
     {
@@ -50,18 +56,20 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
 
     private Cvtar Refresh(CancellationToken ct)
     {
-        return this.PostUiBackground(() => toDoCache.ResetItemsUi(), ct)
-            .IfSuccess(() => toDoCache.GetRootItems())
-            .IfSuccess(items =>
-                this.PostUiBackground(
-                    () =>
-                    {
-                        Roots.UpdateUi(items);
+        return this.InvokeUiAsync(() => toDoCache.ResetItemsUi())
+            .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
+            .IfSuccessAsync(
+                items =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            Roots.UpdateUi(items);
 
-                        return SetupUi();
-                    },
-                    ct
-                )
+                            return SetupUi();
+                        },
+                        ct
+                    ),
+                ct
             )
             .IfSuccessAsync(
                 () => toDoService.GetToDoSelectorItemsAsync(ignoreItems.Select(x => x.Id), ct),
@@ -79,7 +87,16 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
                             Roots.UpdateUi(items);
                             Roots.BinarySort();
 
-                            return SetupUi();
+                            return SetupUi()
+                                .IfSuccess(() =>
+                                {
+                                    if (Item.TryGetValue(out var i))
+                                    {
+                                        SelectedItem = i;
+                                    }
+
+                                    return Result.Success;
+                                });
                         },
                         ct
                     ),

@@ -24,6 +24,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
     private IEventViewModel eventViewModel;
 
     public AddTimerViewModel(
+        Option<ToDoItemEntityNotify> item,
         IViewFactory viewFactory,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
@@ -32,6 +33,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
     {
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
+        Item = item;
         eventViewModel = GetEventViewModel();
         Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
@@ -59,6 +61,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         );
     }
 
+    public Option<ToDoItemEntityNotify> Item { get; }
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand AddTime { get; }
     public bool IsPooled => false;
@@ -75,7 +78,9 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         return Type switch
         {
             EventType.AddToDoItemToFavorite
-                => viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
+                => Item.TryGetValue(out var item)
+                    ? viewFactory.CreateAddToDoItemToFavoriteEventViewModel(item)
+                    : viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

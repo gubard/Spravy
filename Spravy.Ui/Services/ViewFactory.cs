@@ -237,6 +237,13 @@ public class ViewFactory : IViewFactory
         return new(CreateToDoItemSelectorViewModel(), serializer);
     }
 
+    public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel(
+        ToDoItemEntityNotify item
+    )
+    {
+        return new(CreateToDoItemSelectorViewModel(item), serializer);
+    }
+
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
@@ -354,6 +361,11 @@ public class ViewFactory : IViewFactory
         );
     }
 
+    public AddTimerViewModel CreateAddTimerViewModel(ToDoItemEntityNotify item)
+    {
+        return new(item.ToOption(), this, objectStorage, errorHandler, taskProgressService);
+    }
+
     public ToDoItemsGroupByNoneViewModel CreateToDoItemsGroupByNoneViewModel()
     {
         return new(CreateToDoItemsViewModel());
@@ -395,7 +407,7 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new(this, objectStorage, errorHandler, taskProgressService);
+        return new(new(), this, objectStorage, errorHandler, taskProgressService);
     }
 
     public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()
@@ -410,7 +422,7 @@ public class ViewFactory : IViewFactory
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
     {
         return new(
-            null,
+            new(),
             ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
             toDoService,
             toDoCache,
@@ -432,7 +444,14 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     )
     {
-        return new(item, ignoreItems, toDoService, toDoCache, errorHandler, taskProgressService);
+        return new(
+            item.ToOption(),
+            ignoreItems,
+            toDoService,
+            toDoCache,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public ConfirmViewModel CreateConfirmViewModel(

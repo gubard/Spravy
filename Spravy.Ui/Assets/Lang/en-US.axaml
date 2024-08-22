@@ -24,6 +24,7 @@
     <sys:String x:Key="Command.Clone">Clone</sys:String>
     <sys:String x:Key="Command.CreateReference">Create reference</sys:String>
     <sys:String x:Key="Command.OpenCurrent">Open current to-do item</sys:String>
+    <sys:String x:Key="Command.CreateTimer">Create timer</sys:String>
 
     <!--AddToDoItemToFavoriteEventView-->
     <sys:String x:Key="AddToDoItemToFavoriteEventView.ToDoItem">To do item</sys:String>

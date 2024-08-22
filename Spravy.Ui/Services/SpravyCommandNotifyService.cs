@@ -247,6 +247,12 @@ public class SpravyCommandNotifyService
             commandService.RandomizeChildrenOrder
         );
 
+        CreateTimer = new(
+            MaterialIconKind.Timer,
+            new("Command.CreateTimer"),
+            commandService.CreateTimer
+        );
+
         ChangeOrder = new(
             MaterialIconKind.ReorderHorizontal,
             new("Command.Reorder"),
@@ -385,6 +391,7 @@ public class SpravyCommandNotifyService
 
     public SpravyCommandNotify NavigateToCurrentToDoItem { get; }
     public SpravyCommandNotify Complete { get; }
+    public SpravyCommandNotify CreateTimer { get; }
     public SpravyCommandNotify AddToFavorite { get; }
     public SpravyCommandNotify RemoveFromFavorite { get; }
     public SpravyCommandNotify OpenLink { get; }
