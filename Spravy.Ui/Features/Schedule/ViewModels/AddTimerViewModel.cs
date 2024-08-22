@@ -34,6 +34,12 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
         Item = item;
+
+        if (item.TryGetValue(out var i))
+        {
+            name = i.Name;
+        }
+
         eventViewModel = GetEventViewModel();
         Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
