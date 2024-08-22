@@ -34,12 +34,6 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
         Item = item;
-
-        if (item.TryGetValue(out var i))
-        {
-            name = i.Name;
-        }
-
         eventViewModel = GetEventViewModel();
         Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
@@ -118,7 +112,7 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
                     this.PostUiBackground(
                         () =>
                         {
-                            Name = setting.Name;
+                            Name = Item.TryGetValue(out var i) ? i.Name : setting.Name;
                             Names.UpdateUi(setting.Names);
 
                             return Result.Success;
