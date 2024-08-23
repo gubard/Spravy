@@ -64,6 +64,8 @@ public class ListControl : TemplatedControl
 
             Items.Remove(Items[^1]);
             Items.Add(AddItem.Build());
+            Items.Add(CreateCompleteButton());
+            Items.Add(CreateCancelButton());
         };
 
         return result;
@@ -79,14 +81,40 @@ public class ListControl : TemplatedControl
             {
                 return;
             }
-
-            if (AddItem is null)
+            
+            if (ItemsSource is null)
             {
                 return;
             }
 
+            if (Items[^3] is not IAddItem addItem)
+            {
+                return;
+            }
+            
+            ItemsSource.Add(addItem.Value);
             Items.Remove(Items[^1]);
-            Items.Add(AddItem.Build());
+            Items.Remove(Items[^1]);
+            Items.Remove(Items[^1]);
+        };
+
+        return result;
+    }
+    
+    private Button CreateCancelButton()
+    {
+        var result = new Button();
+
+        result.Click += (s, a) =>
+        {
+            if (Items is null)
+            {
+                return;
+            }
+            
+            Items.Remove(Items[^1]);
+            Items.Remove(Items[^1]);
+            Items.Remove(Items[^1]);
         };
 
         return result;
