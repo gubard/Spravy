@@ -187,9 +187,13 @@ public class ToDoUiService : IToDoUiService
                     .GetRootToDoItemIdsAsync(ct)
                     .IfSuccessAsync(
                         ids =>
-                            ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
-                                .IfSuccess(x =>
-                                    this.PostUiBackground(() => toDoItemsView.ClearExceptUi(x), ct)
+                            toDoCache
+                                .UpdateRootItems(ids)
+                                .IfSuccess(items =>
+                                    this.PostUiBackground(
+                                        () => toDoItemsView.ClearExceptUi(items),
+                                        ct
+                                    )
                                 )
                                 .IfSuccess(() => ids.ToResult()),
                         ct

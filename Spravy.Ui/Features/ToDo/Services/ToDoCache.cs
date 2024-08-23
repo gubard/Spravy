@@ -83,6 +83,7 @@ public class ToDoCache : IToDoCache
                 item.IsFavorite = toDoItem.IsFavorite;
                 item.OrderIndex = toDoItem.OrderIndex;
                 item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
+                item.IsIgnore = item.Type == ToDoItemType.Reference;
 
                 if (toDoItem.Active.TryGetValue(out var v))
                 {
@@ -126,85 +127,6 @@ public class ToDoCache : IToDoCache
             });
     }
 
-    public Result<ToDoItemEntityNotify> UpdateUi(
-        Guid id,
-        PeriodicityOffsetToDoItemSettings settings
-    )
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item =>
-            {
-                item.ChildrenType = settings.ChildrenType;
-                item.DueDate = settings.DueDate;
-                item.MonthsOffset = settings.MonthsOffset;
-                item.YearsOffset = settings.YearsOffset;
-                item.DaysOffset = settings.DaysOffset;
-                item.WeeksOffset = settings.WeeksOffset;
-                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
-
-                return item.ToResult();
-            });
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, PeriodicityToDoItemSettings settings)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item =>
-            {
-                item.ChildrenType = settings.ChildrenType;
-                item.DueDate = settings.DueDate;
-                item.TypeOfPeriodicity = settings.TypeOfPeriodicity;
-                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
-
-                return item.ToResult();
-            });
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, PlannedToDoItemSettings settings)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item =>
-            {
-                item.ChildrenType = settings.ChildrenType;
-                item.DueDate = settings.DueDate;
-                item.IsRequiredCompleteInDueDate = settings.IsRequiredCompleteInDueDate;
-
-                return item.ToResult();
-            });
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, ValueToDoItemSettings settings)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item =>
-            {
-                item.ChildrenType = settings.ChildrenType;
-
-                return item.ToResult();
-            });
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, WeeklyPeriodicity periodicity)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item => item.DaysOfWeek.UpdateUi(periodicity.Days).IfSuccess(item.ToResult));
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, MonthlyPeriodicity periodicity)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item =>
-                item.DaysOfMonth.UpdateUi(periodicity.Days.Select(x => (int)x))
-                    .IfSuccess(item.ToResult)
-            );
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(Guid id, AnnuallyPeriodicity periodicity)
-    {
-        return GetToDoItem(id)
-            .IfSuccess(item => item.DaysOfYear.UpdateUi(periodicity.Days).IfSuccess(item.ToResult));
-    }
-
     public Result<ToDoItemEntityNotify> UpdateUi(ActiveToDoItem activeToDoItem)
     {
         return GetToDoItem(activeToDoItem.Id)
@@ -243,6 +165,7 @@ public class ToDoCache : IToDoCache
         item.IsFavorite = toDoItem.IsFavorite;
         item.OrderIndex = toDoItem.OrderIndex;
         item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
+        item.IsIgnore = item.Type == ToDoItemType.Reference;
 
         if (toDoItem.ParentId.TryGetValue(out var value))
         {
@@ -287,7 +210,7 @@ public class ToDoCache : IToDoCache
     )
     {
         return UpdateRootItems(items.Select(x => x.Id))
-            .IfSuccess(_ => items.ToResult().IfSuccessForEach(x => UpdateUi(x)));
+            .IfSuccess(_ => items.ToResult().IfSuccessForEach(UpdateUi));
     }
 
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoSelectorItem item)
@@ -300,7 +223,7 @@ public class ToDoCache : IToDoCache
 
                 return item
                     .Children.ToResult()
-                    .IfSuccessForEach(y => UpdateUi(y))
+                    .IfSuccessForEach(UpdateUi)
                     .IfSuccessForEach(y =>
                     {
                         y.Parent = x;
@@ -318,7 +241,7 @@ public class ToDoCache : IToDoCache
         foreach (var value in cache.Values)
         {
             value.IsExpanded = false;
-            value.IsIgnore = false;
+            value.IsIgnore = value.Type == ToDoItemType.Reference;
         }
 
         return Result.Success;

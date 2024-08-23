@@ -79,43 +79,6 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
             .IfSuccessAsync(items => this.InvokeUiAsync(() => Roots.UpdateUi(items)), ct);
     }
 
-    private Result SetupUi(ToDoItemEntityNotify item)
-    {
-        if (ignoreItems.Span.Contains(item))
-        {
-            item.IsIgnore = true;
-        }
-
-        if (SelectedItem is not null && SelectedItem.Id == item.Id)
-        {
-            var result = ExpandParentsUi(item);
-
-            if (result.IsHasError)
-            {
-                return result;
-            }
-        }
-
-        return item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(SetupUi);
-    }
-
-    private Result ExpandParentsUi(ToDoItemEntityNotify item)
-    {
-        item.IsExpanded = true;
-
-        if (item.Parent == null)
-        {
-            return Result.Success;
-        }
-
-        return ExpandParentsUi(item.Parent);
-    }
-
-    private Result SetupUi()
-    {
-        return Roots.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(SetupUi);
-    }
-
     private Result Search(CancellationToken ct)
     {
         return this.PostUiBackground(
