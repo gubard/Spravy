@@ -101,7 +101,7 @@ public class ToDoUiService : IToDoUiService
                         return Result.AwaitableSuccess;
                     }
 
-                    return this.InvokeUiAsync(() => toDoCache.SelectItemUi(selectedId.Value));
+                    return this.InvokeUiAsync(() => toDoCache.ExpandItemUi(selectedId.Value));
                 },
                 ct
             );

@@ -4,7 +4,7 @@ public interface IToDoCache
 {
     Result ResetItemsUi();
     Result IgnoreItemsUi(ReadOnlyMemory<Guid> ids);
-    Result SelectItemUi(Guid id);
+    Result ExpandItemUi(Guid id);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetRootItems();
     Result<ToDoItemEntityNotify> GetToDoItem(Guid id);

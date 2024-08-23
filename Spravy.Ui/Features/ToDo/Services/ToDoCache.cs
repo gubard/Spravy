@@ -260,7 +260,7 @@ public class ToDoCache : IToDoCache
         return Result.Success;
     }
 
-    public Result SelectItemUi(Guid id)
+    public Result ExpandItemUi(Guid id)
     {
         return GetToDoItem(id)
             .IfSuccess(item =>
@@ -272,7 +272,7 @@ public class ToDoCache : IToDoCache
                     return Result.Success;
                 }
 
-                return SelectItemUi(item.Parent.Id);
+                return ExpandItemUi(item.Parent.Id);
             });
     }
 
