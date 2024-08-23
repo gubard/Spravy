@@ -3,7 +3,7 @@ using Spravy.Ui.Features.Schedule.Settings;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public partial class AddTimerViewModel : ViewModelBase, INavigatable
+public partial class AddTimerViewModel : ViewModelBase, IStateHolder
 {
     private readonly IViewFactory viewFactory;
     private readonly IObjectStorage objectStorage;
@@ -37,12 +37,6 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
         eventViewModel = GetEventViewModel();
         Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
-        InitializedCommand = SpravyCommand.Create(
-            LoadStateAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         AddTime = SpravyCommand.Create<TimeSpan>(
             (t, ct) =>
                 this.PostUiBackground(
@@ -62,7 +56,6 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
     }
 
     public Option<ToDoItemEntityNotify> Item { get; }
-    public SpravyCommand InitializedCommand { get; }
     public SpravyCommand AddTime { get; }
     public bool IsPooled => false;
     public AvaloniaList<string> Names { get; } = new();
@@ -70,7 +63,10 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
 
     public string ViewId
     {
-        get => Item.TryGetValue(out var i) ? $"{TypeCache<AddTimerViewModel>.Type}:{i.Id}" : $"{TypeCache<AddTimerViewModel>.Type}";
+        get =>
+            Item.TryGetValue(out var i)
+                ? $"{TypeCache<AddTimerViewModel>.Type}:{i.Id}"
+                : $"{TypeCache<AddTimerViewModel>.Type}";
     }
 
     private IEventViewModel GetEventViewModel()
@@ -126,10 +122,5 @@ public partial class AddTimerViewModel : ViewModelBase, INavigatable
     public Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
-    }
-
-    public Result Stop()
-    {
-        return Result.Success;
     }
 }

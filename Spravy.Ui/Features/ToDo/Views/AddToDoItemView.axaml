@@ -1,26 +1,27 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:m="clr-namespace:Spravy.Ui.Models"
-             xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-             x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
-             x:DataType="vm:AddToDoItemViewModel">
+<c:MainUserControl x:TypeArguments="vm:AddToDoItemViewModel" 
+                          xmlns="https://github.com/avaloniaui"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                          xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                          xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                          xmlns:m="clr-namespace:Spravy.Ui.Models"
+                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                          x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
+                          x:DataType="vm:AddToDoItemViewModel">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <controls:GroupBoxControl>
-            <controls:GroupBoxControl.Header>
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
                 <TextBlock Classes="alignment-left" Text="{DynamicResource AddToDoItemView.Header}" />
-            </controls:GroupBoxControl.Header>
+            </c:GroupBoxControl.Header>
 
             <StackPanel>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Disabled">
-                    <controls:PathControl Classes="alignment-center" Segments="{Binding Parent.Path}">
-                        <controls:PathControl.DataTemplates>
+                    <c:PathControl Classes="alignment-center" Segments="{Binding Parent.Path}">
+                        <c:PathControl.DataTemplates>
                             <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                 <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                             </DataTemplate>
@@ -28,13 +29,13 @@
                             <DataTemplate DataType="m:RootItem">
                                 <a:MaterialIcon Kind="Home" Margin="5" />
                             </DataTemplate>
-                        </controls:PathControl.DataTemplates>
-                    </controls:PathControl>
+                        </c:PathControl.DataTemplates>
+                    </c:PathControl>
                 </ScrollViewer>
 
                 <ContentControl Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>
-        </controls:GroupBoxControl>
+        </c:GroupBoxControl>
     </ScrollViewer>
-</UserControl>
+</c:MainUserControl>

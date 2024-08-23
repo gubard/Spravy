@@ -21,7 +21,10 @@ public class DialogViewer : IDialogViewer
 
     public Cvtar CloseDialogAsync(DialogViewLayer layer, CancellationToken ct)
     {
-        return GetDialogControl(layer).IfSuccessAsync(dc => SafeCloseUiAsync(dc, ct), ct);
+        return GetDialogControl(layer)
+            .IfSuccess(dc => SafeCloseUi(dc, ct))
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> CloseLastDialogAsync(CancellationToken ct)
@@ -32,11 +35,10 @@ public class DialogViewer : IDialogViewer
             )
         )
         {
-            return SafeCloseUiAsync(
-                    serviceFactory.CreateService<MainView>().ProgressDialogControl,
-                    ct
-                )
-                .IfSuccessAsync(() => true.ToResult(), ct);
+            return SafeCloseUi(serviceFactory.CreateService<MainView>().ProgressDialogControl, ct)
+                .IfSuccess(() => true.ToResult())
+                .ToValueTaskResult()
+                .ConfigureAwait(false);
         }
 
         if (
@@ -45,8 +47,10 @@ public class DialogViewer : IDialogViewer
             )
         )
         {
-            return SafeCloseUiAsync(serviceFactory.CreateService<MainView>().ErrorDialogControl, ct)
-                .IfSuccessAsync(() => true.ToResult(), ct);
+            return SafeCloseUi(serviceFactory.CreateService<MainView>().ErrorDialogControl, ct)
+                .IfSuccess(() => true.ToResult())
+                .ToValueTaskResult()
+                .ConfigureAwait(false);
         }
 
         if (
@@ -55,8 +59,10 @@ public class DialogViewer : IDialogViewer
             )
         )
         {
-            return SafeCloseUiAsync(serviceFactory.CreateService<MainView>().InputDialogControl, ct)
-                .IfSuccessAsync(() => true.ToResult(), ct);
+            return SafeCloseUi(serviceFactory.CreateService<MainView>().InputDialogControl, ct)
+                .IfSuccess(() => true.ToResult())
+                .ToValueTaskResult()
+                .ConfigureAwait(false);
         }
 
         if (
@@ -65,11 +71,10 @@ public class DialogViewer : IDialogViewer
             )
         )
         {
-            return SafeCloseUiAsync(
-                    serviceFactory.CreateService<MainView>().ContentDialogControl,
-                    ct
-                )
-                .IfSuccessAsync(() => true.ToResult(), ct);
+            return SafeCloseUi(serviceFactory.CreateService<MainView>().ContentDialogControl, ct)
+                .IfSuccess(() => true.ToResult())
+                .ToValueTaskResult()
+                .ConfigureAwait(false);
         }
 
         return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
@@ -91,43 +96,22 @@ public class DialogViewer : IDialogViewer
         });
     }
 
-    private ConfiguredValueTaskAwaitable<Result> SafeCloseUiAsync(
-        DialogControl dialogControl,
-        CancellationToken ct
-    )
+    private Result SafeCloseUi(DialogControl dialogControl, CancellationToken ct)
     {
         if (!this.GetUiValue(() => dialogControl.IsOpen))
         {
-            return Result.AwaitableSuccess;
+            return Result.Success;
         }
 
-        return dialogControl
-            .Dialog.IfNotNull(nameof(dialogControl.Dialog))
-            .IfSuccessAsync(
-                content =>
-                {
-                    if (content is IStateHolder saveState)
-                    {
-                        return saveState.SaveStateAsync(ct);
-                    }
+        return this.PostUiBackground(
+            () =>
+            {
+                dialogControl.IsOpen = false;
 
-                    return Result.AwaitableSuccess;
-                },
-                ct
-            )
-            .IfSuccessAsync(
-                () =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            dialogControl.IsOpen = false;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
+                return Result.Success;
+            },
+            ct
+        );
     }
 
     public Result<DialogControl> GetDialogControl(DialogViewLayer layer)

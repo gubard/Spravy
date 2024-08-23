@@ -1,13 +1,14 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-             xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-             x:Class="Spravy.Ui.Features.ToDo.Views.AddRootToDoItemView"
-             x:DataType="vm:AddRootToDoItemViewModel">
+<c:MainUserControl x:TypeArguments="vm:AddRootToDoItemViewModel" 
+                   xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                   xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                   x:Class="Spravy.Ui.Features.ToDo.Views.AddRootToDoItemView"
+                   x:DataType="vm:AddRootToDoItemViewModel">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
@@ -21,4 +22,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
-</UserControl>
+</c:MainUserControl>
