@@ -40,7 +40,7 @@ public static partial class UiMapper
     public static ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemViewModel value)
     {
         return new(
-            value.Item.Id,
+            value.Item.CurrentId,
             value.IsCompleteChildrenTask,
             value.IsMoveCircleOrderIndex,
             value.IsOnlyCompletedTasks,

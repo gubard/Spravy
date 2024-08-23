@@ -42,7 +42,7 @@ public partial class ResetToDoItemViewModel : NavigatableViewModelBase
 
     public override string ViewId
     {
-        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.Id}";
+        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.CurrentId}";
     }
 
     private Cvtar InitializedAsync(CancellationToken ct)
