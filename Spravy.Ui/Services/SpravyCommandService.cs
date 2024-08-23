@@ -158,8 +158,14 @@ public class SpravyCommandService
 
         MultiReset = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                toDoUiService
+                    .UpdateItemAsync(view.Item, ct)
+                    .IfSuccessAsync(
+                        () =>
+                            view.GetSelectedItems()
+                                .IfSuccess(selected => selected.Select(x => x.Id).ToResult()),
+                        ct
+                    )
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -1167,24 +1173,33 @@ public class SpravyCommandService
 
         Reset = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateResetToDoItemViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.ResetToDoItemAsync(vm.ToResetToDoItemOptions(), ct),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                toDoUiService
+                    .UpdateItemAsync(item, ct)
+                    .IfSuccessAsync(
+                        () =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateResetToDoItemViewModel(item),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(
+                                            () =>
+                                                toDoService.ResetToDoItemAsync(
+                                                    vm.ToResetToDoItemOptions(),
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
-                    ct
-                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -1694,8 +1709,14 @@ public class SpravyCommandService
 
         MultiResetToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                toDoUiService
+                    .UpdateItemAsync(item, ct)
+                    .IfSuccessAsync(
+                        () =>
+                            item.GetSelectedItems()
+                                .IfSuccess(selected => selected.Select(x => x.Id).ToResult()),
+                        ct
+                    )
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(

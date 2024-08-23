@@ -477,7 +477,7 @@ public class ViewFactory : IViewFactory
 
     public ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item)
     {
-        return new(item, objectStorage, errorHandler, taskProgressService, toDoUiService);
+        return new(item, objectStorage);
     }
 
     public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
