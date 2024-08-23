@@ -324,6 +324,35 @@ public class ToDoCache : IToDoCache
         return Result.Success;
     }
 
+    public Result IgnoreItemsUi(ReadOnlyMemory<Guid> ids)
+    {
+        foreach (var value in cache.Values)
+        {
+            if (ids.Contains(value.Id))
+            {
+                value.IsIgnore = true;
+            }
+        }
+
+        return Result.Success;
+    }
+
+    public Result SelectItemUi(Guid id)
+    {
+        return GetToDoItem(id)
+            .IfSuccess(item =>
+            {
+                item.IsExpanded = true;
+
+                if (item.Parent is null)
+                {
+                    return Result.Success;
+                }
+
+                return SelectItemUi(item.Parent.Id);
+            });
+    }
+
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots)
     {
         return roots

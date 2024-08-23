@@ -21,7 +21,7 @@ public static class HostExtension
 
         var action = (MaterialDesignSizeType type) =>
         {
-            if (types.Span.Contains(type))
+            if (types.Contains(type))
             {
                 if (!host.Styles.Contains(style))
                 {

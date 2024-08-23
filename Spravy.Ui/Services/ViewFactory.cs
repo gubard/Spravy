@@ -424,8 +424,8 @@ public class ViewFactory : IViewFactory
         return new(
             new(),
             ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            toDoService,
             toDoCache,
+            toDoUiService,
             errorHandler,
             taskProgressService
         );
@@ -444,8 +444,8 @@ public class ViewFactory : IViewFactory
         return new(
             item.ToOption(),
             ignoreItems,
-            toDoService,
             toDoCache,
+            toDoUiService,
             errorHandler,
             taskProgressService
         );

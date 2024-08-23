@@ -75,6 +75,38 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
+    public Cvtar UpdateSelectorItemsAsync(
+        Guid? selectedId,
+        ReadOnlyMemory<Guid> ignoreIds,
+        CancellationToken ct
+    )
+    {
+        return this.InvokeUiAsync(() => toDoCache.ResetItemsUi())
+            .IfSuccessAsync(
+                () => toDoService.GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid>.Empty, ct),
+                ct
+            )
+            .IfSuccessAsync(
+                items =>
+                    this.InvokeUiAsync(() => toDoCache.IgnoreItemsUi(ignoreIds))
+                        .IfSuccessAsync(() => items.ToResult(), ct),
+                ct
+            )
+            .IfSuccessAsync(items => toDoCache.UpdateUi(items), ct)
+            .IfSuccessAsync(
+                _ =>
+                {
+                    if (selectedId is null)
+                    {
+                        return Result.AwaitableSuccess;
+                    }
+
+                    return this.InvokeUiAsync(() => toDoCache.SelectItemUi(selectedId.Value));
+                },
+                ct
+            );
+    }
+
     public Cvtar UpdateSiblingsAsync(
         ToDoItemEntityNotify item,
         IToDoItemsView toDoItemsView,

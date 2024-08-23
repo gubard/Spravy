@@ -2,6 +2,25 @@
 
 public static class MemoryExtension
 {
+    public static bool Contains<TSource>(this ReadOnlyMemory<TSource> source, TSource item)
+        where TSource : notnull
+    {
+        if (source.IsEmpty)
+        {
+            return false;
+        }
+
+        foreach (var e in source.Span)
+        {
+            if (e.Equals(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static bool All<TSource>(
         this ReadOnlyMemory<TSource> source,
         Func<TSource, bool> predicate

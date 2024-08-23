@@ -29,6 +29,11 @@ public readonly struct Option<TValue>
         return new(new PropertyNullValueError("Value"));
     }
 
+    public TValue? GetNullable()
+    {
+        return value;
+    }
+
     public bool TryGetValue([MaybeNullWhen(false)] out TValue result)
     {
         if (IsHasValue)
