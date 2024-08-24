@@ -1,8 +1,13 @@
 namespace Spravy.Ui.Models;
 
-public abstract class NavigatableViewModelBase(bool isPooled) : ViewModelBase, INavigatable
+public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
 {
-    public bool IsPooled { get; } = isPooled;
+    protected NavigatableViewModelBase(bool isPooled)
+    {
+        IsPooled = isPooled;
+    }
+
+    public bool IsPooled { get; }
     public abstract string ViewId { get; }
 
     public abstract Result Stop();

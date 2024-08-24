@@ -28,7 +28,7 @@ public class ModuleDataTemplate : IDataTemplate
         }
 
         value.DataContext = param;
-        var cast = value.CastObject<Control>();
+        var cast = value.CastObject<Control>(nameof(value));
 
         if (!cast.TryGetValue(out var control))
         {

@@ -34,7 +34,7 @@ public class Navigator : INavigator
                                 if (value)
                                 {
                                     return new EmptyNavigatable()
-                                        .CastObject<INavigatable>()
+                                        .CastObject<INavigatable>(nameof(EmptyNavigatable))
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false);
                                 }
@@ -44,7 +44,7 @@ public class Navigator : INavigator
                                     mainSplitViewModel.IsPaneOpen = false;
 
                                     return new EmptyNavigatable()
-                                        .CastObject<INavigatable>()
+                                        .CastObject<INavigatable>(nameof(EmptyNavigatable))
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false);
                                 }

@@ -20,6 +20,7 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
     public LoginViewModel(IObjectStorage objectStorage, IPropertyValidator propertyValidator)
         : base(true)
     {
+        isBusy = true;
         this.objectStorage = objectStorage;
         this.propertyValidator = propertyValidator;
     }

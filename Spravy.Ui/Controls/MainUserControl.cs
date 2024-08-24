@@ -1,23 +1,37 @@
 namespace Spravy.Ui.Controls;
 
 public abstract class MainUserControl<T> : UserControl
-    where T : class
+    where T : ViewModelBase
 {
+    protected TextBox? DefaultFocusTextBox;
+
     public MainUserControl()
     {
-        Initialized += async (s, e) =>
+        Initialized += async (s, _) =>
         {
-            if (s is not IDataContextProvider contextProvider)
+            try
             {
-                return;
-            }
+                ViewModel.View = this;
 
-            if (contextProvider.DataContext is not IStateHolder stateHolder)
+                if (s is not IDataContextProvider contextProvider)
+                {
+                    return;
+                }
+
+                if (contextProvider.DataContext is not IStateHolder stateHolder)
+                {
+                    return;
+                }
+
+                await stateHolder.LoadStateAsync(CancellationToken.None);
+            }
+            finally
             {
-                return;
+                if (DefaultFocusTextBox is not null)
+                {
+                    DefaultFocusTextBox.FocusTextBoxUi();
+                }
             }
-
-            await stateHolder.LoadStateAsync(CancellationToken.None);
         };
 
         DetachedFromVisualTree += async (s, _) =>

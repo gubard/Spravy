@@ -538,7 +538,7 @@ public class ViewFactory : IViewFactory
 
     public EditDescriptionContentViewModel CreateEditDescriptionContentViewModel()
     {
-        return new(errorHandler, taskProgressService);
+        return new();
     }
 
     public DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(

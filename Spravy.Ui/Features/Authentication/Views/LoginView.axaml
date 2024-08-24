@@ -1,17 +1,17 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
-             xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
-             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-             x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
-             x:DataType="vm:LoginViewModel">
-    <!--<UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding $self}" />
-    </UserControl.KeyBindings>-->
+<c:MainUserControl x:TypeArguments="vm:LoginViewModel"
+                   xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                   xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                   x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
+                   x:DataType="vm:LoginViewModel">
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding}" />
+    </UserControl.KeyBindings>
 
     <c:BusyAreaControl Classes="card"
                        MinWidth="300"
@@ -24,32 +24,32 @@
             <StackPanel>
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Login}" />
-                <TextBox Name="{x:Static v:LoginView.LoginTextBoxName}"
+                <TextBox x:Name="LoginTextBox"
                          Text="{Binding Login}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Password}" />
-                <TextBox Name="{x:Static v:LoginView.PasswordTextBoxName}"
+                <TextBox x:Name="PasswordTextBox"
                          Classes="password-char content-type-password"
                          Text="{Binding Password}" />
 
                 <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                    <CheckBox Name="{x:Static v:LoginView.RememberMeCheckBoxName}"
+                    <CheckBox x:Name="RememberMeCheckBox"
                               IsChecked="{Binding IsRememberMe}"
                               Content="{DynamicResource LoginView.RememberMe}"
                               HorizontalAlignment="Center" />
-                    <Button Grid.Column="1"
+                    <Button x:Name="ForgotPasswordButton"
+                            Grid.Column="1"
                             Classes="mode-press"
-                            Name="{x:Static v:LoginView.ForgotPasswordButtonName}"
                             Command="{x:Static h:UiHelper.NavigateToEmailOrLoginInput}"
                             Content="{DynamicResource LoginView.ForgotPassword}" />
-                    <Button Grid.Row="1"
-                            Name="{x:Static v:LoginView.CreateUserButtonName}"
+                    <Button x:Name="CreateUserButton"
+                            Grid.Row="1"
                             Classes="mode-press"
                             Command="{x:Static h:UiHelper.NavigateToCreateUser}"
                             Content="{DynamicResource LoginView.CreateAccount}" />
-                    <Button Grid.Row="1"
+                    <Button x:Name="LoginButton"
+                            Grid.Row="1"
                             Grid.Column="1"
-                            Name="{x:Static v:LoginView.LoginButtonName}"
                             Classes="mode-press"
                             Command="{x:Static h:UiHelper.Login}"
                             CommandParameter="{Binding}"
@@ -58,4 +58,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </c:BusyAreaControl>
-</UserControl>
+</c:MainUserControl>

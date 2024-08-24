@@ -14,7 +14,7 @@ public static class DialogViewerExtension
     {
         var confirm = viewFactory.CreateConfirmViewModel(
             viewModel,
-            obj => obj.CastObject<TViewModel>().IfSuccessAsync(confirmTask.Invoke, ct),
+            obj => obj.CastObject<TViewModel>(nameof(obj)).IfSuccessAsync(confirmTask.Invoke, ct),
             _ => dialogViewer.CloseDialogAsync(layer, ct)
         );
 

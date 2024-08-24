@@ -249,9 +249,14 @@ public static class ObjectExtension
         return (T)obj;
     }
 
-    public static Result<T> CastObject<T>(this object obj)
+    public static Result<T> CastObject<T>(this object? obj, string name)
         where T : notnull
     {
+        if (obj is null)
+        {
+            return new(new VariableNullValueError(name));
+        }
+
         if (obj is T item)
         {
             return item.ToResult();
