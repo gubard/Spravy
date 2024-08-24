@@ -37,6 +37,11 @@ public static class ResultExtension
     {
         foreach (var value in values.ToArray())
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var result = await func.Invoke(value);
 
             if (result.IsHasError)
@@ -48,6 +53,11 @@ public static class ResultExtension
             {
                 return Result.CanceledByUserError;
             }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;
@@ -151,20 +161,25 @@ public static class ResultExtension
     {
         var values = await task;
 
-        if (ct.IsCancellationRequested)
-        {
-            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
-        }
-
         if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         var array = new Memory<TReturn>(new TReturn[v.Length]);
 
         for (var index = 0; index < v.Length; index++)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
             var result = func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
@@ -178,6 +193,11 @@ public static class ResultExtension
             }
 
             array.Span[index] = rv;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -219,6 +239,11 @@ public static class ResultExtension
 
         for (var index = 0; index < v.Length; index++)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
             var result = await func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
@@ -232,6 +257,11 @@ public static class ResultExtension
             }
 
             array.Span[index] = rv;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -261,20 +291,25 @@ public static class ResultExtension
     {
         var values = await task;
 
-        if (ct.IsCancellationRequested)
-        {
-            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
-        }
-
         if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         var array = new Memory<TReturn>(new TReturn[v.Length]);
 
         for (var index = 0; index < v.Length; index++)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
             var result = await func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
@@ -288,6 +323,11 @@ public static class ResultExtension
             }
 
             array.Span[index] = rv;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -317,6 +357,11 @@ public static class ResultExtension
         {
             var i = index;
             tasks[index] = () => func.Invoke(v.Span[i]);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.AwaitableCanceledByUserError;
         }
 
         return Result.AwaitableSuccess.IfSuccessAllAsync(ct, tasks.ToArray());
@@ -362,6 +407,11 @@ public static class ResultExtension
             }
         }
 
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
         return Result.Success;
     }
 
@@ -387,8 +437,18 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
         for (var index = 0; index < v.Length; index++)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var result = await func.Invoke(v.Span[index]);
 
             if (result.IsHasError)
@@ -400,6 +460,11 @@ public static class ResultExtension
             {
                 return Result.CanceledByUserError;
             }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;
@@ -433,14 +498,14 @@ public static class ResultExtension
 
         await foreach (var result in enumerable)
         {
-            if (ct.IsCancellationRequested)
-            {
-                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
-            }
-
             if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
             var item = await func.Invoke(rv);
@@ -450,7 +515,17 @@ public static class ResultExtension
                 return new(item.Errors);
             }
 
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
             list.Add(v);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
         return list.ToArray().ToReadOnlyMemory().ToResult();
@@ -475,14 +550,14 @@ public static class ResultExtension
     {
         await foreach (var result in enumerable)
         {
-            if (ct.IsCancellationRequested)
-            {
-                return Result.CanceledByUserError;
-            }
-
             if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
             }
 
             var item = await func.Invoke(rv);
@@ -491,6 +566,16 @@ public static class ResultExtension
             {
                 return item;
             }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;
@@ -515,14 +600,14 @@ public static class ResultExtension
     {
         await foreach (var result in enumerable)
         {
-            if (ct.IsCancellationRequested)
-            {
-                return Result.CanceledByUserError;
-            }
-
             if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
             }
 
             var item = func.Invoke(rv);
@@ -531,6 +616,16 @@ public static class ResultExtension
             {
                 return item;
             }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;
@@ -569,17 +664,27 @@ public static class ResultExtension
 
         foreach (var awaitable in awaitables)
         {
-            var r = await awaitable.Invoke();
-
             if (ct.IsCancellationRequested)
             {
                 return Result.CanceledByUserError;
             }
 
+            var r = await awaitable.Invoke();
+
             if (r.IsHasError)
             {
                 return r;
             }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;
@@ -1103,6 +1208,11 @@ public static class ResultExtension
 
         foreach (var awaitable in tasks)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var r = await awaitable;
 
             if (ct.IsCancellationRequested)
@@ -1111,6 +1221,11 @@ public static class ResultExtension
             }
 
             errors = errors.Combine(r.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         if (errors.IsEmpty)
@@ -1153,6 +1268,11 @@ public static class ResultExtension
 
         foreach (var awaitable in tasks)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var r = await awaitable;
 
             if (ct.IsCancellationRequested)
@@ -1161,6 +1281,11 @@ public static class ResultExtension
             }
 
             errors = errors.Combine(r.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         if (errors.IsEmpty)
@@ -1205,6 +1330,11 @@ public static class ResultExtension
 
         foreach (var awaitable in tasks)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var r = await awaitable;
 
             if (ct.IsCancellationRequested)
@@ -1213,6 +1343,11 @@ public static class ResultExtension
             }
 
             errors = errors.Combine(r.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return new(errors);
