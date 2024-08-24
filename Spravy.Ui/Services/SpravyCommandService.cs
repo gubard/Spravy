@@ -1025,7 +1025,7 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmDialogAsync(
                     viewFactory,
                     DialogViewLayer.Input,
-                    viewFactory.CreateToDoItemSelectorViewModel(),
+                    viewFactory.CreateToDoItemSelectorViewModel(item),
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Input, ct)
@@ -1508,11 +1508,11 @@ public class SpravyCommandService
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
-                                DialogViewLayer.Content,
+                                DialogViewLayer.Input,
                                 viewFactory.CreateToDoItemSelectorViewModel(item, selected),
                                 vm =>
                                     dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
                                         .IfSuccessAsync(
                                             () =>
                                                 vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
@@ -1765,11 +1765,11 @@ public class SpravyCommandService
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
-                                DialogViewLayer.Content,
+                                DialogViewLayer.Input,
                                 viewFactory.CreateToDoItemSelectorViewModel(item),
                                 vm =>
                                     dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
                                         .IfSuccessAsync(
                                             () =>
                                                 taskProgressService.RunProgressAsync(
