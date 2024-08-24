@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using Spravy.Core.Mappers;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
@@ -13,6 +14,13 @@ namespace Spravy.ToDo.Db.Services;
 
 public class GetterToDoItemParametersService
 {
+    private readonly ILogger<GetterToDoItemParametersService> logger;
+
+    public GetterToDoItemParametersService(ILogger<GetterToDoItemParametersService> logger)
+    {
+        this.logger = logger;
+    }
+
     public ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -77,9 +85,17 @@ public class GetterToDoItemParametersService
         CancellationToken ct
     )
     {
+        logger.LogDebug(
+            "ToDoItem: {ToDoItemId} {ToDoItemName} {ToDoItemType} {ToDoItemReferenceId}",
+            entity.Id,
+            entity.Name,
+            entity.Type,
+            entity.ReferenceId
+        );
+
         if (entity.Type == ToDoItemType.Reference)
         {
-            if (entity.ReferenceId.HasValue)
+            if (entity.ReferenceId.HasValue && entity.ReferenceId.Value != entity.Id)
             {
                 ignoreIds.Add(entity.Id);
 
