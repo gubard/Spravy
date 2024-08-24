@@ -5,35 +5,42 @@
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSelectorView"
              x:DataType="vm:ToDoItemSelectorViewModel">
-    <Grid RowDefinitions="Auto,*">
-        <Grid ColumnDefinitions="*,Auto">
-            <TextBox Text="{Binding SearchText}" />
+    <c:BusyAreaControl IsBusy="{Binding IsBusy}">
+        <c:BusyAreaControl.BusyArea>
+            <ProgressBar IsIndeterminate="True" />
+        </c:BusyAreaControl.BusyArea>
 
-            <Button Grid.Column="1" Classes="mode-press" Command="{Binding SearchCommand.Command}">
-                <mi:MaterialIcon Kind="Search" />
-            </Button>
+        <Grid RowDefinitions="Auto,*">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Text="{Binding SearchText}" />
+
+                <Button Grid.Column="1" Classes="mode-press" Command="{Binding SearchCommand.Command}">
+                    <mi:MaterialIcon Kind="Search" />
+                </Button>
+            </Grid>
+
+            <TreeView Grid.Row="1"
+                      ItemsSource="{Binding Roots}"
+                      SelectionMode="Single"
+                      SelectedItem="{Binding SelectedItem}">
+                <TreeView.Styles>
+                    <Style Selector="TreeViewItem" x:DataType="tm:ToDoItemEntityNotify">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                        <Setter Property="IsVisible"
+                                Value="{Binding IsIgnore, Converter={StaticResource ReverseBooleanValueConverter}}" />
+                    </Style>
+                </TreeView.Styles>
+
+                <TreeView.DataTemplates>
+                    <TreeDataTemplate DataType="tm:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}" />
+                    </TreeDataTemplate>
+                </TreeView.DataTemplates>
+            </TreeView>
         </Grid>
-
-        <TreeView Grid.Row="1"
-                  ItemsSource="{Binding Roots}"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedItem}">
-            <TreeView.Styles>
-                <Style Selector="TreeViewItem" x:DataType="tm:ToDoItemEntityNotify">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-                    <Setter Property="IsVisible"
-                            Value="{Binding IsIgnore, Converter={StaticResource ReverseBooleanValueConverter}}" />
-                </Style>
-            </TreeView.Styles>
-
-            <TreeView.DataTemplates>
-                <TreeDataTemplate DataType="tm:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Name}" />
-                </TreeDataTemplate>
-            </TreeView.DataTemplates>
-        </TreeView>
-    </Grid>
+    </c:BusyAreaControl>
 </UserControl>

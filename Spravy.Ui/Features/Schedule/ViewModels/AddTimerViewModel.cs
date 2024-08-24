@@ -57,7 +57,6 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
 
     public Option<ToDoItemEntityNotify> Item { get; }
     public SpravyCommand AddTime { get; }
-    public bool IsPooled => false;
     public AvaloniaList<string> Names { get; } = new();
     public AvaloniaList<TimeSpan> Times { get; }
 

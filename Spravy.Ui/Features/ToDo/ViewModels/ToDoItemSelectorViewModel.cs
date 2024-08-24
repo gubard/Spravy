@@ -10,6 +10,9 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     private string searchText = string.Empty;
 
     [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
     private ToDoItemEntityNotify? selectedItem;
 
     public ToDoItemSelectorViewModel(
@@ -22,6 +25,7 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
     )
     {
         Item = item;
+        isBusy = true;
         this.toDoCache = toDoCache;
         this.ignoreItems = ignoreItems;
         this.toDoUiService = toDoUiService;
@@ -56,27 +60,45 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
 
     private Cvtar Refresh(CancellationToken ct)
     {
-        return toDoUiService
-            .UpdateSelectorItemsAsync(Item.GetNullable()?.Id, ignoreItems.Select(x => x.Id), ct)
-            .IfSuccessAsync(
-                () =>
-                {
-                    if (!Item.TryGetValue(out var i))
-                    {
-                        return Result.AwaitableSuccess;
-                    }
+        return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
+            () =>
+                toDoUiService
+                    .UpdateSelectorItemsAsync(
+                        Item.GetNullable()?.Id,
+                        ignoreItems.Select(x => x.Id),
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        () =>
+                        {
+                            if (!Item.TryGetValue(out var i))
+                            {
+                                return Result.AwaitableSuccess;
+                            }
 
-                    return this.InvokeUiAsync(() =>
+                            return this.InvokeUiAsync(() =>
+                            {
+                                SelectedItem = i;
+
+                                return Result.Success;
+                            });
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
+                    .IfSuccessAsync(items => this.InvokeUiAsync(() => Roots.UpdateUi(items)), ct),
+            () =>
+                this.PostUiBackground(
+                    () =>
                     {
-                        SelectedItem = i;
+                        IsBusy = false;
 
                         return Result.Success;
-                    });
-                },
-                ct
-            )
-            .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
-            .IfSuccessAsync(items => this.InvokeUiAsync(() => Roots.UpdateUi(items)), ct);
+                    },
+                    ct
+                ),
+            ct
+        );
     }
 
     private Result Search(CancellationToken ct)

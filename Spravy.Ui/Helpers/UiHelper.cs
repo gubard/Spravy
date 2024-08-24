@@ -2,6 +2,7 @@ namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
 {
+    public const string IsBusy = nameof(IsBusy);
     public const bool True = true;
     public const bool False = false;
 
