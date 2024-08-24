@@ -5,7 +5,7 @@ public abstract class MainUserControl<T> : UserControl
 {
     public MainUserControl()
     {
-        Initialized += (s, e) =>
+        Initialized += async (s, e) =>
         {
             if (s is not IDataContextProvider contextProvider)
             {
@@ -17,10 +17,10 @@ public abstract class MainUserControl<T> : UserControl
                 return;
             }
 
-            stateHolder.LoadStateAsync(CancellationToken.None);
+            await stateHolder.LoadStateAsync(CancellationToken.None);
         };
 
-        DetachedFromVisualTree += (s, _) =>
+        DetachedFromVisualTree += async (s, _) =>
         {
             if (s is not IDataContextProvider contextProvider)
             {
@@ -32,7 +32,7 @@ public abstract class MainUserControl<T> : UserControl
                 return;
             }
 
-            stateHolder.SaveStateAsync(CancellationToken.None);
+            await stateHolder.SaveStateAsync(CancellationToken.None);
         };
     }
 
