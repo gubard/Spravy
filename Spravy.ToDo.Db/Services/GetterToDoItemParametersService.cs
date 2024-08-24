@@ -412,7 +412,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Circle => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Step => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Reference
-                => entity.ReferenceId.HasValue
+                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
                     ? context
                         .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                         .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
@@ -447,7 +447,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Step
                 => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Reference
-                => entity.ReferenceId.HasValue
+                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
                     ? context
                         .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                         .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)

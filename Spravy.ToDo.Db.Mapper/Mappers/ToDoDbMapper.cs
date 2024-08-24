@@ -60,11 +60,6 @@ public static partial class ToDoDbMapper
 
     public static ToDoItem ToToDoItem(this ToDoItemEntity entity, ToDoItemParameters parameters)
     {
-        var referenceId =
-            entity.Type == ToDoItemType.Reference
-                ? entity.ReferenceId.ToOptionGuid()
-                : OptionStruct<Guid>.Default;
-
         return new(
             entity.Id,
             entity.Name,
@@ -78,8 +73,23 @@ public static partial class ToDoDbMapper
             parameters.IsCan,
             entity.ParentId.ToOption(),
             entity.DescriptionType,
-            referenceId
+            GetReferenceId(entity)
         );
+    }
+
+    private static OptionStruct<Guid> GetReferenceId(ToDoItemEntity item)
+    {
+        if (item.Type == ToDoItemType.Reference)
+        {
+            return OptionStruct<Guid>.Default;
+        }
+
+        if (item.ReferenceId == item.Id)
+        {
+            return OptionStruct<Guid>.Default;
+        }
+
+        return item.ReferenceId.ToOption();
     }
 
     private static string MapToString(Option<Uri> value)
