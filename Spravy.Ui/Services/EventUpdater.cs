@@ -23,6 +23,7 @@ public class EventUpdater : IEventUpdater
 
     public void Start()
     {
+        Stop();
         _ = StartCore();
     }
 

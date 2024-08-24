@@ -2391,91 +2391,81 @@ public class SpravyCommandService
             {
                 eventUpdater.Stop();
 
-                return Result
-                    .AwaitableSuccess.IfSuccessTryFinallyAsync(
-                        () =>
-                            objectStorage
-                                .IsExistsAsync(StorageIds.LoginId, ct)
-                                .IfSuccessAsync(
-                                    value =>
+                return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
+                    () =>
+                        objectStorage
+                            .IsExistsAsync(StorageIds.LoginId, ct)
+                            .IfSuccessAsync(
+                                value =>
+                                {
+                                    if (!value)
                                     {
-                                        if (!value)
-                                        {
-                                            return this.PostUiBackground(
-                                                    () => view.FocusTextBoxUi("LoginTextBox"),
-                                                    ct
-                                                )
-                                                .ToValueTaskResult()
-                                                .ConfigureAwait(false);
-                                        }
-
-                                        return objectStorage
-                                            .GetObjectAsync<LoginStorageItem>(
-                                                StorageIds.LoginId,
+                                        return this.PostUiBackground(
+                                                () => view.FocusTextBoxUi("LoginTextBox"),
                                                 ct
                                             )
-                                            .IfSuccessAsync(
-                                                item =>
-                                                {
-                                                    var jwtHandler = new JwtSecurityTokenHandler();
-                                                    var jwtToken = jwtHandler.ReadJwtToken(
-                                                        item.Token
+                                            .ToValueTaskResult()
+                                            .ConfigureAwait(false);
+                                    }
+
+                                    return objectStorage
+                                        .GetObjectAsync<LoginStorageItem>(StorageIds.LoginId, ct)
+                                        .IfSuccessAsync(
+                                            item =>
+                                            {
+                                                var jwtHandler = new JwtSecurityTokenHandler();
+                                                var token = item.Token;
+                                                var jwtToken = jwtHandler.ReadJwtToken(token);
+                                                accountNotify.Login = jwtToken.Claims.GetName();
+
+                                                return tokenService
+                                                    .LoginAsync(
+                                                        item.Token.ThrowIfNullOrWhiteSpace(),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            toDoUiService.UpdateSelectorItemsAsync(
+                                                                null,
+                                                                ReadOnlyMemory<Guid>.Empty,
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            navigator.NavigateToAsync(
+                                                                viewFactory.CreateRootToDoItemsViewModel(),
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                        {
+                                                            eventUpdater.Start();
+
+                                                            return Result.AwaitableSuccess;
+                                                        },
+                                                        ct
                                                     );
-                                                    var l = jwtToken
-                                                        .Claims.Single(x =>
-                                                            x.Type == ClaimTypes.Name
-                                                        )
-                                                        .Value;
-                                                    accountNotify.Login = l;
+                                            },
+                                            ct
+                                        );
+                                },
+                                ct
+                            ),
+                    () =>
+                        this.InvokeUiBackgroundAsync(() =>
+                            {
+                                view.ViewModel.IsBusy = false;
 
-                                                    return tokenService
-                                                        .LoginAsync(
-                                                            item.Token.ThrowIfNullOrWhiteSpace(),
-                                                            ct
-                                                        )
-                                                        .IfSuccessAsync(
-                                                            () =>
-                                                                toDoUiService.UpdateSelectorItemsAsync(
-                                                                    null,
-                                                                    ReadOnlyMemory<Guid>.Empty,
-                                                                    ct
-                                                                ),
-                                                            ct
-                                                        )
-                                                        .IfSuccessAsync(
-                                                            () =>
-                                                                navigator.NavigateToAsync(
-                                                                    viewFactory.CreateRootToDoItemsViewModel(),
-                                                                    ct
-                                                                ),
-                                                            ct
-                                                        );
-                                                },
-                                                ct
-                                            );
-                                    },
-                                    ct
-                                ),
-                        () =>
-                            this.InvokeUiBackgroundAsync(() =>
-                                {
-                                    view.ViewModel.IsBusy = false;
-
-                                    return Result.Success;
-                                })
-                                .ToValueTask()
-                                .ConfigureAwait(false),
-                        ct
-                    )
-                    .IfSuccessAsync(
-                        () =>
-                        {
-                            eventUpdater.Start();
-
-                            return Result.AwaitableSuccess;
-                        },
-                        ct
-                    );
+                                return Result.Success;
+                            })
+                            .ToValueTask()
+                            .ConfigureAwait(false),
+                    ct
+                );
             },
             errorHandler,
             taskProgressService

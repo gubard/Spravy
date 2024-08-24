@@ -1,4 +1,6 @@
-namespace Spravy.Service.Extensions;
+using System.Security.Claims;
+
+namespace Spravy.Domain.Extensions;
 
 public static class ClaimExtension
 {
@@ -32,5 +34,10 @@ public static class ClaimExtension
     public static Claim GetRoleClaim(this IEnumerable<Claim> claims)
     {
         return claims.GetClaim(ClaimTypes.Role);
+    }
+
+    public static string GetName(this IEnumerable<Claim> claims)
+    {
+        return claims.GetNameClaim().Value;
     }
 }
