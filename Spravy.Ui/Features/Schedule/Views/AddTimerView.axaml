@@ -22,21 +22,21 @@
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
                 <Calendar SelectedDate="{Binding Date}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
+                <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
 
-                <StackPanel Classes="horizontal">
-                    <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
-
-                    <ItemsControl Classes="stack-panel-horizontal" ItemsSource="{Binding Times}">
-                        <ItemsControl.DataTemplates>
-                            <DataTemplate DataType="s:TimeSpan">
-                                <Button Command="{Binding $parent[v:AddTimerView].ViewModel.AddTime.Command}"
-                                        CommandParameter="{Binding}">
+                <c:ListControl ItemsSource="{Binding Times}">
+                    <c:ListControl.DataTemplates>
+                        <DataTemplate DataType="s:TimeSpan">
+                            <Button Command="{Binding $parent[v:AddTimerView].ViewModel.AddTime.Command}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Classes="horizontal">
+                                    <TextBlock Text="+" />
                                     <TextBlock Text="{Binding}" />
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.DataTemplates>
-                    </ItemsControl>
-                </StackPanel>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </c:ListControl.DataTemplates>
+                </c:ListControl>
 
                 <ContentControl Content="{Binding EventViewModel}" />
             </StackPanel>

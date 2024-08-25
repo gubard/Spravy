@@ -1,17 +1,21 @@
 namespace Spravy.Ui.Controls;
 
+[TemplatePart(Name = "PART_TimePicker", Type = typeof(TimePicker))]
 public class TimeSpanAddItemControl : AddItemControl
 {
-    public static readonly StyledProperty<TimeSpan> TimeProperty = AvaloniaProperty.Register<
-        TimeSpanAddItemControl,
-        TimeSpan
-    >(nameof(Time));
+    private TimePicker? timePicker;
 
-    public override object Value => Time;
+    public override object Value => timePicker?.SelectedTime ?? TimeSpan.Zero;
 
-    public TimeSpan Time
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
-        get => GetValue(TimeProperty);
-        set => SetValue(TimeProperty, value);
+        timePicker = e.NameScope.Find<TimePicker>("PART_TimePicker");
+
+        if (timePicker is not null)
+        {
+            timePicker.SelectedTime = TimeSpan.FromHours(1);
+        }
+
+        base.OnApplyTemplate(e);
     }
 }

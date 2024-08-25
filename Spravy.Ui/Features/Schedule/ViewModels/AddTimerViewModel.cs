@@ -35,7 +35,6 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
         this.objectStorage = objectStorage;
         Item = item;
         eventViewModel = GetEventViewModel();
-        Times = [TimeSpan.FromHours(1), new(0, 2, 30, 0),];
 
         AddTime = SpravyCommand.Create<TimeSpan>(
             (t, ct) =>
@@ -58,7 +57,7 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
     public Option<ToDoItemEntityNotify> Item { get; }
     public SpravyCommand AddTime { get; }
     public AvaloniaList<string> Names { get; } = new();
-    public AvaloniaList<TimeSpan> Times { get; }
+    public AvaloniaList<TimeSpan> Times { get; } = new();
 
     public string ViewId
     {
@@ -109,6 +108,7 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
                         {
                             Name = Item.TryGetValue(out var i) ? i.Name : setting.Name;
                             Names.UpdateUi(setting.Names);
+                            Times.UpdateUi(setting.Times);
 
                             return Result.Success;
                         },

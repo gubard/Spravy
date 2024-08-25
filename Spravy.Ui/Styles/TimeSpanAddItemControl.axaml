@@ -4,7 +4,7 @@
     <ControlTheme x:Key="TimeSpanAddItemControlStyle" TargetType="c:TimeSpanAddItemControl">
         <Setter Property="Template">
             <ControlTemplate>
-                <TimePicker SelectedTime="{TemplateBinding Time}" />
+                <TimePicker x:Name="PART_TimePicker" ClockIdentifier="24HourClock" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>

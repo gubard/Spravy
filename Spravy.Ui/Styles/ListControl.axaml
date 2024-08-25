@@ -4,8 +4,20 @@
     <ControlTheme x:Key="ListControlStyle" TargetType="c:ListControl">
         <Setter Property="Template">
             <ControlTemplate>
-                <ItemsControl ItemsSource="{TemplateBinding Items}" />
+                <ItemsControl ItemsSource="{TemplateBinding Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </ControlTemplate>
+        </Setter>
+
+        <Setter Property="AddItem">
+            <Template>
+                <c:TimeSpanAddItemControl />
+            </Template>
         </Setter>
     </ControlTheme>
 
