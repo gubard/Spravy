@@ -816,6 +816,7 @@ public class SpravyCommandService
 
         Complete = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
+            {
                 Result
                     .AwaitableSuccess.IfSuccessAsync(
                         () =>
@@ -867,7 +868,10 @@ public class SpravyCommandService
                             },
                         ct
                     )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
+
+                return Result.AwaitableSuccess;
+            },
             errorHandler,
             taskProgressService
         );
