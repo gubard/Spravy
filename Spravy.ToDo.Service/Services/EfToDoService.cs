@@ -5,7 +5,7 @@ namespace Spravy.ToDo.Service.Services;
 
 public class EfToDoService : IToDoService
 {
-    private static readonly ReadOnlyMemory<Guid> EventIds =
+    private static readonly ReadOnlyMemory<Guid> eventIds =
         new([AddToDoItemToFavoriteEventOptions.EventId]);
 
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
@@ -207,7 +207,7 @@ public class EfToDoService : IToDoService
     public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
     {
         return eventBusService
-            .GetEventsAsync(EventIds, ct)
+            .GetEventsAsync(eventIds, ct)
             .IfSuccessAsync(
                 events =>
                 {
@@ -524,8 +524,12 @@ public class EfToDoService : IToDoService
                                         parameters =>
                                         {
                                             if (
-                                                item.Type == ToDoItemType.Reference
-                                                && item.ReferenceId.HasValue
+                                                item
+                                                    is {
+                                                        Type: ToDoItemType.Reference,
+                                                        ReferenceId: not null
+                                                    }
+                                                && item.ReferenceId != item.Id
                                             )
                                             {
                                                 return context

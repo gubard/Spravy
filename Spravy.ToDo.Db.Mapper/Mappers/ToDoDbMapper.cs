@@ -79,7 +79,7 @@ public static partial class ToDoDbMapper
 
     private static OptionStruct<Guid> GetReferenceId(ToDoItemEntity item)
     {
-        if (item.Type == ToDoItemType.Reference)
+        if (item.Type != ToDoItemType.Reference)
         {
             return OptionStruct<Guid>.Default;
         }
