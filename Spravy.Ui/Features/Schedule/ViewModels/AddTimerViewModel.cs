@@ -71,11 +71,10 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
     {
         return Type switch
         {
-            EventType.AddToDoItemToFavorite
-                => Item.TryGetValue(out var item)
-                    ? viewFactory.CreateAddToDoItemToFavoriteEventViewModel(item)
-                    : viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
-            _ => throw new ArgumentOutOfRangeException()
+            EventType.AddToDoItemToFavorite => Item.TryGetValue(out var item)
+                ? viewFactory.CreateAddToDoItemToFavoriteEventViewModel(item)
+                : viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 

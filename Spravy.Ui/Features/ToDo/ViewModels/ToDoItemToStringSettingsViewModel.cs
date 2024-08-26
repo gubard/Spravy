@@ -10,7 +10,7 @@ public class ToDoItemToStringSettingsViewModel : ViewModelBase
 
         var items = UiHelper
             .ToDoItemStatuses.ToArray()
-            .Select(x => new CheckedItem<ToDoItemStatus> { Item = x, IsChecked = true, });
+            .Select(x => new CheckedItem<ToDoItemStatus> { Item = x, IsChecked = true });
 
         statuses.AddRange(items);
     }

@@ -4,7 +4,7 @@ public class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsView
 {
     static RootToDoItemsViewModelSetting()
     {
-        Default = new() { GroupBy = GroupBy.ByStatus, };
+        Default = new() { GroupBy = GroupBy.ByStatus };
     }
 
     public RootToDoItemsViewModelSetting(RootToDoItemsViewModel viewModel)

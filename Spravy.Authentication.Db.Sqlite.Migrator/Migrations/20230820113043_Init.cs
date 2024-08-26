@@ -19,7 +19,7 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                     Login = table.Column<string>(type: "TEXT", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
                     Salt = table.Column<string>(type: "TEXT", nullable: false),
-                    HashMethod = table.Column<string>(type: "TEXT", nullable: false)
+                    HashMethod = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

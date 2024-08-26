@@ -1,7 +1,7 @@
 using System.IO;
+using _build.Interfaces;
 using FluentFTP;
 using Serilog;
-using _build.Interfaces;
 
 namespace _build.Extensions;
 

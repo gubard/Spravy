@@ -107,7 +107,7 @@ public class GrpcScheduleService
                     .IfSuccessAsync(
                         metadata =>
                             client
-                                .RemoveTimerAsync(new() { Id = id.ToByteString(), }, metadata)
+                                .RemoveTimerAsync(new() { Id = id.ToByteString() }, metadata)
                                 .ToValueTaskResultOnly()
                                 .ConfigureAwait(false),
                         ct

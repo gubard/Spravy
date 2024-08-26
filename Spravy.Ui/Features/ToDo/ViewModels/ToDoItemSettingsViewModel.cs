@@ -54,14 +54,15 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
             ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
             ToDoItemType.Group => new EmptyApplySettings(),
             ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
-            ToDoItemType.Periodicity
-                => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
-            ToDoItemType.PeriodicityOffset
-                => viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
+            ToDoItemType.Periodicity => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(
+                Item
+            ),
+            ToDoItemType.PeriodicityOffset =>
+                viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
             ToDoItemType.Circle => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
             ToDoItemType.Step => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
             ToDoItemType.Reference => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 

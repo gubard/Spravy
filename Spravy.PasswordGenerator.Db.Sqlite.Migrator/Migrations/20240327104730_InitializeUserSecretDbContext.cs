@@ -17,7 +17,7 @@ namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Secret = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    Secret = table.Column<byte[]>(type: "BLOB", nullable: false),
                 },
                 constraints: table =>
                 {

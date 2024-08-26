@@ -72,7 +72,7 @@ public static class ObjectExtension
 
     public static T[] AsArray<T>(this T obj)
     {
-        return new[] { obj, };
+        return new[] { obj };
     }
 
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
@@ -193,7 +193,7 @@ public static class ObjectExtension
 
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T obj)
     {
-        return new([obj,]);
+        return new([obj]);
     }
 
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Memory<T> memory)

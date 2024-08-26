@@ -85,7 +85,7 @@ public partial class ToDoItemEntityNotify
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
-        path = [RootItem.Default, this,];
+        path = [RootItem.Default, this];
         Id = id;
         description = "Loading...";
         name = "Loading...";

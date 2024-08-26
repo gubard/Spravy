@@ -104,7 +104,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .GetPasswordItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -131,7 +131,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .DeletePasswordItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -157,7 +157,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .GeneratePasswordAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -192,7 +192,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .UpdatePasswordItemNameAsync(
-                                    new() { Id = id.ToByteString(), Name = name, },
+                                    new() { Id = id.ToByteString(), Name = name },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -219,7 +219,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .UpdatePasswordItemKeyAsync(
-                                    new() { Id = id.ToByteString(), Key = key, },
+                                    new() { Id = id.ToByteString(), Key = key },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -246,7 +246,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .UpdatePasswordItemLengthAsync(
-                                    new() { Id = id.ToByteString(), Length = length, },
+                                    new() { Id = id.ToByteString(), Length = length },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -273,7 +273,7 @@ public class GrpcPasswordService
                         metadata =>
                             client
                                 .UpdatePasswordItemRegexAsync(
-                                    new() { Id = id.ToByteString(), Regex = regex, },
+                                    new() { Id = id.ToByteString(), Regex = regex },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct

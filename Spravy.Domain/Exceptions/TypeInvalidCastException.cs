@@ -7,7 +7,7 @@ public class TypeInvalidCastException : InvalidCastException
     {
         CurrentType = currentType;
 
-        ExpectedTypes = new[] { expectedType, };
+        ExpectedTypes = new[] { expectedType };
     }
 
     public TypeInvalidCastException(Type currentType, params Type[] expectedTypes)

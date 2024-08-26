@@ -62,7 +62,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetActiveToDoItem(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -226,7 +226,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .RandomizeChildrenOrderIndexAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -252,7 +252,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetParentsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -282,7 +282,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .SearchToDoItemIdsAsync(
-                                    new() { SearchText = searchText, },
+                                    new() { SearchText = searchText },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -309,7 +309,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetLeafToDoItemIdsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -336,7 +336,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetToDoItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -363,7 +363,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetChildrenToDoItemIdsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -389,7 +389,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetChildrenToDoItemShortsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -522,7 +522,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .DeleteToDoItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -611,7 +611,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemCompleteStatusAsync(
-                                    new() { Id = id.ToByteString(), IsCompleted = isComplete, },
+                                    new() { Id = id.ToByteString(), IsCompleted = isComplete },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     CancellationToken.None
@@ -638,7 +638,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemNameAsync(
-                                    new() { Id = id.ToByteString(), Name = name, },
+                                    new() { Id = id.ToByteString(), Name = name },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -691,7 +691,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemDescriptionAsync(
-                                    new() { Description = description, Id = id.ToByteString(), },
+                                    new() { Description = description, Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -718,11 +718,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemTypeAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        Type = (ToDoItemTypeGrpc)type,
-                                    },
+                                    new() { Id = id.ToByteString(), Type = (ToDoItemTypeGrpc)type },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -748,7 +744,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .AddFavoriteToDoItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -774,7 +770,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .RemoveFavoriteToDoItemAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1012,7 +1008,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .ToDoItemToRootAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1073,7 +1069,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemDaysOffsetAsync(
-                                    new() { Id = id.ToByteString(), Days = days, },
+                                    new() { Id = id.ToByteString(), Days = days },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1100,7 +1096,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemMonthsOffsetAsync(
-                                    new() { Id = id.ToByteString(), Months = months, },
+                                    new() { Id = id.ToByteString(), Months = months },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1127,7 +1123,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemWeeksOffsetAsync(
-                                    new() { Id = id.ToByteString(), Weeks = weeks, },
+                                    new() { Id = id.ToByteString(), Weeks = weeks },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1154,7 +1150,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemYearsOffsetAsync(
-                                    new() { Id = id.ToByteString(), Years = years, },
+                                    new() { Id = id.ToByteString(), Years = years },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1211,7 +1207,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetSiblingsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1271,7 +1267,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .UpdateToDoItemLinkAsync(
-                                    new() { Id = id.ToByteString(), Link = link.MapToString(), },
+                                    new() { Id = id.ToByteString(), Link = link.MapToString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1296,7 +1292,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetPlannedToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1325,7 +1321,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetValueToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1354,7 +1350,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetPeriodicityToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1384,7 +1380,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetWeeklyPeriodicityAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1414,7 +1410,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetMonthlyPeriodicityAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1444,7 +1440,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetAnnuallyPeriodicityAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1473,7 +1469,7 @@ public class GrpcToDoService
                         metadata =>
                             client
                                 .GetPeriodicityOffsetToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString(), },
+                                    new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1517,7 +1513,7 @@ public class GrpcToDoService
             yield break;
         }
 
-        var request = new GetToDoItemsRequest { ChunkSize = chunkSize, };
+        var request = new GetToDoItemsRequest { ChunkSize = chunkSize };
 
         var idsByteString = ids.ToByteString();
         request.Ids.AddRange(idsByteString.ToArray());

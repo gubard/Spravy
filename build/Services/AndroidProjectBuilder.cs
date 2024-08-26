@@ -1,7 +1,7 @@
 using System;
-using Nuke.Common.Tools.DotNet;
 using _build.Extensions;
 using _build.Models;
+using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
@@ -16,7 +16,7 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
     public override void Compile()
     {
         return;
-        
+
         for (var i = 0; i < 3; i++)
         {
             try

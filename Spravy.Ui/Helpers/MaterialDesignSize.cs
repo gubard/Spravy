@@ -30,7 +30,7 @@ public static class MaterialDesignSize
                     > MaxSmall and <= MaxMedium => MaterialDesignSizeType.Medium,
                     > MaxMedium and <= MaxLarge => MaterialDesignSizeType.Large,
                     > MaxLarge => MaterialDesignSizeType.ExtraLarge,
-                    _ => MaterialDesignSizeType.ExtraSmall
+                    _ => MaterialDesignSizeType.ExtraSmall,
                 };
 
                 if (currentType == LastType)

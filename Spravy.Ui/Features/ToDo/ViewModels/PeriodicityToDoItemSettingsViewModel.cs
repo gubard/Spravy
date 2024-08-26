@@ -71,16 +71,17 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
         {
             TypeOfPeriodicity.Daily => new EmptyApplySettings(),
             TypeOfPeriodicity.Weekly => viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item),
-            TypeOfPeriodicity.Monthly
-                => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item),
-            TypeOfPeriodicity.Annually
-                => viewFactory.CreateToDoItemDayOfYearSelectorViewModel(Item),
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(TypeOfPeriodicity),
-                    TypeOfPeriodicity,
-                    null
-                ),
+            TypeOfPeriodicity.Monthly => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(
+                Item
+            ),
+            TypeOfPeriodicity.Annually => viewFactory.CreateToDoItemDayOfYearSelectorViewModel(
+                Item
+            ),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(TypeOfPeriodicity),
+                TypeOfPeriodicity,
+                null
+            ),
         };
     }
 

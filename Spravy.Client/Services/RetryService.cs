@@ -57,7 +57,7 @@ public class RetryService : IRetryService
                 return Result<TReturn>.CanceledByUserError;
             }
             catch (GrpcException rpc)
-                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled }, })
+                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled } })
             {
                 return Result<TReturn>.CanceledByUserError;
             }
@@ -110,7 +110,7 @@ public class RetryService : IRetryService
                 return Result.CanceledByUserError;
             }
             catch (GrpcException rpc)
-                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled }, })
+                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled } })
             {
                 return Result.CanceledByUserError;
             }

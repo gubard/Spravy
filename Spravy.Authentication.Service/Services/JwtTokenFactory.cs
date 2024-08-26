@@ -42,7 +42,7 @@ public class JwtTokenFactory : ITokenFactory
 
         var refreshJwt = CreateToken(
             signingCredentials,
-            new() { new(ClaimTypes.Name, user.Login), },
+            new() { new(ClaimTypes.Name, user.Login) },
             DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
         );
 
@@ -61,13 +61,13 @@ public class JwtTokenFactory : ITokenFactory
 
         var jwt = CreateToken(
             signingCredentials,
-            new() { new(ClaimTypes.Role, Role.Service.ToString()), },
+            new() { new(ClaimTypes.Role, Role.Service.ToString()) },
             DateTime.UtcNow.AddDays(options.ExpiresDays)
         );
 
         var refreshJwt = CreateToken(
             signingCredentials,
-            new() { new(ClaimTypes.Role, Role.Service.ToString()), },
+            new() { new(ClaimTypes.Role, Role.Service.ToString()) },
             DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
         );
 

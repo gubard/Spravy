@@ -47,31 +47,27 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
     {
         var result = item.Status switch
         {
-            ToDoItemStatus.Miss
-                => Missed
-                    .AddOrUpdateUi(item)
-                    .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
-                    .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item)),
-            ToDoItemStatus.ReadyForComplete
-                => Missed
-                    .RemoveItemUi(item)
-                    .IfSuccess(() => ReadyForCompleted.AddOrUpdateUi(item))
-                    .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item)),
-            ToDoItemStatus.Planned
-                => Missed
-                    .RemoveItemUi(item)
-                    .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
-                    .IfSuccess(() => Planned.AddOrUpdateUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item)),
-            ToDoItemStatus.Completed
-                => Missed
-                    .RemoveItemUi(item)
-                    .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
-                    .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.AddOrUpdateUi(item)),
-            _ => new(new ToDoItemStatusOutOfRangeError(item.Status))
+            ToDoItemStatus.Miss => Missed
+                .AddOrUpdateUi(item)
+                .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                .IfSuccess(() => Planned.RemoveItemUi(item))
+                .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.ReadyForComplete => Missed
+                .RemoveItemUi(item)
+                .IfSuccess(() => ReadyForCompleted.AddOrUpdateUi(item))
+                .IfSuccess(() => Planned.RemoveItemUi(item))
+                .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.Planned => Missed
+                .RemoveItemUi(item)
+                .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                .IfSuccess(() => Planned.AddOrUpdateUi(item))
+                .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.Completed => Missed
+                .RemoveItemUi(item)
+                .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                .IfSuccess(() => Planned.RemoveItemUi(item))
+                .IfSuccess(() => Completed.AddOrUpdateUi(item)),
+            _ => new(new ToDoItemStatusOutOfRangeError(item.Status)),
         };
 
         return result;

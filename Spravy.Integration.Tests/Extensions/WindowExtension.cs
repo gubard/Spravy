@@ -95,11 +95,11 @@ public static class WindowExtension
 
         switch (controls.ErrorDialogHost.Dialog)
         {
-            case InfoViewModel { Content: ExceptionViewModel exception, }:
+            case InfoViewModel { Content: ExceptionViewModel exception }:
                 Console.WriteLine(exception.ToString());
 
                 break;
-            case InfoViewModel { Content: ErrorViewModel error, }:
+            case InfoViewModel { Content: ErrorViewModel error }:
                 Console.WriteLine(
                     string.Join(Environment.NewLine, error.Errors.Select(x => x.Message))
                 );

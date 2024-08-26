@@ -34,7 +34,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     CompletedCount = table.Column<uint>(type: "INTEGER", nullable: false),
                     SkippedCount = table.Column<uint>(type: "INTEGER", nullable: false),
                     FailedCount = table.Column<uint>(type: "INTEGER", nullable: false),
-                    ItemId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

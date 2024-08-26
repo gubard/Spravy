@@ -11,7 +11,7 @@ public partial class SettingView : UserControl
             {
                 MaterialDesignSizeType.Medium,
                 MaterialDesignSizeType.Large,
-                MaterialDesignSizeType.ExtraLarge
+                MaterialDesignSizeType.ExtraLarge,
             },
             "BorderAdaptive"
         );
@@ -21,7 +21,7 @@ public partial class SettingView : UserControl
             {
                 MaterialDesignSizeType.Medium,
                 MaterialDesignSizeType.Large,
-                MaterialDesignSizeType.ExtraLarge
+                MaterialDesignSizeType.ExtraLarge,
             },
             "ItemsControlAdaptive"
         );

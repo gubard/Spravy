@@ -151,14 +151,14 @@ public interface IUiModule
 
     static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainWindowModel mainWindowModel)
     {
-        return new MainWindow { DataContext = mainWindowModel, };
+        return new MainWindow { DataContext = mainWindowModel };
     }
 
     static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(
         SingleViewModel singleViewModel
     )
     {
-        return new SingleView { DataContext = singleViewModel, };
+        return new SingleView { DataContext = singleViewModel };
     }
 
     static IClipboard ClipboardFactory(TopLevel topLevel)
@@ -172,7 +172,7 @@ public interface IUiModule
         IViewFactory viewFactory
     )
     {
-        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory, viewFactory), };
+        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory, viewFactory) };
     }
 
     static Application ApplicationFactory()

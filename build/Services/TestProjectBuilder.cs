@@ -2,10 +2,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Nuke.Common.Tools.DotNet;
-using Serilog;
 using _build.Extensions;
 using _build.Models;
+using Nuke.Common.Tools.DotNet;
+using Serilog;
 
 namespace _build.Services;
 
@@ -45,7 +45,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 
     void SetAppSettingsStream(Stream stream, JsonDocument jsonDocument)
     {
-        var jsonWriterOptions = new JsonWriterOptions { Indented = true, };
+        var jsonWriterOptions = new JsonWriterOptions { Indented = true };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
         writer.WriteStartObject();

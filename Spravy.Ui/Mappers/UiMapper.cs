@@ -57,7 +57,7 @@ public static partial class UiMapper
             nameof(ThemeVariant.Default) => ThemeType.Default,
             nameof(ThemeVariant.Dark) => ThemeType.Dark,
             nameof(ThemeVariant.Light) => ThemeType.Light,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 
@@ -68,7 +68,7 @@ public static partial class UiMapper
             ThemeType.Default => ThemeVariant.Default,
             ThemeType.Light => ThemeVariant.Light,
             ThemeType.Dark => ThemeVariant.Dark,
-            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
         };
     }
 

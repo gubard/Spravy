@@ -21,7 +21,7 @@ public class GrpcPasswordService : PasswordServiceBase
             .GeneratePasswordAsync(request.Id.ToGuid(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                value => new GeneratePasswordReply { Password = value, },
+                value => new GeneratePasswordReply { Password = value },
                 context.CancellationToken
             );
     }

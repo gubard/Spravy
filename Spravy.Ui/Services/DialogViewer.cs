@@ -118,15 +118,19 @@ public class DialogViewer : IDialogViewer
     {
         return layer switch
         {
-            DialogViewLayer.Error
-                => serviceFactory.CreateService<MainView>().ErrorDialogControl.ToResult(),
-            DialogViewLayer.Progress
-                => serviceFactory.CreateService<MainView>().ProgressDialogControl.ToResult(),
-            DialogViewLayer.Input
-                => serviceFactory.CreateService<MainView>().InputDialogControl.ToResult(),
-            DialogViewLayer.Content
-                => serviceFactory.CreateService<MainView>().ContentDialogControl.ToResult(),
-            _ => new(new DialogViewLayerOutOfRangeError(layer))
+            DialogViewLayer.Error => serviceFactory
+                .CreateService<MainView>()
+                .ErrorDialogControl.ToResult(),
+            DialogViewLayer.Progress => serviceFactory
+                .CreateService<MainView>()
+                .ProgressDialogControl.ToResult(),
+            DialogViewLayer.Input => serviceFactory
+                .CreateService<MainView>()
+                .InputDialogControl.ToResult(),
+            DialogViewLayer.Content => serviceFactory
+                .CreateService<MainView>()
+                .ContentDialogControl.ToResult(),
+            _ => new(new DialogViewLayerOutOfRangeError(layer)),
         };
     }
 }

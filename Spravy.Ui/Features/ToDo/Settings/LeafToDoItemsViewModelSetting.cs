@@ -12,7 +12,7 @@ public class LeafToDoItemsViewModelSetting : IViewModelSetting<LeafToDoItemsView
 
     static LeafToDoItemsViewModelSetting()
     {
-        Default = new() { GroupBy = GroupBy.ByStatus, };
+        Default = new() { GroupBy = GroupBy.ByStatus };
     }
 
     public GroupBy GroupBy { get; set; }

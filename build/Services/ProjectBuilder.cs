@@ -1,8 +1,8 @@
 using System.IO;
-using Nuke.Common.Tools.DotNet;
 using _build.Extensions;
 using _build.Interfaces;
 using _build.Models;
+using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 

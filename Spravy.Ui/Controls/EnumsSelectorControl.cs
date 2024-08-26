@@ -144,7 +144,7 @@ public class EnumsSelectorControl : TemplatedControl
         enumControls.AddRange(
             UiHelper
                 .GetEnumValues(SelectedEnums.GetType().GetGenericArguments()[0])
-                .Select(x => new EnumSelectorItemControl { Value = (ValueType)x, })
+                .Select(x => new EnumSelectorItemControl { Value = (ValueType)x })
                 .ToArray()
         );
 

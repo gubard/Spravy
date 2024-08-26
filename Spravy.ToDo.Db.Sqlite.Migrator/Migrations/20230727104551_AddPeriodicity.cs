@@ -127,7 +127,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ItemId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -143,7 +143,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     CompletedCount = table.Column<uint>(type: "INTEGER", nullable: false),
                     FailedCount = table.Column<uint>(type: "INTEGER", nullable: false),
                     ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    SkippedCount = table.Column<uint>(type: "INTEGER", nullable: false)
+                    SkippedCount = table.Column<uint>(type: "INTEGER", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -159,7 +159,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     DueDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     IsComplete = table.Column<bool>(type: "INTEGER", nullable: false),
                     ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    TypeOfPeriodicity = table.Column<byte>(type: "INTEGER", nullable: false)
+                    TypeOfPeriodicity = table.Column<byte>(type: "INTEGER", nullable: false),
                 },
                 constraints: table =>
                 {

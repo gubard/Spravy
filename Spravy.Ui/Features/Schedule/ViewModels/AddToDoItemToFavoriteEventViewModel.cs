@@ -23,7 +23,7 @@ public class AddToDoItemToFavoriteEventViewModel : ViewModelBase, IEventViewMode
         return serializer.SerializeAsync(
             new AddToDoItemToFavoriteEventOptions
             {
-                ToDoItemId = ToDoItemSelectorViewModel.SelectedItem.ThrowIfNull().Id
+                ToDoItemId = ToDoItemSelectorViewModel.SelectedItem.ThrowIfNull().Id,
             },
             ct
         );

@@ -20,7 +20,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     TypeOfPeriodicity = table.Column<byte>(type: "INTEGER", nullable: false),
                     DueDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     IsComplete = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ParentId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    ParentId = table.Column<Guid>(type: "TEXT", nullable: true),
                 },
                 constraints: table =>
                 {

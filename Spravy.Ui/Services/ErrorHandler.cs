@@ -2,7 +2,7 @@ namespace Spravy.Ui.Services;
 
 public class ErrorHandler : IErrorHandler
 {
-    private static readonly ReadOnlyMemory<Guid> ignoreIds = new[] { CanceledByUserError.MainId, };
+    private static readonly ReadOnlyMemory<Guid> ignoreIds = new[] { CanceledByUserError.MainId };
 
     private readonly IDialogViewer dialogViewer;
     private readonly IServiceFactory serviceFactory;
@@ -54,7 +54,7 @@ public class ErrorHandler : IErrorHandler
             }
         }
 
-        if (exception is GrpcException { InnerException: RpcException rpc2, })
+        if (exception is GrpcException { InnerException: RpcException rpc2 })
         {
             switch (rpc2.StatusCode)
             {

@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
-using Nuke.Common.Tools.DotNet;
-using Serilog;
 using _build.Extensions;
 using _build.Models;
+using Nuke.Common.Tools.DotNet;
+using Serilog;
 
 namespace _build.Services;
 

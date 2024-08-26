@@ -1,6 +1,6 @@
+using _build.Interfaces;
 using Renci.SshNet;
 using Serilog;
-using _build.Interfaces;
 
 namespace _build.Extensions;
 

@@ -16,7 +16,7 @@ public class PasswordItemCache : IPasswordItemCache
             return value.ToResult();
         }
 
-        var result = new PasswordItemEntityNotify { Id = id, Name = "Loading...", };
+        var result = new PasswordItemEntityNotify { Id = id, Name = "Loading..." };
 
         if (cache.TryAdd(id, result))
         {

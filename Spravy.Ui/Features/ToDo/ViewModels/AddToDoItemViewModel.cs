@@ -5,7 +5,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     private readonly IObjectStorage objectStorage;
 
     public AddToDoItemViewModel(
-        ToDoItemEntityNotify parent,
+        ToDoItemEntityNotify? parent,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
         IObjectStorage objectStorage
@@ -18,13 +18,16 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         Parent = parent;
     }
 
-    public ToDoItemEntityNotify Parent { get; }
+    public ToDoItemEntityNotify? Parent { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
 
     public override string ViewId
     {
-        get => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{Parent.Id}";
+        get =>
+            Parent is null
+                ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}"
+                : $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{Parent.Id}";
     }
 
     public override Result Stop()
@@ -62,25 +65,25 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
     {
+        if (Parent is null)
+        {
+            return new AddToDoItemOptions(
+                new(),
+                ToDoItemContent.Name,
+                ToDoItemContent.Type,
+                DescriptionContent.Description,
+                DescriptionContent.DescriptionType,
+                ToDoItemContent.Link.ToOptionUri()
+            ).ToResult();
+        }
+
         return ConverterToAddToDoItemOptions(Parent.Id);
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId)
     {
-        if (ToDoItemContent.Link.IsNullOrWhiteSpace())
-        {
-            return new AddToDoItemOptions(
-                parentId,
-                ToDoItemContent.Name,
-                ToDoItemContent.Type,
-                DescriptionContent.Description,
-                DescriptionContent.DescriptionType,
-                new()
-            ).ToResult();
-        }
-
         return new AddToDoItemOptions(
-            parentId,
+            parentId.ToOption(),
             ToDoItemContent.Name,
             ToDoItemContent.Type,
             DescriptionContent.Description,

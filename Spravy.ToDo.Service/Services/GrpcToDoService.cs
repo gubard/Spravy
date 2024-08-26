@@ -21,7 +21,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .UpdateEventsAsync(context.CancellationToken)
             .HandleAsync(
                 serializer,
-                isUpdated => new UpdateEventsReply { IsUpdated = isUpdated, },
+                isUpdated => new UpdateEventsReply { IsUpdated = isUpdated },
                 context.CancellationToken
             );
     }
@@ -35,7 +35,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .GetActiveToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                active => new GetActiveToDoItemReply { Item = active.ToActiveToDoItemGrpc(), },
+                active => new GetActiveToDoItemReply { Item = active.ToActiveToDoItemGrpc() },
                 context.CancellationToken
             );
     }
@@ -69,7 +69,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 id =>
                 {
-                    var reply = new CloneToDoItemReply { NewItemId = id.ToByteString(), };
+                    var reply = new CloneToDoItemReply { NewItemId = id.ToByteString() };
 
                     return reply;
                 },
@@ -475,7 +475,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                id => new AddRootToDoItemReply { Id = id.ToByteString(), },
+                id => new AddRootToDoItemReply { Id = id.ToByteString() },
                 context.CancellationToken
             );
     }
@@ -489,7 +489,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .AddToDoItemAsync(request.ToAddToDoItemOptions(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                id => new AddToDoItemReply { Id = id.ToByteString(), },
+                id => new AddToDoItemReply { Id = id.ToByteString() },
                 context.CancellationToken
             );
     }
@@ -724,7 +724,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .ToDoItemToStringAsync(request.ToToDoItemToStringOptions(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                value => new ToDoItemToStringReply { Value = value, },
+                value => new ToDoItemToStringReply { Value = value },
                 context.CancellationToken
             );
     }

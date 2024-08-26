@@ -437,7 +437,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 id =>
                 {
-                    var reply = new AddRootToDoItemReply { Id = id.ToByteString(), };
+                    var reply = new AddRootToDoItemReply { Id = id.ToByteString() };
 
                     return reply;
                 },
@@ -456,7 +456,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 id =>
                 {
-                    var reply = new AddToDoItemReply { Id = id.ToByteString(), };
+                    var reply = new AddToDoItemReply { Id = id.ToByteString() };
 
                     return reply;
                 },
@@ -691,7 +691,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
             .ToDoItemToStringAsync(request.ToToDoItemToStringOptions(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                value => new ToDoItemToStringReply { Value = value, },
+                value => new ToDoItemToStringReply { Value = value },
                 context.CancellationToken
             );
     }

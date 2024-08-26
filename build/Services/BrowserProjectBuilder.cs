@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using Serilog;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
+using Serilog;
 
 namespace _build.Services;
 

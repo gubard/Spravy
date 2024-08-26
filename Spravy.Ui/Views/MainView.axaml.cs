@@ -20,7 +20,7 @@ public partial class MainView : UserControl
         AddHandler(DragDrop.DropEvent, Drop);
 
         this.AddAdaptiveStyle(
-            new[] { MaterialDesignSizeType.ExtraSmall, MaterialDesignSizeType.Small, },
+            new[] { MaterialDesignSizeType.ExtraSmall, MaterialDesignSizeType.Small },
             "AdaptiveCommandsSmall"
         );
 
@@ -45,13 +45,13 @@ public partial class MainView : UserControl
         );
 
         this.AddAdaptiveStyle(
-            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge, },
+            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge },
             "ToDoItemsGroupWide"
         );
 
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.ExtraSmall, }, "DialogHostExtraSmall");
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Small, }, "DialogHostSmall");
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Medium, }, "DialogHostMedium");
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.ExtraSmall }, "DialogHostExtraSmall");
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Small }, "DialogHostSmall");
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Medium }, "DialogHostMedium");
 
         this.AddAdaptiveStyle(
             new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge },

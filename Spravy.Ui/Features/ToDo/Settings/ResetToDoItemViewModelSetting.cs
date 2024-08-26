@@ -14,7 +14,7 @@ public class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemView
 
     static ResetToDoItemViewModelSetting()
     {
-        Default = new() { IsMoveCircleOrderIndex = true, };
+        Default = new() { IsMoveCircleOrderIndex = true };
     }
 
     public bool IsCompleteChildrenTask { get; set; }

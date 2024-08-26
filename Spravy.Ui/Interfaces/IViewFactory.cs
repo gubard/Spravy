@@ -26,7 +26,6 @@ public interface IViewFactory
     ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item);
     ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item);
-    AddRootToDoItemViewModel CreateAddRootToDoItemViewModel();
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
     ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();

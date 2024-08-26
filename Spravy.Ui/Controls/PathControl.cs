@@ -5,7 +5,7 @@ namespace Spravy.Ui.Controls;
 public class PathControl : TemplatedControl
 {
     private static readonly FuncTemplate<Control?> defaultSeparator =
-        new(() => new MaterialIcon { Kind = MaterialIconKind.ChevronRight, });
+        new(() => new MaterialIcon { Kind = MaterialIconKind.ChevronRight });
 
     public static readonly StyledProperty<ITemplate<Control?>> SeparatorProperty =
         AvaloniaProperty.Register<PathControl, ITemplate<Control?>>(

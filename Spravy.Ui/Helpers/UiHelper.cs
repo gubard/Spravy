@@ -111,7 +111,7 @@ public static class UiHelper
                 ToDoItemStatus.Miss,
                 ToDoItemStatus.ReadyForComplete,
                 ToDoItemStatus.Planned,
-                ToDoItemStatus.Completed
+                ToDoItemStatus.Completed,
             ]
         );
 
@@ -125,7 +125,7 @@ public static class UiHelper
                 ToDoItemType.Reference,
                 ToDoItemType.Planned,
                 ToDoItemType.Step,
-                ToDoItemType.PeriodicityOffset
+                ToDoItemType.PeriodicityOffset,
             ]
         );
 
@@ -138,21 +138,21 @@ public static class UiHelper
                 DayOfWeek.Tuesday,
                 DayOfWeek.Friday,
                 DayOfWeek.Saturday,
-                DayOfWeek.Sunday
+                DayOfWeek.Sunday,
             ]
         );
 
     public static ReadOnlyMemory<GroupBy> GroupBys =
-        new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
+        new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType]);
 
     public static ReadOnlyMemory<ToDoItemViewType> ToDoItemViewTypes =
-        new([ToDoItemViewType.List, ToDoItemViewType.Card,]);
+        new([ToDoItemViewType.List, ToDoItemViewType.Card]);
 
     public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
-        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
+        new([DescriptionType.PlainText, DescriptionType.Markdown]);
 
     public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
-        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);
+        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion]);
 
     public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys =
         new(
@@ -165,7 +165,7 @@ public static class UiHelper
         );
 
     public static ReadOnlyMemory<ThemeType> ThemeTypes =
-        new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
+        new([ThemeType.Default, ThemeType.Light, ThemeType.Dark]);
 
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {

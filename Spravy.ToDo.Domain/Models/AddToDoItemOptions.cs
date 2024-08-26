@@ -7,7 +7,7 @@ namespace Spravy.ToDo.Domain.Models;
 public readonly struct AddToDoItemOptions
 {
     public AddToDoItemOptions(
-        Guid parentId,
+        OptionStruct<Guid> parentId,
         string name,
         ToDoItemType type,
         string description,
@@ -23,7 +23,7 @@ public readonly struct AddToDoItemOptions
         Link = link;
     }
 
-    public Guid ParentId { get; }
+    public OptionStruct<Guid> ParentId { get; }
     public string Name { get; }
     public ToDoItemType Type { get; }
     public Option<Uri> Link { get; }

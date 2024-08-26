@@ -53,7 +53,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     DependencyToDoItemId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ToDoItemId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ToDoItemId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

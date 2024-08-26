@@ -172,7 +172,7 @@ public class IntegersSelectorControl : TemplatedControl
         }
 
         integerControls.AddRange(
-            Enumerable.Range(Min, Max).Select(x => new IntegerSelectorItemControl { Value = x, })
+            Enumerable.Range(Min, Max).Select(x => new IntegerSelectorItemControl { Value = x })
         );
 
         foreach (var integerControl in integerControls)

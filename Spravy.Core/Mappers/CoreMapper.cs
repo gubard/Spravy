@@ -33,12 +33,14 @@ public static partial class CoreMapper
     {
         return value.Kind switch
         {
-            DateTimeKind.Unspecified
-                => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
+            DateTimeKind.Unspecified => Timestamp.FromDateTime(
+                TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)
+            ),
             DateTimeKind.Utc => Timestamp.FromDateTime(value),
-            DateTimeKind.Local
-                => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
-            _ => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString())
+            DateTimeKind.Local => Timestamp.FromDateTime(
+                TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)
+            ),
+            _ => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString()),
         };
     }
 

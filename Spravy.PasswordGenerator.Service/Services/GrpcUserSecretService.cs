@@ -21,7 +21,7 @@ public class GrpcUserSecretService : UserSecretServiceBase
             .GetUserSecretAsync(context.CancellationToken)
             .HandleAsync(
                 serializer,
-                userSecret => new GetUserSecretReply { Secret = userSecret.ToByteString(), },
+                userSecret => new GetUserSecretReply { Secret = userSecret.ToByteString() },
                 context.CancellationToken
             );
     }

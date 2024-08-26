@@ -5,6 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using _build.Extensions;
+using _build.Helpers;
+using _build.Interfaces;
+using _build.Services;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
@@ -13,10 +17,6 @@ using Renci.SshNet;
 using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
-using _build.Extensions;
-using _build.Helpers;
-using _build.Interfaces;
-using _build.Services;
 
 namespace _build;
 
@@ -459,10 +459,9 @@ class Build : NukeBuild
         {
             ".APK" => ".APK",
             ".AAB" => ".AAB",
-            ".ZIP"
-                => Path.GetExtension(Path.GetFileNameWithoutExtension(name))
-                    .ThrowIfNull()
-                    .ToUpperInvariant(),
+            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name))
+                .ThrowIfNull()
+                .ToUpperInvariant(),
             _ => throw new ArgumentOutOfRangeException(name),
         };
 
@@ -476,7 +475,7 @@ class Build : NukeBuild
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var expires = DateTime.UtcNow.AddDays(30);
 
-        var claims = new List<Claim> { new(ClaimTypes.Role, "Service"), };
+        var claims = new List<Claim> { new(ClaimTypes.Role, "Service") };
 
         var token = new JwtSecurityToken(
             JwtIssuer,

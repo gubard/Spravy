@@ -407,20 +407,20 @@ public class GetterToDoItemParametersService
             ToDoItemType.Group => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Planned => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Periodicity => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.PeriodicityOffset
-                => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.PeriodicityOffset => true
+                .ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
             ToDoItemType.Circle => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Step => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Reference
-                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                    ? context
-                        .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                        .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
-                    : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            _
-                => new Result<bool>(new ToDoItemTypeOutOfRangeError(entity.Type))
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false),
+            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
+                ? context
+                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                    .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
+                : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            _ => new Result<bool>(new ToDoItemTypeOutOfRangeError(entity.Type))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
         };
     }
 
@@ -432,30 +432,42 @@ public class GetterToDoItemParametersService
     {
         return entity.Type switch
         {
-            ToDoItemType.Value
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Group
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Planned
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Periodicity
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.PeriodicityOffset
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Circle
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Step
-                => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Reference
-                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                    ? context
-                        .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                        .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)
-                    : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            _
-                => new Result<DateOnly>(new ToDoItemTypeOutOfRangeError(entity.Type))
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false),
+            ToDoItemType.Value => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Group => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Planned => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Periodicity => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.PeriodicityOffset => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Circle => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Step => entity
+                .DueDate.ToResult()
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
+                ? context
+                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                    .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)
+                : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            _ => new Result<DateOnly>(new ToDoItemTypeOutOfRangeError(entity.Type))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
         };
     }
 

@@ -15,15 +15,14 @@ namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
                 table: "Timer",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Name",
-                table: "Timer");
+            migrationBuilder.DropColumn(name: "Name", table: "Timer");
         }
     }
 }

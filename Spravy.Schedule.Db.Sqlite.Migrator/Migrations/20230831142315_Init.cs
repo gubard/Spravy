@@ -18,7 +18,7 @@ namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     DueDateTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
                     EventId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Content = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    Content = table.Column<byte[]>(type: "BLOB", nullable: false),
                 },
                 constraints: table =>
                 {

@@ -37,7 +37,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .LoginAsync(
-                        new() { User = user.ToUserGrpc(), },
+                        new() { User = user.ToUserGrpc() },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -76,7 +76,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .RefreshTokenAsync(
-                        new() { RefreshToken = refreshToken, },
+                        new() { RefreshToken = refreshToken },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -96,7 +96,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .UpdateVerificationCodeByLoginAsync(
-                        new() { Login = login, },
+                        new() { Login = login },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -115,7 +115,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .UpdateVerificationCodeByEmailAsync(
-                        new() { Email = email, },
+                        new() { Email = email },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -134,7 +134,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .IsVerifiedByLoginAsync(
-                        new() { Login = login, },
+                        new() { Login = login },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -158,7 +158,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .IsVerifiedByEmailAsync(
-                        new() { Email = email, },
+                        new() { Email = email },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -183,7 +183,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .VerifiedEmailByLoginAsync(
-                        new() { Login = login, VerificationCode = verificationCode, },
+                        new() { Login = login, VerificationCode = verificationCode },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -203,7 +203,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .VerifiedEmailByEmailAsync(
-                        new() { Email = email, VerificationCode = verificationCode, },
+                        new() { Email = email, VerificationCode = verificationCode },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -223,7 +223,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .UpdateEmailNotVerifiedUserByEmailAsync(
-                        new() { Email = email, NewEmail = newEmail, },
+                        new() { Email = email, NewEmail = newEmail },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -243,7 +243,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .UpdateEmailNotVerifiedUserByLoginAsync(
-                        new() { Login = login, NewEmail = newEmail, },
+                        new() { Login = login, NewEmail = newEmail },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -263,7 +263,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .DeleteUserByEmailAsync(
-                        new() { Email = email, VerificationCode = verificationCode, },
+                        new() { Email = email, VerificationCode = verificationCode },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )
@@ -283,7 +283,7 @@ public class GrpcAuthenticationService
             client =>
                 client
                     .DeleteUserByLoginAsync(
-                        new() { Login = login, VerificationCode = verificationCode, },
+                        new() { Login = login, VerificationCode = verificationCode },
                         deadline: DateTime.UtcNow.Add(Timeout),
                         cancellationToken: ct
                     )

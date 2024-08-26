@@ -10,7 +10,7 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
         Item = item;
 
         DaysOfYear = new(
-            Enumerable.Range(1, 12).Select(x => new DayOfYearSelectItem { Month = (byte)x, })
+            Enumerable.Range(1, 12).Select(x => new DayOfYearSelectItem { Month = (byte)x })
         );
 
         var months = item.DaysOfYear.Select(x => x.Month).Distinct().ToArray();

@@ -155,7 +155,7 @@ public class ListControl : TemplatedControl
 
     private Button CreateEditButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Pencil, }, };
+        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Pencil } };
         result.Click += (_, _) => UpdateEditingItems();
 
         return result;
@@ -163,7 +163,7 @@ public class ListControl : TemplatedControl
 
     private Button CreateAddButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Plus, }, };
+        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Plus } };
 
         result.Click += (_, _) =>
         {
@@ -185,7 +185,7 @@ public class ListControl : TemplatedControl
 
     private Button CreateCancelButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Close, }, };
+        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Close } };
         result.Click += (_, _) => UpdateDefaultItems();
 
         return result;

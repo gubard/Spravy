@@ -12,7 +12,7 @@ public class ToDoItemViewModelSetting : IViewModelSetting<ToDoItemViewModelSetti
 
     static ToDoItemViewModelSetting()
     {
-        Default = new() { GroupBy = GroupBy.ByStatus, };
+        Default = new() { GroupBy = GroupBy.ByStatus };
     }
 
     public GroupBy GroupBy { get; set; }

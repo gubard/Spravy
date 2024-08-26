@@ -75,22 +75,19 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
                 () =>
                     IdentifierType switch
                     {
-                        UserIdentifierType.Email
-                            => authenticationService.DeleteUserByEmailAsync(
-                                EmailOrLogin,
-                                VerificationCode.ToUpperInvariant(),
-                                ct
-                            ),
-                        UserIdentifierType.Login
-                            => authenticationService.DeleteUserByEmailAsync(
-                                EmailOrLogin,
-                                VerificationCode.ToUpperInvariant(),
-                                ct
-                            ),
-                        _
-                            => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
-                                .ToValueTaskResult()
-                                .ConfigureAwait(false),
+                        UserIdentifierType.Email => authenticationService.DeleteUserByEmailAsync(
+                            EmailOrLogin,
+                            VerificationCode.ToUpperInvariant(),
+                            ct
+                        ),
+                        UserIdentifierType.Login => authenticationService.DeleteUserByEmailAsync(
+                            EmailOrLogin,
+                            VerificationCode.ToUpperInvariant(),
+                            ct
+                        ),
+                        _ => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                     },
                 ct
             )
@@ -104,14 +101,17 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
     {
         return IdentifierType switch
         {
-            UserIdentifierType.Email
-                => authenticationService.UpdateVerificationCodeByEmailAsync(EmailOrLogin, ct),
-            UserIdentifierType.Login
-                => authenticationService.UpdateVerificationCodeByLoginAsync(EmailOrLogin, ct),
-            _
-                => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false),
+            UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(
+                EmailOrLogin,
+                ct
+            ),
+            UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(
+                EmailOrLogin,
+                ct
+            ),
+            _ => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
         };
     }
 }

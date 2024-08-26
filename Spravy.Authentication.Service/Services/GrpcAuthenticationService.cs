@@ -138,7 +138,7 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
             .IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
             .HandleAsync(
                 serializer,
-                value => new IsVerifiedByLoginReply { IsVerified = value, },
+                value => new IsVerifiedByLoginReply { IsVerified = value },
                 context.CancellationToken
             );
     }
@@ -152,7 +152,7 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
             .IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
             .HandleAsync(
                 serializer,
-                value => new IsVerifiedByEmailReply { IsVerified = value, },
+                value => new IsVerifiedByEmailReply { IsVerified = value },
                 context.CancellationToken
             );
     }

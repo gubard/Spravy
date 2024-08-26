@@ -20,7 +20,7 @@ public class Result
 
     public Result()
     {
-        Errors = new([DefaultObject<DefaultCtorResultError>.Default,]);
+        Errors = new([DefaultObject<DefaultCtorResultError>.Default]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -30,7 +30,7 @@ public class Result
 
     public Result(Error error)
     {
-        Errors = new([error,]);
+        Errors = new([error]);
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
@@ -60,7 +60,7 @@ public class Result<TValue>
 
     public Result()
     {
-        Errors = new([DefaultObject<DefaultCtorResultError<TValue>>.Default,]);
+        Errors = new([DefaultObject<DefaultCtorResultError<TValue>>.Default]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -75,7 +75,7 @@ public class Result<TValue>
 
     public Result(Error error)
     {
-        Errors = new([error,]);
+        Errors = new([error]);
     }
 
     public Result(TValue value)
