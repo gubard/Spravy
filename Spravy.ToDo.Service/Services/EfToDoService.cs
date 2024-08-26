@@ -679,8 +679,10 @@ public class EfToDoService : IToDoService
                                                         var toDoItem = options.ToToDoItemEntity();
                                                         toDoItem.Description = options.Description;
                                                         toDoItem.Id = id;
+
                                                         toDoItem.OrderIndex =
                                                             items.Length == 0 ? 0 : items.Max() + 1;
+
                                                         toDoItem.DueDate =
                                                             parent.DueDate
                                                             < DateTimeOffset
@@ -690,8 +692,10 @@ public class EfToDoService : IToDoService
                                                                     .UtcNow.Add(offset)
                                                                     .Date.ToDateOnly()
                                                                 : parent.DueDate;
+
                                                         toDoItem.TypeOfPeriodicity =
                                                             parent.TypeOfPeriodicity;
+
                                                         toDoItem.DaysOfMonth = parent.DaysOfMonth;
                                                         toDoItem.DaysOfWeek = parent.DaysOfWeek;
                                                         toDoItem.DaysOfYear = parent.DaysOfYear;
@@ -699,11 +703,13 @@ public class EfToDoService : IToDoService
                                                         toDoItem.DaysOffset = parent.DaysOffset;
                                                         toDoItem.MonthsOffset = parent.MonthsOffset;
                                                         toDoItem.YearsOffset = parent.YearsOffset;
+
                                                         toDoItem.Link = options.Link.TryGetValue(
                                                             out var uri
                                                         )
                                                             ? uri.AbsoluteUri
                                                             : string.Empty;
+
                                                         toDoItem.DescriptionType =
                                                             options.DescriptionType;
 
