@@ -71,17 +71,4 @@ public static partial class UiMapper
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
         };
     }
-
-    public static AddRootToDoItemOptions ToAddRootToDoItemOptions(
-        this AddRootToDoItemViewModel value
-    )
-    {
-        return new(
-            value.ToDoItemContent.Name,
-            value.ToDoItemContent.Type,
-            value.ToDoItemContent.Link.ToOptionUri(),
-            value.DescriptionContent.Description,
-            value.DescriptionContent.DescriptionType
-        );
-    }
 }

@@ -68,11 +68,6 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
-        AddRootToDoItemOptions options,
-        CancellationToken ct
-    );
-
     ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
         AddToDoItemOptions options,
         CancellationToken ct

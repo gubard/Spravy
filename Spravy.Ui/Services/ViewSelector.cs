@@ -96,11 +96,6 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ToDoItemsGroupByStatusView>());
         }
 
-        if (typeof(AddRootToDoItemViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<AddRootToDoItemView>());
-        }
-
         if (typeof(AddToDoItemViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<AddToDoItemView>());

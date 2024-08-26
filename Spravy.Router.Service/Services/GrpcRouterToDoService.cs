@@ -426,25 +426,6 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
             );
     }
 
-    public override Task<AddRootToDoItemReply> AddRootToDoItem(
-        AddRootToDoItemRequest request,
-        ServerCallContext context
-    )
-    {
-        return toDoService
-            .AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
-            .HandleAsync(
-                serializer,
-                id =>
-                {
-                    var reply = new AddRootToDoItemReply { Id = id.ToByteString() };
-
-                    return reply;
-                },
-                context.CancellationToken
-            );
-    }
-
     public override Task<AddToDoItemReply> AddToDoItem(
         AddToDoItemRequest request,
         ServerCallContext context

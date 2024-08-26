@@ -28,8 +28,6 @@ public static partial class ToDoDbMapper
         this ReadOnlyMemory<ToDoItemEntity> entity
     );
 
-    public static partial ToDoItemEntity ToToDoItemEntity(this AddRootToDoItemOptions entity);
-
     public static partial ToDoItemEntity ToToDoItemEntity(this AddToDoItemOptions entity);
 
     public static partial ActiveToDoItem ToActiveToDoItem(this ToDoItemEntity entity);

@@ -458,33 +458,6 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
-        AddRootToDoItemOptions options,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .AddRootToDoItemAsync(
-                                    options.ToAddRootToDoItemRequest(),
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(id => id.Id.ToGuid().ToResult(), ct),
-                        ct
-                    ),
-            ct
-        );
-    }
-
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
         AddToDoItemOptions options,
         CancellationToken ct

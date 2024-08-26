@@ -466,20 +466,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .HandleAsync<UpdateToDoItemLinkReply>(serializer, context.CancellationToken);
     }
 
-    public override Task<AddRootToDoItemReply> AddRootToDoItem(
-        AddRootToDoItemRequest request,
-        ServerCallContext context
-    )
-    {
-        return toDoService
-            .AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
-            .HandleAsync(
-                serializer,
-                id => new AddRootToDoItemReply { Id = id.ToByteString() },
-                context.CancellationToken
-            );
-    }
-
     public override Task<AddToDoItemReply> AddToDoItem(
         AddToDoItemRequest request,
         ServerCallContext context

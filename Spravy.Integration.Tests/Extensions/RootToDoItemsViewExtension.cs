@@ -93,7 +93,7 @@ public static class RootToDoItemsViewExtension
                         .GetContentDialogView<ConfirmView, ConfirmViewModel>()
                         .Case(c =>
                             c.GetControl<ContentControl>(ElementNames.ContentContentControl)
-                                .GetContentView<AddRootToDoItemView>()
+                                .GetContentView<AddToDoItemView>()
                                 .GetControl<ContentControl>(
                                     ElementNames.ToDoItemContentContentControl
                                 )

@@ -42,7 +42,6 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
 [JsonSerializable(typeof(LoginViewModelSetting))]
-[JsonSerializable(typeof(AddRootToDoItemViewModelSetting))]
 [JsonSerializable(typeof(AddToDoItemViewModelSetting))]
 [JsonSerializable(typeof(ToDoItemViewModelSetting))]
 [JsonSerializable(typeof(LeafToDoItemsViewModelSetting))]

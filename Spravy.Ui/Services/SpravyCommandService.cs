@@ -1959,16 +1959,13 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmDialogAsync(
                     viewFactory,
                     DialogViewLayer.Content,
-                    viewFactory.CreateAddRootToDoItemViewModel(),
+                    viewFactory.CreateAddToDoItemViewModel(),
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Content, ct)
+                            .IfSuccessAsync(vm.ConverterToAddToDoItemOptions, ct)
                             .IfSuccessAsync(
-                                () =>
-                                    toDoService.AddRootToDoItemAsync(
-                                        vm.ToAddRootToDoItemOptions(),
-                                        ct
-                                    ),
+                                options => toDoService.AddToDoItemAsync(options, ct),
                                 ct
                             )
                             .IfSuccessAsync(

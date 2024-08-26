@@ -20,6 +20,7 @@ public interface IViewFactory
     ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item);
     DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item);
     AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent);
+    AddToDoItemViewModel CreateAddToDoItemViewModel();
     ToDoItemContentViewModel CreateToDoItemContentViewModel();
     DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item);
     MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(ToDoItemEntityNotify item);

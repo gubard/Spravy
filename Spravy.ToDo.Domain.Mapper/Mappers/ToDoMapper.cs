@@ -81,14 +81,6 @@ public static partial class ToDoMapper
         this IEnumerable<ToDoShortItemGrpc> value
     );
 
-    public static partial AddRootToDoItemRequest ToAddRootToDoItemRequest(
-        this AddRootToDoItemOptions value
-    );
-
-    public static partial AddRootToDoItemOptions ToAddRootToDoItemOptions(
-        this AddRootToDoItemRequest value
-    );
-
     public static partial AddToDoItemRequest ToAddToDoItemRequest(this AddToDoItemOptions value);
 
     public static partial AddToDoItemOptions ToAddToDoItemOptions(this AddToDoItemRequest value);

@@ -68,7 +68,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemsGroupByTypeView))]
 [Transient(typeof(ToDoItemsGroupByStatusViewModel))]
 [Transient(typeof(ToDoItemsGroupByStatusView))]
-[Transient(typeof(AddRootToDoItemView))]
 [Transient(typeof(AddTimerView))]
 [Transient(typeof(AddToDoItemView))]
 [Transient(typeof(DeleteToDoItemView))]

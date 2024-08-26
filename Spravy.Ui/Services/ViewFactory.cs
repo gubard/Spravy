@@ -86,15 +86,6 @@ public class ViewFactory : IViewFactory
         );
     }
 
-    public AddRootToDoItemViewModel CreateAddRootToDoItemViewModel()
-    {
-        return new(
-            objectStorage,
-            CreateToDoItemContentViewModel(),
-            CreateEditDescriptionContentViewModel()
-        );
-    }
-
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
     {
         return new();
@@ -525,6 +516,16 @@ public class ViewFactory : IViewFactory
     {
         return new(
             parent,
+            CreateToDoItemContentViewModel(),
+            CreateEditDescriptionContentViewModel(),
+            objectStorage
+        );
+    }
+
+    public AddToDoItemViewModel CreateAddToDoItemViewModel()
+    {
+        return new(
+            null,
             CreateToDoItemContentViewModel(),
             CreateEditDescriptionContentViewModel(),
             objectStorage

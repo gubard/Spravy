@@ -499,18 +499,6 @@ message AddToDoItemReply {
   bytes id = 1;
 }
 
-message AddRootToDoItemRequest {
-  string name = 1;
-  ToDoItemTypeGrpc type = 2;
-  string link = 3;
-  string description = 4;
-  DescriptionTypeGrpc description_type = 5;
-}
-
-message AddRootToDoItemReply {
-  bytes id = 1;
-}
-
 message ToDoItemPlannedGrpc {
   google.protobuf.Timestamp due_date = 1;
   bool is_completed = 2;
