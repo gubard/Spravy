@@ -4,17 +4,28 @@ public static class ResultExtension
 {
     public static Result IfSuccessForEach<TValue>(
         this ReadOnlyMemory<TValue> values,
-        Func<TValue, Result> func
+        Func<TValue, Result> func,
+        CancellationToken ct
     )
     {
         foreach (var value in values.Span)
         {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             var result = func.Invoke(value);
 
             if (result.IsHasError)
             {
                 return new(result.Errors);
             }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return Result.Success;

@@ -98,16 +98,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemsView
             );
     }
 
-    public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)
-    {
-        if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
-        {
-            return ToDoSubItemsViewModel.List.AddOrUpdateUi(item);
-        }
-
-        return Result.Success;
-    }
-
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))

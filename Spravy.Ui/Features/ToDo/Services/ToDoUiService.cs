@@ -63,11 +63,14 @@ public class ToDoUiService : IToDoUiService
                     .GetToDoItemsAsync(items.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
                     .IfSuccessForEachAsync(
                         x =>
-                            x.IfSuccessForEach(i =>
-                                this.PostUiBackground(
-                                    () => toDoCache.UpdateUi(i).IfSuccess(_ => item.IncreaseUi()),
-                                    ct
-                                )
+                            x.IfSuccessForEach(
+                                i =>
+                                    this.PostUiBackground(
+                                        () =>
+                                            toDoCache.UpdateUi(i).IfSuccess(_ => item.IncreaseUi()),
+                                        ct
+                                    ),
+                                ct
                             ),
                         ct
                     ),
@@ -163,10 +166,12 @@ public class ToDoUiService : IToDoUiService
                                     x =>
                                         this.PostUiBackground(
                                             () =>
-                                                x.IfSuccessForEach(i =>
-                                                    toDoCache
-                                                        .UpdateUi(i)
-                                                        .IfSuccess(toDoItemsView.AddOrUpdateUi)
+                                                x.IfSuccessForEach(
+                                                    i =>
+                                                        toDoCache
+                                                            .UpdateUi(i)
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                    ct
                                                 ),
                                             ct
                                         ),
@@ -206,10 +211,12 @@ public class ToDoUiService : IToDoUiService
                                     x =>
                                         this.PostUiBackground(
                                             () =>
-                                                x.IfSuccessForEach(i =>
-                                                    toDoCache
-                                                        .UpdateUi(i)
-                                                        .IfSuccess(toDoItemsView.AddOrUpdateUi)
+                                                x.IfSuccessForEach(
+                                                    i =>
+                                                        toDoCache
+                                                            .UpdateUi(i)
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                    ct
                                                 ),
                                             ct
                                         ),
@@ -249,10 +256,12 @@ public class ToDoUiService : IToDoUiService
                                     x =>
                                         this.PostUiBackground(
                                             () =>
-                                                x.IfSuccessForEach(i =>
-                                                    toDoCache
-                                                        .UpdateUi(i)
-                                                        .IfSuccess(toDoItemsView.AddOrUpdateUi)
+                                                x.IfSuccessForEach(
+                                                    i =>
+                                                        toDoCache
+                                                            .UpdateUi(i)
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                    ct
                                                 ),
                                             ct
                                         ),
@@ -306,10 +315,12 @@ public class ToDoUiService : IToDoUiService
                                     x =>
                                         this.PostUiBackground(
                                             () =>
-                                                x.IfSuccessForEach(i =>
-                                                    toDoCache
-                                                        .UpdateUi(i)
-                                                        .IfSuccess(toDoItemsView.AddOrUpdateUi)
+                                                x.IfSuccessForEach(
+                                                    i =>
+                                                        toDoCache
+                                                            .UpdateUi(i)
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                    ct
                                                 ),
                                             ct
                                         ),
@@ -345,10 +356,12 @@ public class ToDoUiService : IToDoUiService
                                     x =>
                                         this.PostUiBackground(
                                             () =>
-                                                x.IfSuccessForEach(i =>
-                                                    toDoCache
-                                                        .UpdateUi(i)
-                                                        .IfSuccess(toDoItemsView.AddOrUpdateUi)
+                                                x.IfSuccessForEach(
+                                                    i =>
+                                                        toDoCache
+                                                            .UpdateUi(i)
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                    ct
                                                 ),
                                             ct
                                         ),
