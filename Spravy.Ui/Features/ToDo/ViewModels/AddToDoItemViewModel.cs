@@ -49,6 +49,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                             ToDoItemContent.Type = setting.Type;
                             ToDoItemContent.Link = setting.Link;
                             ToDoItemContent.Name = setting.Name;
+                            ToDoItemContent.Names.AddRange(setting.Names);
 
                             return Result.Success;
                         },
