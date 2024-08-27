@@ -1,6 +1,6 @@
 namespace Spravy.Domain.Extensions;
 
-public static class ObjectExtensionV2
+public static class ObjectExtension2
 {
     public static OptionStruct<TValue> ToOption<TValue>(this TValue value)
         where TValue : struct
@@ -11,6 +11,21 @@ public static class ObjectExtensionV2
 
 public static class ObjectExtension
 {
+    public static TSource?[] ToArray<TSource>(this IEnumerable<TSource> source, int length)
+    {
+        var result = new TSource[length];
+        var index = 0;
+        using var enumerator = source.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            result[index] = enumerator.Current;
+            index++;
+        }
+
+        return result;
+    }
+
     public static Option<TValue> ToOption<TValue>(this TValue? value)
         where TValue : class
     {

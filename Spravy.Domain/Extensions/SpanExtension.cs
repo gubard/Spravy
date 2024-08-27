@@ -2,6 +2,58 @@ namespace Spravy.Domain.Extensions;
 
 public static class SpanExtension
 {
+    public static bool Contains<TSource>(this Span<TSource> source, TSource item)
+    {
+        if (source.IsEmpty)
+        {
+            return false;
+        }
+
+        foreach (var element in source)
+        {
+            if (element is null)
+            {
+                if (item is null)
+                {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (element.Equals(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static Span<TSource> DistinctIgnoreNull<TSource>(this Span<TSource?> source)
+    {
+        var result = new Span<TSource>(new TSource[source.Length]);
+        var resultIndex = 0;
+
+        foreach (var current in source)
+        {
+            if (current is null)
+            {
+                continue;
+            }
+
+            if (result.Contains(current))
+            {
+                continue;
+            }
+
+            result[resultIndex] = current;
+            resultIndex++;
+        }
+
+        return result.Slice(0, resultIndex);
+    }
+
     public static void BinarySortDefault<TSource, TValue>(
         this Span<TSource> a,
         Func<TSource, TValue> keySelector

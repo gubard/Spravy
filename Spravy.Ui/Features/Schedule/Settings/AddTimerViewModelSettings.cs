@@ -9,8 +9,9 @@ public class AddTimerViewModelSettings : IViewModelSetting<AddTimerViewModelSett
     public AddTimerViewModelSettings(AddTimerViewModel viewModel)
     {
         Name = viewModel.Name;
-        var temp = new List<string>(viewModel.Names) { viewModel.Name };
-        Names.AddRange(temp.Distinct());
+        var names = viewModel.Names.ToArray(viewModel.Names.Count + 1).AsSpan();
+        names[^1] = Name;
+        Names.AddRange(names.DistinctIgnoreNull());
         Times.AddRange(viewModel.Times);
     }
 

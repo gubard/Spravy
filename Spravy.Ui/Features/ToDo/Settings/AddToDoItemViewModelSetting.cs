@@ -16,9 +16,13 @@ public class AddToDoItemViewModelSetting : IViewModelSetting<AddToDoItemViewMode
         Link = viewModel.ToDoItemContent.Link;
         Description = viewModel.DescriptionContent.Description;
         DescriptionType = viewModel.DescriptionContent.DescriptionType;
-        var names = viewModel.ToDoItemContent.Names.ToList();
-        names.Add(viewModel.ToDoItemContent.Name);
-        Names.AddRange(names.Distinct());
+
+        var names = viewModel
+            .ToDoItemContent.Names.ToArray(viewModel.ToDoItemContent.Names.Count + 1)
+            .AsSpan();
+
+        names[^1] = Name;
+        Names.AddRange(names.DistinctIgnoreNull());
     }
 
     public string Name { get; set; } = string.Empty;
