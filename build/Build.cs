@@ -432,7 +432,7 @@ class Build : NukeBuild
             botClient
                 .SendTextMessageAsync(
                     "@spravy_release",
-                    "#",
+                    "^",
                     replyMarkup: new InlineKeyboardMarkup(currentItems)
                 )
                 .GetAwaiter()
