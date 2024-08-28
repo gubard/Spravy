@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ResetToDoItemViewModel : ViewModelBase, IStateHolder
+public partial class ResetToDoItemViewModel : DialogableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
 
@@ -24,7 +24,7 @@ public partial class ResetToDoItemViewModel : ViewModelBase, IStateHolder
 
     public ToDoItemEntityNotify Item { get; }
 
-    public string ViewId
+    public override string ViewId
     {
         get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.CurrentId}";
     }
@@ -34,7 +34,7 @@ public partial class ResetToDoItemViewModel : ViewModelBase, IStateHolder
         return Result.Success;
     }
 
-    public Cvtar LoadStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return objectStorage
             .GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
@@ -56,7 +56,7 @@ public partial class ResetToDoItemViewModel : ViewModelBase, IStateHolder
             );
     }
 
-    public Cvtar SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
     }

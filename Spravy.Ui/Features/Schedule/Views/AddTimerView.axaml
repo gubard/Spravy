@@ -1,15 +1,15 @@
-<c:MainUserControl x:TypeArguments="vm:AddTimerViewModel"
-                   xmlns="https://github.com/avaloniaui"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                   xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
-                   xmlns:s="clr-namespace:System;assembly=System.Runtime"
-                   xmlns:v="clr-namespace:Spravy.Ui.Features.Schedule.Views"
-                   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                   x:Class="Spravy.Ui.Features.Schedule.Views.AddTimerView"
-                   x:DataType="vm:AddTimerViewModel">
+<c:DialogableUserControl x:TypeArguments="vm:AddTimerViewModel"
+                         xmlns="https://github.com/avaloniaui"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
+                         xmlns:s="clr-namespace:System;assembly=System.Runtime"
+                         xmlns:v="clr-namespace:Spravy.Ui.Features.Schedule.Views"
+                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                         x:Class="Spravy.Ui.Features.Schedule.Views.AddTimerView"
+                         x:DataType="vm:AddTimerViewModel">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
@@ -42,4 +42,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
-</c:MainUserControl>
+</c:DialogableUserControl>

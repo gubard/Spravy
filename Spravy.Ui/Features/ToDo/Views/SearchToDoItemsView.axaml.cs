@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class SearchToDoItemsView : MainUserControl<SearchToDoItemsViewModel>
+public partial class SearchToDoItemsView : NavigatableUserControl<SearchToDoItemsViewModel>
 {
     public const string SearchTextTextBoxName = "SearchTextTextBox";
 

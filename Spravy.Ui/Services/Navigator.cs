@@ -85,66 +85,51 @@ public class Navigator : INavigator
 
     public Cvtar NavigateToAsync(INavigatable parameter, CancellationToken ct)
     {
-        return AddCurrentContentAsync(parameter, ct)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                mainSplitViewModel.IsPaneOpen = false;
+
+                return Result.Success;
+            })
             .IfSuccessAsync(
                 () =>
                 {
-                    if (mainSplitViewModel.Content is not null)
+                    if (mainSplitViewModel.Content.ViewId == parameter.ViewId)
                     {
-                        if (parameter.ViewId == mainSplitViewModel.Content.ViewId)
-                        {
-                            return mainSplitViewModel.Content.RefreshAsync(ct);
-                        }
+                        return mainSplitViewModel.Content.RefreshAsync(ct);
                     }
 
-                    return parameter
-                        .LoadStateAsync(ct)
+                    return Result
+                        .AwaitableSuccess.IfSuccessAsync(
+                            () =>
+                            {
+                                if (!mainSplitViewModel.Content.IsPooled)
+                                {
+                                    return list.Add(new(mainSplitViewModel.Content, lastSetup))
+                                        .GetAwaitable();
+                                }
+
+                                return Result.AwaitableSuccess;
+                            },
+                            ct
+                        )
                         .IfSuccessAsync(
                             () =>
-                                this.InvokeUiBackgroundAsync(() =>
-                                {
-                                    mainSplitViewModel.Content = parameter;
+                                parameter
+                                    .LoadStateAsync(ct)
+                                    .IfSuccessAsync(
+                                        () =>
+                                            this.InvokeUiBackgroundAsync(() =>
+                                            {
+                                                mainSplitViewModel.Content = parameter;
 
-                                    return Result.Success;
-                                }),
+                                                return Result.Success;
+                                            }),
+                                        ct
+                                    ),
                             ct
                         );
                 },
-                ct
-            )
-            .IfSuccessAsync(() => parameter.LoadStateAsync(ct), ct);
-    }
-
-    private Cvtar AddCurrentContentAsync(INavigatable parameter, CancellationToken ct)
-    {
-        if (mainSplitViewModel.Content is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        if (mainSplitViewModel.Content.ViewId == parameter.ViewId)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        mainSplitViewModel.Content.Stop();
-
-        if (!mainSplitViewModel.Content.IsPooled)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        return mainSplitViewModel
-            .Content.SaveStateAsync(ct)
-            .IfSuccessAsync(() => list.Add(new(mainSplitViewModel.Content, lastSetup)), ct)
-            .IfSuccessAsync(
-                () =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        mainSplitViewModel.IsPaneOpen = false;
-
-                        return Result.Success;
-                    }),
                 ct
             );
     }

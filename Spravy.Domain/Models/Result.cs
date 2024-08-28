@@ -26,6 +26,11 @@ public class Result
     public Result(ReadOnlyMemory<Error> errors)
     {
         Errors = errors;
+
+        if (Errors.IsEmpty)
+        {
+            throw new EmptyEnumerableException(nameof(Errors));
+        }
     }
 
     public Result(Error error)
@@ -38,6 +43,11 @@ public class Result
     public bool IsHasError
     {
         get => !Errors.IsEmpty;
+    }
+
+    public Cvtar GetAwaitable()
+    {
+        return this.ToValueTaskResult().ConfigureAwait(false);
     }
 
     public static Result Execute(Action action)
@@ -84,6 +94,11 @@ public class Result<TValue>
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
+
+    public ConfiguredValueTaskAwaitable<Result<TValue>> GetAwaitable()
+    {
+        return this.ToValueTaskResult().ConfigureAwait(false);
+    }
 
     public bool TryGetValue([MaybeNullWhen(false)] out TValue result)
     {

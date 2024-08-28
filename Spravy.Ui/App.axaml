@@ -35,7 +35,7 @@
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
 
-                            <Button DockPanel.Dock="Right" 
+                            <Button DockPanel.Dock="Right"
                                     Command="{x:Static h:UiHelper.DeleteTimer}"
                                     CommandParameter="{Binding}">
                                 <mi:MaterialIcon Kind="Delete" />
@@ -44,10 +44,14 @@
                         </DockPanel>
                     </c:GroupBoxControl.Header>
 
-                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center" Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" />
+                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center"
+                               Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" />
                 </c:GroupBoxControl>
             </Border>
+        </DataTemplate>
 
+        <DataTemplate DataType="s:EmptyNavigatable">
+            <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" />
         </DataTemplate>
 
         <DataTemplate DataType="tdm:ToDoItemEntityNotify">

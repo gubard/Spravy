@@ -1,4 +1,4 @@
-<c:MainUserControl x:TypeArguments="vm:LeafToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
+<c:NavigatableUserControl x:TypeArguments="vm:LeafToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -87,4 +87,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</c:MainUserControl>
+</c:NavigatableUserControl>

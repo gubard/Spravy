@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.Authentication.Views;
 
-public partial class LoginView : MainUserControl<LoginViewModel>
+public partial class LoginView : NavigatableUserControl<LoginViewModel>
 {
     public LoginView()
     {

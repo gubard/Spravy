@@ -3,7 +3,7 @@ using Spravy.Ui.Features.Schedule.Settings;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public partial class AddTimerViewModel : ViewModelBase, IStateHolder
+public partial class AddTimerViewModel : DialogableViewModelBase
 {
     private readonly IViewFactory viewFactory;
     private readonly IObjectStorage objectStorage;
@@ -59,7 +59,7 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
     public AvaloniaList<string> Names { get; } = new();
     public AvaloniaList<TimeSpan> Times { get; } = new();
 
-    public string ViewId
+    public override string ViewId
     {
         get =>
             Item.TryGetValue(out var i)
@@ -96,7 +96,7 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
             );
     }
 
-    public Cvtar LoadStateAsync(CancellationToken ct)
+    public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return objectStorage
             .GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct)
@@ -117,7 +117,7 @@ public partial class AddTimerViewModel : ViewModelBase, IStateHolder
             );
     }
 
-    public Cvtar SaveStateAsync(CancellationToken ct)
+    public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
     }
