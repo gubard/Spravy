@@ -42,17 +42,14 @@ public class TaskWork
         cancellationTokenSource = new();
     }
 
-    public static TaskWork Create(
-        IErrorHandler errorHandler,
-        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task
-    )
+    public static TaskWork Create(IErrorHandler errorHandler, Func<CancellationToken, Cvtar> task)
     {
         return new(task, errorHandler);
     }
 
     public static TaskWork Create<T>(
         IErrorHandler errorHandler,
-        Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task
+        Func<T, CancellationToken, Cvtar> task
     )
     {
         return new(task, errorHandler);

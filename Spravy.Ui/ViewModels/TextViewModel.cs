@@ -1,6 +1,6 @@
 namespace Spravy.Ui.ViewModels;
 
-public partial class TextViewModel : ViewModelBase
+public partial class TextViewModel : DialogableViewModelBase
 {
     [ObservableProperty]
     private bool isReadOnly;
@@ -16,4 +16,19 @@ public partial class TextViewModel : ViewModelBase
 
     [ObservableProperty]
     private string label = string.Empty;
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<TextViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

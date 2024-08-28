@@ -435,7 +435,7 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
-                                viewFactory.CreateMultiToDoItemSettingViewModel(view.Item),
+                                viewFactory.CreateMultiToDoItemSettingViewModel(),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Input, ct)
@@ -1359,7 +1359,7 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateMultiToDoItemSettingViewModel(item),
+                                viewFactory.CreateMultiToDoItemSettingViewModel(),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)

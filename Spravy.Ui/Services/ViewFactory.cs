@@ -326,10 +326,7 @@ public class ViewFactory : IViewFactory
         return new(item, toDoService);
     }
 
-    public InfoViewModel CreateInfoViewModel(
-        object content,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> okTask
-    )
+    public InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask)
     {
         return new(content, okTask, errorHandler, taskProgressService);
     }
@@ -443,9 +440,9 @@ public class ViewFactory : IViewFactory
     }
 
     public ConfirmViewModel CreateConfirmViewModel(
-        object content,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask
+        IDialogable content,
+        Func<IDialogable, Cvtar> confirmTask,
+        Func<IDialogable, Cvtar> cancelTask
     )
     {
         return new(content, errorHandler, taskProgressService, confirmTask, cancelTask);
@@ -492,11 +489,9 @@ public class ViewFactory : IViewFactory
         return new(item);
     }
 
-    public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
-        ToDoItemEntityNotify item
-    )
+    public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel()
     {
-        return new(item);
+        return new();
     }
 
     public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemSelectorViewModel : ViewModelBase
+public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
 {
     private readonly IToDoCache toDoCache;
     private readonly IToDoUiService toDoUiService;
@@ -144,5 +144,20 @@ public partial class ToDoItemSelectorViewModel : ViewModelBase
                         .ToResult()
                         .IfSuccessForEach(x => Search(x, ct))
             );
+    }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<ToDoItemSelectorViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class AddToDoItemViewModel : NavigatableViewModelBase
+public class AddToDoItemViewModel : DialogableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
 
@@ -10,7 +10,6 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         EditDescriptionContentViewModel descriptionContent,
         IObjectStorage objectStorage
     )
-        : base(true)
     {
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
@@ -28,11 +27,6 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
             Parent is null
                 ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}"
                 : $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{Parent.Id}";
-    }
-
-    public override Result Stop()
-    {
-        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -62,11 +56,6 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
-    }
-
-    public override Cvtar RefreshAsync(CancellationToken ct)
-    {
-        return Result.AwaitableSuccess;
     }
 
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()

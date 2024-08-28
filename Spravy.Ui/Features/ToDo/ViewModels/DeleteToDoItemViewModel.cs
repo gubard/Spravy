@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class DeleteToDoItemViewModel : ViewModelBase
+public partial class DeleteToDoItemViewModel : DialogableViewModelBase
 {
     private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
 
@@ -96,4 +96,19 @@ public partial class DeleteToDoItemViewModel : ViewModelBase
     public ToDoItemEntityNotify Item { get; }
     public SpravyCommand InitializedCommand { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<DeleteToDoItemViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

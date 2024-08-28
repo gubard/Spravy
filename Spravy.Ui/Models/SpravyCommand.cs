@@ -14,7 +14,7 @@ public class SpravyCommand
     public ICommand Command { get; }
 
     public static SpravyCommand Create(
-        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<CancellationToken, Cvtar> func,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )
@@ -40,7 +40,7 @@ public class SpravyCommand
     }
 
     public static SpravyCommand Create<TParam>(
-        Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TParam, CancellationToken, Cvtar> func,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )

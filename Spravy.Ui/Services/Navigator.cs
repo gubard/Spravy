@@ -118,6 +118,10 @@ public class Navigator : INavigator
                                 parameter
                                     .LoadStateAsync(ct)
                                     .IfSuccessAsync(
+                                        () => mainSplitViewModel.Content.SaveStateAsync(ct),
+                                        ct
+                                    )
+                                    .IfSuccessAsync(
                                         () =>
                                             this.InvokeUiBackgroundAsync(() =>
                                             {

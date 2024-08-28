@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class MultiToDoItemSettingViewModel(ToDoItemEntityNotify item) : ViewModelBase
+public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase
 {
     [ObservableProperty]
     private bool isName;
@@ -26,7 +26,25 @@ public partial class MultiToDoItemSettingViewModel(ToDoItemEntityNotify item) : 
     [ObservableProperty]
     private bool isDueDate;
 
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } =
-        new(UiHelper.ToDoItemTypes.ToArray());
-    public ToDoItemEntityNotify Item { get; } = item;
+    public MultiToDoItemSettingViewModel()
+    {
+        ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
+    }
+
+    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<ToDoItemToStringSettingsViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

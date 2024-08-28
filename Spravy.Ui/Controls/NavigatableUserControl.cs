@@ -12,20 +12,11 @@ public abstract class NavigatableUserControl<T> : UserControl
             try
             {
                 ViewModel.View = this;
-                await ViewModel.LoadStateAsync(CancellationToken.None);
             }
             finally
             {
-                if (DefaultFocusTextBox is not null)
-                {
-                    DefaultFocusTextBox.FocusTextBoxUi();
-                }
+                DefaultFocusTextBox?.FocusTextBoxUi();
             }
-        };
-
-        DetachedFromVisualTree += async (_, _) =>
-        {
-            await ViewModel.SaveStateAsync(CancellationToken.None);
         };
     }
 

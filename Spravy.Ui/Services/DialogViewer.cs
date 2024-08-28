@@ -9,22 +9,29 @@ public class DialogViewer : IDialogViewer
         this.serviceFactory = serviceFactory;
     }
 
-    public Cvtar ShowDialogAsync(
-        DialogViewLayer layer,
-        ViewModelBase viewModel,
-        CancellationToken ct
-    )
+    public Cvtar ShowDialogAsync(DialogViewLayer layer, IDialogable viewModel, CancellationToken ct)
     {
-        return GetDialogControl(layer)
+        return viewModel
+            .LoadStateAsync(ct)
+            .IfSuccessAsync(() => GetDialogControl(layer), ct)
             .IfSuccessAsync(dialogControl => ShowViewAsync(viewModel, dialogControl), ct);
     }
 
     public Cvtar CloseDialogAsync(DialogViewLayer layer, CancellationToken ct)
     {
         return GetDialogControl(layer)
-            .IfSuccess(dc => SafeCloseUi(dc, ct))
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+            .IfSuccessAsync(
+                dc =>
+                    SafeCloseUi(dc, ct)
+                        .IfSuccessAsync(
+                            () =>
+                                dc
+                                    .Dialog.CastObject<IDialogable>(nameof(dc.Dialog))
+                                    .IfSuccessAsync(d => d.SaveStateAsync(ct), ct),
+                            ct
+                        ),
+                ct
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> CloseLastDialogAsync(CancellationToken ct)
@@ -80,7 +87,7 @@ public class DialogViewer : IDialogViewer
         return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
-    private Cvtar ShowViewAsync(ViewModelBase viewModel, DialogControl dialogControl)
+    private Cvtar ShowViewAsync(IDialogable viewModel, DialogControl dialogControl)
     {
         return this.InvokeUiBackgroundAsync(() =>
         {

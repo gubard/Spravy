@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
-public class ExceptionViewModel : ViewModelBase
+public class ExceptionViewModel : DialogableViewModelBase
 {
     private readonly Exception exception;
 
@@ -14,5 +14,20 @@ public class ExceptionViewModel : ViewModelBase
     public override string ToString()
     {
         return exception.ToString();
+    }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<ExceptionViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

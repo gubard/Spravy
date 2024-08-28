@@ -1,16 +1,16 @@
 namespace Spravy.Ui.ViewModels;
 
-public class ConfirmViewModel : ViewModelBase
+public class ConfirmViewModel : DialogableViewModelBase
 {
-    private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask;
-    private readonly Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask;
+    private readonly Func<IDialogable, Cvtar> confirmTask;
+    private readonly Func<IDialogable, Cvtar> cancelTask;
 
     public ConfirmViewModel(
-        object content,
+        IDialogable content,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask
+        Func<IDialogable, Cvtar> confirmTask,
+        Func<IDialogable, Cvtar> cancelTask
     )
     {
         this.confirmTask = confirmTask;
@@ -22,7 +22,7 @@ public class ConfirmViewModel : ViewModelBase
 
     public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
-    public object Content { get; }
+    public IDialogable Content { get; }
 
     private Cvtar CancelAsync(CancellationToken ct)
     {
@@ -32,5 +32,20 @@ public class ConfirmViewModel : ViewModelBase
     private Cvtar ConfirmAsync(CancellationToken ct)
     {
         return confirmTask.Invoke(Content);
+    }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<ConfirmViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Content.LoadStateAsync(ct);
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Content.SaveStateAsync(ct);
     }
 }

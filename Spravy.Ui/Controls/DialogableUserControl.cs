@@ -7,25 +7,16 @@ public abstract class DialogableUserControl<T> : UserControl
 
     public DialogableUserControl()
     {
-        Initialized += async (_, _) =>
+        Initialized += (_, _) =>
         {
             try
             {
                 ViewModel.View = this;
-                await ViewModel.LoadStateAsync(CancellationToken.None);
             }
             finally
             {
-                if (DefaultFocusTextBox is not null)
-                {
-                    DefaultFocusTextBox.FocusTextBoxUi();
-                }
+                DefaultFocusTextBox?.FocusTextBoxUi();
             }
-        };
-
-        DetachedFromVisualTree += async (_, _) =>
-        {
-            await ViewModel.SaveStateAsync(CancellationToken.None);
         };
     }
 

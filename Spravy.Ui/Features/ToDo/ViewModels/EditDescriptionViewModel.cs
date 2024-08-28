@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class EditDescriptionViewModel : ViewModelBase
+public class EditDescriptionViewModel : DialogableViewModelBase
 {
     public EditDescriptionViewModel(
         ToDoItemEntityNotify item,
@@ -15,4 +15,19 @@ public partial class EditDescriptionViewModel : ViewModelBase
 
     public ToDoItemEntityNotify Item { get; }
     public EditDescriptionContentViewModel Content { get; }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<EditDescriptionViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

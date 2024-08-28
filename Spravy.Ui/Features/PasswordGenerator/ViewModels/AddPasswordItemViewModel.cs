@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public partial class AddPasswordItemViewModel : ViewModelBase
+public partial class AddPasswordItemViewModel : DialogableViewModelBase
 {
     [ObservableProperty]
     private string name = string.Empty;
@@ -28,4 +28,19 @@ public partial class AddPasswordItemViewModel : ViewModelBase
 
     [ObservableProperty]
     private string customAvailableCharacters = string.Empty;
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<AddPasswordItemViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

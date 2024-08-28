@@ -1,12 +1,14 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:v="clr-namespace:Spravy.Ui.Views"
-             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-             x:Class="Spravy.Ui.Views.ConfirmView"
-             x:DataType="vm:ConfirmViewModel">
+<c:DialogableUserControl x:TypeArguments="vm:ConfirmViewModel"
+                         xmlns="https://github.com/avaloniaui"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                         xmlns:v="clr-namespace:Spravy.Ui.Views"
+                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                         x:Class="Spravy.Ui.Views.ConfirmView"
+                         x:DataType="vm:ConfirmViewModel">
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand.Command}" />
     </UserControl.KeyBindings>
@@ -27,4 +29,4 @@
                 Command="{Binding ConfirmCommand.Command}"
                 Content="{DynamicResource ConfirmView.Ok}" />
     </Grid>
-</UserControl>
+</c:DialogableUserControl>

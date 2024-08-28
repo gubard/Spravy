@@ -23,7 +23,7 @@ public interface IViewFactory
     AddToDoItemViewModel CreateAddToDoItemViewModel();
     ToDoItemContentViewModel CreateToDoItemContentViewModel();
     DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item);
-    MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(ToDoItemEntityNotify item);
+    MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel();
     ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item);
     ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item);
@@ -93,10 +93,7 @@ public interface IViewFactory
         ToDoItemEntityNotify item
     );
 
-    InfoViewModel CreateInfoViewModel(
-        object content,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> okTask
-    );
+    InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask);
 
     PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(
         PasswordItemEntityNotify item
@@ -112,9 +109,9 @@ public interface IViewFactory
     );
 
     ConfirmViewModel CreateConfirmViewModel(
-        object content,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Func<object, ConfiguredValueTaskAwaitable<Result>> cancelTask
+        IDialogable content,
+        Func<IDialogable, Cvtar> confirmTask,
+        Func<IDialogable, Cvtar> cancelTask
     );
 
     RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(

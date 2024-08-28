@@ -40,7 +40,7 @@ public static class TaskProgressServiceExtension
     public static Cvtar RunProgressAsync<TTaskProgressServiceProperty, TItem>(
         this TTaskProgressServiceProperty property,
         ReadOnlyMemory<TItem> items,
-        Func<TItem, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TItem, Cvtar> func,
         CancellationToken ct
     )
         where TTaskProgressServiceProperty : ITaskProgressService
@@ -92,7 +92,7 @@ public static class TaskProgressServiceExtension
     public static Cvtar RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
         ushort impact,
-        Func<TaskProgressItem, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TaskProgressItem, Cvtar> func,
         CancellationToken ct
     )
         where TTaskProgressServiceProperty : ITaskProgressService
@@ -115,7 +115,7 @@ public static class TaskProgressServiceExtension
 
     public static Cvtar RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
-        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<CancellationToken, Cvtar> func,
         CancellationToken ct
     )
         where TTaskProgressServiceProperty : ITaskProgressService
@@ -143,7 +143,7 @@ public static class TaskProgressServiceExtension
 
     public static Cvtar RunProgressAsync<TTaskProgressServiceProperty, TParam>(
         this TTaskProgressServiceProperty property,
-        Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TParam, CancellationToken, Cvtar> func,
         TParam param,
         CancellationToken ct
     )

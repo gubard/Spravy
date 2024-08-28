@@ -1,6 +1,6 @@
 ﻿namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase, IToDoItemsView
+public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase, IToDoItemsView
 {
     private readonly AvaloniaList<ToDoItemEntityNotify> items;
     private readonly IToDoUiService toDoUiService;
@@ -57,5 +57,20 @@ public partial class ChangeToDoItemOrderIndexViewModel : ViewModelBase, IToDoIte
     public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         return new(new NotImplementedError(nameof(AddOrUpdateUi)));
+    }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<DialogableViewModelBase>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

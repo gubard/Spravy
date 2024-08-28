@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RandomizeChildrenOrderViewModel : ViewModelBase
+public class RandomizeChildrenOrderViewModel : DialogableViewModelBase
 {
     private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
 
@@ -20,5 +20,20 @@ public class RandomizeChildrenOrderViewModel : ViewModelBase
     public string Name
     {
         get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+    }
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<RandomizeChildrenOrderViewModel>.Type}";
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

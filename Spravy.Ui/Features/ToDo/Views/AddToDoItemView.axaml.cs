@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class AddToDoItemView : NavigatableUserControl<AddToDoItemViewModel>
+public partial class AddToDoItemView : DialogableUserControl<AddToDoItemViewModel>
 {
     public AddToDoItemView()
     {
