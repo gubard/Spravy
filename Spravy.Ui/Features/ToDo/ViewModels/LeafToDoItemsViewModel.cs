@@ -60,7 +60,7 @@ public partial class LeafToDoItemsViewModel
         get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore(ct).ConfigureAwait(false);
     }

@@ -29,8 +29,8 @@
                     <ScrollViewer Grid.Column="1"
                                   VerticalScrollBarVisibility="Disabled"
                                   HorizontalScrollBarVisibility="Auto"
-                                  HorizontalAlignment="Left">
-                        <TextBlock Text="{Binding Item.Name}" />
+                                  Classes="alignment-stretch">
+                        <TextBlock Classes="alignment-left" Text="{Binding Item.Name}" />
                     </ScrollViewer>
 
                     <Panel Grid.Column="2"

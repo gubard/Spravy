@@ -86,17 +86,33 @@ public class Navigator : INavigator
     public Cvtar NavigateToAsync(INavigatable parameter, CancellationToken ct)
     {
         return AddCurrentContentAsync(parameter, ct)
-            .IfSuccessAsync(() => parameter.LoadStateAsync(ct), ct)
             .IfSuccessAsync(
                 () =>
-                    this.InvokeUiBackgroundAsync(() =>
+                {
+                    if (mainSplitViewModel.Content is not null)
                     {
-                        mainSplitViewModel.Content = parameter;
+                        if (parameter.ViewId == mainSplitViewModel.Content.ViewId)
+                        {
+                            return mainSplitViewModel.Content.RefreshAsync(ct);
+                        }
+                    }
 
-                        return Result.Success;
-                    }),
+                    return parameter
+                        .LoadStateAsync(ct)
+                        .IfSuccessAsync(
+                            () =>
+                                this.InvokeUiBackgroundAsync(() =>
+                                {
+                                    mainSplitViewModel.Content = parameter;
+
+                                    return Result.Success;
+                                }),
+                            ct
+                        );
+                },
                 ct
-            );
+            )
+            .IfSuccessAsync(() => parameter.LoadStateAsync(ct), ct);
     }
 
     private Cvtar AddCurrentContentAsync(INavigatable parameter, CancellationToken ct)
@@ -106,23 +122,21 @@ public class Navigator : INavigator
             return Result.AwaitableSuccess;
         }
 
-        var content = (INavigatable)mainSplitViewModel.Content;
-
-        if (content.ViewId == parameter.ViewId)
+        if (mainSplitViewModel.Content.ViewId == parameter.ViewId)
         {
             return Result.AwaitableSuccess;
         }
 
-        content.Stop();
+        mainSplitViewModel.Content.Stop();
 
-        if (!content.IsPooled)
+        if (!mainSplitViewModel.Content.IsPooled)
         {
             return Result.AwaitableSuccess;
         }
 
-        return content
-            .SaveStateAsync(ct)
-            .IfSuccessAsync(() => list.Add(new(content, lastSetup)), ct)
+        return mainSplitViewModel
+            .Content.SaveStateAsync(ct)
+            .IfSuccessAsync(() => list.Add(new(mainSplitViewModel.Content, lastSetup)), ct)
             .IfSuccessAsync(
                 () =>
                     this.InvokeUiBackgroundAsync(() =>

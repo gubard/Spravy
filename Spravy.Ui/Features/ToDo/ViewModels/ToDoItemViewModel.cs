@@ -36,7 +36,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemsView
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Item.Id}";
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
     }

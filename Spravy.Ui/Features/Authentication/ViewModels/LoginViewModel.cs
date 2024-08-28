@@ -117,4 +117,9 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
                 ct
             );
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

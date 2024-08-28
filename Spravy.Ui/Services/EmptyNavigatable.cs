@@ -26,4 +26,9 @@ public class EmptyNavigatable : INavigatable
     {
         return Result.AwaitableSuccess;
     }
+
+    public Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

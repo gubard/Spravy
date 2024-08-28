@@ -68,6 +68,11 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
         return Result.AwaitableSuccess;
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     private Cvtar DeleteAccountAsync(CancellationToken ct)
     {
         return Result

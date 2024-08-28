@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
+public partial class ToDoItemSettingsViewModel : ViewModelBase, IStateHolder
 {
     private readonly IViewFactory viewFactory;
 
@@ -12,7 +12,6 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
         ToDoItemContentViewModel toDoItemContent,
         IViewFactory viewFactory
     )
-        : base(true)
     {
         Item = item;
         ToDoItemContent = toDoItemContent;
@@ -27,22 +26,22 @@ public partial class ToDoItemSettingsViewModel : NavigatableViewModelBase
     public ToDoItemEntityNotify Item { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
 
-    public override string ViewId
+    public string ViewId
     {
         get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
     }
 
-    public override Result Stop()
+    public Result Stop()
     {
         return Result.Success;
     }
 
-    public override Cvtar LoadStateAsync(CancellationToken ct)
+    public Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public override Cvtar SaveStateAsync(CancellationToken ct)
+    public Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

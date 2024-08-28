@@ -34,4 +34,9 @@ public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVeri
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

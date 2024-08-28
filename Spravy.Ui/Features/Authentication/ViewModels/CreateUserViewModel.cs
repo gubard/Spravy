@@ -167,4 +167,9 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

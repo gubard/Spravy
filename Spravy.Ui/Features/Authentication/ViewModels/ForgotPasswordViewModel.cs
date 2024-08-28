@@ -43,4 +43,9 @@ public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerifi
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

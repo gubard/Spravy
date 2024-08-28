@@ -6,7 +6,7 @@ public partial class MainSplitViewModel(PaneViewModel pane) : ViewModelBase
     private bool isPaneOpen;
 
     [ObservableProperty]
-    private object? content;
+    private INavigatable content = new EmptyNavigatable();
 
     public PaneViewModel Pane { get; } = pane;
 }

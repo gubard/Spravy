@@ -139,6 +139,11 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
         );
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;

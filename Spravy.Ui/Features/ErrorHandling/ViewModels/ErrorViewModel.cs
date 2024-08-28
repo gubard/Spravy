@@ -31,4 +31,9 @@ public class ErrorViewModel : NavigatableViewModelBase
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

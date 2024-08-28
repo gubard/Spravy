@@ -13,4 +13,5 @@ public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
     public abstract Result Stop();
     public abstract Cvtar LoadStateAsync(CancellationToken ct);
     public abstract Cvtar SaveStateAsync(CancellationToken ct);
+    public abstract Cvtar RefreshAsync(CancellationToken ct);
 }

@@ -37,7 +37,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
         get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateTodayItemsAsync(ToDoSubItemsViewModel, ct);
     }

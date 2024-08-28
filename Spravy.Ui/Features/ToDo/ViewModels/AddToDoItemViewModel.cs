@@ -64,6 +64,11 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
     {
         if (Parent is null)

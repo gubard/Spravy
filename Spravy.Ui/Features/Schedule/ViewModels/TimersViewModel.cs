@@ -48,7 +48,7 @@ public class TimersViewModel : NavigatableViewModelBase, IRefresh
         return Result.AwaitableSuccess;
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return scheduleService
             .GetTimersAsync(ct)

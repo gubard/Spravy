@@ -22,7 +22,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 
     public AvaloniaList<PasswordItemEntityNotify> Items { get; } = new();
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         Items.Clear();
 

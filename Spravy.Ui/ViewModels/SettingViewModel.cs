@@ -111,6 +111,11 @@ public partial class SettingViewModel : NavigatableViewModelBase
         return objectStorage.SaveObjectAsync(ViewId, new Setting.Setting(this), ct);
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SelectedTheme))

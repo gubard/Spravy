@@ -36,7 +36,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
