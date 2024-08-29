@@ -51,7 +51,10 @@
         </DataTemplate>
 
         <DataTemplate DataType="s:EmptyNavigatable">
-            <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" />
+            <StackPanel Classes="alignment-center">
+                <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" />
+                <Image Source="../Assets/Images/Logo.ico" Width="128" Height="128" />
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate DataType="tdm:ToDoItemEntityNotify">
