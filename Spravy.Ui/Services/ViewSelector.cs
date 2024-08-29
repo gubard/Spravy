@@ -20,6 +20,11 @@ public class ViewSelector : IViewSelector
         {
             return new(serviceFactory.CreateService<MainView>());
         }
+        
+        if (typeof(PolicyViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<PolicyView>());
+        }
 
         if (typeof(PaneViewModel) == viewModelType)
         {

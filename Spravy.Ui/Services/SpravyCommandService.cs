@@ -2710,6 +2710,12 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+        
+        NavigateToPolicy = SpravyCommand.Create(
+            ct => navigator.NavigateToAsync(viewFactory.CreatePolicyViewModel(), ct),
+            errorHandler,
+            taskProgressService
+        );
 
         AddTimer = SpravyCommand.Create(
             ct =>
@@ -2873,6 +2879,7 @@ public class SpravyCommandService
     public SpravyCommand DeleteTimer { get; }
     public SpravyCommand NavigateToPasswordGenerator { get; }
     public SpravyCommand NavigateToSetting { get; }
+    public SpravyCommand NavigateToPolicy { get; }
     public SpravyCommand NavigateToCreateUser { get; }
     public SpravyCommand NavigateToEmailOrLoginInput { get; }
 

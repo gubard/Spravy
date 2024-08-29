@@ -176,6 +176,11 @@ public class ViewFactory : IViewFactory
         return new(scheduleService, errorHandler, taskProgressService);
     }
 
+    public PolicyViewModel CreatePolicyViewModel()
+    {
+        return new();
+    }
+
     public EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel()
     {
         return new(

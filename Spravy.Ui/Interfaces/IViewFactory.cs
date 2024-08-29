@@ -39,6 +39,7 @@ public interface IViewFactory
     PasswordGeneratorViewModel CreatePasswordGeneratorViewModel();
     SettingViewModel CreateSettingViewModel();
     TimersViewModel CreateTimersViewModel();
+    PolicyViewModel CreatePolicyViewModel();
     EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel();
     CreateUserViewModel CreateCreateUserViewModel();
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);

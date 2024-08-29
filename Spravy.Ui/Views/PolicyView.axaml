@@ -2,7 +2,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Spravy.Ui.Views.PolicyView">
-    Welcome to Avalonia!
+             x:Class="Spravy.Ui.Views.PolicyView"
+             x:DataType="vm:PolicyViewModel">
+    <Grid RowDefinitions="Auto, *">
+        <Grid ColumnDefinitions="Auto,*">
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{x:Static h:UiHelper.SwitchPane}">
+                    <mi:MaterialIcon Kind="Menu" />
+                </Button>
+
+                <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          Classes="alignment-stretch">
+                <TextBlock Classes="alignment-left" Text="{DynamicResource PolicyView.Header}" />
+            </ScrollViewer>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <TextBlock Text="{DynamicResource PolicyView.Policy}" />
+        </ScrollViewer>
+    </Grid>
 </UserControl>

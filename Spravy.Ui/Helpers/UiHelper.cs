@@ -50,6 +50,7 @@ public static class UiHelper
         NavigateToSearchToDoItems = commands.NavigateToSearchToDoItems.Command;
         NavigateToPasswordGenerator = commands.NavigateToPasswordGenerator.Command;
         NavigateToSetting = commands.NavigateToSetting.Command;
+        NavigateToPolicy = commands.NavigateToPolicy.Command;
         NavigateToCreateUser = commands.NavigateToCreateUser.Command;
         NavigateToEmailOrLoginInput = commands.NavigateToEmailOrLoginInput.Command;
         MultiToDoItemsViewInitialized = commands.MultiToDoItemsViewInitialized.Command;
@@ -64,6 +65,7 @@ public static class UiHelper
 
     public static readonly ICommand MainSplitViewModelInitialized;
     public static readonly ICommand UpdateEmail;
+    public static readonly ICommand NavigateToPolicy;
     public static readonly ICommand VerificationEmail;
     public static readonly ICommand VerificationCodeViewModelInitialized;
     public static readonly ICommand Back;
