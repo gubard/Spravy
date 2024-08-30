@@ -5,12 +5,12 @@ public class DialogControl : ContentControl
     public static readonly StyledProperty<bool> IsOpenProperty = AvaloniaProperty.Register<
         DialogControl,
         bool
-    >(nameof(IsOpen));
+    >(nameof(IsOpen), defaultBindingMode: BindingMode.TwoWay);
 
     public static readonly StyledProperty<object?> DialogProperty = AvaloniaProperty.Register<
         DialogControl,
         object?
-    >(nameof(Dialog));
+    >(nameof(Dialog), defaultBindingMode: BindingMode.TwoWay);
 
     public static readonly StyledProperty<double> WidthDialogProperty = AvaloniaProperty.Register<
         DialogControl,

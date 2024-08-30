@@ -2,142 +2,150 @@ namespace Spravy.Ui.Services;
 
 public class DialogViewer : IDialogViewer
 {
-    private readonly IServiceFactory serviceFactory;
+    private readonly MainViewModel mainViewModel;
 
-    public DialogViewer(IServiceFactory serviceFactory)
+    public DialogViewer(IRootViewFactory rootViewFactory)
     {
-        this.serviceFactory = serviceFactory;
+        mainViewModel = rootViewFactory.CreateMainViewModel();
     }
 
-    public Cvtar ShowDialogAsync(DialogViewLayer layer, IDialogable viewModel, CancellationToken ct)
+    public Cvtar ShowDialogAsync(
+        DialogViewLayer layer,
+        IDialogable dialogable,
+        CancellationToken ct
+    )
     {
-        return viewModel
+        return dialogable
             .LoadStateAsync(ct)
-            .IfSuccessAsync(() => GetDialogControl(layer), ct)
-            .IfSuccessAsync(dialogControl => ShowViewAsync(viewModel, dialogControl), ct);
+            .IfSuccessAsync(() => ShowViewAsync(layer, dialogable), ct);
     }
 
     public Cvtar CloseDialogAsync(DialogViewLayer layer, CancellationToken ct)
     {
-        return GetDialogControl(layer)
+        return CloseDialogAsync(layer)
             .IfSuccessAsync(
-                dc =>
-                    SafeCloseUi(dc, ct)
-                        .IfSuccessAsync(
-                            () =>
-                                dc
-                                    .Dialog.CastObject<IDialogable>(nameof(dc.Dialog))
-                                    .IfSuccessAsync(d => d.SaveStateAsync(ct), ct),
-                            ct
-                        ),
+                () => GetDialogContent(layer).IfSuccessAsync(d => d.SaveStateAsync(ct), ct),
                 ct
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> CloseLastDialogAsync(CancellationToken ct)
     {
-        if (
-            this.GetUiValue(
-                () => serviceFactory.CreateService<MainView>().ProgressDialogControl.IsOpen
-            )
-        )
+        if (mainViewModel.ProgressDialogIsOpen)
         {
-            return SafeCloseUi(serviceFactory.CreateService<MainView>().ProgressDialogControl, ct)
-                .IfSuccess(() => true.ToResult())
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
+            return CloseDialogAsync(DialogViewLayer.Progress)
+                .IfSuccessAsync(() => true.ToResult(), ct);
         }
 
-        if (
-            this.GetUiValue(
-                () => serviceFactory.CreateService<MainView>().ErrorDialogControl.IsOpen
-            )
-        )
+        if (mainViewModel.ErrorDialogIsOpen)
         {
-            return SafeCloseUi(serviceFactory.CreateService<MainView>().ErrorDialogControl, ct)
-                .IfSuccess(() => true.ToResult())
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
+            CloseDialogAsync(DialogViewLayer.Error).IfSuccessAsync(() => true.ToResult(), ct);
         }
 
-        if (
-            this.GetUiValue(
-                () => serviceFactory.CreateService<MainView>().InputDialogControl.IsOpen
-            )
-        )
+        if (mainViewModel.InputDialogIsOpen)
         {
-            return SafeCloseUi(serviceFactory.CreateService<MainView>().InputDialogControl, ct)
-                .IfSuccess(() => true.ToResult())
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
+            CloseDialogAsync(DialogViewLayer.Input).IfSuccessAsync(() => true.ToResult(), ct);
         }
 
-        if (
-            this.GetUiValue(
-                () => serviceFactory.CreateService<MainView>().ContentDialogControl.IsOpen
-            )
-        )
+        if (mainViewModel.ContentDialogIsOpen)
         {
-            return SafeCloseUi(serviceFactory.CreateService<MainView>().ContentDialogControl, ct)
-                .IfSuccess(() => true.ToResult())
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
+            CloseDialogAsync(DialogViewLayer.Content).IfSuccessAsync(() => true.ToResult(), ct);
         }
 
         return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
-    private Cvtar ShowViewAsync(IDialogable viewModel, DialogControl dialogControl)
-    {
-        return this.InvokeUiBackgroundAsync(() =>
-        {
-            if (dialogControl.IsOpen)
-            {
-                return Result.Success;
-            }
-
-            dialogControl.Dialog = viewModel;
-            dialogControl.IsOpen = true;
-
-            return Result.Success;
-        });
-    }
-
-    private Result SafeCloseUi(DialogControl dialogControl, CancellationToken ct)
-    {
-        if (!this.GetUiValue(() => dialogControl.IsOpen))
-        {
-            return Result.Success;
-        }
-
-        return this.PostUiBackground(
-            () =>
-            {
-                dialogControl.IsOpen = false;
-
-                return Result.Success;
-            },
-            ct
-        );
-    }
-
-    public Result<DialogControl> GetDialogControl(DialogViewLayer layer)
+    private Cvtar ShowViewAsync(DialogViewLayer layer, IDialogable dialogable)
     {
         return layer switch
         {
-            DialogViewLayer.Error => serviceFactory
-                .CreateService<MainView>()
-                .ErrorDialogControl.ToResult(),
-            DialogViewLayer.Progress => serviceFactory
-                .CreateService<MainView>()
-                .ProgressDialogControl.ToResult(),
-            DialogViewLayer.Input => serviceFactory
-                .CreateService<MainView>()
-                .InputDialogControl.ToResult(),
-            DialogViewLayer.Content => serviceFactory
-                .CreateService<MainView>()
-                .ContentDialogControl.ToResult(),
-            _ => new(new DialogViewLayerOutOfRangeError(layer)),
+            DialogViewLayer.Error
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ErrorDialogIsOpen = true;
+                    mainViewModel.ErrorDialogContent = dialogable;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Progress
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ProgressDialogIsOpen = true;
+                    mainViewModel.ProgressDialogContent = dialogable;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Input
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.InputDialogIsOpen = true;
+                    mainViewModel.InputDialogContent = dialogable;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Content
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ContentDialogIsOpen = true;
+                    mainViewModel.ContentDialogContent = dialogable;
+
+                    return Result.Success;
+                }),
+            _
+                => new Result(new DialogViewLayerOutOfRangeError(layer))
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false)
+        };
+    }
+
+    private Cvtar CloseDialogAsync(DialogViewLayer layer)
+    {
+        return layer switch
+        {
+            DialogViewLayer.Error
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ErrorDialogIsOpen = false;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Progress
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ProgressDialogIsOpen = false;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Input
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.InputDialogIsOpen = false;
+
+                    return Result.Success;
+                }),
+            DialogViewLayer.Content
+                => this.InvokeUiBackgroundAsync(() =>
+                {
+                    mainViewModel.ContentDialogIsOpen = false;
+
+                    return Result.Success;
+                }),
+            _
+                => new Result(new DialogViewLayerOutOfRangeError(layer))
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false)
+        };
+    }
+
+    private Result<IDialogable> GetDialogContent(DialogViewLayer layer)
+    {
+        return layer switch
+        {
+            DialogViewLayer.Error => mainViewModel.ErrorDialogContent.ToResult(),
+            DialogViewLayer.Progress => mainViewModel.ProgressDialogContent.ToResult(),
+            DialogViewLayer.Input => mainViewModel.InputDialogContent.ToResult(),
+            DialogViewLayer.Content => mainViewModel.ContentDialogContent.ToResult(),
+            _ => new(new DialogViewLayerOutOfRangeError(layer))
         };
     }
 }

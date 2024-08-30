@@ -89,10 +89,18 @@
     <Panel Name="{x:Static v:MainView.MainPanelName}">
         <ContentControl Content="{Binding MainProgressBar}" VerticalAlignment="Top" />
 
-        <c:DialogControl x:Name="ErrorDialogControl" Classes="adaptive-dialog-host">
-            <c:DialogControl x:Name="ProgressDialogControl" Classes="adaptive-dialog-host">
-                <c:DialogControl x:Name="InputDialogControl" Classes="adaptive-dialog-host">
-                    <c:DialogControl x:Name="ContentDialogControl" Classes="adaptive-dialog-host">
+        <c:DialogControl x:Name="ErrorDialogControl" Classes="adaptive-dialog-host"
+                         IsOpen="{Binding ErrorDialogIsOpen}"
+                         Dialog="{Binding ErrorDialogContent}">
+            <c:DialogControl x:Name="ProgressDialogControl" Classes="adaptive-dialog-host"
+                             IsOpen="{Binding ProgressDialogIsOpen}"
+                             Dialog="{Binding ProgressDialogContent}">
+                <c:DialogControl x:Name="InputDialogControl" Classes="adaptive-dialog-host"
+                                 IsOpen="{Binding InputDialogIsOpen}"
+                                 Dialog="{Binding InputDialogContent}">
+                    <c:DialogControl x:Name="ContentDialogControl" Classes="adaptive-dialog-host"
+                                     IsOpen="{Binding ContentDialogIsOpen}"
+                                     Dialog="{Binding ContentDialogContent}">
                         <ContentControl Name="{x:Static v:MainView.MainContentName}" Content="{Binding MainSplit}" />
                     </c:DialogControl>
                 </c:DialogControl>

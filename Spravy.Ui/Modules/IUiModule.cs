@@ -16,16 +16,11 @@ namespace Spravy.Ui.Modules;
 [Import(typeof(IPasswordGeneratorClientModule))]
 [Import(typeof(IScheduleClientModule))]
 [Singleton(typeof(AccountNotify))]
-[Singleton(typeof(SingleViewModel))]
-[Singleton(typeof(MainWindowModel))]
 [Singleton(typeof(App))]
-[Singleton(typeof(MainProgressBarViewModel))]
-[Singleton(typeof(MainSplitViewModel))]
-[Singleton(typeof(MainViewModel))]
-[Singleton(typeof(MainView))]
 [Singleton(typeof(SpravyCommandService))]
 [Singleton(typeof(SpravyCommandNotifyService))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
+[Singleton(typeof(IRootViewFactory), typeof(RootViewFactory))]
 [Singleton(typeof(ITaskProgressService), typeof(TaskProgressService))]
 [Singleton(typeof(IUiApplicationService), typeof(UiApplicationService))]
 [Singleton(typeof(ITokenService), typeof(TokenService))]
@@ -45,41 +40,31 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(AppOptions), Factory = nameof(AppOptionsFactory))]
 [Transient(typeof(TokenHttpHeaderFactory))]
 [Transient(typeof(TimeZoneHttpHeaderFactory))]
-[Transient(typeof(PaneViewModel))]
+[Transient(typeof(MainView))]
 [Transient(typeof(PaneView))]
 [Transient(typeof(MainSplitView))]
 [Transient(typeof(EditDescriptionView))]
 [Transient(typeof(EditDescriptionContentView))]
 [Transient(typeof(ConfirmView))]
 [Transient(typeof(DeleteAccountView))]
-[Transient(typeof(EmailOrLoginInputViewModel))]
 [Transient(typeof(EmailOrLoginInputView))]
 [Transient(typeof(InfoView))]
-[Transient(typeof(SettingViewModel))]
 [Transient(typeof(SettingView))]
-[Transient(typeof(TextViewModel))]
 [Transient(typeof(TextView))]
 [Transient(typeof(MainProgressBarView))]
-[Transient(typeof(ToDoItemsViewModel))]
 [Transient(typeof(ToDoItemsView))]
-[Transient(typeof(ToDoItemsGroupByNoneViewModel))]
 [Transient(typeof(ToDoItemsGroupByNoneView))]
-[Transient(typeof(ToDoItemsGroupByTypeViewModel))]
 [Transient(typeof(ToDoItemsGroupByTypeView))]
-[Transient(typeof(ToDoItemsGroupByStatusViewModel))]
 [Transient(typeof(ToDoItemsGroupByStatusView))]
 [Transient(typeof(AddTimerView))]
 [Transient(typeof(AddToDoItemView))]
 [Transient(typeof(DeleteToDoItemView))]
-[Transient(typeof(MultiToDoItemsViewModel))]
 [Transient(typeof(MultiToDoItemsView))]
 [Transient(typeof(TimersView))]
 [Transient(typeof(ToDoItemView))]
 [Transient(typeof(ToDoItemCommands))]
-[Transient(typeof(ToDoItemsGroupByViewModel))]
 [Transient(typeof(ToDoItemsGroupByView))]
 [Transient(typeof(ResetToDoItemView))]
-[Transient(typeof(RootToDoItemsViewModel))]
 [Transient(typeof(RootToDoItemsView))]
 [Transient(typeof(ToDoItemContentView))]
 [Transient(typeof(PeriodicityToDoItemSettingsView))]
@@ -91,36 +76,27 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemDayOfYearSelectorView))]
 [Transient(typeof(ToDoItemSelectorView))]
 [Transient(typeof(ToDoItemSettingsView))]
-[Transient(typeof(ToDoSubItemsViewModel))]
 [Transient(typeof(ToDoSubItemsView))]
 [Transient(typeof(ReferenceToDoItemSettingsView))]
 [Transient(typeof(ChangeToDoItemOrderIndexView))]
 [Transient(typeof(MultiToDoItemSettingView))]
 [Transient(typeof(RandomizeChildrenOrderView))]
-[Transient(typeof(SearchToDoItemsViewModel))]
 [Transient(typeof(SearchToDoItemsView))]
 [Transient(typeof(LeafToDoItemsView))]
-[Transient(typeof(TodayToDoItemsViewModel))]
 [Transient(typeof(TodayToDoItemsView))]
 [Transient(typeof(ToDoItemDayOfMonthSelectorView))]
-[Transient(typeof(AddPasswordItemViewModel))]
 [Transient(typeof(AddPasswordItemView))]
 [Transient(typeof(DeletePasswordItemView))]
-[Transient(typeof(PasswordGeneratorViewModel))]
 [Transient(typeof(PasswordGeneratorView))]
 [Transient(typeof(PasswordItemSettingsView))]
-[Transient(typeof(ErrorViewModel))]
 [Transient(typeof(ErrorView))]
 [Transient(typeof(ExceptionView))]
 [Transient(typeof(VerificationCodeView))]
-[Transient(typeof(LoginViewModel))]
 [Transient(typeof(LoginView))]
 [Transient(typeof(DeleteTimerView))]
 [Transient(typeof(AddToDoItemToFavoriteEventView))]
 [Transient(typeof(ForgotPasswordView))]
-[Transient(typeof(CreateUserViewModel))]
 [Transient(typeof(CreateUserView))]
-[Transient(typeof(PolicyViewModel))]
 [Transient(typeof(PolicyView))]
 [Transient(typeof(IToDoUiService), typeof(ToDoUiService))]
 [Transient(typeof(IPropertyValidator), typeof(PropertyValidator))]
@@ -148,16 +124,16 @@ public interface IUiModule
         return configuration.ThrowIfError().AppOptions.ThrowIfNull();
     }
 
-    static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainWindowModel mainWindowModel)
+    static IDesktopTopLevelControl DesktopTopLevelControlFactory(IRootViewFactory rootViewFactory)
     {
-        return new MainWindow { DataContext = mainWindowModel };
+        return new MainWindow { DataContext = rootViewFactory.CreateMainWindowModel() };
     }
 
     static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(
-        SingleViewModel singleViewModel
+        IRootViewFactory rootViewFactory
     )
     {
-        return new SingleView { DataContext = singleViewModel };
+        return new SingleView { DataContext = rootViewFactory.CreateSingleViewModel() };
     }
 
     static IClipboard ClipboardFactory(TopLevel topLevel)

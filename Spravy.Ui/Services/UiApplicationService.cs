@@ -4,9 +4,9 @@ public class UiApplicationService : IUiApplicationService
 {
     private readonly MainSplitViewModel mainSplitViewModel;
 
-    public UiApplicationService(MainSplitViewModel mainSplitViewModel)
+    public UiApplicationService(IRootViewFactory rootViewFactory)
     {
-        this.mainSplitViewModel = mainSplitViewModel;
+        mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
     public Cvtar RefreshCurrentViewAsync(CancellationToken ct)

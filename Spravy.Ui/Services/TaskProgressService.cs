@@ -4,9 +4,9 @@ public class TaskProgressService : ITaskProgressService
 {
     private readonly List<TaskProgressItem> items = new();
 
-    public TaskProgressService(MainProgressBarViewModel mainProgressBar)
+    public TaskProgressService(IRootViewFactory rootViewFactory)
     {
-        MainProgressBar = mainProgressBar;
+        MainProgressBar = rootViewFactory.CreateMainProgressBarViewModel();
     }
 
     public MainProgressBarViewModel MainProgressBar { get; }

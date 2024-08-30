@@ -8,10 +8,10 @@ public class Navigator : INavigator
 
     private Action<object> lastSetup = ActionHelper<object>.Empty;
 
-    public Navigator(IDialogViewer dialogViewer, MainSplitViewModel mainSplitViewModel)
+    public Navigator(IDialogViewer dialogViewer, IRootViewFactory rootViewFactory)
     {
         this.dialogViewer = dialogViewer;
-        this.mainSplitViewModel = mainSplitViewModel;
+        mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
     public ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(
