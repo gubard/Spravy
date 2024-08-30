@@ -3,6 +3,8 @@ namespace Spravy.Domain.Models;
 public readonly struct Option<TValue>
     where TValue : class
 {
+    public static readonly Option<TValue> None = new();
+
     private readonly TValue? value;
 
     public Option()

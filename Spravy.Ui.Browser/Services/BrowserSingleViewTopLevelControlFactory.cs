@@ -1,3 +1,5 @@
+using System.Web;
+
 namespace Spravy.Ui.Browser.Services;
 
 public class BrowserSingleViewTopLevelControlFactory : IFactory<ISingleViewTopLevelControl>
@@ -17,15 +19,14 @@ public class BrowserSingleViewTopLevelControlFactory : IFactory<ISingleViewTopLe
     public Result<ISingleViewTopLevelControl> Create()
     {
         var url = JsWindowInterop.GetCurrentUrl().ToUri();
+        var view = HttpUtility.ParseQueryString(url.Query).Get("view");
 
-        if (url.Segments.Length == 0)
+        if (view is null)
         {
             return singleView.ToResult();
         }
 
-        var lastSegment = url.Segments[^1];
-
-        if (lastSegment.Equals("policy", StringComparison.InvariantCultureIgnoreCase))
+        if (view.Equals("policy", StringComparison.InvariantCultureIgnoreCase))
         {
             return policyView.ToResult();
         }
