@@ -85,7 +85,7 @@
                 Command="{x:Static h:UiHelper.NavigateToPolicy}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <mi:MaterialIcon Kind="FileDocument" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Policy}" />
             </Grid>
         </Button>
 

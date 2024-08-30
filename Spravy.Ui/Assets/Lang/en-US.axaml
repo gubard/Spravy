@@ -267,6 +267,7 @@
     <sys:String x:Key="PaneView.Search">Search</sys:String>
     <sys:String x:Key="PaneView.Timers">Timers</sys:String>
     <sys:String x:Key="PaneView.Settings">Settings</sys:String>
+    <sys:String x:Key="PaneView.Policy">Policy</sys:String>
     <sys:String x:Key="PaneView.PasswordGenerator">Password generator</sys:String>
     <sys:String x:Key="PaneView.Logout">Logout</sys:String>
 
