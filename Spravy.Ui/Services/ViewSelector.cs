@@ -20,7 +20,7 @@ public class ViewSelector : IViewSelector
         {
             return new(serviceFactory.CreateService<MainView>());
         }
-        
+
         if (typeof(PolicyViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<PolicyView>());
@@ -86,21 +86,6 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ToDoItemsView>());
         }
 
-        if (typeof(ToDoItemsGroupByNoneViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemsGroupByNoneView>());
-        }
-
-        if (typeof(ToDoItemsGroupByTypeViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemsGroupByTypeView>());
-        }
-
-        if (typeof(ToDoItemsGroupByStatusViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemsGroupByStatusView>());
-        }
-
         if (typeof(AddToDoItemViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<AddToDoItemView>());
@@ -119,11 +104,6 @@ public class ViewSelector : IViewSelector
         if (typeof(ToDoItemViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<ToDoItemView>());
-        }
-
-        if (typeof(ToDoItemsGroupByViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemsGroupByView>());
         }
 
         if (typeof(ResetToDoItemViewModel) == viewModelType)

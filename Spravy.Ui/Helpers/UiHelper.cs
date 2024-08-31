@@ -53,7 +53,6 @@ public static class UiHelper
         NavigateToPolicy = commands.NavigateToPolicy.Command;
         NavigateToCreateUser = commands.NavigateToCreateUser.Command;
         NavigateToEmailOrLoginInput = commands.NavigateToEmailOrLoginInput.Command;
-        MultiToDoItemsViewInitialized = commands.MultiToDoItemsViewInitialized.Command;
         CopyToClipboard = commands.CopyToClipboard.Command;
         UpdateEmail = commands.UpdateEmail.Command;
         VerificationEmail = commands.VerificationEmail.Command;
@@ -104,7 +103,6 @@ public static class UiHelper
     public static readonly ICommand PasswordGeneratorViewInitialized;
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
-    public static readonly ICommand MultiToDoItemsViewInitialized;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 
     public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses =

@@ -3,14 +3,16 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
 {
     [ObservableProperty]
-    private TextLocalization? header;
-
-    [ObservableProperty]
     private bool isExpanded = true;
 
-    public ToDoItemsViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
+    public ToDoItemsViewModel(
+        TextLocalization header,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         Items = new();
+        Header = header;
 
         SwitchAllSelectionCommand = SpravyCommand.Create(
             ct =>
@@ -43,6 +45,7 @@ public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
         );
     }
 
+    public TextLocalization Header { get; }
     public SpravyCommand SwitchAllSelectionCommand { get; }
     public AvaloniaList<ToDoItemEntityNotify> Items { get; }
 

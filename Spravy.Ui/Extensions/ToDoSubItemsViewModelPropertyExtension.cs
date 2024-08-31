@@ -7,7 +7,7 @@ public static class ToDoSubItemsViewModelPropertyExtension
     )
     {
         var selected = property
-            .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x => x.IsSelected)
+            .ToDoSubItemsViewModel.List.Items.Items.Where(x => x.IsSelected)
             .ToArray()
             .ToReadOnlyMemory();
 
@@ -24,7 +24,7 @@ public static class ToDoSubItemsViewModelPropertyExtension
     )
     {
         var selected = property
-            .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x => !x.IsSelected)
+            .ToDoSubItemsViewModel.List.Items.Items.Where(x => !x.IsSelected)
             .ToArray()
             .ToReadOnlyMemory();
 

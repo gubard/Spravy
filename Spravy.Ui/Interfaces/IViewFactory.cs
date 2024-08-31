@@ -5,13 +5,9 @@ namespace Spravy.Ui.Interfaces;
 public interface IViewFactory
 {
     AddTimerViewModel CreateAddTimerViewModel(ToDoItemEntityNotify item);
-    ToDoItemsGroupByNoneViewModel CreateToDoItemsGroupByNoneViewModel();
-    ToDoItemsGroupByStatusViewModel CreateToDoItemsGroupByStatusViewModel();
-    ToDoItemsGroupByTypeViewModel CreateToDoItemsGroupByTypeViewModel();
-    ToDoItemsViewModel CreateToDoItemsViewModel();
+    ToDoItemsViewModel CreateToDoItemsViewModel(TextLocalization header);
     DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item);
     AddTimerViewModel CreateAddTimerViewModel();
-    ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel();
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel();
     MultiToDoItemsViewModel CreateMultiToDoItemsViewModel();
     TextViewModel CreateTextViewModel();

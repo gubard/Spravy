@@ -359,38 +359,9 @@ public class ViewFactory : IViewFactory
         return new(item.ToOption(), this, objectStorage, errorHandler, taskProgressService);
     }
 
-    public ToDoItemsGroupByNoneViewModel CreateToDoItemsGroupByNoneViewModel()
+    public ToDoItemsViewModel CreateToDoItemsViewModel(TextLocalization header)
     {
-        return new(CreateToDoItemsViewModel());
-    }
-
-    public ToDoItemsGroupByStatusViewModel CreateToDoItemsGroupByStatusViewModel()
-    {
-        return new(
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel()
-        );
-    }
-
-    public ToDoItemsGroupByTypeViewModel CreateToDoItemsGroupByTypeViewModel()
-    {
-        return new(
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel(),
-            CreateToDoItemsViewModel()
-        );
-    }
-
-    public ToDoItemsViewModel CreateToDoItemsViewModel()
-    {
-        return new(errorHandler, taskProgressService);
+        return new(header, errorHandler, taskProgressService);
     }
 
     public DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item)
@@ -401,15 +372,6 @@ public class ViewFactory : IViewFactory
     public AddTimerViewModel CreateAddTimerViewModel()
     {
         return new(new(), this, objectStorage, errorHandler, taskProgressService);
-    }
-
-    public ToDoItemsGroupByViewModel CreateToDoItemsGroupByViewModel()
-    {
-        return new(
-            CreateToDoItemsGroupByNoneViewModel(),
-            CreateToDoItemsGroupByStatusViewModel(),
-            CreateToDoItemsGroupByTypeViewModel()
-        );
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
@@ -426,7 +388,22 @@ public class ViewFactory : IViewFactory
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel()
     {
-        return new(CreateToDoItemsViewModel(), CreateToDoItemsGroupByViewModel());
+        return new(
+            CreateToDoItemsViewModel(new("MultiToDoItemsView.Favorite")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByNoneView.Header")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByStatusView.Missed")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByStatusView.ReadyForCompleted")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByStatusView.Planned")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByStatusView.Completed")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Values")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Groups")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Planneds")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Periodicitys")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.PeriodicityOffsets")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Circles")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.Steps")),
+            CreateToDoItemsViewModel(new("ToDoItemsGroupByTypeView.References"))
+        );
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(

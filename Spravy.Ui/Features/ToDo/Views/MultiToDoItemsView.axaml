@@ -8,13 +8,41 @@
                    xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                    xmlns:c="clr-namespace:Spravy.Ui.Controls"
                    xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                   xmlns:enums="clr-namespace:Spravy.Ui.Enums"
+                   xmlns:e="clr-namespace:Spravy.Ui.Enums"
+                   xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                    x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                    x:DataType="vm:MultiToDoItemsViewModel"
-                   Classes.card="{Binding ToDoItemViewType, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static enums:ToDoItemViewType.Card}}"
+                   Classes.card="{Binding ToDoItemViewType, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static e:ToDoItemViewType.Card}}"
+                   Classes.none="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.None}}"
+                   Classes.by-status="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByStatus}}"
+                   Classes.by-type="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByType}}"
                    Classes.multi="{Binding IsMulti}">
     <UserControl.Styles>
+        <Style Selector="ItemsControl.none">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.by-status">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.by-type">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="v|MultiToDoItemsView.none ItemsControl.none">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="v|MultiToDoItemsView.by-status ItemsControl.by-status">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="v|MultiToDoItemsView.by-type ItemsControl.by-type">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
         <Style Selector="Button.select-all">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -66,14 +94,47 @@
 
         <c:ViewSelectorControl State="{Binding IsMulti}">
             <c:ViewSelectorItemControl State="{x:Static h:UiHelper.False}">
-                <ContentControl Name="{x:Static v:MultiToDoItemsView.ContentContentControlName}"
-                                Content="{Binding ToDoItems}" />
+                <Panel>
+                    <ItemsControl Classes="to-do-items-group none">
+                        <ContentControl Content="{Binding Items}"
+                                        IsVisible="{Binding Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+
+                    <ItemsControl Classes="to-do-items-group by-type">
+                        <ContentControl Content="{Binding Groups}"
+                                        IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Values}"
+                                        IsVisible="{Binding Values.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Steps}"
+                                        IsVisible="{Binding Steps.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Circles}"
+                                        IsVisible="{Binding Circles.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Planneds}"
+                                        IsVisible="{Binding Planneds.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding PeriodicityOffsets}"
+                                        IsVisible="{Binding PeriodicityOffsets.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Periodicitys}"
+                                        IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding References}"
+                                        IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+
+                    <ItemsControl Classes="to-do-items-group by-status">
+                        <ContentControl Content="{Binding Missed}"
+                                        IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding ReadyForCompleted}"
+                                        IsVisible="{Binding ReadyForCompleted.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Planned}"
+                                        IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Completed}"
+                                        IsVisible="{Binding Completed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+                </Panel>
             </c:ViewSelectorItemControl>
 
             <c:ViewSelectorItemControl State="{x:Static h:UiHelper.True}">
-                <ContentControl IsVisible="{Binding IsMulti}"
-                                Content="{Binding ToDoItems}">
-                    <ContentControl.DataTemplates>
+                <Panel>
+                    <Panel.DataTemplates>
                         <DataTemplate DataType="tm:ToDoItemEntityNotify">
                             <ToggleButton Classes="content-alignment-stretch to-do-item"
                                           Padding="0"
@@ -100,8 +161,43 @@
                                 </Border>
                             </ToggleButton>
                         </DataTemplate>
-                    </ContentControl.DataTemplates>
-                </ContentControl>
+                    </Panel.DataTemplates>
+
+                    <ItemsControl Classes="to-do-items-group none">
+                        <ContentControl Content="{Binding Items}"
+                                        IsVisible="{Binding Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+
+                    <ItemsControl Classes="to-do-items-group by-type">
+                        <ContentControl Content="{Binding Groups}"
+                                        IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Values}"
+                                        IsVisible="{Binding Values.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Steps}"
+                                        IsVisible="{Binding Steps.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Circles}"
+                                        IsVisible="{Binding Circles.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Planneds}"
+                                        IsVisible="{Binding Planneds.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding PeriodicityOffsets}"
+                                        IsVisible="{Binding PeriodicityOffsets.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Periodicitys}"
+                                        IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding References}"
+                                        IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+
+                    <ItemsControl Classes="to-do-items-group by-status">
+                        <ContentControl Content="{Binding Missed}"
+                                        IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding ReadyForCompleted}"
+                                        IsVisible="{Binding ReadyForCompleted.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Planned}"
+                                        IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ContentControl Content="{Binding Completed}"
+                                        IsVisible="{Binding Completed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                    </ItemsControl>
+                </Panel>
             </c:ViewSelectorItemControl>
         </c:ViewSelectorControl>
     </StackPanel>
