@@ -1,8 +1,63 @@
+using Avalonia.Layout;
+
 namespace Spravy.Ui;
 
 public class App : Application
 {
+    private static MaterialDesignSizeType materialDesignSizeType;
+
+    public static App? CurrentApp
+    {
+        get => (App?)Current;
+    }
+
     private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
+
+    public static readonly DirectProperty<
+        App,
+        MaterialDesignSizeType
+    > MaterialDesignSizeTypeProperty = AvaloniaProperty.RegisterDirect<App, MaterialDesignSizeType>(
+        nameof(MaterialDesignSizeType),
+        app => app.MaterialDesignSizeType
+    );
+
+    public static event Action<MaterialDesignSizeType>? MaterialDesignSizeTypeChanged;
+
+    static App()
+    {
+        Layoutable.WidthProperty.Changed.AddClassHandler<TopLevel>(
+            (topLevel, _) =>
+            {
+                var currentType = topLevel.Width switch
+                {
+                    <= MaterialDesign.MaxExtraSmall => MaterialDesignSizeType.ExtraSmall,
+                    > MaterialDesign.MaxExtraSmall and <= MaterialDesign.MaxSmall =>
+                        MaterialDesignSizeType.Small,
+                    > MaterialDesign.MaxSmall and <= MaterialDesign.MaxMedium =>
+                        MaterialDesignSizeType.Medium,
+                    > MaterialDesign.MaxMedium and <= MaterialDesign.MaxLarge =>
+                        MaterialDesignSizeType.Large,
+                    > MaterialDesign.MaxLarge => MaterialDesignSizeType.ExtraLarge,
+                    _ => MaterialDesignSizeType.ExtraSmall,
+                };
+
+                if (CurrentApp is null)
+                {
+                    return;
+                }
+
+                CurrentApp.MaterialDesignSizeType = currentType;
+                MaterialDesignSizeTypeChanged?.Invoke(currentType);
+            }
+        );
+    }
+
+    public MaterialDesignSizeType MaterialDesignSizeType
+    {
+        get => materialDesignSizeType;
+        private set =>
+            SetAndRaise(MaterialDesignSizeTypeProperty, ref materialDesignSizeType, value);
+    }
 
     public override void Initialize()
     {
@@ -21,7 +76,6 @@ public class App : Application
                 .CreateService<IDesktopTopLevelControl>()
                 .As<Window>()
                 .ThrowIfNull();
-
             desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
@@ -31,7 +85,6 @@ public class App : Application
                 .Create()
                 .ThrowIfError()
                 .As<Control>();
-
             singleViewPlatform.MainView = control;
         }
 
@@ -118,16 +171,13 @@ public class App : Application
         e.Handled = true;
         UiHelper.IsDrag = false;
         var pointerPosition = e.GetPosition(button);
-
         var options =
             pointerPosition.Y > button.Bounds.Height / 2
                 ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
                 : new(dataItem.Id, sourceItem.Id, false);
-
         await serviceFactory
             .CreateService<IToDoService>()
             .UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
-
         await serviceFactory
             .CreateService<IUiApplicationService>()
             .RefreshCurrentViewAsync(CancellationToken.None);
@@ -138,7 +188,6 @@ public class App : Application
         var mainPanel = DiHelper
             .ServiceFactory.CreateService<MainView>()
             .FindControl<Panel>(MainView.MainPanelName);
-
         var topLevel = DiHelper.ServiceFactory.CreateService<TopLevel>();
 
         if (mainPanel is null)
@@ -169,8 +218,8 @@ public class App : Application
             Height = button.Bounds.Height,
             Content = toDoItem,
             ZIndex = 100,
-            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left,
-            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
         };
 
         var mousePosition = e.GetPosition(topLevel);

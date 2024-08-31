@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class MultiToDoItemsView : UserControl
+public partial class MultiToDoItemsView : MainUserControl<MultiToDoItemsViewModel>
 {
     public const string ContentContentControlName = "content-content-control";
 

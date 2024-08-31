@@ -19,9 +19,9 @@
             <StackPanel>
                 <Panel>
                     <TextBlock Text="{Binding EmailOrLogin, StringFormat=Send verification code to email \{0\}}"
-                               IsVisible="{Binding IdentifierType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static e:UserIdentifierType.Email}}" />
+                               IsVisible="{Binding IdentifierType, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static e:UserIdentifierType.Email}}" />
                     <TextBlock Text="{Binding EmailOrLogin, StringFormat=Send verification code to user \{0\}}"
-                               IsVisible="{Binding IdentifierType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static e:UserIdentifierType.Login}}" />
+                               IsVisible="{Binding IdentifierType, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static e:UserIdentifierType.Login}}" />
                 </Panel>
 
                 <TextBlock Classes="field"

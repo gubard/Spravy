@@ -29,13 +29,12 @@
     <c:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
     <c:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
     <c:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />
-    <c:ObjectToBooleanConverter x:TypeArguments="s:Byte" x:Key="TypeOfPeriodicityToIsVisible" Value="0" Reverse="True" />
+    <c:ObjectEqualsParameterConverter x:Key="ObjectEqualsParameterConverter" Reverse="False" />
+    <c:ObjectEqualsParameterConverter x:Key="ObjectEqualsParameterConverterReverse" Reverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreThen" IsEquals="False" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessThen" IsEquals="False" IsReverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreOrEqualsThen" IsEquals="True" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessOrEqualsThen" IsEquals="True" IsReverse="True" />
-    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="EnumToBooleanConverter" />
-    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="EnumToBooleanConverterReverse"  Reverse="True"/>
 
     <DataTemplates x:Key="CommandDataTemplates">
         <DataTemplate x:DataType="m:SpravyCommandNotify">

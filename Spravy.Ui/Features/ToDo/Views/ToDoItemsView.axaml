@@ -16,7 +16,7 @@
                     <ContentControl Content="{Binding Header}" Margin="0,0,5,0" />
 
                     <Button Grid.Column="1"
-                            Classes="mode-press"
+                            Classes="mode-press select-all"
                             Command="{Binding SwitchAllSelectionCommand.Command}">
                         <mi:MaterialIcon Kind="CheckAll" />
                     </Button>

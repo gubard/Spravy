@@ -6,6 +6,7 @@
                    xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                    xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                    xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   xmlns:local="clr-namespace:Spravy.Ui"
                    mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                    x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
                    x:DataType="vm:LoginViewModel">
@@ -22,6 +23,7 @@
             </c:GroupBoxControl.Header>
 
             <StackPanel>
+                <TextBlock Text="{Binding MaterialDesignSizeType, Source={x:Static local:App.CurrentApp}}"></TextBlock>
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Login}" />
                 <TextBox x:Name="LoginTextBox"

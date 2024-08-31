@@ -1,28 +1,32 @@
 namespace Spravy.Ui.Converters;
 
-public class ObjectToBooleanConverter<TObject> : IValueConverter
+public class ObjectEqualsParameterConverter : IValueConverter
 {
-    public TObject? Value { get; set; }
     public bool Reverse { get; set; }
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is null)
         {
-            return false;
+            if (parameter is null)
+            {
+                return !Reverse;
+            }
+
+            return Reverse;
         }
 
-        if (value is not TObject item)
+        if (parameter is null)
         {
-            return false;
+            return Reverse;
         }
 
         if (Reverse)
         {
-            return !Value?.Equals(item);
+            return !value.Equals(parameter);
         }
 
-        return Value?.Equals(item);
+        return value.Equals(parameter);
     }
 
     public object ConvertBack(

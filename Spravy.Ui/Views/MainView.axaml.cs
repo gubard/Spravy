@@ -17,46 +17,53 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+        SetPseudoClasses(App.CurrentApp.ThrowIfNull().MaterialDesignSizeType);
+        App.MaterialDesignSizeTypeChanged += SetPseudoClasses;
         AddHandler(DragDrop.DropEvent, Drop);
+    }
 
-        this.AddAdaptiveStyle(
-            new[] { MaterialDesignSizeType.ExtraSmall, MaterialDesignSizeType.Small },
-            "AdaptiveCommandsSmall"
-        );
-
-        this.AddAdaptiveStyle(
-            new[]
-            {
-                MaterialDesignSizeType.Medium,
-                MaterialDesignSizeType.Large,
-                MaterialDesignSizeType.ExtraLarge,
-            },
-            "AdaptiveCommandsWide"
-        );
-
-        this.AddAdaptiveStyle(
-            new[]
-            {
-                MaterialDesignSizeType.ExtraSmall,
-                MaterialDesignSizeType.Small,
-                MaterialDesignSizeType.Medium,
-            },
-            "ToDoItemsGroupSmall"
-        );
-
-        this.AddAdaptiveStyle(
-            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge },
-            "ToDoItemsGroupWide"
-        );
-
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.ExtraSmall }, "DialogHostExtraSmall");
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Small }, "DialogHostSmall");
-        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Medium }, "DialogHostMedium");
-
-        this.AddAdaptiveStyle(
-            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge },
-            "DialogHostLarge"
-        );
+    private void SetPseudoClasses(MaterialDesignSizeType sizeType)
+    {
+        switch (sizeType)
+        {
+            case MaterialDesignSizeType.ExtraSmall:
+                PseudoClasses.Set(":extra-small", true);
+                PseudoClasses.Set(":small", false);
+                PseudoClasses.Set(":medium", false);
+                PseudoClasses.Set(":large", false);
+                PseudoClasses.Set(":extra-large", false);
+                break;
+            case MaterialDesignSizeType.Small:
+                PseudoClasses.Set(":extra-small", false);
+                PseudoClasses.Set(":small", true);
+                PseudoClasses.Set(":medium", false);
+                PseudoClasses.Set(":large", false);
+                PseudoClasses.Set(":extra-large", false);
+                break;
+            case MaterialDesignSizeType.Medium:
+                PseudoClasses.Set(":extra-small", false);
+                PseudoClasses.Set(":small", false);
+                PseudoClasses.Set(":medium", true);
+                PseudoClasses.Set(":large", false);
+                PseudoClasses.Set(":extra-large", false);
+                break;
+            case MaterialDesignSizeType.Large:
+                PseudoClasses.Set(":extra-small", false);
+                PseudoClasses.Set(":small", false);
+                PseudoClasses.Set(":medium", false);
+                PseudoClasses.Set(":large", true);
+                PseudoClasses.Set(":extra-large", false);
+                break;
+            case MaterialDesignSizeType.ExtraLarge:
+                PseudoClasses.Set(":extra-small", true);
+                PseudoClasses.Set(":small", false);
+                PseudoClasses.Set(":medium", false);
+                PseudoClasses.Set(":large", false);
+                PseudoClasses.Set(":extra-large", true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(sizeType), sizeType, null);
+        }
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)

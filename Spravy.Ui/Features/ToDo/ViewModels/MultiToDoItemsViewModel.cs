@@ -52,36 +52,6 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
                 ToDoItems.GroupBy = GroupBy;
 
                 break;
-            case nameof(ToDoItemViewType) when MultiToDoItemsView is null:
-                return;
-            case nameof(ToDoItemViewType):
-            {
-                if (!MultiToDoItemsView.TryGetStyle("CardToDoItems", out var style))
-                {
-                    return;
-                }
-
-                switch (ToDoItemViewType)
-                {
-                    case ToDoItemViewType.List:
-                        MultiToDoItemsView.Styles.Remove(style);
-                        break;
-                    case ToDoItemViewType.Card:
-                        if (!MultiToDoItemsView.Styles.Contains(style))
-                        {
-                            MultiToDoItemsView.Styles.Add(style);
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(
-                            nameof(ToDoItemViewType),
-                            ToDoItemViewType,
-                            null
-                        );
-                }
-
-                break;
-            }
         }
     }
 }

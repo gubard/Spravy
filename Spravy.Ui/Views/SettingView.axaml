@@ -9,29 +9,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.SettingView"
              x:DataType="vm:SettingViewModel">
-    <UserControl.Resources>
-        <Style x:Key="BorderAdaptive" Selector="Border.adaptive">
-            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="CornerRadius" Value="5" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Width" Value="300" />
-            <Setter Property="Height" Value="150" />
-            <Setter Property="Margin" Value="2" />
-        </Style>
-
-        <Style x:Key="ItemsControlAdaptive" Selector="ItemsControl.adaptive-items-control">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
     <c:BusyAreaControl IsBusy="{Binding IsBusy}" Margin="2">
         <Grid RowDefinitions="*,Auto">
             <ScrollViewer>
