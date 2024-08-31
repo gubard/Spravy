@@ -1,7 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:c="clr-namespace:Spravy.Ui.Converters"
-                    xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:s="clr-namespace:System;assembly=System.Runtime"
                     xmlns:e="clr-namespace:Spravy.Ui.Enums"
                     xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters"
@@ -30,20 +29,13 @@
     <c:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
     <c:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
     <c:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />
-    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByNoneToTrue" Value="None" />
-    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByStatusToTrue" Value="ByStatus" />
-    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByTypeToTrue" Value="ByType" />
     <c:ObjectToBooleanConverter x:TypeArguments="s:Byte" x:Key="TypeOfPeriodicityToIsVisible" Value="0" Reverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreThen" IsEquals="False" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessThen" IsEquals="False" IsReverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreOrEqualsThen" IsEquals="True" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessOrEqualsThen" IsEquals="True" IsReverse="True" />
-
-    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeEmailToTrue"
-                              Value="Email" />
-
-    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeLoginToTrue"
-                              Value="Login" />
+    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="EnumToBooleanConverter" />
+    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="EnumToBooleanConverterReverse"  Reverse="True"/>
 
     <DataTemplates x:Key="CommandDataTemplates">
         <DataTemplate x:DataType="m:SpravyCommandNotify">

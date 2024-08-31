@@ -2,7 +2,7 @@ using Avalonia.Layout;
 
 namespace Spravy.Ui.Helpers;
 
-public static class MaterialDesignSize
+public static class MaterialDesign
 {
     public const double MinExtraSmall = 1;
     public const double MaxExtraSmall = 599;
@@ -18,7 +18,7 @@ public static class MaterialDesignSize
 
     public static event Action<MaterialDesignSizeType>? MaterialDesignSizeTypeChanged;
 
-    static MaterialDesignSize()
+    static MaterialDesign()
     {
         Layoutable.WidthProperty.Changed.AddClassHandler<TopLevel>(
             (topLevel, _) =>

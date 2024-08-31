@@ -3,7 +3,6 @@ namespace Spravy.Ui.Converters;
 public class EnumToBooleanConverter<TEnum> : IValueConverter
     where TEnum : struct, Enum
 {
-    public TEnum Value { get; set; }
     public bool Reverse { get; set; }
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -12,13 +11,18 @@ public class EnumToBooleanConverter<TEnum> : IValueConverter
         {
             return false;
         }
+        
+        if (parameter is not TEnum parameterEnum)
+        {
+            return false;
+        }
 
         if (Reverse)
         {
-            return !Value.Equals(item);
+            return !parameterEnum.Equals(item);
         }
 
-        return Value.Equals(item);
+        return parameterEnum.Equals(item);
     }
 
     public object ConvertBack(

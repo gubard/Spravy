@@ -34,7 +34,7 @@ public static class HostExtension
             }
         };
 
-        MaterialDesignSize.MaterialDesignSizeTypeChanged += action;
-        action.Invoke(MaterialDesignSize.LastType);
+        MaterialDesign.MaterialDesignSizeTypeChanged += action;
+        action.Invoke(MaterialDesign.LastType);
     }
 }
