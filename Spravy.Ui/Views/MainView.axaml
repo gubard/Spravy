@@ -5,10 +5,37 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+             mc:Ignorable="d"
+             d:DesignWidth="425"
+             d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
     <UserControl.Styles>
+        <!-- Items group -->
+        <Style Selector="v|MainView:medium ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="v|MainView:large ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="v|MainView:extra-large ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
         <!-- DialogControl -->
         <Style Selector="v|MainView:extra-small c|DialogControl.adaptive-dialog-host">
             <Setter Property="WidthDialog"
@@ -17,8 +44,7 @@
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
-        <Style
-            Selector="v|MainView:small c|DialogControl.adaptive-dialog-host">
+        <Style Selector="v|MainView:small c|DialogControl.adaptive-dialog-host">
             <Setter Property="WidthDialog"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
             <Setter Property="MaxHeightDialog"
@@ -48,49 +74,67 @@
 
         <!-- Commands -->
         <Style Selector="ItemsControl.adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="IsVisible"
+                    Value="False" />
         </Style>
 
         <Style Selector="Button.adaptive-commands-button">
-            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="IsVisible"
+                    Value="True" />
         </Style>
 
         <Style Selector="v|MainView:medium ItemsControl.adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="IsVisible"
+                    Value="True" />
         </Style>
 
         <Style Selector="v|MainView:medium Button.adaptive-commands-button">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="IsVisible"
+                    Value="False" />
         </Style>
 
         <Style Selector="v|MainView:large ItemsControl.adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="IsVisible"
+                    Value="True" />
         </Style>
 
         <Style Selector="v|MainView:large Button.adaptive-commands-button">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="IsVisible"
+                    Value="False" />
         </Style>
 
         <Style Selector="v|MainView:extra-large ItemsControl.adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="IsVisible"
+                    Value="True" />
         </Style>
 
         <Style Selector="v|MainView:extra-large Button.adaptive-commands-button">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="IsVisible"
+                    Value="False" />
         </Style>
 
         <!-- Settings -->
         <Style Selector="v|MainView:medium Border.adaptive">
-            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="CornerRadius" Value="5" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Width" Value="300" />
-            <Setter Property="Height" Value="150" />
-            <Setter Property="Margin" Value="2" />
+            <Setter Property="Background"
+                    Value="{DynamicResource ButtonBackground}" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="CornerRadius"
+                    Value="5" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="BorderBrush"
+                    Value="{DynamicResource ExpanderHeaderBorderBrush}" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Width"
+                    Value="300" />
+            <Setter Property="Height"
+                    Value="150" />
+            <Setter Property="Margin"
+                    Value="2" />
         </Style>
 
         <Style Selector="v|MainView:medium ItemsControl.adaptive-items-control">
@@ -102,16 +146,26 @@
         </Style>
 
         <Style Selector="v|MainView:large Border.adaptive">
-            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="CornerRadius" Value="5" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Width" Value="300" />
-            <Setter Property="Height" Value="150" />
-            <Setter Property="Margin" Value="2" />
+            <Setter Property="Background"
+                    Value="{DynamicResource ButtonBackground}" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="CornerRadius"
+                    Value="5" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="BorderBrush"
+                    Value="{DynamicResource ExpanderHeaderBorderBrush}" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Width"
+                    Value="300" />
+            <Setter Property="Height"
+                    Value="150" />
+            <Setter Property="Margin"
+                    Value="2" />
         </Style>
 
         <Style Selector="v|MainView:large ItemsControl.adaptive-items-control">
@@ -123,16 +177,26 @@
         </Style>
 
         <Style Selector="v|MainView:extra-large Border.adaptive">
-            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="CornerRadius" Value="5" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Width" Value="300" />
-            <Setter Property="Height" Value="150" />
-            <Setter Property="Margin" Value="2" />
+            <Setter Property="Background"
+                    Value="{DynamicResource ButtonBackground}" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="CornerRadius"
+                    Value="5" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="BorderBrush"
+                    Value="{DynamicResource ExpanderHeaderBorderBrush}" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Width"
+                    Value="300" />
+            <Setter Property="Height"
+                    Value="150" />
+            <Setter Property="Margin"
+                    Value="2" />
         </Style>
 
         <Style Selector="v|MainView:extra-large ItemsControl.adaptive-items-control">
@@ -145,21 +209,26 @@
     </UserControl.Styles>
 
     <Panel Name="{x:Static v:MainView.MainPanelName}">
-        <ContentControl Content="{Binding MainProgressBar}" VerticalAlignment="Top" />
-
-        <c:DialogControl x:Name="ErrorDialogControl" Classes="adaptive-dialog-host"
+        <ContentControl Content="{Binding MainProgressBar}"
+                        VerticalAlignment="Top" />
+        <c:DialogControl x:Name="ErrorDialogControl"
+                         Classes="adaptive-dialog-host"
                          IsOpen="{Binding ErrorDialogIsOpen}"
                          Dialog="{Binding ErrorDialogContent}">
-            <c:DialogControl x:Name="ProgressDialogControl" Classes="adaptive-dialog-host"
+            <c:DialogControl x:Name="ProgressDialogControl"
+                             Classes="adaptive-dialog-host"
                              IsOpen="{Binding ProgressDialogIsOpen}"
                              Dialog="{Binding ProgressDialogContent}">
-                <c:DialogControl x:Name="InputDialogControl" Classes="adaptive-dialog-host"
+                <c:DialogControl x:Name="InputDialogControl"
+                                 Classes="adaptive-dialog-host"
                                  IsOpen="{Binding InputDialogIsOpen}"
                                  Dialog="{Binding InputDialogContent}">
-                    <c:DialogControl x:Name="ContentDialogControl" Classes="adaptive-dialog-host"
+                    <c:DialogControl x:Name="ContentDialogControl"
+                                     Classes="adaptive-dialog-host"
                                      IsOpen="{Binding ContentDialogIsOpen}"
                                      Dialog="{Binding ContentDialogContent}">
-                        <ContentControl Name="{x:Static v:MainView.MainContentName}" Content="{Binding MainSplit}" />
+                        <ContentControl Name="{x:Static v:MainView.MainContentName}"
+                                        Content="{Binding MainSplit}" />
                     </c:DialogControl>
                 </c:DialogControl>
             </c:DialogControl>
