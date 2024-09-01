@@ -27,7 +27,6 @@ public class ErrorHandler : IErrorHandler
             return Result.AwaitableSuccess;
         }
 
-        Console.WriteLine(errors.Select(x => x.Message).ToArray().JoinString(Environment.NewLine));
         var viewFactory = serviceFactory.CreateService<IViewFactory>();
 
         return dialogViewer.ShowInfoDialogAsync(
@@ -63,7 +62,6 @@ public class ErrorHandler : IErrorHandler
             }
         }
 
-        Console.WriteLine(exception);
         var viewFactory = serviceFactory.CreateService<IViewFactory>();
 
         return dialogViewer.ShowInfoDialogAsync(
