@@ -4,6 +4,9 @@
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationId>com.SerhiiMaksymovFOP.Spravy</ApplicationId>
+        <ApplicationVersion>1</ApplicationVersion>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -18,6 +21,13 @@
         <AdditionalFileItemNames>false</AdditionalFileItemNames>
         <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
         <AndroidDebuggable>false</AndroidDebuggable>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+        <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+        <EnableProguard>true</EnableProguard>
+        <Optimize>true</Optimize>
+        <AndroidLinkTool>r8</AndroidLinkTool>
     </PropertyGroup>
 
     <ItemGroup>
