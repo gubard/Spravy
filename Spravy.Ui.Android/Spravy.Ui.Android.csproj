@@ -10,15 +10,17 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>aab</AndroidPackageFormat>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>full</TrimMode>
         <RunAOTCompilation>true</RunAOTCompilation>
         <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
         <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
         <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
-        
-        <!--<PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>-->
-        <!--<PublishAot>true</PublishAot>-->
+        <AdditionalFileItemNames>false</AdditionalFileItemNames>
+        <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     </PropertyGroup>
 
     <ItemGroup>

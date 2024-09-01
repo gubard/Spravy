@@ -151,9 +151,7 @@ public static class RootToDoItemsViewExtension
             .GetControl<ContentControl>(ElementNames.ListContentControl)
             .GetContentView<MultiToDoItemsView>()
             .GetControl<ContentControl>(ElementNames.ContentContentControl)
-            .GetContentView<ToDoItemsGroupByView>()
             .GetControl<ContentControl>(ElementNames.ContentContentControl)
-            .GetContentView<ToDoItemsGroupByStatusView>()
             .GetControl<ContentControl>(ElementNames.ReadyForCompletedContentControl)
             .GetVisualChildren()
             .ToArray();
