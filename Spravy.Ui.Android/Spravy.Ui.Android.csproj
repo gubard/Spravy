@@ -17,6 +17,7 @@
         <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
         <AdditionalFileItemNames>false</AdditionalFileItemNames>
         <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+        <AndroidDebuggable>false</AndroidDebuggable>
     </PropertyGroup>
 
     <ItemGroup>
