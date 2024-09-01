@@ -7,7 +7,7 @@ public abstract class MainUserControl<T> : UserControl
 
     public MainUserControl()
     {
-        Initialized += async (_, _) =>
+        Initialized += (_, _) =>
         {
             try
             {
