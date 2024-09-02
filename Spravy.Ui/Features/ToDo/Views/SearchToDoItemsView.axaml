@@ -74,7 +74,9 @@
 
             <StackPanel Grid.Column="2">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
-                <TextBox x:Name="SearchTextTextBox" Text="{Binding SearchText}" />
+                <AutoCompleteBox x:Name="SearchTextTextBox"
+                                 Text="{Binding SearchText}"
+                                 ItemsSource="{Binding SearchTexts}" />
             </StackPanel>
 
             <Button Grid.Column="3"

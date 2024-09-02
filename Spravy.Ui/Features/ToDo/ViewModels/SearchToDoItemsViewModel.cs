@@ -23,6 +23,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.objectStorage = objectStorage;
         this.toDoUiService = toDoUiService;
+        SearchTexts = new();
         Commands = new();
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
@@ -30,6 +31,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
 
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
+    public AvaloniaList<string> SearchTexts { get; }
 
     public override string ViewId
     {
@@ -63,6 +65,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
                         () =>
                         {
                             SearchText = s.SearchText;
+                            SearchTexts.UpdateUi(s.SearchTexts);
 
                             return Result.Success;
                         },

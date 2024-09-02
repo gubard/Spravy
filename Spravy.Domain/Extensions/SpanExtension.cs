@@ -30,6 +30,30 @@ public static class SpanExtension
         return false;
     }
 
+    public static Span<string> DistinctIgnoreNullOrWhiteSpace(this Span<string?> source)
+    {
+        var result = new Span<string>(new string[source.Length]);
+        var resultIndex = 0;
+
+        foreach (var current in source)
+        {
+            if (current.IsNullOrWhiteSpace())
+            {
+                continue;
+            }
+
+            if (result.Contains(current))
+            {
+                continue;
+            }
+
+            result[resultIndex] = current;
+            resultIndex++;
+        }
+
+        return result.Slice(0, resultIndex);
+    }
+
     public static Span<TSource> DistinctIgnoreNull<TSource>(this Span<TSource?> source)
     {
         var result = new Span<TSource>(new TSource[source.Length]);

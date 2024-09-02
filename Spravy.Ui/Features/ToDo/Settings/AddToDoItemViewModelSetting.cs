@@ -22,7 +22,7 @@ public class AddToDoItemViewModelSetting : IViewModelSetting<AddToDoItemViewMode
             .AsSpan();
 
         names[^1] = Name;
-        Names.AddRange(names.DistinctIgnoreNull());
+        Names.AddRange(names.DistinctIgnoreNullOrWhiteSpace());
     }
 
     public string Name { get; set; } = string.Empty;
