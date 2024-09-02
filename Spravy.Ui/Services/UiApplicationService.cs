@@ -9,14 +9,14 @@ public class UiApplicationService : IUiApplicationService
         mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
+    public Result StopCurrentView()
+    {
+        return mainSplitViewModel.Content.Stop();
+    }
+
     public Cvtar RefreshCurrentViewAsync(CancellationToken ct)
     {
-        if (mainSplitViewModel.Content is not IRefresh refresh)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        return refresh.RefreshAsync(ct);
+        return mainSplitViewModel.Content.RefreshAsync(ct);
     }
 
     public Result<Type> GetCurrentViewType()
