@@ -90,8 +90,9 @@ public partial class ToDoItemEntityNotify
         description = "Loading...";
         name = "Loading...";
         link = string.Empty;
-        status = ToDoItemStatus.ReadyForComplete;
+        status = ToDoItemStatus.Completed;
         orderIndex = uint.MaxValue;
+        isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;
         CompactCommands = new();
         SingleCommands = new();
