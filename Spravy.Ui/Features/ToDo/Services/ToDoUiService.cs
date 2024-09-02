@@ -160,7 +160,10 @@ public class ToDoUiService : IToDoUiService
                     )
                     .IfSuccessAsync(
                         ids =>
-                            toDoService
+                        {
+                            ushort loadedIndex = 0;
+
+                            return toDoService
                                 .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
@@ -170,13 +173,22 @@ public class ToDoUiService : IToDoUiService
                                                     i =>
                                                         toDoCache
                                                             .UpdateUi(i)
-                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                            .IfSuccess(notify =>
+                                                            {
+                                                                notify.LoadedIndex = loadedIndex;
+                                                                loadedIndex++;
+
+                                                                return toDoItemsView.AddOrUpdateUi(
+                                                                    notify
+                                                                );
+                                                            }),
                                                     ct
                                                 ),
                                             ct
                                         ),
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     )
         );
@@ -250,7 +262,10 @@ public class ToDoUiService : IToDoUiService
                     )
                     .IfSuccessAsync(
                         ids =>
-                            toDoService
+                        {
+                            ushort loadedIndex = 0;
+
+                            return toDoService
                                 .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
@@ -260,13 +275,22 @@ public class ToDoUiService : IToDoUiService
                                                     i =>
                                                         toDoCache
                                                             .UpdateUi(i)
-                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                            .IfSuccess(notify =>
+                                                            {
+                                                                notify.LoadedIndex = loadedIndex;
+                                                                loadedIndex++;
+
+                                                                return toDoItemsView.AddOrUpdateUi(
+                                                                    notify
+                                                                );
+                                                            }),
                                                     ct
                                                 ),
                                             ct
                                         ),
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     )
         );
@@ -350,7 +374,10 @@ public class ToDoUiService : IToDoUiService
                     )
                     .IfSuccessAsync(
                         ids =>
-                            toDoService
+                        {
+                            ushort loadedIndex = 0;
+
+                            return toDoService
                                 .GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                                 .IfSuccessForEachAsync(
                                     x =>
@@ -360,13 +387,22 @@ public class ToDoUiService : IToDoUiService
                                                     i =>
                                                         toDoCache
                                                             .UpdateUi(i)
-                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                            .IfSuccess(notify =>
+                                                            {
+                                                                notify.LoadedIndex = loadedIndex;
+                                                                loadedIndex++;
+
+                                                                return toDoItemsView.AddOrUpdateUi(
+                                                                    notify
+                                                                );
+                                                            }),
                                                     ct
                                                 ),
                                             ct
                                         ),
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     )
         );

@@ -53,7 +53,7 @@ public static class AvaloniaListExtension
         return new(list.ToArray());
     }
 
-    private static int BinarySearch(
+    private static int BinarySearchOrderIndex(
         this AvaloniaList<ToDoItemEntityNotify> list,
         ToDoItemEntityNotify x,
         int low,
@@ -74,19 +74,64 @@ public static class AvaloniaListExtension
 
         if (x.OrderIndex > list[mid].OrderIndex)
         {
-            return list.BinarySearch(x, mid + 1, high);
+            return list.BinarySearchOrderIndex(x, mid + 1, high);
         }
 
-        return list.BinarySearch(x, low, mid - 1);
+        return list.BinarySearchOrderIndex(x, low, mid - 1);
     }
 
-    public static void BinarySort(this AvaloniaList<ToDoItemEntityNotify> list)
+    public static void BinarySortByOrderIndex(this AvaloniaList<ToDoItemEntityNotify> list)
     {
         for (var i = 1; i < list.Count; ++i)
         {
             var j = i - 1;
             var key = list[i];
-            var pos = list.BinarySearch(key, 0, j);
+            var pos = list.BinarySearchOrderIndex(key, 0, j);
+
+            while (j >= pos)
+            {
+                list[j + 1] = list[j];
+                j--;
+            }
+
+            list[j + 1] = key;
+        }
+    }
+
+    private static int BinarySearchLoadedIndex(
+        this AvaloniaList<ToDoItemEntityNotify> list,
+        ToDoItemEntityNotify x,
+        int low,
+        int high
+    )
+    {
+        if (high <= low)
+        {
+            return x.LoadedIndex > list[low].LoadedIndex ? low + 1 : low;
+        }
+
+        var mid = (low + high) / 2;
+
+        if (x.LoadedIndex == list[mid].LoadedIndex)
+        {
+            return mid + 1;
+        }
+
+        if (x.LoadedIndex > list[mid].LoadedIndex)
+        {
+            return list.BinarySearchLoadedIndex(x, mid + 1, high);
+        }
+
+        return list.BinarySearchLoadedIndex(x, low, mid - 1);
+    }
+
+    public static void BinarySortByLoadedIndex(this AvaloniaList<ToDoItemEntityNotify> list)
+    {
+        for (var i = 1; i < list.Count; ++i)
+        {
+            var j = i - 1;
+            var key = list[i];
+            var pos = list.BinarySearchLoadedIndex(key, 0, j);
 
             while (j >= pos)
             {

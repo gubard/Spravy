@@ -1,11 +1,16 @@
+using Spravy.Ui.Features.ToDo.Errors;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
 {
+    private readonly SortBy sortBy;
+
     [ObservableProperty]
     private bool isExpanded = true;
 
     public ToDoItemsViewModel(
+        SortBy sortBy,
         TextLocalization header,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
@@ -13,6 +18,7 @@ public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
     {
         Items = new();
         Header = header;
+        this.sortBy = sortBy;
 
         SwitchAllSelectionCommand = SpravyCommand.Create(
             ct =>
@@ -70,7 +76,17 @@ public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
             Items.Add(item);
         }
 
-        Items.BinarySort();
+        switch (sortBy)
+        {
+            case SortBy.OrderIndex:
+                Items.BinarySortByOrderIndex();
+                break;
+            case SortBy.LoadedIndex:
+                Items.BinarySortByLoadedIndex();
+                break;
+            default:
+                return new(new SortByOutOfRangeError(sortBy));
+        }
 
         return Result.Success;
     }

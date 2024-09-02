@@ -82,6 +82,9 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private TypeOfPeriodicity typeOfPeriodicity;
 
+    [ObservableProperty]
+    private ushort loadedIndex;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;

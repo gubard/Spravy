@@ -319,7 +319,7 @@ public class ToDoCache : IToDoCache
                             children.Where(x => !currentChildrenIds.Span.Contains(x.Id)).ToArray()
                         );
 
-                        item.Children.BinarySort();
+                        item.Children.BinarySortByOrderIndex();
 
                         return Result.Success;
                     })
