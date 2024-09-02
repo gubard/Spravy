@@ -8,12 +8,10 @@
                    xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                    xmlns:c="clr-namespace:Spravy.Ui.Controls"
                    xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                   xmlns:e="clr-namespace:Spravy.Ui.Enums"
                    xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                    x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                    x:DataType="vm:MultiToDoItemsViewModel"
-                   Classes.card="{Binding ToDoItemViewType, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static e:ToDoItemViewType.Card}}"
                    Classes.none="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.None}}"
                    Classes.by-status="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByStatus}}"
                    Classes.by-type="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByType}}"
@@ -50,26 +48,10 @@
         <Style Selector="v|MultiToDoItemsView.multi Button.select-all">
             <Setter Property="IsVisible" Value="True" />
         </Style>
-
-        <Style Selector="v|MultiToDoItemsView.card ItemsControl.to-do-items-control">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="v|MultiToDoItemsView.card Button.to-do-item">
-            <Setter Property="Width" Value="300" />
-        </Style>
-
-        <Style Selector="v|MultiToDoItemsView.card ToggleButton.to-do-item">
-            <Setter Property="Width" Value="200" />
-        </Style>
     </UserControl.Styles>
 
     <StackPanel x:Name="MainPanel">
-        <Grid ColumnDefinitions="Auto,Auto,*"
+        <Grid ColumnDefinitions="Auto,*"
               Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
@@ -80,12 +62,6 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="2">
-                <TextBlock Classes="field"
-                           Text="{DynamicResource MultiToDoItemsView.ViewLike}" />
-                <c:EnumSelectorControl SelectedEnum="{Binding ToDoItemViewType}" />
             </StackPanel>
         </Grid>
 

@@ -145,9 +145,6 @@ public static class UiHelper
     public static ReadOnlyMemory<GroupBy> GroupBys =
         new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType]);
 
-    public static ReadOnlyMemory<ToDoItemViewType> ToDoItemViewTypes =
-        new([ToDoItemViewType.List, ToDoItemViewType.Card]);
-
     public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
         new([DescriptionType.PlainText, DescriptionType.Markdown]);
 
@@ -187,11 +184,6 @@ public static class UiHelper
         if (typeof(GroupBy) == type)
         {
             return new(GroupBys.ToArray().OfType<object>().ToArray());
-        }
-
-        if (typeof(ToDoItemViewType) == type)
-        {
-            return new(ToDoItemViewTypes.ToArray().OfType<object>().ToArray());
         }
 
         if (typeof(DescriptionType) == type)
