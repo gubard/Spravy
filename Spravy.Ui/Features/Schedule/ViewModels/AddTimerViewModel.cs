@@ -116,6 +116,8 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParam
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
+        return objectStorage
+            .SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct)
+            .IfSuccessAsync(() => EventViewModel.SaveStateAsync(ct), ct);
     }
 }
