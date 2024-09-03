@@ -230,14 +230,7 @@ public class ViewFactory : IViewFactory
 
     public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel()
     {
-        return new(CreateToDoItemSelectorViewModel(), serializer);
-    }
-
-    public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(CreateToDoItemSelectorViewModel(item), serializer);
+        return new(CreateToDoItemSelectorViewModel(), serializer, objectStorage, toDoCache);
     }
 
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
@@ -354,9 +347,11 @@ public class ViewFactory : IViewFactory
         );
     }
 
-    public AddTimerViewModel CreateAddTimerViewModel(ToDoItemEntityNotify item)
+    public ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
+        ToDoItemEntityNotify item
+    )
     {
-        return new(item.ToOption(), this, objectStorage, errorHandler, taskProgressService);
+        return new(item, objectStorage, serializer, errorHandler, taskProgressService);
     }
 
     public ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header)
@@ -371,7 +366,7 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new(new(), this, objectStorage, errorHandler, taskProgressService);
+        return new(this, objectStorage, errorHandler, taskProgressService);
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()

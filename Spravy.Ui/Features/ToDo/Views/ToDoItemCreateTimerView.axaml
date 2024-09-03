@@ -1,0 +1,37 @@
+<c:DialogableUserControl x:TypeArguments="vm:ToDoItemCreateTimerViewModel"
+                         xmlns="https://github.com/avaloniaui"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemCreateTimerView"
+                         x:DataType="vm:ToDoItemCreateTimerViewModel">
+    <c:GroupBoxControl Header="{DynamicResource ToDoItemCreateTimerView.Header}">
+        <StackPanel>
+            <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
+            <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
+            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
+            <Calendar SelectedDate="{Binding Date}" />
+            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
+            <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
+
+            <c:ListControl ItemsSource="{Binding Times}">
+                <c:ListControl.DataTemplates>
+                    <DataTemplate DataType="system:TimeSpan">
+                        <Button Command="{Binding $parent[v:ToDoItemCreateTimerView].ViewModel.AddTime.Command}"
+                                CommandParameter="{Binding}">
+                            <StackPanel Classes="horizontal">
+                                <TextBlock Text="+" />
+                                <TextBlock Text="{Binding}" />
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </c:ListControl.DataTemplates>
+            </c:ListControl>
+        </StackPanel>
+    </c:GroupBoxControl>
+</c:DialogableUserControl>

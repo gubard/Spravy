@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.Schedule.Interfaces;
 
-public interface IEventViewModel
+public interface IEventViewModel : IStateHolder
 {
     Guid Id { get; }
 

@@ -100,6 +100,11 @@ public class Result<TValue>
         return this.ToValueTaskResult().ConfigureAwait(false);
     }
 
+    public TValue? GetValueOrDefault()
+    {
+        return value;
+    }
+
     public bool TryGetValue([MaybeNullWhen(false)] out TValue result)
     {
         if (IsHasError)

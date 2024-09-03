@@ -21,6 +21,11 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<MainView>());
         }
 
+        if (typeof(ToDoItemCreateTimerViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<ToDoItemCreateTimerView>());
+        }
+
         if (typeof(PolicyViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<PolicyView>());

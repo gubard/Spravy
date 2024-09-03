@@ -2734,7 +2734,7 @@ public class SpravyCommandService
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(() => vm.ToAddTimerParametersAsync(ct), ct)
+                            .IfSuccessAsync(() => vm.CreateAddTimerParametersAsync(ct), ct)
                             .IfSuccessAsync(
                                 parameters => scheduleService.AddTimerAsync(parameters, ct),
                                 ct
@@ -2777,11 +2777,11 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmDialogAsync(
                     viewFactory,
                     DialogViewLayer.Content,
-                    viewFactory.CreateAddTimerViewModel(item),
+                    viewFactory.CreateToDoItemCreateTimerViewModel(item),
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(() => vm.ToAddTimerParametersAsync(ct), ct)
+                            .IfSuccessAsync(() => vm.CreateAddTimerParametersAsync(ct), ct)
                             .IfSuccessAsync(
                                 parameters => scheduleService.AddTimerAsync(parameters, ct),
                                 ct

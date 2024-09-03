@@ -1,66 +1,8 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-    <!--PolicyView-->
-    <sys:String x:Key="PolicyView.Header">Policy</sys:String>
-    <sys:String x:Key="PolicyView.Policy">
-        Terms of Use
-        Introduction
-        These Terms of Use ("Terms") govern your use of Spravy ("the App") provided by IE Serhii Maksymov. By accessing or using the App, you agree to comply with these Terms.
-        Use of the App
-        You must be at least 13 years old to use the App.
-        You agree not to use the App for any illegal or unauthorized purpose.
-        You are solely responsible for any data, content, or activity that occurs under your account.
-        Intellectual Property
-        All content and materials available in the App are the property of IE Serhii Maksymov and are protected by copyright and other intellectual property laws.
-        You may not modify, reproduce, or distribute any content from the App without prior written permission.
-        Privacy
-        Please refer to our Privacy Policy for information on how we collect, use, and disclose your personal information.
-        Disclaimer of Warranties
-        The App is provided on an "as is" and "as available" basis without any warranties of any kind.
-        IE Serhii Maksymov does not guarantee the accuracy, reliability, or availability of the App.
-        Limitation of Liability
-        IE Serhii Maksymov will not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of the App.
-        Indemnification
-        You agree to indemnify and hold harmless IE Serhii Maksymov from any claims, damages, or losses arising out of your use of the App or violation of these Terms.
-        Changes to Terms
-        IE Serhii Maksymov reserves the right to modify or revise these Terms at any time. Continued use of the App after any changes indicates your acceptance of the modified Terms.
-        Governing Law
-        These Terms are governed by and construed in accordance with the laws of Ukraine.
-        Contact Us
-        If you have any questions or concerns about these Terms, please contact us at feedback@spravy.com.ua
-        Privacy Policy
-        Information We Collect
-        We collect personal information you provide to us, such as your name, email address, and profile information, when you register for an account or use certain features of the App.
-        How do we use it?
-        Login
-        Creation of the Client's Personal Account;
-        To verify a Customer during the authorization process.
-        Email
-        To identify you and your activities during the provision of the Service;
-        To prevent unauthorized access to your Personal Account;
-        To verify the Customer during the authorization process;
-        To provide you with necessary information and updates;
-        To provide general Customer support. For these purposes, we may contact you by email.
-        We also collect non-personal technical information such as device information, time zone, and usage data automatically when you access or use the App.
-
-
-        Sharing of Your Information
-        We may also share your information in response to legal requests or to protect our rights or property.
-
-        Data Retention
-        We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy.
-        Security
-        We take reasonable measures to protect your information from unauthorized access, disclosure, or alteration.
-        Your Choices
-        You can access, update, or delete your account information at any time by logging into your account settings.
-        Children's Privacy
-        The App is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13.
-        Changes to Privacy Policy
-        We reserve the right to modify or revise this Privacy Policy at any time. We will notify you of any changes by posting the new Privacy Policy on this page.
-        Contact Us
-        If you have any questions or concerns about this Privacy Policy, please contact us at feedback@spravy.com.ua
-    </sys:String>
+    <!--ToDoItemCreateTimerView-->
+    <sys:String x:Key="ToDoItemCreateTimerView.Header">Create timer</sys:String>
 
     <!--Notification-->
     <sys:String x:Key="Notification.CopyToClipboard">Copy to clipboard</sys:String>
@@ -348,4 +290,65 @@
     <!--ValueToDoItemSettingsView-->
     <sys:String x:Key="ValueToDoItemSettingsView.Type">Type</sys:String>
     <sys:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
+
+    <!--PolicyView-->
+    <sys:String x:Key="PolicyView.Header">Policy</sys:String>
+    <sys:String x:Key="PolicyView.Policy">
+        Terms of Use
+        Introduction
+        These Terms of Use ("Terms") govern your use of Spravy ("the App") provided by IE Serhii Maksymov. By accessing or using the App, you agree to comply with these Terms.
+        Use of the App
+        You must be at least 13 years old to use the App.
+        You agree not to use the App for any illegal or unauthorized purpose.
+        You are solely responsible for any data, content, or activity that occurs under your account.
+        Intellectual Property
+        All content and materials available in the App are the property of IE Serhii Maksymov and are protected by copyright and other intellectual property laws.
+        You may not modify, reproduce, or distribute any content from the App without prior written permission.
+        Privacy
+        Please refer to our Privacy Policy for information on how we collect, use, and disclose your personal information.
+        Disclaimer of Warranties
+        The App is provided on an "as is" and "as available" basis without any warranties of any kind.
+        IE Serhii Maksymov does not guarantee the accuracy, reliability, or availability of the App.
+        Limitation of Liability
+        IE Serhii Maksymov will not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of the App.
+        Indemnification
+        You agree to indemnify and hold harmless IE Serhii Maksymov from any claims, damages, or losses arising out of your use of the App or violation of these Terms.
+        Changes to Terms
+        IE Serhii Maksymov reserves the right to modify or revise these Terms at any time. Continued use of the App after any changes indicates your acceptance of the modified Terms.
+        Governing Law
+        These Terms are governed by and construed in accordance with the laws of Ukraine.
+        Contact Us
+        If you have any questions or concerns about these Terms, please contact us at feedback@spravy.com.ua
+        Privacy Policy
+        Information We Collect
+        We collect personal information you provide to us, such as your name, email address, and profile information, when you register for an account or use certain features of the App.
+        How do we use it?
+        Login
+        Creation of the Client's Personal Account;
+        To verify a Customer during the authorization process.
+        Email
+        To identify you and your activities during the provision of the Service;
+        To prevent unauthorized access to your Personal Account;
+        To verify the Customer during the authorization process;
+        To provide you with necessary information and updates;
+        To provide general Customer support. For these purposes, we may contact you by email.
+        We also collect non-personal technical information such as device information, time zone, and usage data automatically when you access or use the App.
+
+
+        Sharing of Your Information
+        We may also share your information in response to legal requests or to protect our rights or property.
+
+        Data Retention
+        We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy.
+        Security
+        We take reasonable measures to protect your information from unauthorized access, disclosure, or alteration.
+        Your Choices
+        You can access, update, or delete your account information at any time by logging into your account settings.
+        Children's Privacy
+        The App is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13.
+        Changes to Privacy Policy
+        We reserve the right to modify or revise this Privacy Policy at any time. We will notify you of any changes by posting the new Privacy Policy on this page.
+        Contact Us
+        If you have any questions or concerns about this Privacy Policy, please contact us at feedback@spravy.com.ua
+    </sys:String>
 </ResourceDictionary>

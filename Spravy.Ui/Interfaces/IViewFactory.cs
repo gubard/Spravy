@@ -4,10 +4,10 @@ namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
 {
-    AddTimerViewModel CreateAddTimerViewModel(ToDoItemEntityNotify item);
+    AddTimerViewModel CreateAddTimerViewModel();
+    ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(ToDoItemEntityNotify item);
     ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header);
     DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item);
-    AddTimerViewModel CreateAddTimerViewModel();
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel();
     MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(SortBy sortBy);
     TextViewModel CreateTextViewModel();
@@ -41,10 +41,6 @@ public interface IViewFactory
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item);
     AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel();
-
-    AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel(
-        ToDoItemEntityNotify item
-    );
 
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         ToDoItemEntityNotify item,

@@ -3,7 +3,7 @@ using Spravy.Ui.Features.Schedule.Settings;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public partial class AddTimerViewModel : DialogableViewModelBase
+public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParametersFactory
 {
     private readonly IViewFactory viewFactory;
     private readonly IObjectStorage objectStorage;
@@ -24,7 +24,6 @@ public partial class AddTimerViewModel : DialogableViewModelBase
     private IEventViewModel eventViewModel;
 
     public AddTimerViewModel(
-        Option<ToDoItemEntityNotify> item,
         IViewFactory viewFactory,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
@@ -33,7 +32,6 @@ public partial class AddTimerViewModel : DialogableViewModelBase
     {
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
-        Item = item;
         eventViewModel = GetEventViewModel();
 
         AddTime = SpravyCommand.Create<TimeSpan>(
@@ -54,31 +52,26 @@ public partial class AddTimerViewModel : DialogableViewModelBase
         );
     }
 
-    public Option<ToDoItemEntityNotify> Item { get; }
     public SpravyCommand AddTime { get; }
     public AvaloniaList<string> Names { get; } = new();
     public AvaloniaList<TimeSpan> Times { get; } = new();
 
     public override string ViewId
     {
-        get =>
-            Item.TryGetValue(out var i)
-                ? $"{TypeCache<AddTimerViewModel>.Type}:{i.Id}"
-                : $"{TypeCache<AddTimerViewModel>.Type}";
+        get => $"{TypeCache<AddTimerViewModel>.Type}";
     }
 
     private IEventViewModel GetEventViewModel()
     {
         return Type switch
         {
-            EventType.AddToDoItemToFavorite => Item.TryGetValue(out var item)
-                ? viewFactory.CreateAddToDoItemToFavoriteEventViewModel(item)
-                : viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
+            EventType.AddToDoItemToFavorite
+                => viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
             _ => throw new ArgumentOutOfRangeException(),
         };
     }
 
-    public ConfiguredValueTaskAwaitable<Result<AddTimerParameters>> ToAddTimerParametersAsync(
+    public ConfiguredValueTaskAwaitable<Result<AddTimerParameters>> CreateAddTimerParametersAsync(
         CancellationToken ct
     )
     {
@@ -98,14 +91,18 @@ public partial class AddTimerViewModel : DialogableViewModelBase
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct)
+        return EventViewModel
+            .LoadStateAsync(ct)
+            .IfSuccessAsync(
+                () => objectStorage.GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct),
+                ct
+            )
             .IfSuccessAsync(
                 setting =>
                     this.PostUiBackground(
                         () =>
                         {
-                            Name = Item.TryGetValue(out var i) ? i.Name : setting.Name;
+                            Name = setting.Name;
                             Names.UpdateUi(setting.Names);
                             Times.UpdateUi(setting.Times);
 
