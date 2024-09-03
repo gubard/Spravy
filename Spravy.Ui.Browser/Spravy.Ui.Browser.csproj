@@ -13,6 +13,9 @@
         <IsTrimmed>true</IsTrimmed>
         <TrimMode>full</TrimMode>
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
+        <RunAOTCompilation>true</RunAOTCompilation>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <WasmEnableWebcil>false</WasmEnableWebcil>
     </PropertyGroup>
 
     <ItemGroup>
