@@ -25,7 +25,8 @@ public class SpravyCommandService
         IViewFactory viewFactory,
         IToDoUiService toDoUiService,
         IScheduleService scheduleService,
-        IEventUpdater eventUpdater
+        IEventUpdater eventUpdater,
+        Application application
     )
     {
         this.navigator = navigator;
@@ -2795,6 +2796,45 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        MainViewInitialized = SpravyCommand.Create(
+            ct =>
+            {
+                var key = TypeCache<SettingViewModel>.Type.Name;
+
+                return objectStorage
+                    .IsExistsAsync(key, ct)
+                    .IfSuccessAsync(
+                        isExists =>
+                        {
+                            if (isExists)
+                            {
+                                return objectStorage
+                                    .GetObjectAsync<Setting.Setting>(key, ct)
+                                    .IfSuccessAsync(
+                                        setting =>
+                                            setting.PostUiBackground(
+                                                () =>
+                                                {
+                                                    application.RequestedThemeVariant =
+                                                        setting.Theme.ToThemeVariant();
+
+                                                    return Result.Success;
+                                                },
+                                                ct
+                                            ),
+                                        ct
+                                    );
+                            }
+
+                            return Result.AwaitableSuccess;
+                        },
+                        ct
+                    );
+            },
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2892,6 +2932,7 @@ public class SpravyCommandService
 
     public SpravyCommand VerificationCodeViewModelInitialized { get; }
     public SpravyCommand MainSplitViewModelInitialized { get; }
+    public SpravyCommand MainViewInitialized { get; }
     public SpravyCommand UpdateEmail { get; }
     public SpravyCommand VerificationEmail { get; }
 

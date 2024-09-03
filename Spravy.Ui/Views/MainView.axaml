@@ -213,7 +213,8 @@
             </Setter>
         </Style>
     </UserControl.Styles>
-    <Panel Name="{x:Static v:MainView.MainPanelName}">
+    
+    <Panel x:Name="MainPanel">
         <ContentControl Content="{Binding MainProgressBar}"
                         VerticalAlignment="Top" />
         <c:DialogControl x:Name="ErrorDialogControl"
@@ -232,7 +233,7 @@
                                      Classes="adaptive-dialog-host"
                                      IsOpen="{Binding ContentDialogIsOpen}"
                                      Dialog="{Binding ContentDialogContent}">
-                        <ContentControl Name="{x:Static v:MainView.MainContentName}"
+                        <ContentControl x:Name="MainSplit"
                                         Content="{Binding MainSplit}" />
                     </c:DialogControl>
                 </c:DialogControl>

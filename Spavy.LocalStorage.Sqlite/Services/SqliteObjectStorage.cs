@@ -16,7 +16,7 @@ public class SqliteObjectStorage : IObjectStorage
     {
         this.serializer = serializer;
         this.file = file;
-        connectionString = $"DataSource={file}";
+        connectionString = $"DataSource={file.FullName}";
         Init();
     }
 

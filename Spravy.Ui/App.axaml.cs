@@ -31,12 +31,15 @@ public class App : Application
                 var currentType = topLevel.Width switch
                 {
                     <= MaterialDesign.MaxExtraSmall => MaterialDesignSizeType.ExtraSmall,
-                    > MaterialDesign.MaxExtraSmall and <= MaterialDesign.MaxSmall =>
-                        MaterialDesignSizeType.Small,
-                    > MaterialDesign.MaxSmall and <= MaterialDesign.MaxMedium =>
-                        MaterialDesignSizeType.Medium,
-                    > MaterialDesign.MaxMedium and <= MaterialDesign.MaxLarge =>
-                        MaterialDesignSizeType.Large,
+                    > MaterialDesign.MaxExtraSmall
+                    and <= MaterialDesign.MaxSmall
+                        => MaterialDesignSizeType.Small,
+                    > MaterialDesign.MaxSmall
+                    and <= MaterialDesign.MaxMedium
+                        => MaterialDesignSizeType.Medium,
+                    > MaterialDesign.MaxMedium
+                    and <= MaterialDesign.MaxLarge
+                        => MaterialDesignSizeType.Large,
                     > MaterialDesign.MaxLarge => MaterialDesignSizeType.ExtraLarge,
                     _ => MaterialDesignSizeType.ExtraSmall,
                 };
@@ -68,8 +71,6 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        SetTheme().GetAwaiter().GetResult().ThrowIfError();
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var window = serviceFactory
@@ -85,46 +86,11 @@ public class App : Application
                 .Create()
                 .ThrowIfError()
                 .As<Control>();
+
             singleViewPlatform.MainView = control;
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private Cvtar SetTheme()
-    {
-        var objectStorage = serviceFactory.CreateService<IObjectStorage>();
-        var ct = CancellationToken.None;
-        var key = TypeCache<SettingViewModel>.Type.Name;
-
-        return objectStorage
-            .IsExistsAsync(key, ct)
-            .IfSuccessAsync(
-                isExists =>
-                {
-                    if (isExists)
-                    {
-                        return objectStorage
-                            .GetObjectAsync<Setting.Setting>(key, ct)
-                            .IfSuccessAsync(
-                                setting =>
-                                    setting.PostUiBackground(
-                                        () =>
-                                        {
-                                            RequestedThemeVariant = setting.Theme.ToThemeVariant();
-
-                                            return Result.Success;
-                                        },
-                                        ct
-                                    ),
-                                ct
-                            );
-                    }
-
-                    return Result.AwaitableSuccess;
-                },
-                ct
-            );
     }
 
     private async void ToDoItemTapped(object? sender, TappedEventArgs e)
@@ -187,7 +153,8 @@ public class App : Application
     {
         var mainPanel = DiHelper
             .ServiceFactory.CreateService<MainView>()
-            .FindControl<Panel>(MainView.MainPanelName);
+            .FindControl<Panel>("MainPanel");
+
         var topLevel = DiHelper.ServiceFactory.CreateService<TopLevel>();
 
         if (mainPanel is null)

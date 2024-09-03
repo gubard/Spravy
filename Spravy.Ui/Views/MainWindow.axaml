@@ -12,7 +12,7 @@
         Height="600"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent">
-    <Panel x:Name="PART_Panel">
+    <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
                 <ExperimentalAcrylicMaterial
@@ -23,6 +23,6 @@
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
 
-        <ContentControl Content="{Binding MainViewModel}" />
+        <ContentControl x:Name="MainView" Content="{Binding MainViewModel}" />
     </Panel>
 </Window>

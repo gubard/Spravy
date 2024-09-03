@@ -14,60 +14,53 @@ public static class UiHelper
 
     static UiHelper()
     {
-        try
-        {
-            var commands = DiHelper.ServiceFactory.CreateService<SpravyCommandService>();
-            var commandsNotify =
-                DiHelper.ServiceFactory.CreateService<SpravyCommandNotifyService>();
-            NavigateToToDoItem = commands.NavigateToToDoItem.Command;
-            Complete = commands.Complete.Command;
-            RemoveFromFavorite = commands.RemoveFromFavorite.Command;
-            AddToFavorite = commands.AddToFavorite.Command;
-            OpenLink = commands.OpenLink.Command;
-            SendNewVerificationCode = commands.SendNewVerificationCode.Command;
-            VerificationCodeViewModelInitialized = commands
-                .VerificationCodeViewModelInitialized
-                .Command;
-            NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
-            Back = commands.Back.Command;
-            SwitchPane = commands.SwitchPane.Command;
-            AddRootToDoItem = commands.AddRootToDoItem.Command;
-            Logout = commands.Logout.Command;
-            RefreshCurrentView = commands.RefreshCurrentView.Command;
-            SetToDoItemDescription = commands.SetToDoItemDescription.Command;
-            AddPasswordItem = commands.AddPasswordItem.Command;
-            ShowPasswordItemSetting = commands.ShowPasswordItemSetting.Command;
-            NavigateToActiveToDoItem = commands.NavigateToActiveToDoItem.Command;
-            ForgotPasswordViewInitialized = commands.ForgotPasswordViewInitialized.Command;
-            ForgotPassword = commands.ForgotPassword.Command;
-            CreateUserViewEnter = commands.CreateUserViewEnter.Command;
-            CreateUser = commands.CreateUser.Command;
-            LoginViewInitialized = commands.LoginViewInitialized.Command;
-            LoginViewEnter = commands.LoginViewEnter.Command;
-            Login = commands.Login.Command;
-            PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
-            GeneratePassword = commands.GeneratePassword.Command;
-            DeletePasswordItem = commands.DeletePasswordItem.Command;
-            NavigateToRootToDoItems = commands.NavigateToRootToDoItems.Command;
-            NavigateToTodayToDoItems = commands.NavigateToTodayToDoItems.Command;
-            NavigateToSearchToDoItems = commands.NavigateToSearchToDoItems.Command;
-            NavigateToPasswordGenerator = commands.NavigateToPasswordGenerator.Command;
-            NavigateToSetting = commands.NavigateToSetting.Command;
-            NavigateToPolicy = commands.NavigateToPolicy.Command;
-            NavigateToCreateUser = commands.NavigateToCreateUser.Command;
-            NavigateToEmailOrLoginInput = commands.NavigateToEmailOrLoginInput.Command;
-            CopyToClipboard = commands.CopyToClipboard.Command;
-            UpdateEmail = commands.UpdateEmail.Command;
-            VerificationEmail = commands.VerificationEmail.Command;
-            MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
-            NavigateToTimers = commands.NavigateToTimers.Command;
-            AddTimer = commands.AddTimer.Command;
-            DeleteTimer = commands.DeleteTimer.Command;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        var commands = DiHelper.ServiceFactory.CreateService<SpravyCommandService>();
+        var commandsNotify = DiHelper.ServiceFactory.CreateService<SpravyCommandNotifyService>();
+        NavigateToToDoItem = commands.NavigateToToDoItem.Command;
+        Complete = commands.Complete.Command;
+        RemoveFromFavorite = commands.RemoveFromFavorite.Command;
+        AddToFavorite = commands.AddToFavorite.Command;
+        OpenLink = commands.OpenLink.Command;
+        SendNewVerificationCode = commands.SendNewVerificationCode.Command;
+        VerificationCodeViewModelInitialized = commands
+            .VerificationCodeViewModelInitialized
+            .Command;
+        NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
+        Back = commands.Back.Command;
+        SwitchPane = commands.SwitchPane.Command;
+        AddRootToDoItem = commands.AddRootToDoItem.Command;
+        Logout = commands.Logout.Command;
+        RefreshCurrentView = commands.RefreshCurrentView.Command;
+        SetToDoItemDescription = commands.SetToDoItemDescription.Command;
+        AddPasswordItem = commands.AddPasswordItem.Command;
+        ShowPasswordItemSetting = commands.ShowPasswordItemSetting.Command;
+        NavigateToActiveToDoItem = commands.NavigateToActiveToDoItem.Command;
+        ForgotPasswordViewInitialized = commands.ForgotPasswordViewInitialized.Command;
+        ForgotPassword = commands.ForgotPassword.Command;
+        CreateUserViewEnter = commands.CreateUserViewEnter.Command;
+        CreateUser = commands.CreateUser.Command;
+        LoginViewInitialized = commands.LoginViewInitialized.Command;
+        LoginViewEnter = commands.LoginViewEnter.Command;
+        Login = commands.Login.Command;
+        PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
+        GeneratePassword = commands.GeneratePassword.Command;
+        DeletePasswordItem = commands.DeletePasswordItem.Command;
+        NavigateToRootToDoItems = commands.NavigateToRootToDoItems.Command;
+        NavigateToTodayToDoItems = commands.NavigateToTodayToDoItems.Command;
+        NavigateToSearchToDoItems = commands.NavigateToSearchToDoItems.Command;
+        NavigateToPasswordGenerator = commands.NavigateToPasswordGenerator.Command;
+        NavigateToSetting = commands.NavigateToSetting.Command;
+        NavigateToPolicy = commands.NavigateToPolicy.Command;
+        NavigateToCreateUser = commands.NavigateToCreateUser.Command;
+        NavigateToEmailOrLoginInput = commands.NavigateToEmailOrLoginInput.Command;
+        CopyToClipboard = commands.CopyToClipboard.Command;
+        UpdateEmail = commands.UpdateEmail.Command;
+        VerificationEmail = commands.VerificationEmail.Command;
+        MainSplitViewModelInitialized = commands.MainSplitViewModelInitialized.Command;
+        NavigateToTimers = commands.NavigateToTimers.Command;
+        AddTimer = commands.AddTimer.Command;
+        DeleteTimer = commands.DeleteTimer.Command;
+        MainViewInitialized = commands.MainViewInitialized.Command;
     }
 
     public static readonly ICommand MainSplitViewModelInitialized;
@@ -106,6 +99,7 @@ public static class UiHelper
     public static readonly ICommand CreateUserViewEnter;
     public static readonly ICommand CreateUser;
     public static readonly ICommand LoginViewInitialized;
+    public static readonly ICommand MainViewInitialized;
     public static readonly ICommand LoginViewEnter;
     public static readonly ICommand Login;
     public static readonly ICommand PasswordGeneratorViewInitialized;

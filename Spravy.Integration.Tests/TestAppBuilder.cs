@@ -22,7 +22,7 @@ public class TestAppBuilder
         return AppBuilder
             .Configure<App>()
             .UseSkia()
-            .UseHeadless(new() { UseHeadlessDrawing = false })
+            .UseHeadless(new() { UseHeadlessDrawing = false, })
             .WithShantellSansFont()
             .WithInterFont();
     }

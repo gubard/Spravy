@@ -7,8 +7,8 @@ public static class ContentControlExtension
         return contentControl
             .GetVisualChildren()
             .Single()
-            .GetVisualChildren()
-            .Single()
+            .ThrowIfIsNotCast<ContentPresenter>()
+            .Child.ThrowIfNull()
             .ThrowIfIsNotCast<TView>();
     }
 }

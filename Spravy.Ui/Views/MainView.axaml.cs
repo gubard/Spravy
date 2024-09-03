@@ -11,12 +11,10 @@ public partial class MainView : UserControl
     private readonly IUiApplicationService uiApplicationService =
         DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
 
-    public const string MainContentName = "main-content-control";
-    public const string MainPanelName = "main-panel-control";
-
     public MainView()
     {
         InitializeComponent();
+        Initialized += (_, _) => UiHelper.MainViewInitialized.Execute(null);
         SetPseudoClasses(App.CurrentApp.ThrowIfNull().MaterialDesignSizeType);
         App.MaterialDesignSizeTypeChanged += SetPseudoClasses;
         AddHandler(DragDrop.DropEvent, Drop);
@@ -75,7 +73,7 @@ public partial class MainView : UserControl
             return;
         }
 
-        var mainPanel = this.FindControl<Panel>(MainPanelName);
+        var mainPanel = this.FindControl<Panel>("MainPanel");
 
         if (mainPanel is null)
         {

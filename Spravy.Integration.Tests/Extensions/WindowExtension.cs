@@ -147,33 +147,21 @@ public static class WindowExtension
 
     public static DialogControl GetErrorDialogHost(this Window window)
     {
-        var errorDialogHost = window
-            .ThrowIfIsNotCast<MainWindow>()
-            .GetVisualChildren()
-            .Single()
-            .ThrowIfIsNotCast<Panel>()
-            .Children.Last()
-            .ThrowIfIsNotCast<VisualLayerManager>()
-            .Child.ThrowIfNull()
-            .ThrowIfIsNotCast<ContentPresenter>()
-            .GetVisualChildren()
-            .Single()
-            .ThrowIfIsNotCast<Panel>()
-            .Children.Last()
-            .GetVisualChildren()
-            .Single()
-            .ThrowIfIsNotCast<ContentPresenter>()
-            .Child.ThrowIfNull()
-            .ThrowIfIsNotCast<MainView>()
-            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainViewModel>())
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<Panel>()
-            .Children.Last()
-            .ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("ErrorDialogHost"));
+        return window.GetMainView().GetControl<DialogControl>("ErrorDialogControl");
+    }
 
-        return errorDialogHost;
+    public static MainView GetMainView(this Window window)
+    {
+        return window.GetControl<ContentControl>("MainView").GetContentView<MainView>();
+    }
+
+    public static MainSplitView GetMainSplitView(this Window window)
+    {
+        return window
+            .GetControl<ContentControl>("MainView")
+            .GetContentView<MainView>()
+            .GetControl<ContentControl>("MainSplit")
+            .GetContentView<MainSplitView>();
     }
 
     public static (
@@ -184,83 +172,35 @@ public static class WindowExtension
         object Content
     ) GetMainControls(this Window window)
     {
-        var errorDialogHost = window.GetErrorDialogHost();
+        var mainView = window.GetMainView();
 
-        var progressDialogHost = errorDialogHost
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("ProgressDialogHost"));
-
-        var inputDialogHost = progressDialogHost
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("InputDialogHost"));
-
-        var contentDialogHost = inputDialogHost
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("ContentDialogHost"));
-
-        var content = contentDialogHost
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<ContentControl>()
-            .GetContentView<MainSplitView>()
-            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainSplitViewModel>())
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<SplitView>()
-            .Case(sv => sv.Pane.ThrowIfNull().ThrowIfIsNotCast<PaneViewModel>())
-            .Content.ThrowIfNull();
-
-        return (errorDialogHost, progressDialogHost, inputDialogHost, contentDialogHost, content);
+        return (
+            mainView.GetControl<DialogControl>("ErrorDialogControl"),
+            mainView.GetControl<DialogControl>("ProgressDialogControl"),
+            mainView.GetControl<DialogControl>("InputDialogControl"),
+            mainView.GetControl<DialogControl>("ContentDialogControl"),
+            mainView.GetControl<ContentControl>("MainSplit").Content.ThrowIfNull()
+        );
     }
 
     public static TView GetCurrentView<TView, TViewModel>(this Window window)
         where TView : UserControl
         where TViewModel : ViewModelBase
     {
-        return window
-            .GetErrorDialogHost()
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("ProgressDialogHost"))
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("InputDialogHost"))
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<DialogControl>()
-            .Case(dh => dh.Name.Should().Be("ContentDialogHost"))
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<ContentControl>()
-            .GetContentView<MainSplitView>()
-            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainSplitViewModel>())
-            .Content.ThrowIfNull()
-            .ThrowIfIsNotCast<SplitView>()
-            .Case(sv => sv.Pane.ThrowIfNull().ThrowIfIsNotCast<PaneViewModel>())
-            .Case(sv => sv.Content.ThrowIfNull().ThrowIfIsNotCast<TViewModel>())
+        var contentPresenter = window
+            .GetMainSplitView()
+            .GetControl<SplitView>("MainSplit")
             .GetVisualChildren()
             .Single()
             .ThrowIfIsNotCast<Grid>()
-            .Case(g =>
-                g.Children.Should()
-                    .HaveCount(2)
-                    .And.Subject.First()
-                    .ThrowIfIsNotCast<Panel>()
-                    .Children.Should()
-                    .HaveCount(2)
-                    .And.Subject.First()
-                    .ThrowIfIsNotCast<ContentPresenter>()
-                    .Child.ThrowIfNull()
-                    .ThrowIfIsNotCast<PaneView>()
-            )
-            .Children.Skip(1)
-            .Single()
+            .Children.Last()
             .ThrowIfIsNotCast<Panel>()
-            .Children.Should()
-            .HaveCount(2)
-            .And.Subject.First()
-            .ThrowIfIsNotCast<ContentPresenter>()
-            .Child.ThrowIfNull()
-            .ThrowIfIsNotCast<TView>();
+            .Children.First()
+            .ThrowIfIsNotCast<ContentPresenter>();
+
+        contentPresenter.Content.ThrowIfNull().ThrowIfIsNotCast<TViewModel>();
+
+        return contentPresenter.Child.ThrowIfNull().ThrowIfIsNotCast<TView>();
     }
 
     public static TView GetContentDialogView<TView, TViewModel>(this Window window)

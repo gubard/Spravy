@@ -26,7 +26,8 @@ public class Tests
                             () =>
                                 w.Case(
                                         () =>
-                                            w.GetCurrentView<LoginView, LoginViewModel>()
+                                            w.RunJobsAll(1)
+                                                .GetCurrentView<LoginView, LoginViewModel>()
                                                 .RunJobsAll(1)
                                                 .Case(l =>
                                                     l.GetControl<TextBox>(ElementNames.LoginTextBox)
