@@ -4,16 +4,15 @@
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
         <OutputType>Exe</OutputType>
-
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <IsTrimmed>true</IsTrimmed>
         <TrimMode>full</TrimMode>
-        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
-        <!--<PublishReadyToRun>true</PublishReadyToRun>-->
-        <!--<PublishAot>true</PublishAot>-->
     </PropertyGroup>
 
     <ItemGroup>
