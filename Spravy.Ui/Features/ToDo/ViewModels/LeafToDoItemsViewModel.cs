@@ -169,4 +169,9 @@ public partial class LeafToDoItemsViewModel
     {
         return ToDoSubItemsViewModel.AddOrUpdateUi(item);
     }
+
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
+    }
 }

@@ -62,6 +62,11 @@ public class ToDoSubItemsViewModel(
         return List.AddOrUpdateUi(item);
     }
 
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return List.RemoveUi(item);
+    }
+
     public Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoService

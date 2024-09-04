@@ -144,7 +144,7 @@ public partial class ToDoItemsViewModel : ViewModelBase, IToDoItemsView
         return Items.Count;
     }
 
-    public Result RemoveItemUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ToDoItemEntityNotify item)
     {
         Items.Remove(item);
 

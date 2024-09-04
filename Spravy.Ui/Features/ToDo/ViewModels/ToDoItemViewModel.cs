@@ -115,4 +115,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemsView
     {
         return ToDoSubItemsViewModel.AddOrUpdateUi(item);
     }
+
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
+    }
 }

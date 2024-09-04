@@ -51,12 +51,19 @@ public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
     {
-        return this.PostUiBackground(() => items.UpdateUi(newItems), CancellationToken.None);
+        return items.UpdateUi(newItems);
     }
 
     public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         return new(new NotImplementedError(nameof(AddOrUpdateUi)));
+    }
+
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        items.Remove(item);
+
+        return Result.Success;
     }
 
     public override string ViewId

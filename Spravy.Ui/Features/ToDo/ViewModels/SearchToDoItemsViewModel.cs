@@ -95,6 +95,11 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         }
     }
 
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
+    }
+
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return ToDoSubItemsViewModel.ClearExceptUi(items);

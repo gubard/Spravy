@@ -90,11 +90,18 @@ public static class AvaloniaListExtension
 
             while (j >= pos)
             {
-                list[j + 1] = list[j];
+                if (list[j + 1].OrderIndex != list[j].OrderIndex)
+                {
+                    list[j + 1] = list[j];
+                }
+
                 j--;
             }
 
-            list[j + 1] = key;
+            if (list[j + 1].OrderIndex != key.OrderIndex)
+            {
+                list[j + 1] = key;
+            }
         }
     }
 
@@ -135,11 +142,18 @@ public static class AvaloniaListExtension
 
             while (j >= pos)
             {
-                list[j + 1] = list[j];
+                if (list[j + 1].LoadedIndex != list[j].LoadedIndex)
+                {
+                    list[j + 1] = list[j];
+                }
+
                 j--;
             }
 
-            list[j + 1] = key;
+            if (list[j + 1].LoadedIndex != key.LoadedIndex)
+            {
+                list[j + 1] = key;
+            }
         }
     }
 }

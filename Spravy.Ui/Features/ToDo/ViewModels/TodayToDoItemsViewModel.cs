@@ -82,6 +82,11 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
         return ToDoSubItemsViewModel.ClearExceptUi(items);
     }
 
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
+    }
+
     public Result AddOrUpdateUi(ToDoItemEntityNotify item)
     {
         return ToDoSubItemsViewModel.AddOrUpdateUi(item);

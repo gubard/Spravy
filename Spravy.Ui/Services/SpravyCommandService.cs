@@ -830,11 +830,10 @@ public class SpravyCommandService
                                     => this.PostUi(() =>
                                         {
                                             item.IsCan = ToDoItemIsCan.None;
-                                            item.Status = ToDoItemStatus.Completed;
 
                                             return uiApplicationService
                                                 .GetCurrentView<IToDoItemsView>()
-                                                .IfSuccess(x => x.AddOrUpdateUi(item));
+                                                .IfSuccess(x => x.RemoveUi(item));
                                         })
                                         .IfSuccessAsync(
                                             () =>
@@ -849,11 +848,10 @@ public class SpravyCommandService
                                     => this.PostUi(() =>
                                         {
                                             item.IsCan = ToDoItemIsCan.None;
-                                            item.Status = ToDoItemStatus.ReadyForComplete;
 
                                             return uiApplicationService
                                                 .GetCurrentView<IToDoItemsView>()
-                                                .IfSuccess(x => x.AddOrUpdateUi(item));
+                                                .IfSuccess(x => x.RemoveUi(item));
                                         })
                                         .IfSuccessAsync(
                                             () =>
