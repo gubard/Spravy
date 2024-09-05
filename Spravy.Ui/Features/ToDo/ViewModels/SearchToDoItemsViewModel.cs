@@ -1,6 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
+public partial class SearchToDoItemsViewModel
+    : NavigatableViewModelBase,
+        IToDoItemsView,
+        IToDoMultiItems
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
@@ -29,6 +32,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
+    public Option<ToDoItemEntityNotify> Item => Option<ToDoItemEntityNotify>.None;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<string> SearchTexts { get; }

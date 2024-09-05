@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
+public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView, IToDoMultiItems
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
@@ -35,6 +35,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }
+    public Option<ToDoItemEntityNotify> Item => Option<ToDoItemEntityNotify>.None;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public override string ViewId

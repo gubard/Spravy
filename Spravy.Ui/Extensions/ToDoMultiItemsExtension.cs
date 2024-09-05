@@ -1,9 +1,9 @@
 namespace Spravy.Ui.Extensions;
 
-public static class ToDoSubItemsViewModelPropertyExtension
+public static class ToDoMultiItemsExtension
 {
     public static Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems(
-        this IToDoSubItemsViewModelProperty property
+        this IToDoMultiItems property
     )
     {
         var selected = property
@@ -20,7 +20,7 @@ public static class ToDoSubItemsViewModelPropertyExtension
     }
 
     public static Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetNotSelectedItems(
-        this IToDoSubItemsViewModelProperty property
+        this IToDoMultiItems property
     )
     {
         var selected = property

@@ -16,17 +16,20 @@ public partial class ResetToDoItemViewModel : DialogableViewModelBase
     [ObservableProperty]
     private bool isOnlyCompletedTasks;
 
-    public ResetToDoItemViewModel(ToDoItemEntityNotify item, IObjectStorage objectStorage)
+    public ResetToDoItemViewModel(Option<ToDoItemEntityNotify> item, IObjectStorage objectStorage)
     {
         this.objectStorage = objectStorage;
-        Item = item;
+        Item = item.GetNullable();
     }
 
-    public ToDoItemEntityNotify Item { get; }
+    public ToDoItemEntityNotify? Item { get; }
 
     public override string ViewId
     {
-        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.CurrentId}";
+        get =>
+            Item is null
+                ? $"{TypeCache<ResetToDoItemViewModel>.Type.Name}"
+                : $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.CurrentId}";
     }
 
     public Result Stop()

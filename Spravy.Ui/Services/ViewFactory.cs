@@ -416,6 +416,20 @@ public class ViewFactory : IViewFactory
         );
     }
 
+    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
+    )
+    {
+        return new(
+            Option<ToDoItemEntityNotify>.None,
+            ignoreItems,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
+    }
+
     public ConfirmViewModel CreateConfirmViewModel(
         IDialogable content,
         Func<IDialogable, Cvtar> confirmTask,
@@ -442,7 +456,14 @@ public class ViewFactory : IViewFactory
 
     public ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item)
     {
-        return new(item, objectStorage);
+        return new(item.ToOption(), objectStorage);
+    }
+
+    public ResetToDoItemViewModel CreateResetToDoItemViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(Option<ToDoItemEntityNotify>.None, objectStorage);
     }
 
     public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
@@ -463,7 +484,28 @@ public class ViewFactory : IViewFactory
         ToDoItemEntityNotify item
     )
     {
-        return new(item);
+        return new(item.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+    }
+
+    public ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(Option<ToDoItemEntityNotify>.None, items);
+    }
+
+    public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(
+            Option<ToDoItemEntityNotify>.None,
+            items,
+            toDoService,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel()
@@ -471,17 +513,16 @@ public class ViewFactory : IViewFactory
         return new();
     }
 
-    public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(item, items, toDoService, toDoUiService, errorHandler, taskProgressService);
-    }
-
     public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item)
     {
-        return CreateDeleteToDoItemViewModel(item, ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+        return new(
+            item.ToOption(),
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
+            toDoService,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent)

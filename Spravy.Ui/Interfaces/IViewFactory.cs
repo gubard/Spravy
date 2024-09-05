@@ -14,6 +14,7 @@ public interface IViewFactory
     ErrorViewModel CreateErrorViewModel(ReadOnlyMemory<Error> errors);
     ExceptionViewModel CreateExceptionViewModel(Exception exception);
     ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item);
+    ResetToDoItemViewModel CreateResetToDoItemViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
     DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item);
     AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent);
     AddToDoItemViewModel CreateAddToDoItemViewModel();
@@ -101,6 +102,10 @@ public interface IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     );
 
+    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
+    );
+
     ConfirmViewModel CreateConfirmViewModel(
         IDialogable content,
         Func<IDialogable, Cvtar> confirmTask,
@@ -119,8 +124,11 @@ public interface IViewFactory
         ToDoItemEntityNotify item
     );
 
+    ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
     DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 

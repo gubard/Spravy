@@ -8,7 +8,7 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
     private string childrenText = string.Empty;
 
     public DeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         IToDoService toDoService,
         IToDoUiService toDoUiService,
@@ -16,7 +16,7 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
         ITaskProgressService taskProgressService
     )
     {
-        Item = item;
+        Item = item.GetNullable();
         this.items.AddRange(items.ToArray());
 
         InitializedCommand = SpravyCommand.Create(
@@ -26,7 +26,10 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
 
                 return Result.AwaitableSuccess.IfSuccessAllAsync(
                     ct,
-                    () => toDoUiService.UpdateItemAsync(Item, ct),
+                    () =>
+                        Item is null
+                            ? Result.AwaitableSuccess
+                            : toDoUiService.UpdateItemAsync(Item, ct),
                     () =>
                     {
                         if (Items.IsEmpty())
@@ -93,7 +96,7 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
         );
     }
 
-    public ToDoItemEntityNotify Item { get; }
+    public ToDoItemEntityNotify? Item { get; }
     public SpravyCommand InitializedCommand { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
 

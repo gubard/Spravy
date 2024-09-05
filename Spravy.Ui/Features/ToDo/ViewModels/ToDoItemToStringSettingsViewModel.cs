@@ -4,18 +4,23 @@ public class ToDoItemToStringSettingsViewModel : DialogableViewModelBase
 {
     private readonly AvaloniaList<CheckedItem<ToDoItemStatus>> statuses = new();
 
-    public ToDoItemToStringSettingsViewModel(ToDoItemEntityNotify item)
+    public ToDoItemToStringSettingsViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
     {
-        Item = item;
+        Item = item.GetNullable();
+        Items = new(items.ToArray());
 
-        var items = UiHelper
+        var select = UiHelper
             .ToDoItemStatuses.ToArray()
             .Select(x => new CheckedItem<ToDoItemStatus> { Item = x, IsChecked = true });
 
-        statuses.AddRange(items);
+        statuses.AddRange(select);
     }
 
-    public ToDoItemEntityNotify Item { get; }
+    public ToDoItemEntityNotify? Item { get; }
+    public AvaloniaList<ToDoItemEntityNotify> Items { get; }
     public IEnumerable<CheckedItem<ToDoItemStatus>> Statuses => statuses;
 
     public override string ViewId

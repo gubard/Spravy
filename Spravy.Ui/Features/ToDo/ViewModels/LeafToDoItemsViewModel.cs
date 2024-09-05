@@ -3,7 +3,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class LeafToDoItemsViewModel
     : NavigatableViewModelBase,
         IObjectParameters,
-        IToDoItemsView
+        IToDoItemsView,
+        IToDoMultiItems
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
 
@@ -15,7 +16,7 @@ public partial class LeafToDoItemsViewModel
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public LeafToDoItemsViewModel(
-        ToDoItemEntityNotify? item,
+        ToDoItemEntityNotify? toDoItem,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
@@ -26,7 +27,7 @@ public partial class LeafToDoItemsViewModel
     )
         : base(true)
     {
-        Item = item;
+        ToDoItem = toDoItem;
         this.items.AddRange(items.ToArray());
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
@@ -45,19 +46,21 @@ public partial class LeafToDoItemsViewModel
     }
 
     public SpravyCommand InitializedCommand { get; }
-    public ToDoItemEntityNotify? Item { get; }
+
+    public ToDoItemEntityNotify? ToDoItem { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
+    public Option<ToDoItemEntityNotify> Item => ToDoItem.ToOption();
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
     public string Header
     {
-        get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+        get => ToDoItem?.Name ?? Items.Select(x => x.Name).JoinString(", ");
     }
 
     public override string ViewId
     {
-        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
+        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{ToDoItem?.Name}";
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -76,7 +79,8 @@ public partial class LeafToDoItemsViewModel
     {
         if (Items.IsEmpty())
         {
-            return Item.IfNotNull(nameof(Item))
+            return ToDoItem
+                .IfNotNull(nameof(ToDoItem))
                 .IfSuccessAsync(
                     i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
                     ct

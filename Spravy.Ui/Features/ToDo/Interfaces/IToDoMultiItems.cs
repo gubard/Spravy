@@ -1,7 +1,7 @@
 namespace Spravy.Ui.Features.ToDo.Interfaces;
 
-public interface IToDoSubItemsViewModelProperty
+public interface IToDoMultiItems
 {
-    ToDoItemEntityNotify Item { get; }
+    Option<ToDoItemEntityNotify> Item { get; }
     ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 }

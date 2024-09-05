@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
+public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView, IToDoMultiItems
 {
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
@@ -28,6 +28,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
+    public Option<ToDoItemEntityNotify> Item => Option<ToDoItemEntityNotify>.None;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }

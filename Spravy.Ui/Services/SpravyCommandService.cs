@@ -48,7 +48,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiCreateReference = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiCreateReference = SpravyCommand.Create<IToDoMultiItems>(
             (property, ct) =>
                 property
                     .GetSelectedItems()
@@ -113,7 +113,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiClone = SpravyCommand.Create<IToDoMultiItems>(
             (property, ct) =>
                 property
                     .GetSelectedItems()
@@ -157,22 +157,18 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiReset = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiReset = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
-                toDoUiService
-                    .UpdateItemAsync(view.Item, ct)
-                    .IfSuccessAsync(
-                        () =>
-                            view.GetSelectedItems()
-                                .IfSuccess(selected => selected.Select(x => x.Id).ToResult()),
-                        ct
-                    )
+                view.GetSelectedItems()
+                    .IfSuccess(selected => selected.ToResult())
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateResetToDoItemViewModel(view.Item),
+                                view.Item.TryGetValue(out var item)
+                                    ? viewFactory.CreateResetToDoItemViewModel(item)
+                                    : viewFactory.CreateResetToDoItemViewModel(selected),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
@@ -183,7 +179,7 @@ public class SpravyCommandService
                                                     i =>
                                                         toDoService.ResetToDoItemAsync(
                                                             new(
-                                                                i,
+                                                                i.Id,
                                                                 vm.IsCompleteChildrenTask,
                                                                 vm.IsMoveCircleOrderIndex,
                                                                 vm.IsOnlyCompletedTasks,
@@ -207,7 +203,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiChangeOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiChangeOrder = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -265,7 +261,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiRandomizeChildrenOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiRandomizeChildrenOrder = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -302,16 +298,18 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiCopyToClipboard = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiCopyToClipboard = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                    .IfSuccess(selected => selected.ToResult())
                     .IfSuccessAsync(
                         selected =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateToDoItemToStringSettingsViewModel(view.Item),
+                                view.Item.TryGetValue(out var item)
+                                    ? viewFactory.CreateToDoItemToStringSettingsViewModel(item)
+                                    : viewFactory.CreateToDoItemToStringSettingsViewModel(selected),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
@@ -328,7 +326,7 @@ public class SpravyCommandService
                                                                         )
                                                                         .Select(x => x.Item)
                                                                         .ToArray(),
-                                                                    i
+                                                                    i.Id
                                                                 ),
                                                                 ct
                                                             ),
@@ -353,7 +351,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiMakeAsRoot = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiMakeAsRoot = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -370,7 +368,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiChangeParent = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiChangeParent = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -378,7 +376,9 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
-                                viewFactory.CreateToDoItemSelectorViewModel(view.Item, selected),
+                                view.Item.TryGetValue(out var item)
+                                    ? viewFactory.CreateToDoItemSelectorViewModel(item, selected)
+                                    : viewFactory.CreateToDoItemSelectorViewModel(selected),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Input, ct)
@@ -413,7 +413,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiOpenLeaf = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiOpenLeaf = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -428,7 +428,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiShowSetting = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiShowSetting = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -526,7 +526,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiDelete = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiDelete = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -534,7 +534,9 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateDeleteToDoItemViewModel(view.Item, selected),
+                                view.Item.TryGetValue(out var item)
+                                    ? viewFactory.CreateDeleteToDoItemViewModel(item)
+                                    : viewFactory.CreateDeleteToDoItemViewModel(selected),
                                 _ =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
@@ -542,11 +544,7 @@ public class SpravyCommandService
                                             () =>
                                                 taskProgressService.RunProgressAsync(
                                                     selected,
-                                                    item =>
-                                                        toDoService.DeleteToDoItemAsync(
-                                                            item.Id,
-                                                            ct
-                                                        ),
+                                                    i => toDoService.DeleteToDoItemAsync(i.Id, ct),
                                                     ct
                                                 ),
                                             ct
@@ -563,7 +561,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiAddChild = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiAddChild = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -571,7 +569,9 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateAddToDoItemViewModel(view.Item),
+                                view.Item.TryGetValue(out var item)
+                                    ? viewFactory.CreateAddToDoItemViewModel(item)
+                                    : viewFactory.CreateAddToDoItemViewModel(),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
@@ -609,7 +609,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiOpenLink = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiOpenLink = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -630,7 +630,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiRemoveFromFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiRemoveFromFavorite = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -647,7 +647,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiAddToFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiAddToFavorite = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -664,7 +664,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiComplete = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+        MultiComplete = SpravyCommand.Create<IToDoMultiItems>(
             (view, ct) =>
                 view.GetSelectedItems()
                     .IfSuccessAsync(
@@ -1464,7 +1464,7 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateDeleteToDoItemViewModel(item, selected),
+                                viewFactory.CreateDeleteToDoItemViewModel(selected),
                                 _ =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
