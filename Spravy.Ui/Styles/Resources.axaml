@@ -1,8 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:c="clr-namespace:Spravy.Ui.Converters"
-                    xmlns:s="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:e="clr-namespace:Spravy.Ui.Enums"
                     xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters"
                     xmlns:m="clr-namespace:Spravy.Ui.Models">
     <lc:ObjectToLocalizationConverter x:Key="ObjectToLocalizationConverter" />

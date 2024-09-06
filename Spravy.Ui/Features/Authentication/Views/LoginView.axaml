@@ -23,7 +23,7 @@
             </c:GroupBoxControl.Header>
 
             <StackPanel>
-                <TextBlock Text="{Binding MaterialDesignSizeType, Source={x:Static local:App.CurrentApp}}"></TextBlock>
+                <TextBlock Text="{Binding MaterialDesignSizeType, Source={x:Static local:App.CurrentApp}}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Login}" />
                 <TextBox x:Name="LoginTextBox"

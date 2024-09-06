@@ -7,7 +7,6 @@
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              x:Class="Spravy.Ui.App"
