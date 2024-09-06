@@ -713,21 +713,26 @@ public class SpravyCommandService
                     .IfSuccessAsync(
                         activeToDoItem =>
                         {
-                            if (activeToDoItem.TryGetValue(out var value))
+                            if (!activeToDoItem.TryGetValue(out var value))
                             {
-                                if (value.ParentId.TryGetValue(out var parentId))
-                                {
-                                    return toDoCache
-                                        .GetToDoItem(parentId)
-                                        .IfSuccessAsync(
-                                            parent =>
-                                                navigator.NavigateToAsync(
-                                                    viewFactory.CreateToDoItemViewModel(parent),
-                                                    ct
-                                                ),
-                                            ct
-                                        );
-                                }
+                                return navigator.NavigateToAsync(
+                                    viewFactory.CreateRootToDoItemsViewModel(),
+                                    ct
+                                );
+                            }
+
+                            if (value.ParentId.TryGetValue(out var parentId))
+                            {
+                                return toDoCache
+                                    .GetToDoItem(parentId)
+                                    .IfSuccessAsync(
+                                        parent =>
+                                            navigator.NavigateToAsync(
+                                                viewFactory.CreateToDoItemViewModel(parent),
+                                                ct
+                                            ),
+                                        ct
+                                    );
                             }
 
                             return navigator.NavigateToAsync(
