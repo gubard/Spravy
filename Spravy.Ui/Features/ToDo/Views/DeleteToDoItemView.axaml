@@ -5,8 +5,6 @@
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:mia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
@@ -33,17 +31,7 @@
             <StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Disabled"
                               HorizontalScrollBarVisibility="Auto">
-                    <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                        <c:PathControl.DataTemplates>
-                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                            </DataTemplate>
-
-                            <DataTemplate DataType="m:RootItem">
-                                <mia:MaterialIcon Kind="Home" Margin="5" />
-                            </DataTemplate>
-                        </c:PathControl.DataTemplates>
-                    </c:PathControl>
+                    <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}"/>
                 </ScrollViewer>
 
                 <TextBlock Classes="alignment-left"

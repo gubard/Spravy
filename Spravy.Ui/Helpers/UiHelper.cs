@@ -2,10 +2,6 @@ namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
 {
-    public const string IsBusy = nameof(IsBusy);
-    public const bool True = true;
-    public const bool False = false;
-
     public static bool IsDrag;
     public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
     public static object? DragData;

@@ -7,9 +7,6 @@
                          xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                          xmlns:system="clr-namespace:System;assembly=System.Runtime"
                          xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                         xmlns:m="clr-namespace:Spravy.Ui.Models"
-                         xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                          mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                          x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemCreateTimerView"
                          x:DataType="vm:ToDoItemCreateTimerViewModel">
@@ -17,17 +14,7 @@
         <StackPanel>
             <ScrollViewer HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled">
-                <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                    <c:PathControl.DataTemplates>
-                        <DataTemplate DataType="tdm:ToDoItemEntityNotify">
-                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                        </DataTemplate>
-
-                        <DataTemplate DataType="m:RootItem">
-                            <avalonia:MaterialIcon Kind="Home" Margin="5" />
-                        </DataTemplate>
-                    </c:PathControl.DataTemplates>
-                </c:PathControl>
+                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
             </ScrollViewer>
 
             <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />

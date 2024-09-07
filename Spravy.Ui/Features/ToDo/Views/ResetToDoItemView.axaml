@@ -6,25 +6,12 @@
                          xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                          xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                         xmlns:m="clr-namespace:Spravy.Ui.Models"
-                         xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                          mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                          x:Class="Spravy.Ui.Features.ToDo.Views.ResetToDoItemView"
                          x:DataType="vm:ResetToDoItemViewModel">
     <c:GroupBoxControl Header="{Binding Item.Name}">
         <StackPanel>
-            <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                <c:PathControl.DataTemplates>
-                    <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                        <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                    </DataTemplate>
-
-                    <DataTemplate DataType="m:RootItem">
-                        <mi:MaterialIcon Kind="Home" Margin="5" />
-                    </DataTemplate>
-                </c:PathControl.DataTemplates>
-            </c:PathControl>
+            <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
 
             <CheckBox IsChecked="{Binding IsCompleteChildrenTask}"
                       Content="{DynamicResource ResetToDoItemView.CompleteChildrenTask}" />

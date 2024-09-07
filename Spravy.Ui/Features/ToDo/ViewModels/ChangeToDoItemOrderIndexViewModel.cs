@@ -12,7 +12,43 @@ public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase
     private bool isAfter = true;
 
     public ChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify? item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
+    )
+    {
+        this.items = new(items.ToArray());
+        this.toDoUiService = toDoUiService;
+        Item = null;
+
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
+    }
+
+    public ChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService,
+        IToDoUiService toDoUiService
+    )
+    {
+        items = new();
+        this.toDoUiService = toDoUiService;
+        Item = item;
+
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
+    }
+
+    public ChangeToDoItemOrderIndexViewModel(
+        ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,

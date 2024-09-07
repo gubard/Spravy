@@ -3,9 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.RandomizeChildrenOrderView"
@@ -16,16 +13,6 @@
                        Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
         </c:GroupBoxControl.Header>
 
-        <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-            <c:PathControl.DataTemplates>
-                <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                    <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                </DataTemplate>
-
-                <DataTemplate DataType="m:RootItem">
-                    <mi:MaterialIcon Kind="Home" Margin="5" />
-                </DataTemplate>
-            </c:PathControl.DataTemplates>
-        </c:PathControl>
+        <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
     </c:GroupBoxControl>
 </UserControl>

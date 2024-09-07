@@ -35,7 +35,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView, 
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }
-    public Option<ToDoItemEntityNotify> Item => Option<ToDoItemEntityNotify>.None;
+    public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public override string ViewId

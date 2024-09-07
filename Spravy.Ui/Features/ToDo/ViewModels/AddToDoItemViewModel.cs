@@ -5,7 +5,19 @@ public class AddToDoItemViewModel : DialogableViewModelBase
     private readonly IObjectStorage objectStorage;
 
     public AddToDoItemViewModel(
-        ToDoItemEntityNotify? parent,
+        ToDoItemContentViewModel toDoItemContent,
+        EditDescriptionContentViewModel descriptionContent,
+        IObjectStorage objectStorage
+    )
+    {
+        ToDoItemContent = toDoItemContent;
+        DescriptionContent = descriptionContent;
+        this.objectStorage = objectStorage;
+        Parent = null;
+    }
+
+    public AddToDoItemViewModel(
+        ToDoItemEntityNotify parent,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
         IObjectStorage objectStorage

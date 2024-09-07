@@ -5,7 +5,6 @@
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-             xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:sm="clr-namespace:Spravy.Ui.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
@@ -95,15 +94,7 @@
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
-            <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                <c:PathControl.DataTemplates>
-                    <DataTemplate DataType="m:ToDoItemEntityNotify">
-                        <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                                CommandParameter="{Binding}"
-                                Content="{Binding Name}" />
-                    </DataTemplate>
-                </c:PathControl.DataTemplates>
-            </c:PathControl>
+            <c:PathControl Classes="alignment-center to-do-item" Segments="{Binding Item.Path}" />
         </ScrollViewer>
 
         <ScrollViewer Grid.Row="2">

@@ -16,7 +16,7 @@ public partial class LeafToDoItemsViewModel
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public LeafToDoItemsViewModel(
-        ToDoItemEntityNotify? toDoItem,
+        ToDoItemEntityNotify? item,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
@@ -27,7 +27,7 @@ public partial class LeafToDoItemsViewModel
     )
         : base(true)
     {
-        ToDoItem = toDoItem;
+        Item = item;
         this.items.AddRange(items.ToArray());
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
@@ -47,20 +47,19 @@ public partial class LeafToDoItemsViewModel
 
     public SpravyCommand InitializedCommand { get; }
 
-    public ToDoItemEntityNotify? ToDoItem { get; }
+    public ToDoItemEntityNotify? Item { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
-    public Option<ToDoItemEntityNotify> Item => ToDoItem.ToOption();
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
     public string Header
     {
-        get => ToDoItem?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+        get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
     }
 
     public override string ViewId
     {
-        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{ToDoItem?.Name}";
+        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -79,8 +78,7 @@ public partial class LeafToDoItemsViewModel
     {
         if (Items.IsEmpty())
         {
-            return ToDoItem
-                .IfNotNull(nameof(ToDoItem))
+            return Item.IfNotNull(nameof(Item))
                 .IfSuccessAsync(
                     i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
                     ct

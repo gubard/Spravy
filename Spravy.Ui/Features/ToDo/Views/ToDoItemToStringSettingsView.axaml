@@ -6,26 +6,14 @@
              xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemToStringSettingsView"
              x:DataType="vm:ToDoItemToStringSettingsViewModel">
     <v:GroupBoxControl Header="{Binding Item.Name}">
         <StackPanel>
             <v:PathControl IsVisible="{Binding Item, Converter={StaticResource NullToBooleanConverter}}"
-                           Classes="alignment-center" 
-                           Segments="{Binding Item.Path}">
-                <v:PathControl.DataTemplates>
-                    <DataTemplate DataType="models:ToDoItemEntityNotify">
-                        <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                    </DataTemplate>
-
-                    <DataTemplate DataType="m:RootItem">
-                        <avalonia:MaterialIcon Kind="Home" Margin="5" />
-                    </DataTemplate>
-                </v:PathControl.DataTemplates>
-            </v:PathControl>
+                           Classes="alignment-center read-only-to-do-item"
+                           Segments="{Binding Item.Path}" />
 
             <ItemsControl ItemsSource="{Binding Statuses}">
                 <ItemsControl.DataTemplates>

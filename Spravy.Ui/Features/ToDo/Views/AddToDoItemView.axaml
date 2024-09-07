@@ -1,12 +1,9 @@
-<c:NavigatableUserControl x:TypeArguments="vm:AddToDoItemViewModel" 
+<c:NavigatableUserControl x:TypeArguments="vm:AddToDoItemViewModel"
                           xmlns="https://github.com/avaloniaui"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                          xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                          xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                          xmlns:m="clr-namespace:Spravy.Ui.Models"
                           xmlns:c="clr-namespace:Spravy.Ui.Controls"
                           mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                           x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
@@ -20,17 +17,7 @@
             <StackPanel>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Disabled">
-                    <c:PathControl Classes="alignment-center" Segments="{Binding Parent.Path}">
-                        <c:PathControl.DataTemplates>
-                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                            </DataTemplate>
-
-                            <DataTemplate DataType="m:RootItem">
-                                <a:MaterialIcon Kind="Home" Margin="5" />
-                            </DataTemplate>
-                        </c:PathControl.DataTemplates>
-                    </c:PathControl>
+                    <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Parent.Path}" />
                 </ScrollViewer>
 
                 <ContentControl Content="{Binding ToDoItemContent}" />

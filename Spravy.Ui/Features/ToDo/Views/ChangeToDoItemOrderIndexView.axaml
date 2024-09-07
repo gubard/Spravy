@@ -6,29 +6,28 @@
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:m="clr-namespace:Spravy.Ui.Models"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
              x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
     <ScrollViewer>
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{Binding Item.Name}" Classes="alignment-left" />
+                <c:ViewSelectorControl State="{Binding Item, Converter={StaticResource ObjectToVisibleValueConverter}}">
+                    <c:ViewSelectorItemControl State="{x:True}">
+                        <TextBlock Text="{Binding Item.Name}" Classes="alignment-left" />
+                    </c:ViewSelectorItemControl>
+
+                    <c:ViewSelectorItemControl State="{x:False}">
+                        <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Header}"
+                                   Classes="alignment-left" />
+                    </c:ViewSelectorItemControl>
+                </c:ViewSelectorControl>
             </c:GroupBoxControl.Header>
 
             <StackPanel>
-                <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                    <c:PathControl.DataTemplates>
-                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                        </DataTemplate>
-
-                        <DataTemplate DataType="m:RootItem">
-                            <avalonia:MaterialIcon Kind="Home" Margin="5" />
-                        </DataTemplate>
-                    </c:PathControl.DataTemplates>
-                </c:PathControl>
+                <c:PathControl IsVisible="{Binding Item, Converter={StaticResource ObjectToVisibleValueConverter}}"
+                               Classes="alignment-center read-only-to-do-item"
+                               Segments="{Binding Item.Path}" />
 
                 <StackPanel Classes="horizontal">
                     <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />

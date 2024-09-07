@@ -13,6 +13,9 @@ public class PathControl : TemplatedControl
             defaultSeparator
         );
 
+    public static readonly StyledProperty<IDataTemplate?> ItemTemplateProperty =
+        ItemsControl.ItemTemplateProperty.AddOwner<PathControl>();
+
     public static readonly StyledProperty<IEnumerable> SegmentsProperty = AvaloniaProperty.Register<
         PathControl,
         IEnumerable
@@ -80,5 +83,11 @@ public class PathControl : TemplatedControl
     {
         get => GetValue(ItemsProperty);
         private set => SetValue(ItemsProperty, value);
+    }
+
+    public IDataTemplate? ItemTemplate
+    {
+        get => GetValue(ItemTemplateProperty);
+        set => SetValue(ItemTemplateProperty, value);
     }
 }

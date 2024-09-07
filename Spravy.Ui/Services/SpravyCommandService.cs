@@ -166,8 +166,8 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                view.Item.TryGetValue(out var item)
-                                    ? viewFactory.CreateResetToDoItemViewModel(item)
+                                view.Item is not null
+                                    ? viewFactory.CreateResetToDoItemViewModel(view.Item)
                                     : viewFactory.CreateResetToDoItemViewModel(selected),
                                 vm =>
                                     dialogViewer
@@ -307,8 +307,8 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                view.Item.TryGetValue(out var item)
-                                    ? viewFactory.CreateToDoItemToStringSettingsViewModel(item)
+                                view.Item is null
+                                    ? viewFactory.CreateToDoItemToStringSettingsViewModel(view.Item)
                                     : viewFactory.CreateToDoItemToStringSettingsViewModel(selected),
                                 vm =>
                                     dialogViewer
@@ -376,8 +376,11 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
-                                view.Item.TryGetValue(out var item)
-                                    ? viewFactory.CreateToDoItemSelectorViewModel(item, selected)
+                                view.Item is not null
+                                    ? viewFactory.CreateToDoItemSelectorViewModel(
+                                        view.Item,
+                                        selected
+                                    )
                                     : viewFactory.CreateToDoItemSelectorViewModel(selected),
                                 vm =>
                                     dialogViewer
@@ -534,8 +537,8 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                view.Item.TryGetValue(out var item)
-                                    ? viewFactory.CreateDeleteToDoItemViewModel(item)
+                                view.Item is not null
+                                    ? viewFactory.CreateDeleteToDoItemViewModel(view.Item, selected)
                                     : viewFactory.CreateDeleteToDoItemViewModel(selected),
                                 _ =>
                                     dialogViewer
@@ -569,8 +572,8 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                view.Item.TryGetValue(out var item)
-                                    ? viewFactory.CreateAddToDoItemViewModel(item)
+                                view.Item is not null
+                                    ? viewFactory.CreateAddToDoItemViewModel(view.Item)
                                     : viewFactory.CreateAddToDoItemViewModel(),
                                 vm =>
                                     dialogViewer

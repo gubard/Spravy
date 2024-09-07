@@ -185,6 +185,7 @@
     <!--ChangeToDoItemOrderIndexView-->
     <sys:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</sys:String>
     <sys:String x:Key="ChangeToDoItemOrderIndexView.After">After</sys:String>
+    <sys:String x:Key="ChangeToDoItemOrderIndexView.Header">Chang order</sys:String>
 
     <!--ForgotPasswordView-->
     <sys:String x:Key="ForgotPasswordView.SendNewCode">Send new code</sys:String>

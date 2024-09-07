@@ -4,9 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:m="clr-namespace:Spravy.Ui.Models"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
              x:Class="Spravy.Ui.Features.ToDo.Views.EditDescriptionView"
              x:DataType="viewModels:EditDescriptionViewModel">
@@ -17,17 +14,7 @@
 
         <ScrollViewer>
             <StackPanel>
-                <c:PathControl Classes="alignment-center" Segments="{Binding Item.Path}">
-                    <c:PathControl.DataTemplates>
-                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                            <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                        </DataTemplate>
-
-                        <DataTemplate DataType="m:RootItem">
-                            <mi:MaterialIcon Kind="Home" Margin="5" />
-                        </DataTemplate>
-                    </c:PathControl.DataTemplates>
-                </c:PathControl>
+                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
 
                 <ContentControl Content="{Binding Content}" />
             </StackPanel>

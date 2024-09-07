@@ -24,6 +24,7 @@
         <FluentTheme />
         <mi:MaterialIconStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
+        <StyleInclude Source="avares://Spravy.Ui/Styles/Spravy.axaml" />
     </Application.Styles>
 
     <Application.DataTemplates>
@@ -109,11 +110,6 @@
 
         <DataTemplate x:DataType="m:DayOfMonthSelectItem">
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding Day}" />
-        </DataTemplate>
-
-        <DataTemplate DataType="m:RootItem">
-            <Button Command="{x:Static h:UiHelper.NavigateToRootToDoItems}"
-                    Content="{x:Static i:MaterialIconKind.Home}" />
         </DataTemplate>
 
         <DataTemplate DataType="i:MaterialIconKind">

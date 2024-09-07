@@ -28,7 +28,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView,
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
-    public Option<ToDoItemEntityNotify> Item => Option<ToDoItemEntityNotify>.None;
+    public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }

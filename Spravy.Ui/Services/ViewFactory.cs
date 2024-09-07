@@ -233,6 +233,14 @@ public class ViewFactory : IViewFactory
         return new(CreateToDoItemSelectorViewModel(), serializer, objectStorage, toDoCache);
     }
 
+    public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(item, items, toDoService, toDoUiService, errorHandler, taskProgressService);
+    }
+
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         ToDoItemEntityNotify item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
@@ -498,14 +506,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(
-            Option<ToDoItemEntityNotify>.None,
-            items,
-            toDoService,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
-        );
+        return new(items, toDoService, toDoUiService, errorHandler, taskProgressService);
     }
 
     public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel()
@@ -515,14 +516,7 @@ public class ViewFactory : IViewFactory
 
     public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item)
     {
-        return new(
-            item.ToOption(),
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            toDoService,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
-        );
+        return new(item, toDoService, toDoUiService, errorHandler, taskProgressService);
     }
 
     public AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent)
@@ -538,7 +532,6 @@ public class ViewFactory : IViewFactory
     public AddToDoItemViewModel CreateAddToDoItemViewModel()
     {
         return new(
-            null,
             CreateToDoItemContentViewModel(),
             CreateEditDescriptionContentViewModel(),
             objectStorage
@@ -566,13 +559,7 @@ public class ViewFactory : IViewFactory
         ToDoItemEntityNotify item
     )
     {
-        return new(
-            item,
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            errorHandler,
-            taskProgressService,
-            toDoUiService
-        );
+        return new(item, errorHandler, taskProgressService, toDoUiService);
     }
 
     public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
@@ -587,6 +574,6 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(null, items, errorHandler, taskProgressService, toDoUiService);
+        return new(items, errorHandler, taskProgressService, toDoUiService);
     }
 }
