@@ -11,7 +11,9 @@
                          x:DataType="vm:ResetToDoItemViewModel">
     <c:GroupBoxControl Header="{Binding Item.Name}">
         <StackPanel>
-            <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
+            <ScrollViewer Classes="horizontal">
+                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
+            </ScrollViewer>
 
             <CheckBox IsChecked="{Binding IsCompleteChildrenTask}"
                       Content="{DynamicResource ResetToDoItemView.CompleteChildrenTask}" />
