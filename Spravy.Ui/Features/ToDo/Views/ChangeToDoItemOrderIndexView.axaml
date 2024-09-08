@@ -9,7 +9,7 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
              x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
-    <ScrollViewer>
+    <ScrollViewer Classes="vertical">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
                 <c:ViewSelectorControl State="{Binding Item, Converter={StaticResource ObjectToVisibleValueConverter}}">

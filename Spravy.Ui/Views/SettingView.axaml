@@ -11,7 +11,7 @@
              x:DataType="vm:SettingViewModel">
     <c:BusyAreaControl IsBusy="{Binding IsBusy}" Margin="2">
         <Grid RowDefinitions="*,Auto">
-            <ScrollViewer>
+            <ScrollViewer Classes="vertical">
                 <c:GroupBoxControl>
                     <c:GroupBoxControl.Header>
                         <Grid ColumnDefinitions="Auto,*">
@@ -24,8 +24,7 @@
                             </StackPanel>
 
                             <ScrollViewer Grid.Column="1"
-                                          VerticalScrollBarVisibility="Disabled"
-                                          HorizontalScrollBarVisibility="Auto"
+                                          Classes="horizontal"
                                           HorizontalAlignment="Left">
                                 <TextBlock Text="{DynamicResource SettingView.Header}" />
                             </ScrollViewer>

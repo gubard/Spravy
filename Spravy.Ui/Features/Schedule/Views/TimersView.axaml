@@ -17,7 +17,7 @@
             <TextBlock Text="{StaticResource TimersView.Header}" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Classes="vertical">
             <ItemsControl Classes="wrap-panel" ItemsSource="{Binding Timers}" />
         </ScrollViewer>
         

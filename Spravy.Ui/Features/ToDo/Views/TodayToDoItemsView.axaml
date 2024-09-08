@@ -20,8 +20,7 @@
             </StackPanel>
 
             <ScrollViewer Grid.Column="1"
-                          VerticalScrollBarVisibility="Disabled"
-                          HorizontalScrollBarVisibility="Auto"
+                          Classes="horizontal"
                           HorizontalAlignment="Left">
                 <TextBlock Text="{DynamicResource TodayToDoItemsView.Header}" />
             </ScrollViewer>
@@ -79,7 +78,7 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Classes="vertical">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>

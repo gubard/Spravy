@@ -18,15 +18,12 @@
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
             </StackPanel>
 
-            <ScrollViewer Grid.Column="1"
-                          VerticalScrollBarVisibility="Disabled"
-                          HorizontalScrollBarVisibility="Auto"
-                          Classes="alignment-stretch">
+            <ScrollViewer Grid.Column="1" Classes="alignment-stretch horizontal">
                 <TextBlock Classes="alignment-left" Text="{DynamicResource PolicyView.Header}" />
             </ScrollViewer>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" Classes="vertical">
             <TextBlock Classes="alignment-left alignment-top text-wrap" Text="{DynamicResource PolicyView.Policy}" />
         </ScrollViewer>
     </Grid>

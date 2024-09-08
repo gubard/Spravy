@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ErrorHandling.Views.ErrorView"
              x:DataType="vm:ErrorViewModel">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="vertical">
         <ItemsControl Name="{x:Static v:ErrorView.ErrorsItemsControlName}" ItemsSource="{Binding Errors}">
             <ItemsControl.DataTemplates>
                 <DataTemplate x:DataType="errors:Error">

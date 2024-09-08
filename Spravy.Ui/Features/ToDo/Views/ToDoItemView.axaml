@@ -26,9 +26,7 @@
                     </StackPanel>
 
                     <ScrollViewer Grid.Column="1"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  HorizontalScrollBarVisibility="Auto"
-                                  Classes="alignment-stretch">
+                                  Classes="alignment-stretch horizontal">
                         <TextBlock Classes="alignment-left" Text="{Binding Item.Name}" />
                     </ScrollViewer>
 
@@ -91,13 +89,12 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Disabled"
-                      HorizontalScrollBarVisibility="Auto"
+                      Classes="horizontal"
                       Margin="8,0,0,0">
             <c:PathControl Classes="alignment-center to-do-item" Segments="{Binding Item.Path}" />
         </ScrollViewer>
 
-        <ScrollViewer Grid.Row="2">
+        <ScrollViewer Grid.Row="2" Classes="vertical">
             <StackPanel>
                 <Expander Classes="header-alignment-left"
                           Margin="3"
@@ -124,7 +121,6 @@
                             <mdxaml:MarkdownScrollViewer Markdown="{Binding Item.Description}" />
                         </c:ViewSelectorItemControl>
                     </c:ViewSelectorControl>
-
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

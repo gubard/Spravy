@@ -9,7 +9,7 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
              x:DataType="vm:DeleteToDoItemViewModel">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="vertical">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
                 <Panel Classes="alignment-left">
@@ -29,8 +29,7 @@
             </c:GroupBoxControl.DataTemplates>
 
             <StackPanel>
-                <ScrollViewer VerticalScrollBarVisibility="Disabled"
-                              HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer Classes="horizontal">
                     <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}"/>
                 </ScrollViewer>
 

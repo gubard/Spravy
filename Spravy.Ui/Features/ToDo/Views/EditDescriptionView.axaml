@@ -7,17 +7,16 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
              x:Class="Spravy.Ui.Features.ToDo.Views.EditDescriptionView"
              x:DataType="viewModels:EditDescriptionViewModel">
-    <c:GroupBoxControl>
-        <c:GroupBoxControl.Header>
-            <TextBlock Classes="alignment-left text-wrap" Text="{Binding Item.Name}" />
-        </c:GroupBoxControl.Header>
+    <ScrollViewer Classes="vertical">
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
+                <TextBlock Classes="alignment-left text-wrap" Text="{Binding Item.Name}" />
+            </c:GroupBoxControl.Header>
 
-        <ScrollViewer>
             <StackPanel>
                 <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
-
                 <ContentControl Content="{Binding Content}" />
             </StackPanel>
-        </ScrollViewer>
-    </c:GroupBoxControl>
+        </c:GroupBoxControl>
+    </ScrollViewer>
 </UserControl>

@@ -12,8 +12,7 @@
                          x:DataType="vm:ToDoItemCreateTimerViewModel">
     <c:GroupBoxControl Header="{DynamicResource ToDoItemCreateTimerView.Header}">
         <StackPanel>
-            <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Disabled">
+            <ScrollViewer Classes="horizontal">
                 <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
             </ScrollViewer>
 

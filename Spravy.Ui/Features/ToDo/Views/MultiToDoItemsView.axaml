@@ -198,8 +198,7 @@
                                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 </Grid>
 
-                                <ScrollViewer VerticalScrollBarVisibility="Disabled"
-                                              HorizontalScrollBarVisibility="Auto">
+                                <ScrollViewer Classes="horizontal">
                                     <TextBlock Classes="alignment-left" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>

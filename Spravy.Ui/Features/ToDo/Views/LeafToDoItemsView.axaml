@@ -22,8 +22,7 @@
             </StackPanel>
 
             <ScrollViewer Grid.Column="1"
-                          VerticalScrollBarVisibility="Disabled"
-                          HorizontalScrollBarVisibility="Auto"
+                          Classes="horizontal"
                           HorizontalAlignment="Left">
                 <TextBlock
                     Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=LeafToDoItemsView.Header}" />
@@ -83,7 +82,7 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Classes="vertical">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
