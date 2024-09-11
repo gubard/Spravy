@@ -40,6 +40,7 @@ public class PasswordItemCache : IPasswordItemCache
                 item.IsAvailableLowerLatin = passwordItem.IsAvailableLowerLatin;
                 item.CustomAvailableCharacters = passwordItem.CustomAvailableCharacters;
                 item.IsAvailableSpecialSymbols = passwordItem.IsAvailableSpecialSymbols;
+                item.Login = passwordItem.Login;
 
                 return Result.Success;
             });

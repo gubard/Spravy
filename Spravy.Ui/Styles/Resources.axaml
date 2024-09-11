@@ -16,7 +16,7 @@
     <c:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
     <c:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
     <c:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
-    <c:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
+    <c:StringIsNullOrWhiteSpaceConverter x:Key="StringIsNullOrWhiteSpaceConverter" />
     <c:NullToBooleanConverter x:Key="NullToBooleanConverter" />
     <c:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
     <c:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />

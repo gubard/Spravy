@@ -85,7 +85,8 @@
                     <TextBlock Classes="text-wrap alignment-left" Text="{Binding Name}" />
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="{x:Static i:MaterialIconKind.Login}"
+                        <Button IsVisible="{Binding Login, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}"
+                                Content="{x:Static i:MaterialIconKind.Login}"
                                 Command="{x:Static h:UiHelper.CopyLogin}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Settings}"
