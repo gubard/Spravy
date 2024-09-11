@@ -1,16 +1,17 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemContentView"
-             x:DataType="vm:ToDoItemContentViewModel">
+<c:MainUserControl x:TypeArguments="vm:ToDoItemContentViewModel"
+                   xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                   x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemContentView"
+                   x:DataType="vm:ToDoItemContentViewModel">
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemSettingsView.Name}" />
-        <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
+        <AutoCompleteBox x:Name="NameAutoCompleteBox" Text="{Binding Name}" ItemsSource="{Binding Names}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemSettingsView.Url}" />
         <TextBox Classes="content-type-url"
@@ -19,4 +20,4 @@
                    Text="{DynamicResource ToDoItemSettingsView.Type}" />
         <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
     </StackPanel>
-</UserControl>
+</c:MainUserControl>
