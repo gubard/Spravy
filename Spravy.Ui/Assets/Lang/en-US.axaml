@@ -90,6 +90,7 @@
     <sys:String x:Key="PasswordGeneratorView.Header">Password generator</sys:String>
     <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
     <sys:String x:Key="PasswordGeneratorView.Notification.CopyPassword">Copied password "{Name}"</sys:String>
+    <sys:String x:Key="PasswordGeneratorView.Notification.CopyLogin">Copied login "{Name}"</sys:String>
 
     <!--AddPasswordItemView-->
     <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>
@@ -99,6 +100,7 @@
     <sys:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</sys:String>
     <sys:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</sys:String>
     <sys:String x:Key="AddPasswordItemView.Regex">Regex</sys:String>
+    <sys:String x:Key="AddPasswordItemView.Login">Login</sys:String>
     <sys:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</sys:String>
     <sys:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</sys:String>
     <sys:String x:Key="AddPasswordItemView.AvailableNumber">Available number</sys:String>

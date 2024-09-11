@@ -33,7 +33,8 @@ public static partial class UiMapper
             value.IsAvailableUpperLatin,
             value.IsAvailableNumber,
             value.IsAvailableSpecialSymbols,
-            value.CustomAvailableCharacters
+            value.CustomAvailableCharacters,
+            value.Login
         );
     }
 

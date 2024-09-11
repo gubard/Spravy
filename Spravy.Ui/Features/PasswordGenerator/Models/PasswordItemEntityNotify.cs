@@ -39,6 +39,9 @@ public partial class PasswordItemEntityNotify
     [ObservableProperty]
     private bool isAvailableSpecialSymbols = true;
 
+    [ObservableProperty]
+    private string login = string.Empty;
+
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
         if (nameParameterName.Span.AreEquals(parameterName))

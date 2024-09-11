@@ -216,4 +216,18 @@ public class GrpcPasswordService : PasswordServiceBase
                 context.CancellationToken
             );
     }
+
+    public override Task<UpdatePasswordItemLoginReply> UpdatePasswordItemLogin(
+        UpdatePasswordItemLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        return passwordService
+            .UpdatePasswordItemLoginAsync(
+                request.Id.ToGuid(),
+                request.Login,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdatePasswordItemLoginReply>(serializer, context.CancellationToken);
+    }
 }

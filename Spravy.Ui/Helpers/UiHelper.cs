@@ -57,8 +57,10 @@ public static class UiHelper
         AddTimer = commands.AddTimer.Command;
         DeleteTimer = commands.DeleteTimer.Command;
         MainViewInitialized = commands.MainViewInitialized.Command;
+        CopyLogin = commands.CopyLogin.Command;
     }
 
+    public static readonly ICommand CopyLogin;
     public static readonly ICommand MainSplitViewModelInitialized;
     public static readonly ICommand UpdateEmail;
     public static readonly ICommand NavigateToPolicy;

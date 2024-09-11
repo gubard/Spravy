@@ -440,4 +440,31 @@ public class GrpcPasswordService
             ct
         );
     }
+
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLoginAsync(
+        Guid id,
+        string login,
+        CancellationToken ct
+    )
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .UpdatePasswordItemLoginAsync(
+                                    new() { Id = id.ToByteString(), Login = login },
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false),
+                        ct
+                    ),
+            ct
+        );
+    }
 }
