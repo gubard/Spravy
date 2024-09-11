@@ -16,6 +16,8 @@
         <RunAOTCompilation>true</RunAOTCompilation>
         <InvariantGlobalization>true</InvariantGlobalization>
         <WasmEnableWebcil>false</WasmEnableWebcil>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>None</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
