@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+using Microsoft.Data.Sqlite;
 using Spravy.EventBus.Domain.Errors;
 using Spravy.EventBus.Domain.Interfaces;
 
@@ -5,8 +7,131 @@ namespace Spravy.ToDo.Service.Services;
 
 public class EfToDoService : IToDoService
 {
+    private const string LoadAllItemChildrenQuery = """
+        WITH RECURSIVE hierarchy(
+                 Id,
+                 Name,
+                 OrderIndex,
+                 Description,
+                 CreatedDateTime,
+                 Type,
+                 IsFavorite,
+                 DueDate,
+                 IsCompleted,
+                 TypeOfPeriodicity,
+                 DaysOfWeek,
+                 DaysOfMonth,
+                 DaysOfYear,
+                 LastCompleted,
+                 DaysOffset,
+                 MonthsOffset,
+                 WeeksOffset,
+                 YearsOffset,
+                 ChildrenType,
+                 CurrentCircleOrderIndex,
+                 Link,
+                 IsRequiredCompleteInDueDate,
+                 DescriptionType,
+                 ReferenceId,
+                 ParentId
+             ) AS (
+                 SELECT
+                 Id,
+                 Name,
+                 OrderIndex,
+                 Description,
+                 CreatedDateTime,
+                 Type,
+                 IsFavorite,
+                 DueDate,
+                 IsCompleted,
+                 TypeOfPeriodicity,
+                 DaysOfWeek,
+                 DaysOfMonth,
+                 DaysOfYear,
+                 LastCompleted,
+                 DaysOffset,
+                 MonthsOffset,
+                 WeeksOffset,
+                 YearsOffset,
+                 ChildrenType,
+                 CurrentCircleOrderIndex,
+                 Link,
+                 IsRequiredCompleteInDueDate,
+                 DescriptionType,
+                 ReferenceId,
+                 ParentId
+                 FROM ToDoItem
+                 WHERE Id = @Id
+
+                 UNION ALL
+
+                 SELECT
+                 t.Id,
+                 t.Name,
+                 t.OrderIndex,
+                 t.Description,
+                 t.CreatedDateTime,
+                 t.Type,
+                 t.IsFavorite,
+                 t.DueDate,
+                 t.IsCompleted,
+                 t.TypeOfPeriodicity,
+                 t.DaysOfWeek,
+                 t.DaysOfMonth,
+                 t.DaysOfYear,
+                 t.LastCompleted,
+                 t.DaysOffset,
+                 t.MonthsOffset,
+                 t.WeeksOffset,
+                 t.YearsOffset,
+                 t.ChildrenType,
+                 t.CurrentCircleOrderIndex,
+                 t.Link,
+                 t.IsRequiredCompleteInDueDate,
+                 t.DescriptionType,
+                 t.ReferenceId,
+                 t.ParentId
+                 FROM ToDoItem t
+                 INNER JOIN hierarchy h ON t.ParentId = h.Id
+
+                 UNION ALL
+
+                 SELECT
+                 t.Id,
+                 t.Name,
+                 t.OrderIndex,
+                 t.Description,
+                 t.CreatedDateTime,
+                 t.Type,
+                 t.IsFavorite,
+                 t.DueDate,
+                 t.IsCompleted,
+                 t.TypeOfPeriodicity,
+                 t.DaysOfWeek,
+                 t.DaysOfMonth,
+                 t.DaysOfYear,
+                 t.LastCompleted,
+                 t.DaysOffset,
+                 t.MonthsOffset,
+                 t.WeeksOffset,
+                 t.YearsOffset,
+                 t.ChildrenType,
+                 t.CurrentCircleOrderIndex,
+                 t.Link,
+                 t.IsRequiredCompleteInDueDate,
+                 t.DescriptionType,
+                 t.ReferenceId,
+                 t.ParentId
+                 FROM ToDoItem t
+                 INNER JOIN hierarchy h ON t.Id = h.ReferenceId
+                 WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id
+             )
+             SELECT * FROM hierarchy;
+        """;
+
     private static readonly ReadOnlyMemory<Guid> eventIds =
-        new([AddToDoItemToFavoriteEventOptions.EventId]);
+        new([AddToDoItemToFavoriteEventOptions.EventId,]);
 
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
@@ -27,6 +152,30 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
         this.eventBusService = eventBusService;
         this.serializer = serializer;
+    }
+
+    private ConfiguredValueTaskAwaitable<
+        Result<FrozenDictionary<Guid, ToDoItemEntity>>
+    > GetAllChildrenAsync(SpravyDbToDoDbContext context, Guid id, CancellationToken ct)
+    {
+        return context
+            .Set<ToDoItemEntity>()
+            .FromSqlRaw(LoadAllItemChildrenQuery, new SqliteParameter("@Id", id))
+            .ToArrayEntitiesAsync(ct)
+            .IfSuccessAsync(
+                items =>
+                {
+                    var dictionary = new Dictionary<Guid, ToDoItemEntity>();
+
+                    foreach (var item in items.Span)
+                    {
+                        dictionary.TryAdd(item.Id, item);
+                    }
+
+                    return dictionary.ToFrozenDictionary().ToResult();
+                },
+                ct
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
@@ -96,13 +245,12 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
+                            GetAllChildrenAsync(context, id, ct)
                                 .IfSuccessAsync(
-                                    item =>
+                                    items =>
                                         getterToDoItemParametersService.GetToDoItemParametersAsync(
-                                            context,
-                                            item,
+                                            items,
+                                            items[id],
                                             offset,
                                             ct
                                         ),
@@ -292,7 +440,6 @@ public class EfToDoService : IToDoService
                                     children =>
                                     {
                                         SetRandomOrderIndex(children);
-
                                         var items = children.Span.OrderBy(x => x.OrderIndex);
 
                                         for (var i = 0; items.Length > i; i++)
@@ -314,7 +461,7 @@ public class EfToDoService : IToDoService
     {
         foreach (var entity in entities.Span)
         {
-            entity.OrderIndex = (uint)RandomNumberGenerator.GetInt32(0, Int32.MaxValue);
+            entity.OrderIndex = (uint)RandomNumberGenerator.GetInt32(0, int.MaxValue);
         }
     }
 
@@ -332,7 +479,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             item =>
                             {
-                                var parents = new List<ToDoShortItem> { new(item.Id, item.Name) };
+                                var parents = new List<ToDoShortItem> { new(item.Id, item.Name), };
 
                                 return GetParentsAsync(context, id, parents, ct)
                                     .ConfigureAwait(false)
@@ -441,13 +588,17 @@ public class EfToDoService : IToDoService
                         .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
-                                getterToDoItemParametersService
-                                    .GetToDoItemParametersAsync(
-                                        context,
-                                        item,
-                                        httpContextAccessor
-                                            .HttpContext.ThrowIfNull()
-                                            .GetTimeZoneOffset(),
+                                GetAllChildrenAsync(context, item.Id, ct)
+                                    .IfSuccessAsync(
+                                        items =>
+                                            getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                                items,
+                                                item,
+                                                httpContextAccessor
+                                                    .HttpContext.ThrowIfNull()
+                                                    .GetTimeZoneOffset(),
+                                                ct
+                                            ),
                                         ct
                                     )
                                     .IfSuccessAsync(
@@ -511,13 +662,17 @@ public class EfToDoService : IToDoService
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessForEachAsync(
                             item =>
-                                getterToDoItemParametersService
-                                    .GetToDoItemParametersAsync(
-                                        context,
-                                        item,
-                                        httpContextAccessor
-                                            .HttpContext.ThrowIfNull()
-                                            .GetTimeZoneOffset(),
+                                GetAllChildrenAsync(context, item.Id, ct)
+                                    .IfSuccessAsync(
+                                        items =>
+                                            getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                                items,
+                                                item,
+                                                httpContextAccessor
+                                                    .HttpContext.ThrowIfNull()
+                                                    .GetTimeZoneOffset(),
+                                                ct
+                                            ),
                                         ct
                                     )
                                     .IfSuccessAsync(
@@ -527,7 +682,7 @@ public class EfToDoService : IToDoService
                                                 item
                                                     is {
                                                         Type: ToDoItemType.Reference,
-                                                        ReferenceId: not null
+                                                        ReferenceId: not null,
                                                     }
                                                 && item.ReferenceId != item.Id
                                             )
@@ -679,7 +834,6 @@ public class EfToDoService : IToDoService
                                                         var toDoItem = options.ToToDoItemEntity();
                                                         toDoItem.Description = options.Description;
                                                         toDoItem.Id = id;
-
                                                         toDoItem.OrderIndex =
                                                             items.Length == 0 ? 0 : items.Max() + 1;
 
@@ -695,7 +849,6 @@ public class EfToDoService : IToDoService
 
                                                         toDoItem.TypeOfPeriodicity =
                                                             parent.TypeOfPeriodicity;
-
                                                         toDoItem.DaysOfMonth = parent.DaysOfMonth;
                                                         toDoItem.DaysOfWeek = parent.DaysOfWeek;
                                                         toDoItem.DaysOfYear = parent.DaysOfYear;
@@ -703,13 +856,11 @@ public class EfToDoService : IToDoService
                                                         toDoItem.DaysOffset = parent.DaysOffset;
                                                         toDoItem.MonthsOffset = parent.MonthsOffset;
                                                         toDoItem.YearsOffset = parent.YearsOffset;
-
                                                         toDoItem.Link = options.Link.TryGetValue(
                                                             out var uri
                                                         )
                                                             ? uri.AbsoluteUri
                                                             : string.Empty;
-
                                                         toDoItem.DescriptionType =
                                                             options.DescriptionType;
 
@@ -737,15 +888,12 @@ public class EfToDoService : IToDoService
                                         toDoItem.Id = id;
                                         toDoItem.OrderIndex =
                                             items.Length == 0 ? 0 : items.Max() + 1;
-
                                         toDoItem.DueDate = DateTimeOffset
                                             .UtcNow.Add(offset)
                                             .Date.ToDateOnly();
-
                                         toDoItem.Link = options.Link.TryGetValue(out var uri)
                                             ? uri.AbsoluteUri
                                             : string.Empty;
-
                                         toDoItem.DescriptionType = options.DescriptionType;
 
                                         return context
@@ -870,11 +1018,15 @@ public class EfToDoService : IToDoService
                                     {
                                         if (isComplete)
                                         {
-                                            return getterToDoItemParametersService
-                                                .GetToDoItemParametersAsync(
-                                                    context,
-                                                    item,
-                                                    offset,
+                                            return GetAllChildrenAsync(context, item.Id, ct)
+                                                .IfSuccessAsync(
+                                                    items =>
+                                                        getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                                            items,
+                                                            item,
+                                                            offset,
+                                                            ct
+                                                        ),
                                                     ct
                                                 )
                                                 .IfSuccessAsync(
@@ -1227,7 +1379,7 @@ public class EfToDoService : IToDoService
                                 || x.Type == ToDoItemType.Planned
                             )
                         )
-                        .Select(x => new { x.Id, x.DueDate })
+                        .Select(x => new { x.Id, x.DueDate, })
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessAsync(
                             items =>
@@ -1663,18 +1815,25 @@ public class EfToDoService : IToDoService
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessForEachAsync(
                             item =>
-                                getterToDoItemParametersService
-                                    .GetToDoItemParametersAsync(context, item, offset, ct)
+                                GetAllChildrenAsync(context, item.Id, ct)
                                     .IfSuccessAsync(
-                                        parameters =>
-                                        {
-                                            if (parameters.ActiveItem.IsHasValue)
-                                            {
-                                                return parameters.ActiveItem.ToResult();
-                                            }
+                                        items =>
+                                            getterToDoItemParametersService
+                                                .GetToDoItemParametersAsync(items, item, offset, ct)
+                                                .IfSuccessAsync(
+                                                    parameters =>
+                                                    {
+                                                        if (parameters.ActiveItem.IsHasValue)
+                                                        {
+                                                            return parameters.ActiveItem.ToResult();
+                                                        }
 
-                                            return new(new OptionStruct<ActiveToDoItem>());
-                                        },
+                                                        return new(
+                                                            new OptionStruct<ActiveToDoItem>()
+                                                        );
+                                                    },
+                                                    ct
+                                                ),
                                         ct
                                     ),
                             ct
@@ -1889,7 +2048,6 @@ public class EfToDoService : IToDoService
         clone.Id = Guid.NewGuid();
         clone.ParentId = parentId.TryGetValue(out var value) ? value : null;
         await context.AddAsync(clone, ct);
-
         var items = await context
             .Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -1999,31 +2157,35 @@ public class EfToDoService : IToDoService
                                             i.Type switch
                                             {
                                                 ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group => StepCompletionAsync(
-                                                    context,
-                                                    i,
-                                                    completeTask,
-                                                    ct
-                                                ),
+                                                ToDoItemType.Group
+                                                    => StepCompletionAsync(
+                                                        context,
+                                                        i,
+                                                        completeTask,
+                                                        ct
+                                                    ),
                                                 ToDoItemType.Planned => Result.AwaitableSuccess,
                                                 ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset =>
-                                                    Result.AwaitableSuccess,
+                                                ToDoItemType.PeriodicityOffset
+                                                    => Result.AwaitableSuccess,
                                                 ToDoItemType.Circle => Result.AwaitableSuccess,
-                                                ToDoItemType.Step => Result
-                                                    .Execute(() => i.IsCompleted = completeTask)
-                                                    .ToValueTaskResult()
-                                                    .ConfigureAwait(false),
-                                                ToDoItemType.Reference => new Result(
-                                                    new ToDoItemTypeOutOfRangeError(i.Type)
-                                                )
-                                                    .ToValueTaskResult()
-                                                    .ConfigureAwait(false),
-                                                _ => new Result(
-                                                    new ToDoItemTypeOutOfRangeError(i.Type)
-                                                )
-                                                    .ToValueTaskResult()
-                                                    .ConfigureAwait(false),
+                                                ToDoItemType.Step
+                                                    => Result
+                                                        .Execute(() => i.IsCompleted = completeTask)
+                                                        .ToValueTaskResult()
+                                                        .ConfigureAwait(false),
+                                                ToDoItemType.Reference
+                                                    => new Result(
+                                                        new ToDoItemTypeOutOfRangeError(i.Type)
+                                                    )
+                                                        .ToValueTaskResult()
+                                                        .ConfigureAwait(false),
+                                                _
+                                                    => new Result(
+                                                        new ToDoItemTypeOutOfRangeError(i.Type)
+                                                    )
+                                                        .ToValueTaskResult()
+                                                        .ConfigureAwait(false),
                                             },
                                         ct
                                     ),
@@ -2123,30 +2285,33 @@ public class EfToDoService : IToDoService
                                             i.Type switch
                                             {
                                                 ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group => CircleCompletionAsync(
-                                                    context,
-                                                    i,
-                                                    moveCircleOrderIndex,
-                                                    completeTask,
-                                                    onlyCompletedTasks,
-                                                    ct
-                                                ),
+                                                ToDoItemType.Group
+                                                    => CircleCompletionAsync(
+                                                        context,
+                                                        i,
+                                                        moveCircleOrderIndex,
+                                                        completeTask,
+                                                        onlyCompletedTasks,
+                                                        ct
+                                                    ),
                                                 ToDoItemType.Planned => Result.AwaitableSuccess,
                                                 ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset =>
-                                                    Result.AwaitableSuccess,
+                                                ToDoItemType.PeriodicityOffset
+                                                    => Result.AwaitableSuccess,
                                                 ToDoItemType.Circle => Result.AwaitableSuccess,
                                                 ToDoItemType.Step => Result.AwaitableSuccess,
-                                                ToDoItemType.Reference => new Result(
-                                                    new ToDoItemTypeOutOfRangeError(i.Type)
-                                                )
-                                                    .ToValueTaskResult()
-                                                    .ConfigureAwait(false),
-                                                _ => new Result(
-                                                    new ToDoItemTypeOutOfRangeError(i.Type)
-                                                )
-                                                    .ToValueTaskResult()
-                                                    .ConfigureAwait(false),
+                                                ToDoItemType.Reference
+                                                    => new Result(
+                                                        new ToDoItemTypeOutOfRangeError(i.Type)
+                                                    )
+                                                        .ToValueTaskResult()
+                                                        .ConfigureAwait(false),
+                                                _
+                                                    => new Result(
+                                                        new ToDoItemTypeOutOfRangeError(i.Type)
+                                                    )
+                                                        .ToValueTaskResult()
+                                                        .ConfigureAwait(false),
                                             },
                                         ct
                                     ),
@@ -2173,8 +2338,17 @@ public class EfToDoService : IToDoService
             .ToArrayEntitiesAsync(ct)
             .IfSuccessForEachAsync(
                 item =>
-                    getterToDoItemParametersService
-                        .GetToDoItemParametersAsync(context, item, offset, ct)
+                    GetAllChildrenAsync(context, item.Id, ct)
+                        .IfSuccessAsync(
+                            items =>
+                                getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                    items,
+                                    item,
+                                    offset,
+                                    ct
+                                ),
+                            ct
+                        )
                         .IfSuccessAsync(
                             parameters =>
                             {
@@ -2425,12 +2599,10 @@ public class EfToDoService : IToDoService
             case TypeOfPeriodicity.Weekly:
             {
                 var dayOfWeek = item.DueDate.DayOfWeek;
-
                 var daysOfWeek = item.GetDaysOfWeek()
                     .OrderByDefault(x => x)
                     .Select(x => (DayOfWeek?)x)
                     .ToArray();
-
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
 
                 item.DueDate = nextDay is not null
@@ -2473,7 +2645,6 @@ public class EfToDoService : IToDoService
             case TypeOfPeriodicity.Annually:
             {
                 var now = item.DueDate;
-
                 var daysOfYear = item.GetDaysOfYear()
                     .OrderBy(x => x)
                     .Select(x => (DayOfYear?)x)

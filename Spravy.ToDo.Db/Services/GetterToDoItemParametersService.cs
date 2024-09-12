@@ -1,10 +1,9 @@
+using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 using Spravy.Core.Mappers;
-using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
-using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Errors;
@@ -22,31 +21,31 @@ public class GetterToDoItemParametersService
     }
 
     public ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> allItems,
         ToDoItemEntity entity,
         TimeSpan offset,
         CancellationToken ct
     )
     {
-        return GetToDoItemParametersAsync(context, entity, offset, new(), ct);
+        return GetToDoItemParametersAsync(allItems, entity, offset, new(), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> allItems,
         ToDoItemEntity entity,
         TimeSpan offset,
         ToDoItemParameters parameters,
         CancellationToken ct
     )
     {
-        return IsDueableAsync(context, entity, ct)
+        return IsDueable(allItems, entity)
             .IfSuccessAsync(
                 isDueable =>
                 {
                     if (isDueable)
                     {
                         return GetToDoItemParametersAsync(
-                                context,
+                                allItems,
                                 entity,
                                 entity.DueDate,
                                 offset,
@@ -59,7 +58,7 @@ public class GetterToDoItemParametersService
                     }
 
                     return GetToDoItemParametersAsync(
-                            context,
+                            allItems,
                             entity,
                             DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
                             offset,
@@ -75,7 +74,7 @@ public class GetterToDoItemParametersService
     }
 
     private async ValueTask<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> allItems,
         ToDoItemEntity entity,
         DateOnly dueDate,
         TimeSpan offset,
@@ -99,23 +98,17 @@ public class GetterToDoItemParametersService
             {
                 ignoreIds.Add(entity.Id);
 
-                return await context
-                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                    .IfSuccessAsync(
-                        item =>
-                            GetToDoItemParametersAsync(
-                                    context,
-                                    item,
-                                    dueDate,
-                                    offset,
-                                    parameters,
-                                    useDueDate,
-                                    ignoreIds,
-                                    ct
-                                )
-                                .ConfigureAwait(false),
+                return await GetToDoItemParametersAsync(
+                        allItems,
+                        allItems[entity.ReferenceId.Value],
+                        dueDate,
+                        offset,
+                        parameters,
+                        useDueDate,
+                        ignoreIds,
                         ct
-                    );
+                    )
+                    .ConfigureAwait(false);
             }
 
             return parameters
@@ -142,7 +135,7 @@ public class GetterToDoItemParametersService
         }
 
         var isMiss = false;
-        var isDueable = await IsDueableAsync(context, entity, ct);
+        var isDueable = IsDueable(allItems, entity);
 
         if (!isDueable.TryGetValue(out var rv))
         {
@@ -188,12 +181,10 @@ public class GetterToDoItemParametersService
             }
         }
 
-        var items = await context
-            .Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
+        var items = allItems
+            .Values.Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(ct);
+            .ToArray();
 
         var firstReadyForComplete = new OptionStruct<ActiveToDoItem>();
         var firstMiss = new OptionStruct<ActiveToDoItem>();
@@ -207,7 +198,7 @@ public class GetterToDoItemParametersService
             }
 
             var result = await GetToDoItemParametersAsync(
-                context,
+                allItems,
                 item,
                 dueDate,
                 offset,
@@ -395,79 +386,25 @@ public class GetterToDoItemParametersService
             .ToResult();
     }
 
-    private ConfiguredValueTaskAwaitable<Result<bool>> IsDueableAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        CancellationToken ct
+    private Result<bool> IsDueable(
+        FrozenDictionary<Guid, ToDoItemEntity> allItems,
+        ToDoItemEntity entity
     )
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Group => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Planned => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Periodicity => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.PeriodicityOffset => true
-                .ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Circle => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Step => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                ? context
-                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                    .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
-                : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            _ => new Result<bool>(new ToDoItemTypeOutOfRangeError(entity.Type))
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-        };
-    }
-
-    private ConfiguredValueTaskAwaitable<Result<DateOnly>> GetDueDateAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        CancellationToken ct
-    )
-    {
-        return entity.Type switch
-        {
-            ToDoItemType.Value => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Group => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Planned => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Periodicity => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.PeriodicityOffset => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Circle => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Step => entity
-                .DueDate.ToResult()
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                ? context
-                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                    .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)
-                : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
-            _ => new Result<DateOnly>(new ToDoItemTypeOutOfRangeError(entity.Type))
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
+            ToDoItemType.Value => false.ToResult(),
+            ToDoItemType.Group => false.ToResult(),
+            ToDoItemType.Planned => true.ToResult(),
+            ToDoItemType.Periodicity => true.ToResult(),
+            ToDoItemType.PeriodicityOffset => true.ToResult(),
+            ToDoItemType.Circle => false.ToResult(),
+            ToDoItemType.Step => false.ToResult(),
+            ToDoItemType.Reference
+                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
+                    ? IsDueable(allItems, allItems[entity.ReferenceId.Value])
+                    : false.ToResult(),
+            _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
 

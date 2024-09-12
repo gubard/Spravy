@@ -163,6 +163,31 @@ public static class MemoryExtension
         return new(new MultiValuesArrayError(arrayName, (ulong)memory.Length));
     }
 
+    public static Result<TSource> First<TSource>(
+        this ReadOnlyMemory<TSource> memory,
+        string arrayName,
+        Func<TSource, bool> predicate
+    )
+        where TSource : notnull
+    {
+        if (memory.IsEmpty)
+        {
+            return new(new EmptyArrayError(arrayName));
+        }
+
+        for (var index = 0; index < memory.Length; index++)
+        {
+            if (!predicate.Invoke(memory.Span[index]))
+            {
+                continue;
+            }
+
+            return memory.Span[index].ToResult();
+        }
+
+        return new(new NotFoundNamedError(arrayName));
+    }
+
     public static T GetSingle<T>(this Memory<T> memory)
     {
         if (memory.Length == 1)
