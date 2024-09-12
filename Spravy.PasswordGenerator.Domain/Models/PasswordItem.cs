@@ -12,7 +12,8 @@ public readonly struct PasswordItem
         bool isAvailableLowerLatin,
         bool isAvailableSpecialSymbols,
         bool isAvailableNumber,
-        string customAvailableCharacters
+        string customAvailableCharacters,
+        string login
     )
     {
         Id = id;
@@ -25,6 +26,7 @@ public readonly struct PasswordItem
         IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
         IsAvailableNumber = isAvailableNumber;
         CustomAvailableCharacters = customAvailableCharacters;
+        Login = login;
     }
 
     public Guid Id { get; }
@@ -37,4 +39,5 @@ public readonly struct PasswordItem
     public string CustomAvailableCharacters { get; }
     public ushort Length { get; }
     public string Regex { get; }
+    public string Login { get; }
 }

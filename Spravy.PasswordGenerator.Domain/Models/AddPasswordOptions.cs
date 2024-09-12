@@ -11,7 +11,8 @@ public readonly struct AddPasswordOptions
         bool isAvailableUpperLatin,
         bool isAvailableNumber,
         bool isAvailableSpecialSymbols,
-        string customAvailableCharacters
+        string customAvailableCharacters,
+        string login
     )
     {
         Name = name;
@@ -23,6 +24,7 @@ public readonly struct AddPasswordOptions
         IsAvailableNumber = isAvailableNumber;
         IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
         CustomAvailableCharacters = customAvailableCharacters;
+        Login = login;
     }
 
     public string Name { get; }
@@ -34,4 +36,5 @@ public readonly struct AddPasswordOptions
     public string CustomAvailableCharacters { get; }
     public ushort Length { get; }
     public string Regex { get; }
+    public string Login { get; }
 }

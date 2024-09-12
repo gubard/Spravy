@@ -378,4 +378,33 @@ public class EfPasswordService : IPasswordService
                 ct
             );
     }
+
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLoginAsync(
+        Guid id,
+        string login,
+        CancellationToken ct
+    )
+    {
+        return dbContextFactory
+            .Create()
+            .IfSuccessDisposeAsync(
+                context =>
+                    context.AtomicExecuteAsync(
+                        () =>
+                            context
+                                .GetEntityAsync<PasswordItemEntity>(id)
+                                .IfSuccessAsync(
+                                    item =>
+                                    {
+                                        item.Login = login;
+
+                                        return Result.Success;
+                                    },
+                                    ct
+                                ),
+                        ct
+                    ),
+                ct
+            );
+    }
 }

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class ToDoItemContentView : UserControl
+public partial class ToDoItemContentView : MainUserControl<ToDoItemContentViewModel>
 {
     public ToDoItemContentView()
     {

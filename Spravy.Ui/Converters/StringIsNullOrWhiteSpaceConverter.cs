@@ -1,15 +1,27 @@
 namespace Spravy.Ui.Converters;
 
-public class EmptyStringToNullConverter : IValueConverter
+public class StringIsNullOrWhiteSpaceConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not string str)
+        var revers = false;
+
+        if (parameter is bool r)
         {
-            return value;
+            revers = r;
         }
 
-        return str.IsNullOrWhiteSpace() ? null : value;
+        if (value is not string str)
+        {
+            return false;
+        }
+
+        if (revers)
+        {
+            return !str.IsNullOrWhiteSpace();
+        }
+
+        return str.IsNullOrWhiteSpace();
     }
 
     public object ConvertBack(

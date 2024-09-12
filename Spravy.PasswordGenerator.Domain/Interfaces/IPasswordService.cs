@@ -75,4 +75,10 @@ public interface IPasswordService
         bool isAvailableUpperLatin,
         CancellationToken ct
     );
+
+    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLoginAsync(
+        Guid id,
+        string login,
+        CancellationToken ct
+    );
 }

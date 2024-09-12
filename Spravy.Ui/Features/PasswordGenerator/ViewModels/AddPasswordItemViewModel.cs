@@ -29,6 +29,9 @@ public partial class AddPasswordItemViewModel : DialogableViewModelBase
     [ObservableProperty]
     private string customAvailableCharacters = string.Empty;
 
+    [ObservableProperty]
+    private string login = string.Empty;
+
     public override string ViewId
     {
         get => $"{TypeCache<AddPasswordItemViewModel>.Type}";
