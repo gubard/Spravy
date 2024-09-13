@@ -1,5 +1,7 @@
 using System.Collections.Frozen;
+using System.Data.Common;
 using Microsoft.Data.Sqlite;
+using Spravy.Db.Models;
 using Spravy.EventBus.Domain.Errors;
 using Spravy.EventBus.Domain.Interfaces;
 
@@ -7,129 +9,6 @@ namespace Spravy.ToDo.Service.Services;
 
 public class EfToDoService : IToDoService
 {
-    private const string LoadAllItemChildrenQuery = """
-        WITH RECURSIVE hierarchy(
-                 Id,
-                 Name,
-                 OrderIndex,
-                 Description,
-                 CreatedDateTime,
-                 Type,
-                 IsFavorite,
-                 DueDate,
-                 IsCompleted,
-                 TypeOfPeriodicity,
-                 DaysOfWeek,
-                 DaysOfMonth,
-                 DaysOfYear,
-                 LastCompleted,
-                 DaysOffset,
-                 MonthsOffset,
-                 WeeksOffset,
-                 YearsOffset,
-                 ChildrenType,
-                 CurrentCircleOrderIndex,
-                 Link,
-                 IsRequiredCompleteInDueDate,
-                 DescriptionType,
-                 ReferenceId,
-                 ParentId
-             ) AS (
-                 SELECT
-                 Id,
-                 Name,
-                 OrderIndex,
-                 Description,
-                 CreatedDateTime,
-                 Type,
-                 IsFavorite,
-                 DueDate,
-                 IsCompleted,
-                 TypeOfPeriodicity,
-                 DaysOfWeek,
-                 DaysOfMonth,
-                 DaysOfYear,
-                 LastCompleted,
-                 DaysOffset,
-                 MonthsOffset,
-                 WeeksOffset,
-                 YearsOffset,
-                 ChildrenType,
-                 CurrentCircleOrderIndex,
-                 Link,
-                 IsRequiredCompleteInDueDate,
-                 DescriptionType,
-                 ReferenceId,
-                 ParentId
-                 FROM ToDoItem
-                 WHERE Id = @Id
-
-                 UNION ALL
-
-                 SELECT
-                 t.Id,
-                 t.Name,
-                 t.OrderIndex,
-                 t.Description,
-                 t.CreatedDateTime,
-                 t.Type,
-                 t.IsFavorite,
-                 t.DueDate,
-                 t.IsCompleted,
-                 t.TypeOfPeriodicity,
-                 t.DaysOfWeek,
-                 t.DaysOfMonth,
-                 t.DaysOfYear,
-                 t.LastCompleted,
-                 t.DaysOffset,
-                 t.MonthsOffset,
-                 t.WeeksOffset,
-                 t.YearsOffset,
-                 t.ChildrenType,
-                 t.CurrentCircleOrderIndex,
-                 t.Link,
-                 t.IsRequiredCompleteInDueDate,
-                 t.DescriptionType,
-                 t.ReferenceId,
-                 t.ParentId
-                 FROM ToDoItem t
-                 INNER JOIN hierarchy h ON t.ParentId = h.Id
-
-                 UNION ALL
-
-                 SELECT
-                 t.Id,
-                 t.Name,
-                 t.OrderIndex,
-                 t.Description,
-                 t.CreatedDateTime,
-                 t.Type,
-                 t.IsFavorite,
-                 t.DueDate,
-                 t.IsCompleted,
-                 t.TypeOfPeriodicity,
-                 t.DaysOfWeek,
-                 t.DaysOfMonth,
-                 t.DaysOfYear,
-                 t.LastCompleted,
-                 t.DaysOffset,
-                 t.MonthsOffset,
-                 t.WeeksOffset,
-                 t.YearsOffset,
-                 t.ChildrenType,
-                 t.CurrentCircleOrderIndex,
-                 t.Link,
-                 t.IsRequiredCompleteInDueDate,
-                 t.DescriptionType,
-                 t.ReferenceId,
-                 t.ParentId
-                 FROM ToDoItem t
-                 INNER JOIN hierarchy h ON t.Id = h.ReferenceId
-                 WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id
-             )
-             SELECT * FROM hierarchy;
-        """;
-
     private static readonly ReadOnlyMemory<Guid> eventIds =
         new([AddToDoItemToFavoriteEventOptions.EventId,]);
 
@@ -154,13 +33,179 @@ public class EfToDoService : IToDoService
         this.serializer = serializer;
     }
 
+    private SqlRawParameters CreateSqlRawParametersForAllChildren(ReadOnlyMemory<Guid> ids)
+    {
+        var idsString = Enumerable.Range(0, ids.Length).Select(i => $"@Id{i}").JoinString(", ");
+        var parameters = new DbParameter[ids.Length];
+
+        for (var i = 0; i < ids.Length; i++)
+        {
+            parameters[i] = new SqliteParameter($"@Id{i}", ids.Span[i]);
+        }
+
+        return new(
+            $"""
+            WITH RECURSIVE hierarchy(
+                     Id,
+                     Name,
+                     OrderIndex,
+                     Description,
+                     CreatedDateTime,
+                     Type,
+                     IsFavorite,
+                     DueDate,
+                     IsCompleted,
+                     TypeOfPeriodicity,
+                     DaysOfWeek,
+                     DaysOfMonth,
+                     DaysOfYear,
+                     LastCompleted,
+                     DaysOffset,
+                     MonthsOffset,
+                     WeeksOffset,
+                     YearsOffset,
+                     ChildrenType,
+                     CurrentCircleOrderIndex,
+                     Link,
+                     IsRequiredCompleteInDueDate,
+                     DescriptionType,
+                     ReferenceId,
+                     ParentId
+                 ) AS (
+                     SELECT
+                     Id,
+                     Name,
+                     OrderIndex,
+                     Description,
+                     CreatedDateTime,
+                     Type,
+                     IsFavorite,
+                     DueDate,
+                     IsCompleted,
+                     TypeOfPeriodicity,
+                     DaysOfWeek,
+                     DaysOfMonth,
+                     DaysOfYear,
+                     LastCompleted,
+                     DaysOffset,
+                     MonthsOffset,
+                     WeeksOffset,
+                     YearsOffset,
+                     ChildrenType,
+                     CurrentCircleOrderIndex,
+                     Link,
+                     IsRequiredCompleteInDueDate,
+                     DescriptionType,
+                     ReferenceId,
+                     ParentId
+                     FROM ToDoItem
+                     WHERE Id IN ({idsString})
+
+                     UNION ALL
+
+                     SELECT
+                     t.Id,
+                     t.Name,
+                     t.OrderIndex,
+                     t.Description,
+                     t.CreatedDateTime,
+                     t.Type,
+                     t.IsFavorite,
+                     t.DueDate,
+                     t.IsCompleted,
+                     t.TypeOfPeriodicity,
+                     t.DaysOfWeek,
+                     t.DaysOfMonth,
+                     t.DaysOfYear,
+                     t.LastCompleted,
+                     t.DaysOffset,
+                     t.MonthsOffset,
+                     t.WeeksOffset,
+                     t.YearsOffset,
+                     t.ChildrenType,
+                     t.CurrentCircleOrderIndex,
+                     t.Link,
+                     t.IsRequiredCompleteInDueDate,
+                     t.DescriptionType,
+                     t.ReferenceId,
+                     t.ParentId
+                     FROM ToDoItem t
+                     INNER JOIN hierarchy h ON t.ParentId = h.Id
+
+                     UNION ALL
+
+                     SELECT
+                     t.Id,
+                     t.Name,
+                     t.OrderIndex,
+                     t.Description,
+                     t.CreatedDateTime,
+                     t.Type,
+                     t.IsFavorite,
+                     t.DueDate,
+                     t.IsCompleted,
+                     t.TypeOfPeriodicity,
+                     t.DaysOfWeek,
+                     t.DaysOfMonth,
+                     t.DaysOfYear,
+                     t.LastCompleted,
+                     t.DaysOffset,
+                     t.MonthsOffset,
+                     t.WeeksOffset,
+                     t.YearsOffset,
+                     t.ChildrenType,
+                     t.CurrentCircleOrderIndex,
+                     t.Link,
+                     t.IsRequiredCompleteInDueDate,
+                     t.DescriptionType,
+                     t.ReferenceId,
+                     t.ParentId
+                     FROM ToDoItem t
+                     INNER JOIN hierarchy h ON t.Id = h.ReferenceId
+                     WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id
+                 )
+                 SELECT * FROM hierarchy;
+            """,
+            parameters
+        );
+    }
+
     private ConfiguredValueTaskAwaitable<
         Result<FrozenDictionary<Guid, ToDoItemEntity>>
-    > GetAllChildrenAsync(SpravyDbToDoDbContext context, Guid id, CancellationToken ct)
+    > GetAllItemsAsync(SpravyDbToDoDbContext context, CancellationToken ct)
     {
         return context
             .Set<ToDoItemEntity>()
-            .FromSqlRaw(LoadAllItemChildrenQuery, new SqliteParameter("@Id", id))
+            .ToArrayEntitiesAsync(ct)
+            .IfSuccessAsync(
+                items =>
+                {
+                    var dictionary = new Dictionary<Guid, ToDoItemEntity>();
+
+                    foreach (var item in items.Span)
+                    {
+                        dictionary.TryAdd(item.Id, item);
+                    }
+
+                    return dictionary.ToFrozenDictionary().ToResult();
+                },
+                ct
+            );
+    }
+
+    private ConfiguredValueTaskAwaitable<
+        Result<FrozenDictionary<Guid, ToDoItemEntity>>
+    > GetAllChildrenAsync(
+        SpravyDbToDoDbContext context,
+        ReadOnlyMemory<Guid> ids,
+        CancellationToken ct
+    )
+    {
+        var parameters = CreateSqlRawParametersForAllChildren(ids);
+
+        return context
+            .Set<ToDoItemEntity>()
+            .FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray())
             .ToArrayEntitiesAsync(ct)
             .IfSuccessAsync(
                 items =>
@@ -245,7 +290,7 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            GetAllChildrenAsync(context, id, ct)
+                            GetAllChildrenAsync(context, new[] { id }, ct)
                                 .IfSuccessAsync(
                                     items =>
                                         getterToDoItemParametersService.GetToDoItemParametersAsync(
@@ -584,59 +629,66 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
+                    GetAllChildrenAsync(context, new[] { id }, ct)
                         .IfSuccessAsync(
-                            item =>
-                                GetAllChildrenAsync(context, item.Id, ct)
+                            items =>
+                                items[id]
+                                    .ToResult()
                                     .IfSuccessAsync(
-                                        items =>
-                                            getterToDoItemParametersService.GetToDoItemParametersAsync(
-                                                items,
-                                                item,
-                                                httpContextAccessor
-                                                    .HttpContext.ThrowIfNull()
-                                                    .GetTimeZoneOffset(),
-                                                ct
-                                            ),
-                                        ct
-                                    )
-                                    .IfSuccessAsync(
-                                        parameters =>
-                                        {
-                                            if (
-                                                item.Type == ToDoItemType.Reference
-                                                && item.ReferenceId.HasValue
-                                            )
-                                            {
-                                                return context
-                                                    .GetEntityAsync<ToDoItemEntity>(
-                                                        item.ReferenceId.Value
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        i =>
-                                                            (
-                                                                i with
-                                                                {
-                                                                    Id = item.Id,
-                                                                    ReferenceId = item.ReferenceId,
-                                                                    ParentId = item.ParentId,
-                                                                    Type = ToDoItemType.Reference,
-                                                                    OrderIndex = item.OrderIndex,
-                                                                    Name = item.Name,
-                                                                }
-                                                            )
-                                                                .ToFullToDoItem(parameters)
-                                                                .ToResult(),
-                                                        ct
-                                                    );
-                                            }
+                                        item =>
+                                            getterToDoItemParametersService
+                                                .GetToDoItemParametersAsync(
+                                                    items,
+                                                    items[id],
+                                                    httpContextAccessor
+                                                        .HttpContext.ThrowIfNull()
+                                                        .GetTimeZoneOffset(),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    parameters =>
+                                                    {
+                                                        if (
+                                                            item.Type == ToDoItemType.Reference
+                                                            && item.ReferenceId.HasValue
+                                                        )
+                                                        {
+                                                            return context
+                                                                .GetEntityAsync<ToDoItemEntity>(
+                                                                    item.ReferenceId.Value
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    i =>
+                                                                        (
+                                                                            i with
+                                                                            {
+                                                                                Id = item.Id,
+                                                                                ReferenceId =
+                                                                                    item.ReferenceId,
+                                                                                ParentId =
+                                                                                    item.ParentId,
+                                                                                Type =
+                                                                                    ToDoItemType.Reference,
+                                                                                OrderIndex =
+                                                                                    item.OrderIndex,
+                                                                                Name = item.Name,
+                                                                            }
+                                                                        )
+                                                                            .ToFullToDoItem(
+                                                                                parameters
+                                                                            )
+                                                                            .ToResult(),
+                                                                    ct
+                                                                );
+                                                        }
 
-                                            return item.ToFullToDoItem(parameters)
-                                                .ToResult()
-                                                .ToValueTaskResult()
-                                                .ConfigureAwait(false);
-                                        },
+                                                        return item.ToFullToDoItem(parameters)
+                                                            .ToResult()
+                                                            .ToValueTaskResult()
+                                                            .ConfigureAwait(false);
+                                                    },
+                                                    ct
+                                                ),
                                         ct
                                     ),
                             ct
@@ -654,67 +706,72 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    context
-                        .Set<ToDoItemEntity>()
-                        .AsNoTracking()
-                        .Where(x => ids.ToArray().Contains(x.Id))
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
-                        .IfSuccessForEachAsync(
-                            item =>
-                                GetAllChildrenAsync(context, item.Id, ct)
-                                    .IfSuccessAsync(
-                                        items =>
-                                            getterToDoItemParametersService.GetToDoItemParametersAsync(
-                                                items,
-                                                item,
-                                                httpContextAccessor
-                                                    .HttpContext.ThrowIfNull()
-                                                    .GetTimeZoneOffset(),
-                                                ct
-                                            ),
-                                        ct
-                                    )
-                                    .IfSuccessAsync(
-                                        parameters =>
-                                        {
-                                            if (
-                                                item
-                                                    is {
-                                                        Type: ToDoItemType.Reference,
-                                                        ReferenceId: not null,
-                                                    }
-                                                && item.ReferenceId != item.Id
-                                            )
-                                            {
-                                                return context
-                                                    .GetEntityAsync<ToDoItemEntity>(
-                                                        item.ReferenceId.Value
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        i =>
-                                                            (
-                                                                i with
-                                                                {
-                                                                    Id = item.Id,
-                                                                    ReferenceId = item.ReferenceId,
-                                                                    ParentId = item.ParentId,
-                                                                    Type = ToDoItemType.Reference,
-                                                                    OrderIndex = item.OrderIndex,
-                                                                    Name = item.Name,
+                    GetAllChildrenAsync(context, ids, ct)
+                        .IfSuccessAsync(
+                            items =>
+                                items
+                                    .Values.Where(x => ids.Contains(x.Id))
+                                    .OrderBy(x => x.OrderIndex)
+                                    .ToArray()
+                                    .ToReadOnlyMemory()
+                                    .ToResult()
+                                    .IfSuccessForEachAsync(
+                                        item =>
+                                            getterToDoItemParametersService
+                                                .GetToDoItemParametersAsync(
+                                                    items,
+                                                    item,
+                                                    httpContextAccessor
+                                                        .HttpContext.ThrowIfNull()
+                                                        .GetTimeZoneOffset(),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    parameters =>
+                                                    {
+                                                        if (
+                                                            item
+                                                                is {
+                                                                    Type: ToDoItemType.Reference,
+                                                                    ReferenceId: not null,
                                                                 }
-                                                            )
-                                                                .ToToDoItem(parameters)
-                                                                .ToResult(),
-                                                        ct
-                                                    );
-                                            }
+                                                            && item.ReferenceId != item.Id
+                                                        )
+                                                        {
+                                                            return context
+                                                                .GetEntityAsync<ToDoItemEntity>(
+                                                                    item.ReferenceId.Value
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    i =>
+                                                                        (
+                                                                            i with
+                                                                            {
+                                                                                Id = item.Id,
+                                                                                ReferenceId =
+                                                                                    item.ReferenceId,
+                                                                                ParentId =
+                                                                                    item.ParentId,
+                                                                                Type =
+                                                                                    ToDoItemType.Reference,
+                                                                                OrderIndex =
+                                                                                    item.OrderIndex,
+                                                                                Name = item.Name,
+                                                                            }
+                                                                        )
+                                                                            .ToToDoItem(parameters)
+                                                                            .ToResult(),
+                                                                    ct
+                                                                );
+                                                        }
 
-                                            return item.ToToDoItem(parameters)
-                                                .ToResult()
-                                                .ToValueTaskResult()
-                                                .ConfigureAwait(false);
-                                        },
+                                                        return item.ToToDoItem(parameters)
+                                                            .ToResult()
+                                                            .ToValueTaskResult()
+                                                            .ConfigureAwait(false);
+                                                    },
+                                                    ct
+                                                ),
                                         ct
                                     ),
                             ct
@@ -1018,7 +1075,11 @@ public class EfToDoService : IToDoService
                                     {
                                         if (isComplete)
                                         {
-                                            return GetAllChildrenAsync(context, item.Id, ct)
+                                            return GetAllChildrenAsync(
+                                                    context,
+                                                    new[] { item.Id },
+                                                    ct
+                                                )
                                                 .IfSuccessAsync(
                                                     items =>
                                                         getterToDoItemParametersService.GetToDoItemParametersAsync(
@@ -1808,16 +1869,17 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    context
-                        .Set<ToDoItemEntity>()
-                        .Where(x => x.ParentId == null)
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
-                        .IfSuccessForEachAsync(
-                            item =>
-                                GetAllChildrenAsync(context, item.Id, ct)
-                                    .IfSuccessAsync(
-                                        items =>
+                    GetAllItemsAsync(context, ct)
+                        .IfSuccessAsync(
+                            items =>
+                                items
+                                    .Values.Where(y => y.ParentId is null)
+                                    .OrderBy(x => x.OrderIndex)
+                                    .ToArray()
+                                    .ToReadOnlyMemory()
+                                    .ToResult()
+                                    .IfSuccessForEachAsync(
+                                        item =>
                                             getterToDoItemParametersService
                                                 .GetToDoItemParametersAsync(items, item, offset, ct)
                                                 .IfSuccessAsync(
@@ -1835,16 +1897,16 @@ public class EfToDoService : IToDoService
                                                     ct
                                                 ),
                                         ct
-                                    ),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            items =>
-                            {
-                                var item = items.Span.FirstOrDefault(x => x.IsHasValue);
+                                    )
+                                    .IfSuccessAsync(
+                                        i =>
+                                        {
+                                            var item = i.Span.FirstOrDefault(x => x.IsHasValue);
 
-                                return new Result<OptionStruct<ActiveToDoItem>>(item);
-                            },
+                                            return new Result<OptionStruct<ActiveToDoItem>>(item);
+                                        },
+                                        ct
+                                    ),
                             ct
                         ),
                 ct
@@ -2330,50 +2392,46 @@ public class EfToDoService : IToDoService
         CancellationToken ct
     )
     {
-        return context
-            .Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == options.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayEntitiesAsync(ct)
-            .IfSuccessForEachAsync(
-                item =>
-                    GetAllChildrenAsync(context, item.Id, ct)
-                        .IfSuccessAsync(
-                            items =>
-                                getterToDoItemParametersService.GetToDoItemParametersAsync(
-                                    items,
-                                    item,
-                                    offset,
-                                    ct
-                                ),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            parameters =>
-                            {
-                                if (
-                                    !options
-                                        .Statuses.Select(x => (byte)x)
-                                        .Span.Contains((byte)parameters.Status)
-                                )
-                                {
-                                    return Result.AwaitableSuccess;
-                                }
+        return GetAllChildrenAsync(context, new[] { options.Id }, ct)
+            .IfSuccessAsync(
+                items =>
+                    items
+                        .Values.Where(x => x.ParentId == options.Id)
+                        .OrderBy(x => x.OrderIndex)
+                        .ToArray()
+                        .ToReadOnlyMemory()
+                        .ToResult()
+                        .IfSuccessForEachAsync(
+                            item =>
+                                getterToDoItemParametersService
+                                    .GetToDoItemParametersAsync(items, item, offset, ct)
+                                    .IfSuccessAsync(
+                                        parameters =>
+                                        {
+                                            if (
+                                                !options
+                                                    .Statuses.Select(x => (byte)x)
+                                                    .Span.Contains((byte)parameters.Status)
+                                            )
+                                            {
+                                                return Result.AwaitableSuccess;
+                                            }
 
-                                builder.Duplicate(" ", level);
-                                builder.Append(item.Name);
-                                builder.AppendLine();
+                                            builder.Duplicate(" ", level);
+                                            builder.Append(item.Name);
+                                            builder.AppendLine();
 
-                                return ToDoItemToStringAsync(
-                                    context,
-                                    new(options.Statuses, item.Id),
-                                    (ushort)(level + 1),
-                                    builder,
-                                    offset,
-                                    ct
-                                );
-                            },
+                                            return ToDoItemToStringAsync(
+                                                context,
+                                                new(options.Statuses, item.Id),
+                                                (ushort)(level + 1),
+                                                builder,
+                                                offset,
+                                                ct
+                                            );
+                                        },
+                                        ct
+                                    ),
                             ct
                         ),
                 ct
