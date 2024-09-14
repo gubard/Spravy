@@ -92,4 +92,15 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
             Periodicity = CreatePeriodicity();
         }
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
+        Item.ChildrenType = ChildrenType;
+        Item.TypeOfPeriodicity = TypeOfPeriodicity;
+        Item.DueDate = DueDate;
+        Periodicity.UpdateItemUi();
+
+        return Result.Success;
+    }
 }

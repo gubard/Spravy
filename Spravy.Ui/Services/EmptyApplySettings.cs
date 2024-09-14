@@ -6,4 +6,9 @@ public class EmptyApplySettings : IApplySettings
     {
         return Result.AwaitableSuccess;
     }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
+    }
 }

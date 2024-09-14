@@ -39,4 +39,13 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
                 ct
             );
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
+        Item.ChildrenType = ChildrenType;
+        Item.DueDate = DueDate;
+
+        return Result.Success;
+    }
 }

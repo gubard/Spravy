@@ -36,4 +36,11 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 
         return Result.Success;
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.DaysOfWeek.UpdateUi(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value));
+
+        return Result.Success;
+    }
 }

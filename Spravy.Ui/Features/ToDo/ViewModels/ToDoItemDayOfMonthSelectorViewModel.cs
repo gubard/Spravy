@@ -23,4 +23,11 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
             ct
         );
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.DaysOfMonth.UpdateUi(DaysOfMonth);
+
+        return Result.Success;
+    }
 }

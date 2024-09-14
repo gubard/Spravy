@@ -28,4 +28,11 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
                 ct
             );
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.ReferenceId = ToDoItemSelector.SelectedItem?.Id;
+
+        return Result.Success;
+    }
 }

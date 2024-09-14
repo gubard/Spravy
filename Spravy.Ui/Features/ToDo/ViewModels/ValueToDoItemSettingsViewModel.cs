@@ -32,6 +32,13 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
         return toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct);
     }
 
+    public Result UpdateItemUi()
+    {
+        Item.ChildrenType = ChildrenType;
+
+        return Result.Success;
+    }
+
     public Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoService

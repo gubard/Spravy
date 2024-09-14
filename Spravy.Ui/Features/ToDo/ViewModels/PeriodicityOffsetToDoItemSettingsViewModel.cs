@@ -74,4 +74,17 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 ct
             );
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
+        Item.ChildrenType = ChildrenType;
+        Item.DaysOffset = DaysOffset;
+        Item.DueDate = DueDate;
+        Item.MonthsOffset = MonthsOffset;
+        Item.WeeksOffset = WeeksOffset;
+        Item.YearsOffset = YearsOffset;
+
+        return Result.Success;
+    }
 }

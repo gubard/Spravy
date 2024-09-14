@@ -131,7 +131,7 @@ public class EfToDoService : IToDoService
         """;
 
     private static readonly ReadOnlyMemory<Guid> eventIds =
-        new([AddToDoItemToFavoriteEventOptions.EventId,]);
+        new([AddToDoItemToFavoriteEventOptions.EventId]);
 
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
@@ -479,7 +479,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             item =>
                             {
-                                var parents = new List<ToDoShortItem> { new(item.Id, item.Name), };
+                                var parents = new List<ToDoShortItem> { new(item.Id, item.Name) };
 
                                 return GetParentsAsync(context, id, parents, ct)
                                     .ConfigureAwait(false)
@@ -1072,8 +1072,16 @@ public class EfToDoService : IToDoService
                                                                 item.IsCompleted = true;
 
                                                                 break;
+                                                            case ToDoItemType.Reference:
+                                                                break;
                                                             default:
-                                                                throw new ArgumentOutOfRangeException();
+                                                                return new Result(
+                                                                    new ToDoItemTypeOutOfRangeError(
+                                                                        item.Type
+                                                                    )
+                                                                )
+                                                                    .ToValueTaskResult()
+                                                                    .ConfigureAwait(false);
                                                         }
 
                                                         return UpdateDueDateAsync(
@@ -1379,7 +1387,7 @@ public class EfToDoService : IToDoService
                                 || x.Type == ToDoItemType.Planned
                             )
                         )
-                        .Select(x => new { x.Id, x.DueDate, })
+                        .Select(x => new { x.Id, x.DueDate })
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessAsync(
                             items =>
@@ -2157,35 +2165,27 @@ public class EfToDoService : IToDoService
                                             i.Type switch
                                             {
                                                 ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group
-                                                    => StepCompletionAsync(
-                                                        context,
-                                                        i,
-                                                        completeTask,
-                                                        ct
-                                                    ),
+                                                ToDoItemType.Group => StepCompletionAsync(
+                                                    context,
+                                                    i,
+                                                    completeTask,
+                                                    ct
+                                                ),
                                                 ToDoItemType.Planned => Result.AwaitableSuccess,
                                                 ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset
-                                                    => Result.AwaitableSuccess,
+                                                ToDoItemType.PeriodicityOffset =>
+                                                    Result.AwaitableSuccess,
                                                 ToDoItemType.Circle => Result.AwaitableSuccess,
-                                                ToDoItemType.Step
-                                                    => Result
-                                                        .Execute(() => i.IsCompleted = completeTask)
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                                ToDoItemType.Reference
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                                _
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
+                                                ToDoItemType.Step => Result
+                                                    .Execute(() => i.IsCompleted = completeTask)
+                                                    .ToValueTaskResult()
+                                                    .ConfigureAwait(false),
+                                                ToDoItemType.Reference => Result.AwaitableSuccess,
+                                                _ => new Result(
+                                                    new ToDoItemTypeOutOfRangeError(i.Type)
+                                                )
+                                                    .ToValueTaskResult()
+                                                    .ConfigureAwait(false),
                                             },
                                         ct
                                     ),
@@ -2285,33 +2285,26 @@ public class EfToDoService : IToDoService
                                             i.Type switch
                                             {
                                                 ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group
-                                                    => CircleCompletionAsync(
-                                                        context,
-                                                        i,
-                                                        moveCircleOrderIndex,
-                                                        completeTask,
-                                                        onlyCompletedTasks,
-                                                        ct
-                                                    ),
+                                                ToDoItemType.Group => CircleCompletionAsync(
+                                                    context,
+                                                    i,
+                                                    moveCircleOrderIndex,
+                                                    completeTask,
+                                                    onlyCompletedTasks,
+                                                    ct
+                                                ),
                                                 ToDoItemType.Planned => Result.AwaitableSuccess,
                                                 ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset
-                                                    => Result.AwaitableSuccess,
+                                                ToDoItemType.PeriodicityOffset =>
+                                                    Result.AwaitableSuccess,
                                                 ToDoItemType.Circle => Result.AwaitableSuccess,
                                                 ToDoItemType.Step => Result.AwaitableSuccess,
-                                                ToDoItemType.Reference
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                                _
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
+                                                ToDoItemType.Reference => Result.AwaitableSuccess,
+                                                _ => new Result(
+                                                    new ToDoItemTypeOutOfRangeError(i.Type)
+                                                )
+                                                    .ToValueTaskResult()
+                                                    .ConfigureAwait(false),
                                             },
                                         ct
                                     ),
