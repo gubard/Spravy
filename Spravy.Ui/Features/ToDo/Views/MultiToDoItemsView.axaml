@@ -18,11 +18,11 @@
                    Classes.by-type="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByType}}"
                    Classes.multi="{Binding IsMulti}">
     <UserControl.Styles>
-        <Style Selector="c|GridColumnStackControl.none">
+        <Style Selector="ItemsControl.none">
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="c|GridColumnStackControl.to-do-items-control">
+        <Style Selector="ItemsControl.to-do-items-control">
             <Setter Property="ItemTemplate">
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <Button x:Name="RootToDoItemButton"
@@ -150,23 +150,23 @@
             </Setter>
         </Style>
 
-        <Style Selector="c|GridColumnStackControl.by-status">
+        <Style Selector="ItemsControl.by-status">
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="c|GridColumnStackControl.by-type">
+        <Style Selector="ItemsControl.by-type">
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="v|MultiToDoItemsView.none c|GridColumnStackControl.none">
+        <Style Selector="v|MultiToDoItemsView.none ItemsControl.none">
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-        <Style Selector="v|MultiToDoItemsView.by-status c|GridColumnStackControl.by-status">
+        <Style Selector="v|MultiToDoItemsView.by-status ItemsControl.by-status">
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-        <Style Selector="v|MultiToDoItemsView.by-type c|GridColumnStackControl.by-type">
+        <Style Selector="v|MultiToDoItemsView.by-type ItemsControl.by-type">
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
@@ -178,7 +178,7 @@
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-        <Style Selector="v|MultiToDoItemsView.multi c|GridColumnStackControl.to-do-items-control">
+        <Style Selector="v|MultiToDoItemsView.multi ItemsControl.to-do-items-control">
             <Setter Property="ItemTemplate">
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch to-do-item"
@@ -228,12 +228,12 @@
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
         <Panel>
-            <c:GridColumnStackControl Classes="to-do-items-group none">
+            <ItemsControl Classes="to-do-items-group none">
                 <ContentControl Content="{Binding Items}"
                                 IsVisible="{Binding Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-            </c:GridColumnStackControl>
+            </ItemsControl>
 
-            <c:GridColumnStackControl Classes="to-do-items-group by-type">
+            <ItemsControl Classes="to-do-items-group by-type">
                 <ContentControl Content="{Binding Groups}"
                                 IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Values}"
@@ -250,9 +250,9 @@
                                 IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding References}"
                                 IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-            </c:GridColumnStackControl>
+            </ItemsControl>
 
-            <c:GridColumnStackControl Classes="to-do-items-group by-status">
+            <ItemsControl Classes="to-do-items-group by-status">
                 <ContentControl Content="{Binding Missed}"
                                 IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding ReadyForCompleted}"
@@ -261,7 +261,7 @@
                                 IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Completed}"
                                 IsVisible="{Binding Completed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-            </c:GridColumnStackControl>
+            </ItemsControl>
         </Panel>
     </StackPanel>
 </c:MainUserControl>

@@ -12,20 +12,36 @@
              x:DataType="vm:MainViewModel">
     <UserControl.Styles>
         <!-- Items group -->
-        <Style Selector="v|MainView:small c|GridColumnStackControl.to-do-items-group">
-            <Setter Property="ColumnCount" Value="2" />
+        <Style Selector="v|MainView:small ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <c:GridColumnStackPanel Columns="2" />
+                </ItemsPanelTemplate>
+            </Setter>
         </Style>
 
-        <Style Selector="v|MainView:medium c|GridColumnStackControl.to-do-items-group">
-            <Setter Property="ColumnCount" Value="3" />
+        <Style Selector="v|MainView:medium ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <c:GridColumnStackPanel Columns="3" />
+                </ItemsPanelTemplate>
+            </Setter>
         </Style>
 
-        <Style Selector="v|MainView:large c|GridColumnStackControl.to-do-items-group">
-            <Setter Property="ColumnCount" Value="4" />
+        <Style Selector="v|MainView:large ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <c:GridColumnStackPanel Columns="4" />
+                </ItemsPanelTemplate>
+            </Setter>
         </Style>
 
-        <Style Selector="v|MainView:extra-large c|GridColumnStackControl.to-do-items-group">
-            <Setter Property="ColumnCount" Value="5" />
+        <Style Selector="v|MainView:extra-large ItemsControl.to-do-items-group">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <c:GridColumnStackPanel Columns="5" />
+                </ItemsPanelTemplate>
+            </Setter>
         </Style>
 
         <!-- DialogControl -->
