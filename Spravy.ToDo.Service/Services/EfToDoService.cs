@@ -35,7 +35,7 @@ public class EfToDoService : IToDoService
 
     private SqlRawParameters CreateSqlRawParametersForAllChildren(ReadOnlyMemory<Guid> ids)
     {
-        var idsString = Enumerable.Range(0, ids.Length).Select(i => $"@Id{i}").JoinString(", ");
+        var idsString = Enumerable.Range(1, ids.Length).Select(i => $"@Id{i}").JoinString(", ");
         var parameters = new DbParameter[ids.Length];
 
         for (var i = 0; i < ids.Length; i++)
