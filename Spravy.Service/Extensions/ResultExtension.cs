@@ -16,7 +16,9 @@ public static class ResultExtension
             throw await result.ToRpcExceptionAsync(serializer, ct);
         }
 
-        return DefaultObject<TReturn>.Default;
+        var value = DefaultObject<TReturn>.Default;
+
+        return value;
     }
 
     public static async Task<TReturn> HandleAsync<TReturn>(

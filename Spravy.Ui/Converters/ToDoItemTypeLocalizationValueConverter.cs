@@ -16,27 +16,20 @@ public class ToDoItemTypeLocalizationValueConverter : IValueConverter
             return null;
         }
 
-        switch (type)
+        return type switch
         {
-            case ToDoItemType.Value:
-                return application.GetResource("ToDoItemType.Value");
-            case ToDoItemType.Group:
-                return application.GetResource("ToDoItemType.Group");
-            case ToDoItemType.Planned:
-                return application.GetResource("ToDoItemType.Planned");
-            case ToDoItemType.Periodicity:
-                return application.GetResource("ToDoItemType.Periodicity");
-            case ToDoItemType.PeriodicityOffset:
-                return application.GetResource("ToDoItemType.PeriodicityOffset");
-            case ToDoItemType.Circle:
-                return application.GetResource("ToDoItemType.Circle");
-            case ToDoItemType.Step:
-                return application.GetResource("ToDoItemType.Step");
-            case ToDoItemType.Reference:
-                return application.GetResource("ToDoItemType.Reference");
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ToDoItemType.Value => application.GetResource("ToDoItemType.Value"),
+            ToDoItemType.Group => application.GetResource("ToDoItemType.Group"),
+            ToDoItemType.Planned => application.GetResource("ToDoItemType.Planned"),
+            ToDoItemType.Periodicity => application.GetResource("ToDoItemType.Periodicity"),
+            ToDoItemType.PeriodicityOffset => application.GetResource(
+                "ToDoItemType.PeriodicityOffset"
+            ),
+            ToDoItemType.Circle => application.GetResource("ToDoItemType.Circle"),
+            ToDoItemType.Step => application.GetResource("ToDoItemType.Step"),
+            ToDoItemType.Reference => application.GetResource("ToDoItemType.Reference"),
+            _ => throw new ArgumentOutOfRangeException(),
+        };
     }
 
     public object ConvertBack(

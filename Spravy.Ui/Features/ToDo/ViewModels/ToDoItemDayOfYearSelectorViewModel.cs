@@ -49,4 +49,15 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
             ct
         );
     }
+
+    public Result UpdateItemUi()
+    {
+        Item.DaysOfYear.UpdateUi(
+            DaysOfYear.SelectMany(x =>
+                x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
+            )
+        );
+
+        return Result.Success;
+    }
 }

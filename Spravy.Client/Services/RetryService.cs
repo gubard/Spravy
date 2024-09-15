@@ -114,8 +114,10 @@ public class RetryService : IRetryService
             {
                 return Result.CanceledByUserError;
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
+
                 if (retryCount == i)
                 {
                     throw;
