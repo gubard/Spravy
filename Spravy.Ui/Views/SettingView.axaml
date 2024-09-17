@@ -26,7 +26,7 @@
                             <ScrollViewer Grid.Column="1"
                                           Classes="horizontal"
                                           HorizontalAlignment="Left">
-                                <TextBlock Text="{DynamicResource SettingView.Header}" />
+                                <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
                             </ScrollViewer>
                         </Grid>
                     </c:GroupBoxControl.Header>

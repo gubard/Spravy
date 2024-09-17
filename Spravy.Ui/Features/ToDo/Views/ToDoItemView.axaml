@@ -27,7 +27,7 @@
 
                     <ScrollViewer Grid.Column="1"
                                   Classes="alignment-stretch horizontal">
-                        <TextBlock Classes="alignment-left" Text="{Binding Item.Name}" />
+                        <TextBlock Classes="alignment-left h3" Text="{Binding Item.Name}" />
                     </ScrollViewer>
 
                     <Panel Grid.Column="2"

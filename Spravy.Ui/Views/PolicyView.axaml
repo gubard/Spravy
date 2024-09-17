@@ -19,7 +19,7 @@
             </StackPanel>
 
             <ScrollViewer Grid.Column="1" Classes="alignment-stretch horizontal">
-                <TextBlock Classes="alignment-left" Text="{DynamicResource PolicyView.Header}" />
+                <TextBlock Classes="alignment-left h3" Text="{DynamicResource PolicyView.Header}" />
             </ScrollViewer>
         </Grid>
 

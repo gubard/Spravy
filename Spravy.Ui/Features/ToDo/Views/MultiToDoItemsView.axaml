@@ -79,7 +79,7 @@
 
                             <StackPanel Grid.Column="1" Grid.Row="2">
                                 <TextBlock Margin="5,5,0,0"
-                                           Classes="text-wrap vertical-alignment-center alignment-left"
+                                           Classes="text-wrap vertical-alignment-center alignment-left h4"
                                            Text="{Binding Name}" />
 
                                 <Button Margin="0,0,0,5"
@@ -199,7 +199,7 @@
                                 </Grid>
 
                                 <ScrollViewer Classes="horizontal">
-                                    <TextBlock Classes="alignment-left" Text="{Binding Name}" />
+                                    <TextBlock Classes="alignment-left h4" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>
                         </Border>

@@ -1,5 +1,19 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+           <StackPanel>
+               <TextBlock Text="QAZqaz" />
+               <TextBlock Text="QAZqaz" Classes="h1" />
+               <TextBlock Text="QAZqaz" Classes="h2" />
+               <TextBlock Text="QAZqaz" Classes="h3" />
+               <TextBlock Text="QAZqaz" Classes="h4" />
+               <TextBlock Text="QAZqaz" Classes="h5" />
+               <TextBlock Text="QAZqaz" Classes="h6" />
+           </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+    
     <Style Selector="TextBlock">
         <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -14,5 +28,29 @@
         <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Margin" Value="6,0,0,3" />
+    </Style>
+
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="35" />
+    </Style>
+
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="27" />
+    </Style>
+
+    <Style Selector="TextBlock.h3">
+        <Setter Property="FontSize" Value="21" />
+    </Style>
+
+    <Style Selector="TextBlock.h4">
+        <Setter Property="FontSize" Value="17" />
+    </Style>
+
+    <Style Selector="TextBlock.h5">
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <Style Selector="TextBlock.h6">
+        <Setter Property="FontSize" Value="13" />
     </Style>
 </Styles>
