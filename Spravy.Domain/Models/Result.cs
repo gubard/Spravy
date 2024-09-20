@@ -7,14 +7,13 @@ public class Result
         CanceledByUserError
     );
 
-    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableCanceledByUserError =
+    public static readonly Cvtar AwaitableCanceledByUserError =
         CanceledByUserErrorValueTask.ConfigureAwait(false);
 
     public static readonly Result Success = new(true);
     public static readonly ValueTask<Result> SuccessValueTask = ValueTask.FromResult(Success);
 
-    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableSuccess =
-        SuccessValueTask.ConfigureAwait(false);
+    public static readonly Cvtar AwaitableSuccess = SuccessValueTask.ConfigureAwait(false);
 
     private Result(bool _) { }
 
@@ -63,8 +62,7 @@ public class Result<TValue>
 {
     public static readonly Result<TValue> CanceledByUserError = new(new CanceledByUserError());
 
-    public static readonly Func<TValue, ConfiguredValueTaskAwaitable<Result>> EmptyFunc = _ =>
-        Result.AwaitableSuccess;
+    public static readonly Func<TValue, Cvtar> EmptyFunc = _ => Result.AwaitableSuccess;
 
     private readonly TValue? value;
 

@@ -50,10 +50,7 @@ public class EfAuthenticationService : IAuthenticationService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
-        CreateUserOptions options,
-        CancellationToken ct
-    )
+    public Cvtar CreateUserAsync(CreateUserOptions options, CancellationToken ct)
     {
         return CreateUserCore(options, ct).ConfigureAwait(false);
     }
@@ -91,10 +88,7 @@ public class EfAuthenticationService : IAuthenticationService
         }
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
-        string login,
-        CancellationToken ct
-    )
+    public Cvtar UpdateVerificationCodeByLoginAsync(string login, CancellationToken ct)
     {
         login = login.Trim();
 
@@ -123,10 +117,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
-        string email,
-        CancellationToken ct
-    )
+    public Cvtar UpdateVerificationCodeByEmailAsync(string email, CancellationToken ct)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -179,7 +170,7 @@ public class EfAuthenticationService : IAuthenticationService
             .IfSuccessAsync(userEntity => userEntity.IsEmailVerified.ToResult(), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
+    public Cvtar VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken ct
@@ -208,7 +199,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
+    public Cvtar VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken ct
@@ -237,7 +228,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+    public Cvtar UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken ct
@@ -262,7 +253,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+    public Cvtar UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken ct
@@ -287,11 +278,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
-        string email,
-        string verificationCode,
-        CancellationToken ct
-    )
+    public Cvtar DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken ct)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -309,11 +296,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
-        string login,
-        string verificationCode,
-        CancellationToken ct
-    )
+    public Cvtar DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken ct)
     {
         login = login.Trim();
 
@@ -331,7 +314,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
+    public Cvtar UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -370,7 +353,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
+    public Cvtar UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,

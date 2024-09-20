@@ -12,6 +12,7 @@ public record ToDoItemEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
     public ToDoItemType Type { get; set; }
+    public bool IsBookmark { get; set; }
     public bool IsFavorite { get; set; }
     public DateOnly DueDate { get; set; } = DateTime.Now.ToDateOnly();
     public bool IsCompleted { get; set; }

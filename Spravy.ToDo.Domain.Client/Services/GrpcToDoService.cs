@@ -1,20 +1,7 @@
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Mappers;
 using Spravy.ToDo.Domain.Models;
-using Spravy.ToDo.Protos;
 
 namespace Spravy.ToDo.Domain.Client.Services;
 
@@ -106,7 +93,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
+    public Cvtar UpdateToDoItemDescriptionTypeAsync(
         Guid id,
         DescriptionType type,
         CancellationToken ct
@@ -137,11 +124,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
-        Guid id,
-        Guid referenceId,
-        CancellationToken ct
-    )
+    public Cvtar UpdateReferenceToDoItemAsync(Guid id, Guid referenceId, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -168,10 +151,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
-        ResetToDoItemOptions options,
-        CancellationToken ct
-    )
+    public Cvtar ResetToDoItemAsync(ResetToDoItemOptions options, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -213,10 +193,56 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
-        Guid id,
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(
         CancellationToken ct
     )
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .GetBookmarkToDoItemIdsAsync(
+                                    new(),
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(reply => reply.Ids.ToGuid().ToResult(), ct),
+                        ct
+                    ),
+            ct
+        );
+    }
+
+    public Cvtar UpdateIsBookmarkAsync(Guid id, bool isBookmark, CancellationToken ct)
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .UpdateIsBookmarkAsync(
+                                    new() { Id = id.ToByteString(), IsBookmark = isBookmark },
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false),
+                        ct
+                    ),
+            ct
+        );
+    }
+
+    public Cvtar RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -485,7 +511,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken ct)
+    public Cvtar DeleteToDoItemAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -508,7 +534,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
+    public Cvtar UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
         TypeOfPeriodicity type,
         CancellationToken ct
@@ -539,11 +565,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
-        Guid id,
-        DateOnly dueDate,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -570,11 +592,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
-        Guid id,
-        bool isComplete,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -597,11 +615,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
-        Guid id,
-        string name,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemNameAsync(Guid id, string name, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -624,7 +638,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
+    public Cvtar UpdateToDoItemOrderIndexAsync(
         UpdateOrderIndexToDoItemOptions options,
         CancellationToken ct
     )
@@ -650,11 +664,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
-        Guid id,
-        string description,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -677,11 +687,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
-        Guid id,
-        ToDoItemType type,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -704,10 +710,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(
-        Guid id,
-        CancellationToken ct
-    )
+    public Cvtar AddFavoriteToDoItemAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -730,10 +733,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
-        Guid id,
-        CancellationToken ct
-    )
+    public Cvtar RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -756,7 +756,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+    public Cvtar UpdateToDoItemIsRequiredCompleteInDueDateAsync(
         Guid id,
         bool value,
         CancellationToken ct
@@ -813,7 +813,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
+    public Cvtar UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,
         CancellationToken ct
@@ -844,7 +844,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
+    public Cvtar UpdateToDoItemMonthlyPeriodicityAsync(
         Guid id,
         MonthlyPeriodicity periodicity,
         CancellationToken ct
@@ -875,7 +875,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
+    public Cvtar UpdateToDoItemWeeklyPeriodicityAsync(
         Guid id,
         WeeklyPeriodicity periodicity,
         CancellationToken ct
@@ -940,11 +940,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
-        Guid id,
-        Guid parentId,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -971,7 +967,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken ct)
+    public Cvtar ToDoItemToRootAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -1028,11 +1024,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
-        Guid id,
-        ushort days,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -1055,11 +1047,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
-        Guid id,
-        ushort months,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -1082,11 +1070,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
-        Guid id,
-        ushort weeks,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -1109,11 +1093,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
-        Guid id,
-        ushort years,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -1136,7 +1116,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
+    public Cvtar UpdateToDoItemChildrenTypeAsync(
         Guid id,
         ToDoItemChildrenType type,
         CancellationToken ct
@@ -1226,11 +1206,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
-        Guid id,
-        Option<Uri> link,
-        CancellationToken ct
-    )
+    public Cvtar UpdateToDoItemLinkAsync(Guid id, Option<Uri> link, CancellationToken ct)
     {
         return CallClientAsync(
             client =>

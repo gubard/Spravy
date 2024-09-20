@@ -39,4 +39,5 @@ global using Spravy.EventBus.Protos;
 global using Spravy.Service.Extensions;
 global using Spravy.Service.HostedServices;
 global using Spravy.Service.Services;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;
 global using SpravyJsonSerializerContext = Spravy.Authentication.Service.Services.SpravyJsonSerializerContext;

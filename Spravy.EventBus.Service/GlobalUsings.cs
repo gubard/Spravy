@@ -19,3 +19,4 @@ global using Spravy.EventBus.Domain.Models;
 global using Spravy.EventBus.Service.Services;
 global using Spravy.Service.Extensions;
 global using Spravy.Service.HostedServices;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

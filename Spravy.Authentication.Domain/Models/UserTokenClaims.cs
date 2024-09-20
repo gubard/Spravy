@@ -1,5 +1,3 @@
-using Spravy.Domain.Enums;
-
 namespace Spravy.Authentication.Domain.Models;
 
 public struct UserTokenClaims

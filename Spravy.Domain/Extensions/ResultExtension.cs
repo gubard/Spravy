@@ -31,9 +31,9 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+    public static Cvtar IfSuccessForEachAsync<TValue>(
         this ReadOnlyMemory<TValue> values,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -42,7 +42,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
         this ReadOnlyMemory<TValue> values,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -344,9 +344,9 @@ public static class ResultExtension
         return array.ToReadOnlyMemory().ToResult();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAllAsync<TValue>(
+    public static Cvtar IfSuccessForEachAllAsync<TValue>(
         this Result<ReadOnlyMemory<TValue>> values,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -360,9 +360,7 @@ public static class ResultExtension
             return Result.AwaitableCanceledByUserError;
         }
 
-        var tasks = new Span<Func<ConfiguredValueTaskAwaitable<Result>>>(
-            new Func<ConfiguredValueTaskAwaitable<Result>>[v.Length]
-        );
+        var tasks = new Span<Func<Cvtar>>(new Func<Cvtar>[v.Length]);
 
         for (var index = 0; index < v.Length; index++)
         {
@@ -378,9 +376,9 @@ public static class ResultExtension
         return Result.AwaitableSuccess.IfSuccessAllAsync(ct, tasks.ToArray());
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+    public static Cvtar IfSuccessForEachAsync<TValue>(
         this Result<ReadOnlyMemory<TValue>> values,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -389,7 +387,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
         this Result<ReadOnlyMemory<TValue>> values,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -426,9 +424,9 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+    public static Cvtar IfSuccessForEachAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -437,7 +435,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -542,9 +540,9 @@ public static class ResultExtension
         return list.ToArray().ToReadOnlyMemory().ToResult();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+    public static Cvtar IfSuccessForEachAsync<TValue>(
         this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -554,7 +552,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
         this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -592,7 +590,7 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+    public static Cvtar IfSuccessForEachAsync<TValue>(
         this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
         Func<TValue, Result> func,
         CancellationToken ct
@@ -642,9 +640,9 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllInOrderAsync<TValue>(
+    public static Cvtar IfSuccessAllInOrderAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, Func<ConfiguredValueTaskAwaitable<Result>>[]> funcs,
+        Func<TValue, Func<Cvtar>[]> funcs,
         CancellationToken ct
     )
         where TValue : notnull
@@ -655,7 +653,7 @@ public static class ResultExtension
     private static async ValueTask<Result> IfSuccessAllInOrderCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         CancellationToken ct,
-        Func<TValue, Func<ConfiguredValueTaskAwaitable<Result>>[]> funcs
+        Func<TValue, Func<Cvtar>[]> funcs
     )
         where TValue : notnull
     {
@@ -701,9 +699,9 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync<TValue>(
+    public static Cvtar IfErrorsAsync<TValue>(
         this Result<TValue> result,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<ReadOnlyMemory<Error>, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -721,9 +719,9 @@ public static class ResultExtension
         return Result.AwaitableSuccess;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+    public static Cvtar IfErrorsAsync(
+        this Cvtar task,
+        Func<ReadOnlyMemory<Error>, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -731,8 +729,8 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result> IfErrorsCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+        this Cvtar task,
+        Func<ReadOnlyMemory<Error>, Cvtar> func,
         CancellationToken ct
     )
     {
@@ -751,8 +749,8 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
+    public static Cvtar IfErrorsAsync(
+        this Cvtar task,
         Func<ReadOnlyMemory<Error>, Result> func,
         CancellationToken ct
     )
@@ -761,7 +759,7 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result> IfErrorsCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         Func<ReadOnlyMemory<Error>, Result> func,
         CancellationToken ct
     )
@@ -792,7 +790,7 @@ public static class ResultExtension
         return new(task.Errors);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> ToResultOnlyAsync<TValue>(
+    public static Cvtar ToResultOnlyAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task
     )
         where TValue : notnull
@@ -815,7 +813,7 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static async ValueTask ThrowIfErrorAsync(this ConfiguredValueTaskAwaitable<Result> task)
+    public static async ValueTask ThrowIfErrorAsync(this Cvtar task)
     {
         var result = await task;
 
@@ -879,7 +877,7 @@ public static class ResultExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
     )
@@ -889,7 +887,7 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result<TReturn>> IfSuccessCore<TReturn>(
-        ConfiguredValueTaskAwaitable<Result> task,
+        Cvtar task,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
     )
@@ -913,7 +911,7 @@ public static class ResultExtension
     private static async ValueTask<Result> IfSuccessCore<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, TArg, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -939,10 +937,10 @@ public static class ResultExtension
         return await func.Invoke(rv, a1);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
+    public static Cvtar IfSuccessAsync<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, TArg, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1047,11 +1045,11 @@ public static class ResultExtension
         return await func.Invoke(rv, a1);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg1, TArg2>(
+    public static Cvtar IfSuccessAsync<TValue, TArg1, TArg2>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg1> arg1,
         Result<TArg2> arg2,
-        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, TArg1, TArg2, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1065,7 +1063,7 @@ public static class ResultExtension
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg1> arg1,
         Result<TArg2> arg2,
-        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, TArg1, TArg2, Cvtar> func,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1098,7 +1096,7 @@ public static class ResultExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         Func<Result<TReturn>> func,
         CancellationToken ct
     )
@@ -1108,7 +1106,7 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result<TReturn>> IfSuccessCore<TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         Func<Result<TReturn>> func,
         CancellationToken ct
     )
@@ -1129,17 +1127,13 @@ public static class ResultExtension
         return func.Invoke();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<Result> func,
-        CancellationToken ct
-    )
+    public static Cvtar IfSuccessAsync(this Cvtar task, Func<Result> func, CancellationToken ct)
     {
         return IfSuccessCore(task, func, ct).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         Func<Result> func,
         CancellationToken ct
     )
@@ -1159,18 +1153,14 @@ public static class ResultExtension
         return func.Invoke();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> func,
-        CancellationToken ct
-    )
+    public static Cvtar IfSuccessAsync(this Cvtar task, Func<Cvtar> func, CancellationToken ct)
     {
         return IfSuccessCore(task, func, ct).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        this Cvtar task,
+        Func<Cvtar> func,
         CancellationToken ct
     )
     {
@@ -1189,10 +1179,10 @@ public static class ResultExtension
         return await func.Invoke();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync(
+    public static Cvtar IfSuccessAllAsync(
         this Result result,
         CancellationToken ct,
-        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<Cvtar>[] funcs
     )
     {
         return IfSuccessAllCore(result, ct, funcs).ConfigureAwait(false);
@@ -1201,7 +1191,7 @@ public static class ResultExtension
     private static async ValueTask<Result> IfSuccessAllCore(
         this Result result,
         CancellationToken ct,
-        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<Cvtar>[] funcs
     )
     {
         if (result.IsHasError)
@@ -1247,19 +1237,19 @@ public static class ResultExtension
         return new(errors);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
+    public static Cvtar IfSuccessAllAsync(
+        this Cvtar task,
         CancellationToken ct,
-        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<Cvtar>[] funcs
     )
     {
         return IfSuccessAllCore(task, ct, funcs).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessAllCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         CancellationToken ct,
-        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<Cvtar>[] funcs
     )
     {
         var result = await task;
@@ -1307,10 +1297,10 @@ public static class ResultExtension
         return new(errors);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync<TValue>(
+    public static Cvtar IfSuccessAllAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         CancellationToken cancellationToke,
-        params Func<TValue, ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<TValue, Cvtar>[] funcs
     )
         where TValue : notnull
     {
@@ -1320,7 +1310,7 @@ public static class ResultExtension
     private static async ValueTask<Result> IfSuccessAllCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         CancellationToken ct,
-        params Func<TValue, ConfiguredValueTaskAwaitable<Result>>[] funcs
+        params Func<TValue, Cvtar>[] funcs
     )
         where TValue : notnull
     {
@@ -1394,18 +1384,14 @@ public static class ResultExtension
         return await action.Invoke();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(
-        this Result result,
-        Func<ConfiguredValueTaskAwaitable<Result>> action,
-        CancellationToken ct
-    )
+    public static Cvtar IfSuccessAsync(this Result result, Func<Cvtar> action, CancellationToken ct)
     {
         return IfSuccessCore(result, action, ct).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore(
         this Result result,
-        Func<ConfiguredValueTaskAwaitable<Result>> action,
+        Func<Cvtar> action,
         CancellationToken ct
     )
     {
@@ -1422,10 +1408,10 @@ public static class ResultExtension
         return await action.Invoke();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+    public static Cvtar IfSuccessAsync<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> errors,
+        Func<TValue, Cvtar> action,
+        Func<ReadOnlyMemory<Error>, Cvtar> errors,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1443,9 +1429,9 @@ public static class ResultExtension
         return action.Invoke(rv);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+    public static Cvtar IfSuccessAsync<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, Cvtar> action,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1455,7 +1441,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessCore<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, Cvtar> action,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1473,10 +1459,10 @@ public static class ResultExtension
         return await action.Invoke(rv);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
+    public static Cvtar IfSuccessAsync<TValue, TArg>(
         this Result<TValue> result,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, TArg, Cvtar> action,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1664,9 +1650,9 @@ public static class ResultExtension
         return await func.Invoke(value);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessDisposeAsync<TValue>(
+    public static Cvtar IfSuccessDisposeAsync<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, Cvtar> action,
         CancellationToken ct
     )
         where TValue : IAsyncDisposable
@@ -1676,7 +1662,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessDisposeCore<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        Func<TValue, Cvtar> func,
         CancellationToken ct
     )
         where TValue : IAsyncDisposable
@@ -1696,7 +1682,7 @@ public static class ResultExtension
         return await func.Invoke(value);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+    public static Cvtar IfSuccessAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Func<TValue, Result> action,
         CancellationToken ct
@@ -1728,9 +1714,9 @@ public static class ResultExtension
         return action.Invoke(rv);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+    public static Cvtar IfSuccessAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, Cvtar> action,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1740,7 +1726,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<TValue, Cvtar> action,
         CancellationToken ct
     )
         where TValue : notnull
@@ -1957,9 +1943,9 @@ public static class ResultExtension
         }
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync<TValue>(
+    public static Cvtar IfSuccessTryFinallyAsync<TValue>(
         this Result<TValue> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Action<TValue> funcFinally,
         CancellationToken ct
     )
@@ -1970,7 +1956,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessTryFinallyCore<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Action<TValue> funcFinally,
         CancellationToken ct
     )
@@ -1996,9 +1982,9 @@ public static class ResultExtension
         }
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync<TValue>(
+    public static Cvtar IfSuccessTryFinallyAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Action<TValue> funcFinally,
         CancellationToken ct
     )
@@ -2009,7 +1995,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessTryFinallyCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Action<TValue> funcFinally,
         CancellationToken ct
     )
@@ -2059,9 +2045,9 @@ public static class ResultExtension
         }
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync<TValue>(
+    public static Cvtar IfSuccessTryFinallyAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Func<TValue, ConfiguredValueTaskAwaitable> funcFinally,
         CancellationToken ct
     )
@@ -2072,7 +2058,7 @@ public static class ResultExtension
 
     private static async ValueTask<Result> IfSuccessTryFinallyCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Func<TValue, Cvtar> funcTry,
         Func<TValue, ConfiguredValueTaskAwaitable> funcFinally,
         CancellationToken ct
     )
@@ -2100,9 +2086,9 @@ public static class ResultExtension
         }
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
+    public static Cvtar IfSuccessTryFinallyAsync(
+        this Cvtar task,
+        Func<Cvtar> funcTry,
         Action funcFinally,
         CancellationToken ct
     )
@@ -2111,8 +2097,8 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result> IfSuccessTryFinallyCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
+        this Cvtar task,
+        Func<Cvtar> funcTry,
         Action funcFinally,
         CancellationToken ct
     )
@@ -2139,9 +2125,9 @@ public static class ResultExtension
         }
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
+    public static Cvtar IfSuccessTryFinallyAsync(
+        this Cvtar task,
+        Func<Cvtar> funcTry,
         Func<ConfiguredValueTaskAwaitable> funcFinally,
         CancellationToken ct
     )
@@ -2150,8 +2136,8 @@ public static class ResultExtension
     }
 
     private static async ValueTask<Result> IfSuccessTryFinallyCore(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
+        this Cvtar task,
+        Func<Cvtar> funcTry,
         Func<ConfiguredValueTaskAwaitable> funcFinally,
         CancellationToken ct
     )
@@ -2178,7 +2164,7 @@ public static class ResultExtension
         }
     }
 
-    public static async ValueTask ToValueTask(this ConfiguredValueTaskAwaitable<Result> task)
+    public static async ValueTask ToValueTask(this Cvtar task)
     {
         await task;
     }

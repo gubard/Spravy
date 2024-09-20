@@ -26,3 +26,4 @@ global using Spravy.Service.Extensions;
 global using Spravy.Service.Services;
 global using Spravy.ToDo.Domain.Errors;
 global using Spravy.ToDo.Domain.Interfaces;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

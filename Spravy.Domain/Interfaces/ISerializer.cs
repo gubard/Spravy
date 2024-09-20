@@ -5,11 +5,7 @@ public interface ISerializer
     Result<TObject> Deserialize<TObject>(Stream stream)
         where TObject : notnull;
 
-    ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(
-        T obj,
-        Stream stream,
-        CancellationToken ct
-    )
+    Cvtar SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
         where T : notnull;
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> SerializeAsync<T>(

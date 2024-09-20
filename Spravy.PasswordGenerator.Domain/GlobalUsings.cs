@@ -10,3 +10,4 @@ global using Spravy.Domain.Interfaces;
 global using Spravy.Domain.Models;
 global using Spravy.PasswordGenerator.Domain.Interfaces;
 global using Spravy.PasswordGenerator.Domain.Models;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

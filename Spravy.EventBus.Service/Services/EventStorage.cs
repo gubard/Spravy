@@ -20,11 +20,7 @@ public class EventStorage
         this.fileFactory = fileFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddEventAsync(
-        Guid id,
-        byte[] content,
-        CancellationToken ct
-    )
+    public Cvtar AddEventAsync(Guid id, byte[] content, CancellationToken ct)
     {
         var newEvent = new EventEntity
         {

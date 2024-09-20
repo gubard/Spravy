@@ -14,10 +14,7 @@ public class EfScheduleService : IScheduleService
         this.eventBusService = eventBusService;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
-        AddTimerParameters parameters,
-        CancellationToken ct
-    )
+    public Cvtar AddTimerAsync(AddTimerParameters parameters, CancellationToken ct)
     {
         var newTimer = new TimerEntity
         {
@@ -113,7 +110,7 @@ public class EfScheduleService : IScheduleService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken ct)
+    public Cvtar RemoveTimerAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory
             .Create()

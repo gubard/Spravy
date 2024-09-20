@@ -30,10 +30,7 @@ public class GrpcScheduleService
         return new(grpcClientFactory, host, metadataFactory, handler, retryService);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
-        AddTimerParameters parameters,
-        CancellationToken ct
-    )
+    public Cvtar AddTimerAsync(AddTimerParameters parameters, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -98,7 +95,7 @@ public class GrpcScheduleService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken ct)
+    public Cvtar RemoveTimerAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
             client =>

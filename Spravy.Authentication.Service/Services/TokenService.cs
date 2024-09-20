@@ -40,15 +40,12 @@ public class TokenService : ITokenService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
+    public Cvtar LoginAsync(User user, CancellationToken ct)
     {
         throw new NotSupportedException();
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(
-        string refreshToken,
-        CancellationToken ct
-    )
+    public Cvtar LoginAsync(string refreshToken, CancellationToken ct)
     {
         throw new NotSupportedException();
     }

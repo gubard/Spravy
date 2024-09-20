@@ -1,14 +1,16 @@
 namespace Spravy.Ui.ViewModels;
 
-public class PaneViewModel : ViewModelBase
+public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
 {
     public PaneViewModel(AccountNotify account)
     {
         Account = account;
+        Bookmarks = new();
         Account.PropertyChanged += OnPropertyChanged;
     }
 
     public AccountNotify Account { get; }
+    public AvaloniaList<ToDoItemEntityNotify> Bookmarks { get; }
 
     public bool IsShowPasswordGenerator
     {
@@ -21,5 +23,10 @@ public class PaneViewModel : ViewModelBase
         {
             OnPropertyChanged(nameof(IsShowPasswordGenerator));
         }
+    }
+
+    public Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    {
+        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByOrderIndex());
     }
 }

@@ -39,3 +39,4 @@ global using Spravy.PasswordGenerator.Service.Services;
 global using Spravy.Service.Extensions;
 global using Spravy.Service.HostedServices;
 global using Spravy.Service.Middlewares;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

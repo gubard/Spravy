@@ -12,6 +12,40 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<GetBookmarkToDoItemIdsRequestReply> GetBookmarkToDoItemIds(
+        GetBookmarkToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        return toDoService
+            .GetBookmarkToDoItemIdsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetBookmarkToDoItemIdsRequestReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
+
+                    return reply;
+                },
+                context.CancellationToken
+            );
+    }
+
+    public override Task<UpdateIsBookmarkReply> UpdateIsBookmark(
+        UpdateIsBookmarkRequest request,
+        ServerCallContext context
+    )
+    {
+        return toDoService
+            .UpdateIsBookmarkAsync(
+                request.Id.ToGuid(),
+                request.IsBookmark,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateIsBookmarkReply>(serializer, context.CancellationToken);
+    }
+
     public override Task<UpdateEventsReply> UpdateEvents(
         UpdateEventsRequest request,
         ServerCallContext context

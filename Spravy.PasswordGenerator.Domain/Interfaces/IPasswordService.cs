@@ -2,10 +2,12 @@ namespace Spravy.PasswordGenerator.Domain.Interfaces;
 
 public interface IPasswordService
 {
-    ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(
-        AddPasswordOptions options,
-        CancellationToken ct
-    );
+    Cvtar AddPasswordItemAsync(AddPasswordOptions options, CancellationToken ct);
+    Cvtar UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken ct);
+    Cvtar UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken ct);
+    Cvtar UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken ct);
+    Cvtar UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken ct);
+    Cvtar UpdatePasswordItemLoginAsync(Guid id, string login, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
         CancellationToken ct
@@ -16,69 +18,39 @@ public interface IPasswordService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken ct);
+    Cvtar DeletePasswordItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
         Guid id,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
-        Guid id,
-        string name,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
-        Guid id,
-        string key,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
-        Guid id,
-        ushort length,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
-        Guid id,
-        string regex,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableNumberAsync(
+    Cvtar UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,
         bool isAvailableNumber,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
+    Cvtar UpdatePasswordItemIsAvailableLowerLatinAsync(
         Guid id,
         bool isAvailableLowerLatin,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+    Cvtar UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
         bool isAvailableSpecialSymbols,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
+    Cvtar UpdatePasswordItemCustomAvailableCharactersAsync(
         Guid id,
         string customAvailableCharacters,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
+    Cvtar UpdatePasswordItemIsAvailableUpperLatinAsync(
         Guid id,
         bool isAvailableUpperLatin,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLoginAsync(
-        Guid id,
-        string login,
         CancellationToken ct
     );
 }

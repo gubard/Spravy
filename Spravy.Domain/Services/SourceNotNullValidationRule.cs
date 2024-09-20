@@ -3,7 +3,7 @@ namespace Spravy.Domain.Services;
 public class SourceNotNullValidationRule<TObject> : IValidationRule<TObject>
     where TObject : class
 {
-    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(TObject? value, string sourceName)
+    public Cvtar ValidateAsync(TObject? value, string sourceName)
     {
         if (value is null)
         {

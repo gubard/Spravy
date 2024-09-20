@@ -1,6 +1,3 @@
-using Spravy.Client.Enums;
-using Spravy.Client.Interfaces;
-
 namespace Spravy.ToDo.Domain.Client.Models;
 
 public class GrpcToDoServiceOptions : IGrpcOptionsValue

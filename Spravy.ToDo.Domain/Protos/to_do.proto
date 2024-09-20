@@ -58,4 +58,6 @@ service ToDoService {
     rpc ResetToDoItem (ResetToDoItemRequest) returns (ResetToDoItemReply);
     rpc UpdateReferenceToDoItem (UpdateReferenceToDoItemRequest) returns (UpdateReferenceToDoItemReply);
     rpc UpdateEvents (UpdateEventsRequest) returns (UpdateEventsReply);
+    rpc UpdateIsBookmark (UpdateIsBookmarkRequest) returns (UpdateIsBookmarkReply);
+    rpc GetBookmarkToDoItemIds (GetBookmarkToDoItemIdsRequest) returns (GetBookmarkToDoItemIdsRequestReply);
 }

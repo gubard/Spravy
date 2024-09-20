@@ -12,9 +12,7 @@ public class RetryService : IRetryService
         return TryCore(func).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> TryAsync(
-        Func<ConfiguredValueTaskAwaitable<Result>> func
-    )
+    public Cvtar TryAsync(Func<Cvtar> func)
     {
         return TryCore(func).ConfigureAwait(false);
     }
@@ -75,7 +73,7 @@ public class RetryService : IRetryService
         return new(new UnknownError(Guid.Empty));
     }
 
-    private async ValueTask<Result> TryCore(Func<ConfiguredValueTaskAwaitable<Result>> func)
+    private async ValueTask<Result> TryCore(Func<Cvtar> func)
     {
         for (var i = 1; i <= retryCount; i++)
         {

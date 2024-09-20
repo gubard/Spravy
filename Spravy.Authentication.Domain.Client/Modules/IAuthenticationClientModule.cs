@@ -1,13 +1,3 @@
-using Grpc.Net.Client;
-using Jab;
-using Spravy.Authentication.Domain.Client.Models;
-using Spravy.Authentication.Domain.Client.Services;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Client.Helpers;
-using Spravy.Client.Models;
-using Spravy.Core.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
 namespace Spravy.Authentication.Domain.Client.Modules;

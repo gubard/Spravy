@@ -19,11 +19,7 @@ public class GrpcEventBusService
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
-        Guid eventId,
-        ReadOnlyMemory<byte> content,
-        CancellationToken ct
-    )
+    public Cvtar PublishEventAsync(Guid eventId, ReadOnlyMemory<byte> content, CancellationToken ct)
     {
         return CallClientAsync(
             client =>

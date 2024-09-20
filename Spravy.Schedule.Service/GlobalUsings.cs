@@ -47,4 +47,5 @@ global using Spravy.Service.Extensions;
 global using Spravy.Service.HostedServices;
 global using Spravy.Service.Middlewares;
 global using Spravy.Service.Services;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;
 global using IAuthenticationService = Spravy.Authentication.Domain.Interfaces.IAuthenticationService;

@@ -1,8 +1,3 @@
-using Grpc.Core;
-using Spravy.Authentication.Protos;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Authentication.Domain.Client.Services;
 
 public class AuthenticationClientFactory

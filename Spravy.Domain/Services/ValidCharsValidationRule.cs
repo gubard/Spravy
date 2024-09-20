@@ -9,7 +9,7 @@ public class ValidCharsValidationRule : IValidationRule<string>
         this.validChars = validChars;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(string? value, string sourceName)
+    public Cvtar ValidateAsync(string? value, string sourceName)
     {
         if (value is null)
         {

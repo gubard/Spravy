@@ -2,7 +2,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class AvaloniaListExtension
 {
-    public static Result UpdateUi(
+    public static Result<AvaloniaList<ToDoItemEntityNotify>> UpdateUi(
         this AvaloniaList<ToDoItemEntityNotify> list,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
@@ -10,7 +10,7 @@ public static class AvaloniaListExtension
         list.RemoveAll(list.Where(x => !items.Span.Contains(x)));
         list.AddRange(items.Where(x => !list.Contains(x)).ToArray());
 
-        return Result.Success;
+        return list.ToResult();
     }
 
     public static Result UpdateUi<T>(this AvaloniaList<T> list, List<T> items)
@@ -80,7 +80,7 @@ public static class AvaloniaListExtension
         return list.BinarySearchOrderIndex(x, low, mid - 1);
     }
 
-    public static void BinarySortByOrderIndex(this AvaloniaList<ToDoItemEntityNotify> list)
+    public static Result BinarySortByOrderIndex(this AvaloniaList<ToDoItemEntityNotify> list)
     {
         for (var i = 1; i < list.Count; ++i)
         {
@@ -103,6 +103,8 @@ public static class AvaloniaListExtension
                 list[j + 1] = key;
             }
         }
+
+        return Result.Success;
     }
 
     private static int BinarySearchLoadedIndex(

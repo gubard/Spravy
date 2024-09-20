@@ -23,7 +23,7 @@ public class FilesObjectStorage : IObjectStorage
         return file.Exists.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id, CancellationToken ct)
+    public Cvtar DeleteAsync(string id, CancellationToken ct)
     {
         var file = root.ToFile(id);
         file.Delete();
@@ -31,11 +31,7 @@ public class FilesObjectStorage : IObjectStorage
         return Result.AwaitableSuccess;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(
-        string id,
-        object obj,
-        CancellationToken ct
-    )
+    public Cvtar SaveObjectAsync(string id, object obj, CancellationToken ct)
     {
         return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }

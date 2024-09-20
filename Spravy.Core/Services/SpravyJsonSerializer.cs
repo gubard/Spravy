@@ -9,11 +9,7 @@ public class SpravyJsonSerializer : ISerializer
         this.context = context;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(
-        T obj,
-        Stream stream,
-        CancellationToken ct
-    )
+    public Cvtar SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
         where T : notnull
     {
         return SerializeCore(obj, stream, ct).ConfigureAwait(false);

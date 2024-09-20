@@ -314,7 +314,7 @@ public class SpravyCommandService
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                view.Item is null
+                                view.Item is not null
                                     ? viewFactory.CreateToDoItemToStringSettingsViewModel(view.Item)
                                     : viewFactory.CreateToDoItemToStringSettingsViewModel(selected),
                                 vm =>

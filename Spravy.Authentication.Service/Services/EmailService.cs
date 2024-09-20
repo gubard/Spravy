@@ -12,7 +12,7 @@ public class EmailService : IEmailService
         this.options = options;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SendEmailAsync(
+    public Cvtar SendEmailAsync(
         string subject,
         string recipientEmail,
         string text,

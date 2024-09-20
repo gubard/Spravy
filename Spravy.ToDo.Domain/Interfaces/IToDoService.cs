@@ -8,14 +8,31 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
-    ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken ct);
+    Cvtar DeleteToDoItemAsync(Guid id, CancellationToken ct);
+    Cvtar AddFavoriteToDoItemAsync(Guid id, CancellationToken ct);
+    Cvtar RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct);
+    Cvtar ToDoItemToRootAsync(Guid id, CancellationToken ct);
+    Cvtar UpdateIsBookmarkAsync(Guid id, bool isBookmark, CancellationToken ct);
+    Cvtar RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken ct);
+    Cvtar UpdateReferenceToDoItemAsync(Guid id, Guid referenceId, CancellationToken ct);
+    Cvtar ResetToDoItemAsync(ResetToDoItemOptions options, CancellationToken ct);
+    Cvtar UpdateToDoItemDescriptionTypeAsync(Guid id, DescriptionType type, CancellationToken ct);
+    Cvtar UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken ct);
+    Cvtar UpdateToDoItemNameAsync(Guid id, string name, CancellationToken ct);
+    Cvtar UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken ct);
+    Cvtar UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken ct);
+    Cvtar UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken ct);
+    Cvtar UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken ct);
+    Cvtar UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken ct);
+    Cvtar UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months, CancellationToken ct);
+    Cvtar UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken ct);
+    Cvtar UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken ct);
+    Cvtar UpdateToDoItemLinkAsync(Guid id, Option<Uri> link, CancellationToken ct);
+    Cvtar UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type, CancellationToken ct);
+    Cvtar UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
-        Guid id,
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(
         CancellationToken ct
     );
 
@@ -26,17 +43,6 @@ public interface IToDoService
 
     ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
         Guid id,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
-        Guid id,
-        Guid referenceId,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
-        ResetToDoItemOptions options,
         CancellationToken ct
     );
 
@@ -122,78 +128,6 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
-        Guid id,
-        DescriptionType type,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
-        Guid id,
-        DateOnly dueDate,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
-        Guid id,
-        string name,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
-        Guid id,
-        string description,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
-        Guid id,
-        bool isComplete,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
-        Guid id,
-        ToDoItemType type,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
-        Guid id,
-        Guid parentId,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
-        Guid id,
-        ushort days,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
-        Guid id,
-        ushort months,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
-        Guid id,
-        ushort weeks,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
-        Guid id,
-        ushort years,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
-        Guid id,
-        Option<Uri> link,
-        CancellationToken ct
-    );
-
     ConfiguredValueTaskAwaitable<
         Result<ReadOnlyMemory<ToDoShortItem>>
     > GetChildrenToDoItemShortsAsync(Guid id, CancellationToken ct);
@@ -202,42 +136,30 @@ public interface IToDoService
         Result<PeriodicityToDoItemSettings>
     > GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
+    Cvtar UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
         TypeOfPeriodicity type,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
+    Cvtar UpdateToDoItemOrderIndexAsync(
         UpdateOrderIndexToDoItemOptions options,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
-        Guid id,
-        ToDoItemChildrenType type,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-        Guid id,
-        bool value,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
+    Cvtar UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
+    Cvtar UpdateToDoItemMonthlyPeriodicityAsync(
         Guid id,
         MonthlyPeriodicity periodicity,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
+    Cvtar UpdateToDoItemWeeklyPeriodicityAsync(
         Guid id,
         WeeklyPeriodicity periodicity,
         CancellationToken ct

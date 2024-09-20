@@ -1,11 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Authentication.Domain.Services;
 
 public class TokenService : ITokenService
@@ -48,7 +40,7 @@ public class TokenService : ITokenService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
+    public Cvtar LoginAsync(User user, CancellationToken ct)
     {
         return authenticationService
             .LoginAsync(user, ct)
@@ -63,10 +55,7 @@ public class TokenService : ITokenService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(
-        string refreshToken,
-        CancellationToken ct
-    )
+    public Cvtar LoginAsync(string refreshToken, CancellationToken ct)
     {
         return authenticationService
             .RefreshTokenAsync(refreshToken, ct)

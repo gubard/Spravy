@@ -1,13 +1,22 @@
 // Global using directives
 global using System.Runtime.CompilerServices;
+global using Grpc.Core;
+global using Grpc.Net.Client;
+global using Jab;
 global using Spravy.Client.Enums;
 global using Spravy.Client.Extensions;
+global using Spravy.Client.Helpers;
 global using Spravy.Client.Interfaces;
+global using Spravy.Client.Models;
 global using Spravy.Client.Services;
+global using Spravy.Core.Interfaces;
+global using Spravy.Core.Mappers;
+global using Spravy.Domain.Enums;
 global using Spravy.Domain.Extensions;
 global using Spravy.Domain.Interfaces;
 global using Spravy.Domain.Models;
-global using Spravy.PasswordGenerator.Domain.Interfaces;
-global using Spravy.PasswordGenerator.Domain.Models;
-global using static Spravy.PasswordGenerator.Protos.PasswordService;
+global using Spravy.ToDo.Domain.Client.Models;
+global using Spravy.ToDo.Domain.Client.Services;
+global using Spravy.ToDo.Domain.Interfaces;
+global using Spravy.ToDo.Protos;
 global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

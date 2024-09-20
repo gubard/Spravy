@@ -6,3 +6,8 @@ public interface IToDoItemsView : IRefresh
     Result AddOrUpdateUi(ToDoItemEntityNotify item);
     Result RemoveUi(ToDoItemEntityNotify item);
 }
+
+public interface IBookmarksToDoItemsView
+{
+    Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items);
+}

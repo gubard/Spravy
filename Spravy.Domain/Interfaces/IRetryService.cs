@@ -7,5 +7,5 @@ public interface IRetryService
     )
         where TReturn : notnull;
 
-    ConfiguredValueTaskAwaitable<Result> TryAsync(Func<ConfiguredValueTaskAwaitable<Result>> func);
+    Cvtar TryAsync(Func<Cvtar> func);
 }

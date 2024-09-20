@@ -41,7 +41,7 @@ public static partial class UiMapper
     public static ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemViewModel value)
     {
         return new(
-            value.Item.CurrentId,
+            value.Item?.CurrentId ?? throw new NullReferenceException(nameof(value.Item)),
             value.IsCompleteChildrenTask,
             value.IsMoveCircleOrderIndex,
             value.IsOnlyCompletedTasks,
@@ -58,7 +58,7 @@ public static partial class UiMapper
             nameof(ThemeVariant.Default) => ThemeType.Default,
             nameof(ThemeVariant.Dark) => ThemeType.Dark,
             nameof(ThemeVariant.Light) => ThemeType.Light,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(key),
         };
     }
 

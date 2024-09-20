@@ -3,7 +3,7 @@ namespace Spravy.Service.Extensions;
 public static class ResultExtension
 {
     public static async Task<TReturn> HandleAsync<TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         ISerializer serializer,
         CancellationToken ct
     )
@@ -22,7 +22,7 @@ public static class ResultExtension
     }
 
     public static async Task<TReturn> HandleAsync<TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
+        this Cvtar task,
         ISerializer serializer,
         Func<TReturn> func,
         CancellationToken ct

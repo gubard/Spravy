@@ -59,12 +59,7 @@ public class ScheduleHostedService : IHostedService
                                             .IfSuccessAllInOrderAsync(
                                                 timers =>
                                                 {
-                                                    var list =
-                                                        new List<
-                                                            Func<
-                                                                ConfiguredValueTaskAwaitable<Result>
-                                                            >
-                                                        >();
+                                                    var list = new List<Func<Cvtar>>();
 
                                                     foreach (var timer in timers.Span)
                                                     {

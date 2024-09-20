@@ -124,9 +124,9 @@ public static class DbContextExtension
         return result;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> AtomicExecuteAsync<TDbContext>(
+    public static Cvtar AtomicExecuteAsync<TDbContext>(
         this TDbContext context,
-        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        Func<Cvtar> func,
         CancellationToken ct
     )
         where TDbContext : DbContext
@@ -136,7 +136,7 @@ public static class DbContextExtension
 
     private static async ValueTask<Result> AtomicExecuteCore<TDbContext>(
         this TDbContext context,
-        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        Func<Cvtar> func,
         CancellationToken ct
     )
         where TDbContext : DbContext

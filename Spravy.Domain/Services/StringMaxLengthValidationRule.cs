@@ -9,7 +9,7 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
         this.maxLength = maxLength;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(string? value, string sourceName)
+    public Cvtar ValidateAsync(string? value, string sourceName)
     {
         if (value is null)
         {

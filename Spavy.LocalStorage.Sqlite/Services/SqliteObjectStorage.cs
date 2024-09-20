@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -58,7 +57,7 @@ public class SqliteObjectStorage : IObjectStorage
         return IsExistsCore(id, ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id, CancellationToken ct)
+    public Cvtar DeleteAsync(string id, CancellationToken ct)
     {
         return DeleteCore(id, ct).ConfigureAwait(false);
     }
@@ -125,11 +124,7 @@ public class SqliteObjectStorage : IObjectStorage
         return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(
-        string id,
-        object obj,
-        CancellationToken ct
-    )
+    public Cvtar SaveObjectAsync(string id, object obj, CancellationToken ct)
     {
         return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }

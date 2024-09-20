@@ -6,6 +6,22 @@ package spravy.to_do;
 
 import "google/protobuf/timestamp.proto";
 
+
+message GetBookmarkToDoItemIdsRequest {
+}
+
+message GetBookmarkToDoItemIdsRequestReply {
+  repeated bytes ids = 1;
+}
+
+message UpdateIsBookmarkRequest {
+  bytes id = 1;
+  bool is_bookmark = 2;
+}
+
+message UpdateIsBookmarkReply {
+}
+
 message UpdateEventsRequest {
 }
 
@@ -112,6 +128,7 @@ message ToDoItemGrpc {
   bytes parent_id = 11;
   DescriptionTypeGrpc description_type = 12;
   bytes referenceId = 13;
+  bool is_bookmark = 14; 
 }
 
 message GetToDoItemsReply {
@@ -245,6 +262,7 @@ message GetToDoItemReply {
   bool IsRequiredCompleteInDueDate= 22;
   TypeOfPeriodicityGrpc TypeOfPeriodicity= 23;
   repeated DayOfWeekGrpc WeeklyDays = 24;
+  bool is_bookmark = 25;
 }
 
 message GetChildrenToDoItemIdsRequest {
@@ -499,108 +517,6 @@ message AddToDoItemReply {
   bytes id = 1;
 }
 
-message ToDoItemPlannedGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  bool is_completed = 2;
-  ToDoItemChildrenTypeGrpc children_type = 6;
-}
-
-message ToDoItemCircleGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  bool is_completed = 2;
-  ToDoItemChildrenTypeGrpc children_type = 3;
-}
-
-message ToDoItemStepGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  bool is_completed = 2;
-  ToDoItemChildrenTypeGrpc children_type = 3;
-}
-
-message ToDoItemPeriodicityGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  ToDoItemChildrenTypeGrpc children_type = 6;
-
-  oneof Periodicity {
-    DailyPeriodicityGrpc daily = 2;
-    WeeklyPeriodicityGrpc weekly = 3;
-    MonthlyPeriodicityGrpc monthly = 4;
-    AnnuallyPeriodicityGrpc annually = 5;
-  }
-}
-
-message ToDoItemGroupGrpc {
-}
-
-message ToDoSubItemGrpc {
-  bytes id = 1;
-  string name = 2;
-  uint32 order_index = 3;
-  ToDoItemStatusGrpc status = 4;
-  string description = 5;
-  bool is_favorite = 8;
-  ActiveToDoItemGrpc active = 9;
-  string link = 12;
-  bytes referenceId = 16;
-
-  oneof Parameters {
-    ToDoSubItemValueGrpc value = 6;
-    ToDoSubItemGroupGrpc group = 7;
-    ToDoSubItemPlannedGrpc planned = 10;
-    ToDoSubItemPeriodicityGrpc periodicity = 11;
-    ToDoSubItemPeriodicityOffsetGrpc periodicity_offset = 13;
-    ToDoSubItemCircleGrpc circle = 14;
-    ToDoSubItemStepGrpc step = 15;
-  }
-}
-
-message ToDoSubItemPeriodicityGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  google.protobuf.Timestamp last_completed = 9;
-
-  oneof Periodicity {
-    DailyPeriodicityGrpc daily = 5;
-    WeeklyPeriodicityGrpc weekly = 6;
-    MonthlyPeriodicityGrpc monthly = 7;
-    AnnuallyPeriodicityGrpc annually = 8;
-  }
-}
-
-message ToDoSubItemPlannedGrpc {
-  bool is_completed = 1;
-  google.protobuf.Timestamp due_date = 2;
-  google.protobuf.Timestamp last_completed = 6;
-}
-
-message ToDoSubItemGroupGrpc {
-}
-
-message ToDoSubItemValueGrpc {
-  bool is_completed = 1;
-  google.protobuf.Timestamp last_completed = 5;
-}
-
-message ToDoSubItemCircleGrpc {
-  bool is_completed = 1;
-  google.protobuf.Timestamp last_completed = 5;
-}
-
-message ToDoSubItemStepGrpc {
-  bool is_completed = 1;
-  google.protobuf.Timestamp last_completed = 5;
-}
-
-message ToDoItemParentGrpc {
-  bytes id = 1;
-  string name = 2;
-}
-
-message ToDoItemValueGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  bool is_completed = 2;
-  ToDoItemChildrenTypeGrpc children_type = 3;
-}
-
 enum TypeOfPeriodicityGrpc {
   TYPE_OF_PERIODICITY_GRPC_DAILY = 0;
   TYPE_OF_PERIODICITY_GRPC_WEEKLY = 1;
@@ -609,20 +525,6 @@ enum TypeOfPeriodicityGrpc {
 }
 
 message DailyPeriodicityGrpc {
-}
-
-message ToDoSubItemPeriodicityOffsetGrpc {
-  google.protobuf.Timestamp due_date = 1;
-  google.protobuf.Timestamp last_completed = 5;
-}
-
-message ToDoItemPeriodicityOffsetGrpc {
-  uint32 days_offset = 1;
-  uint32 months_offset = 2;
-  uint32 weeks_offset = 3;
-  uint32 years_offset = 4;
-  google.protobuf.Timestamp due_date = 5;
-  ToDoItemChildrenTypeGrpc children_type = 6;
 }
 
 message MonthlyPeriodicityGrpc {

@@ -87,7 +87,7 @@ public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
     {
-        return items.UpdateUi(newItems);
+        return items.UpdateUi(newItems).ToResultOnly();
     }
 
     public Result AddOrUpdateUi(ToDoItemEntityNotify item)

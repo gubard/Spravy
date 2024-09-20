@@ -1,6 +1,3 @@
-using Spravy.Client.Enums;
-using Spravy.Client.Interfaces;
-
 namespace Spravy.Authentication.Domain.Client.Models;
 
 public class GrpcAuthenticationServiceOptions : IGrpcOptionsValue

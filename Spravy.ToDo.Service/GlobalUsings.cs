@@ -48,3 +48,4 @@ global using Spravy.ToDo.Protos;
 global using Spravy.ToDo.Service;
 global using Spravy.ToDo.Service.Extensions;
 global using Spravy.ToDo.Service.Services;
+global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;

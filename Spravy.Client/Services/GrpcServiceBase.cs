@@ -24,10 +24,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
         this.retryService = retryService;
     }
 
-    protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
-        Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result>> func,
-        CancellationToken ct
-    )
+    protected Cvtar CallClientAsync(Func<TGrpcClient, Cvtar> func, CancellationToken ct)
     {
         try
         {

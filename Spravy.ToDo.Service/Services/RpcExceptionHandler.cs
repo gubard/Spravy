@@ -9,10 +9,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
         this.serializer = serializer;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ToErrorAsync(
-        RpcException exception,
-        CancellationToken ct
-    )
+    public Cvtar ToErrorAsync(RpcException exception, CancellationToken ct)
     {
         return ToErrorCore(exception, ct).ConfigureAwait(false);
     }
