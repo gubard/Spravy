@@ -60,6 +60,5 @@ public class TimersViewModel : NavigatableViewModelBase, IRefresh
                     ),
                 ct
             );
-        ;
     }
 }

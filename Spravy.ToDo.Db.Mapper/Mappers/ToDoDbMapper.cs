@@ -71,7 +71,8 @@ public static partial class ToDoDbMapper
             parameters.IsCan,
             entity.ParentId.ToOption(),
             entity.DescriptionType,
-            GetReferenceId(entity)
+            GetReferenceId(entity),
+            entity.IsBookmark
         );
     }
 
@@ -139,7 +140,8 @@ public static partial class ToDoDbMapper
             entity.YearsOffset,
             entity.IsRequiredCompleteInDueDate,
             entity.TypeOfPeriodicity,
-            entity.GetDaysOfWeek()
+            entity.GetDaysOfWeek(),
+            entity.IsBookmark
         );
     }
 }

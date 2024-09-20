@@ -82,6 +82,7 @@ public class ToDoCache : IToDoCache
                 item.IsCan = toDoItem.IsCan;
                 item.IsFavorite = toDoItem.IsFavorite;
                 item.OrderIndex = toDoItem.OrderIndex;
+                item.IsBookmark = toDoItem.IsBookmark;
                 item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
@@ -163,6 +164,7 @@ public class ToDoCache : IToDoCache
         item.Status = toDoItem.Status;
         item.IsCan = toDoItem.IsCan;
         item.IsFavorite = toDoItem.IsFavorite;
+        item.IsBookmark = toDoItem.IsBookmark;
         item.OrderIndex = toDoItem.OrderIndex;
         item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
         item.IsIgnore = item.Type == ToDoItemType.Reference;

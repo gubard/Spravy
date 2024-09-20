@@ -70,7 +70,8 @@ public class EfToDoService : IToDoService
                      IsRequiredCompleteInDueDate,
                      DescriptionType,
                      ReferenceId,
-                     ParentId
+                     ParentId,
+                     IsBookmark
                  ) AS (
                      SELECT
                      Id,
@@ -97,7 +98,8 @@ public class EfToDoService : IToDoService
                      IsRequiredCompleteInDueDate,
                      DescriptionType,
                      ReferenceId,
-                     ParentId
+                     ParentId,
+                     IsBookmark
                      FROM ToDoItem
                      WHERE Id IN ({idsString})
 
@@ -128,7 +130,8 @@ public class EfToDoService : IToDoService
                      t.IsRequiredCompleteInDueDate,
                      t.DescriptionType,
                      t.ReferenceId,
-                     t.ParentId
+                     t.ParentId,
+                     t.IsBookmark
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.ParentId = h.Id
 
@@ -159,7 +162,8 @@ public class EfToDoService : IToDoService
                      t.IsRequiredCompleteInDueDate,
                      t.DescriptionType,
                      t.ReferenceId,
-                     t.ParentId
+                     t.ParentId,
+                     t.IsBookmark
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.Id = h.ReferenceId
                      WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id

@@ -19,7 +19,8 @@ public readonly struct ToDoItem
         ToDoItemIsCan isCan,
         OptionStruct<Guid> parentId,
         DescriptionType descriptionType,
-        OptionStruct<Guid> referenceId
+        OptionStruct<Guid> referenceId,
+        bool isBookmark
     )
     {
         Id = id;
@@ -35,6 +36,7 @@ public readonly struct ToDoItem
         ParentId = parentId;
         DescriptionType = descriptionType;
         ReferenceId = referenceId;
+        IsBookmark = isBookmark;
     }
 
     public Guid Id { get; }
@@ -50,4 +52,5 @@ public readonly struct ToDoItem
     public OptionStruct<Guid> ParentId { get; }
     public DescriptionType DescriptionType { get; }
     public OptionStruct<Guid> ReferenceId { get; }
+    public bool IsBookmark { get; }
 }

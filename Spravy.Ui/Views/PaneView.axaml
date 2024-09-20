@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.PaneView"
              x:DataType="vm:PaneViewModel">
@@ -64,7 +65,7 @@
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
             </Grid>
         </Button>
-        
+
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToTimers}">
             <Grid ColumnDefinitions="Auto,Auto">
@@ -80,7 +81,7 @@
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
             </Grid>
         </Button>
-        
+
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToPolicy}">
             <Grid ColumnDefinitions="Auto,Auto">
@@ -96,5 +97,21 @@
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
             </Grid>
         </Button>
+
+        <Rectangle Height="1"
+                   Margin="0,10,0,10"
+                   Fill="{DynamicResource ExpanderHeaderBorderBrush}"
+                   IsVisible="{Binding Bookmarks.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+
+        <ItemsControl ItemsSource="{Binding Bookmarks}">
+            <ItemsControl.DataTemplates>
+                <DataTemplate DataType="tdm:ToDoItemEntityNotify">
+                    <Button x:Name="RootToDoItemButton"
+                            Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                            CommandParameter="{Binding}"
+                            Content="{Binding Name}" />
+                </DataTemplate>
+            </ItemsControl.DataTemplates>
+        </ItemsControl>
     </StackPanel>
 </UserControl>

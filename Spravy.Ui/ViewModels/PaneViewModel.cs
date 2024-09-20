@@ -27,6 +27,6 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
 
     public Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByOrderIndex());
+        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByLoadedIndex());
     }
 }

@@ -2,10 +2,18 @@ namespace Spravy.Ui.Services;
 
 public class UiApplicationService : IUiApplicationService
 {
+    private readonly IToDoUiService toDoUiService;
     private readonly MainSplitViewModel mainSplitViewModel;
+    private readonly AccountNotify accountNotify;
 
-    public UiApplicationService(IRootViewFactory rootViewFactory)
+    public UiApplicationService(
+        IRootViewFactory rootViewFactory,
+        IToDoUiService toDoUiService,
+        AccountNotify accountNotify
+    )
     {
+        this.toDoUiService = toDoUiService;
+        this.accountNotify = accountNotify;
         mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
@@ -16,7 +24,15 @@ public class UiApplicationService : IUiApplicationService
 
     public Cvtar RefreshCurrentViewAsync(CancellationToken ct)
     {
-        return mainSplitViewModel.Content.RefreshAsync(ct);
+        return mainSplitViewModel
+            .Content.RefreshAsync(ct)
+            .IfSuccessAsync(
+                () =>
+                    accountNotify.Login.IsNullOrWhiteSpace()
+                        ? Result.AwaitableSuccess
+                        : toDoUiService.UpdateBookmarkItemsAsync(mainSplitViewModel.Pane, ct),
+                ct
+            );
     }
 
     public Result<Type> GetCurrentViewType()

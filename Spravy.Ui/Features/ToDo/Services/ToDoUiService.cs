@@ -78,6 +78,25 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
+    public Cvtar UpdateBookmarkItemsAsync(
+        IBookmarksToDoItemsView bookmarksToDoItemsView,
+        CancellationToken ct
+    )
+    {
+        return toDoService
+            .GetBookmarkToDoItemIdsAsync(ct)
+            .IfSuccessAsync(
+                ids =>
+                    this.PostUiBackground(
+                        () =>
+                            ids.IfSuccessForEach(i => toDoCache.GetToDoItem(i))
+                                .IfSuccess(bookmarksToDoItemsView.ClearBookmarksExceptUi),
+                        ct
+                    ),
+                ct
+            );
+    }
+
     public Cvtar UpdateSelectorItemsAsync(
         Guid? selectedId,
         ReadOnlyMemory<Guid> ignoreIds,

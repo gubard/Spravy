@@ -134,7 +134,7 @@ public static class AvaloniaListExtension
         return list.BinarySearchLoadedIndex(x, low, mid - 1);
     }
 
-    public static void BinarySortByLoadedIndex(this AvaloniaList<ToDoItemEntityNotify> list)
+    public static Result BinarySortByLoadedIndex(this AvaloniaList<ToDoItemEntityNotify> list)
     {
         for (var i = 1; i < list.Count; ++i)
         {
@@ -157,5 +157,7 @@ public static class AvaloniaListExtension
                 list[j + 1] = key;
             }
         }
+
+        return Result.Success;
     }
 }

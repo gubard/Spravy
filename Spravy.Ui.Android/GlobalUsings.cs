@@ -19,4 +19,6 @@ global using Spravy.Ui.Interfaces;
 global using Spravy.Ui.Modules;
 global using Spravy.Ui.Services;
 global using Xamarin.Essentials;
+global using AndroidUri = Android.Net.Uri;
 global using Cvtar = System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable<Spravy.Domain.Models.Result>;
+global using SpravyResult = Spravy.Domain.Models.Result;

@@ -206,6 +206,18 @@ public class SpravyCommandNotifyService
             commandService.RemoveFromFavorite
         );
 
+        AddToBookmark = new(
+            MaterialIconKind.BookmarkOutline,
+            new("Command.AddToBookmark"),
+            commandService.AddToBookmark
+        );
+
+        RemoveFromBookmark = new(
+            MaterialIconKind.Bookmark,
+            new("Command.RemoveFromBookmark"),
+            commandService.RemoveFromBookmark
+        );
+
         OpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.OpenLink);
 
         AddChild = new(
@@ -407,6 +419,8 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotify Reset { get; }
     public SpravyCommandNotify Clone { get; }
     public SpravyCommandNotify CreateReference { get; }
+    public SpravyCommandNotify AddToBookmark { get; }
+    public SpravyCommandNotify RemoveFromBookmark { get; }
 
     public ReadOnlyMemory<SpravyCommandNotify> LeafToDoItemsMulti { get; }
     public ReadOnlyMemory<SpravyCommandNotify> RootToDoItemsMulti { get; }

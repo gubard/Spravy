@@ -29,6 +29,9 @@ public partial class ToDoItemEntityNotify
     private bool isFavorite;
 
     [ObservableProperty]
+    private bool isBookmark;
+
+    [ObservableProperty]
     private string description;
 
     [ObservableProperty]
@@ -261,6 +264,12 @@ public partial class ToDoItemEntityNotify
                 spravyCommandNotifyService.CreateReference,
                 spravyCommandNotifyService.CreateTimer,
             ]
+        );
+
+        CompactCommands.Add(
+            IsBookmark
+                ? spravyCommandNotifyService.RemoveFromBookmark
+                : spravyCommandNotifyService.AddToBookmark
         );
 
         var singleCommands = new List<SpravyCommandNotify>(CompactCommands);

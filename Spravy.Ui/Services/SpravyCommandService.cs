@@ -2036,6 +2036,8 @@ public class SpravyCommandService
                                 return objectStorage.DeleteAsync(StorageIds.LoginId, ct);
                             }
 
+                            accountNotify.Login = string.Empty;
+
                             return Result.AwaitableSuccess;
                         },
                         ct
@@ -2481,6 +2483,13 @@ public class SpravyCommandService
                                                     )
                                                     .IfSuccessAsync(
                                                         () =>
+                                                            uiApplicationService.RefreshCurrentViewAsync(
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
                                                             navigator.NavigateToAsync(
                                                                 viewFactory.CreateRootToDoItemsViewModel(),
                                                                 ct
@@ -2527,6 +2536,7 @@ public class SpravyCommandService
                         objectStorage,
                         toDoUiService,
                         accountNotify,
+                        uiApplicationService,
                         ct
                     )
                     .IfSuccessAsync(
@@ -2573,6 +2583,7 @@ public class SpravyCommandService
                                     objectStorage,
                                     toDoUiService,
                                     accountNotify,
+                                    uiApplicationService,
                                     ct
                                 );
                             }
@@ -2880,6 +2891,24 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        AddToBookmark = SpravyCommand.Create<ToDoItemEntityNotify>(
+            (item, ct) =>
+                toDoService
+                    .UpdateIsBookmarkAsync(item.Id, true, ct)
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        RemoveFromBookmark = SpravyCommand.Create<ToDoItemEntityNotify>(
+            (item, ct) =>
+                toDoService
+                    .UpdateIsBookmarkAsync(item.Id, false, ct)
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2920,6 +2949,8 @@ public class SpravyCommandService
     public SpravyCommand CreateReference { get; }
     public SpravyCommand NavigateToToDoItem { get; }
     public SpravyCommand NavigateToActiveToDoItem { get; }
+    public SpravyCommand AddToBookmark { get; }
+    public SpravyCommand RemoveFromBookmark { get; }
 
     public SpravyCommand MultiComplete { get; }
     public SpravyCommand MultiAddToFavorite { get; }
@@ -3034,6 +3065,7 @@ public class SpravyCommandService
         IObjectStorage objectStorage,
         IToDoUiService toDoUiService,
         AccountNotify accountNotify,
+        IUiApplicationService uiApplicationService,
         CancellationToken ct
     )
     {
@@ -3091,6 +3123,13 @@ public class SpravyCommandService
                                                         toDoUiService.UpdateSelectorItemsAsync(
                                                             null,
                                                             ReadOnlyMemory<Guid>.Empty,
+                                                            ct
+                                                        ),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    () =>
+                                                        uiApplicationService.RefreshCurrentViewAsync(
                                                             ct
                                                         ),
                                                     ct

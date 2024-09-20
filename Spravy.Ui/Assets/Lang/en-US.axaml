@@ -23,6 +23,8 @@
     <sys:String x:Key="Command.Setting">Setting</sys:String>
     <sys:String x:Key="Command.AddToFavorite">Add to favorite</sys:String>
     <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
+    <sys:String x:Key="Command.AddToBookmark">Add to bookmark</sys:String>
+    <sys:String x:Key="Command.RemoveFromBookmark">Remove from bookmark</sys:String>
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
     <sys:String x:Key="Command.Clone">Clone</sys:String>
     <sys:String x:Key="Command.CreateReference">Create reference</sys:String>
