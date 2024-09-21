@@ -2,11 +2,11 @@ namespace Spravy.Ui.Services;
 
 public class TopLevelClipboardService : IClipboardService
 {
-    private readonly IClipboard clipboard;
+    private readonly Application app;
 
-    public TopLevelClipboardService(IClipboard clipboard)
+    public TopLevelClipboardService(Application app)
     {
-        this.clipboard = clipboard;
+        this.app = app;
     }
 
     public Cvtar SetTextAsync(string? text)
@@ -16,7 +16,7 @@ public class TopLevelClipboardService : IClipboardService
 
     public async ValueTask<Result> SetTextCore(string? text)
     {
-        await clipboard.SetTextAsync(text);
+        await app.GetTopLevel().ThrowIfNull().Clipboard.ThrowIfNull().SetTextAsync(text);
 
         return Result.Success;
     }

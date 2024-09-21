@@ -105,7 +105,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
 [Transient(typeof(IRpcExceptionHandler), typeof(RpcExceptionHandler))]
-[Transient(typeof(IClipboard), Factory = nameof(ClipboardFactory))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
 {
@@ -131,11 +130,6 @@ public interface IUiModule
     )
     {
         return new SingleView { DataContext = rootViewFactory.CreateSingleViewModel() };
-    }
-
-    static IClipboard ClipboardFactory(TopLevel topLevel)
-    {
-        return topLevel.Clipboard.ThrowIfNull();
     }
 
     static IEnumerable<IDataTemplate> DataTemplatesFactory(

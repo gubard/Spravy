@@ -10,7 +10,6 @@ namespace Spravy.Ui.Browser.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IStringToBytes), typeof(StringToUtf8Bytes))]
 [Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
 [Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
@@ -18,11 +17,6 @@ namespace Spravy.Ui.Browser.Modules;
 [Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
 public partial class BrowserServiceProvider : IServiceFactory
 {
-    static TopLevel TopLevelFactory(Avalonia.Application application)
-    {
-        return application.GetTopLevel().ThrowIfNull();
-    }
-
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
