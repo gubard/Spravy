@@ -20,20 +20,14 @@ namespace Spravy.Ui.Desktop.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
-[Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
+[Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory
 {
     static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
     {
         return new SqliteObjectStorage(serializer, "./storage/storage.db".ToFile());
-    }
-
-    static TopLevel TopLevelFactory(Avalonia.Application application)
-    {
-        return application.GetTopLevel().ThrowIfNull();
     }
 
     public IServiceFactory ServiceFactoryFactory()
