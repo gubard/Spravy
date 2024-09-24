@@ -71,6 +71,18 @@ public static class ObjectExtension
         return new(value);
     }
 
+    public static Cvtar Wrap(this Task value)
+    {
+        return WrapCore(value).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> WrapCore(this Task value)
+    {
+        await value;
+
+        return Result.Success;
+    }
+
     public static async Task<T[]> ToArrayAsync<T>(this ConfiguredTaskAwaitable<IEnumerable<T>> task)
     {
         var enumerable = await task;

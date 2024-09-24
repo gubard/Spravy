@@ -21,7 +21,7 @@ namespace Spravy.Ui.Desktop.Modules;
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
-[Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
+[Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory
 {
