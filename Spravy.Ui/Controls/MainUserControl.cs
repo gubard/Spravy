@@ -5,19 +5,16 @@ public abstract class MainUserControl<T> : UserControl
 {
     protected TextBox? DefaultFocusTextBox;
 
-    public MainUserControl()
+    protected override void OnInitialized()
     {
-        Initialized += (_, _) =>
-        {
-            try
-            {
-                ViewModel.View = this;
-            }
-            finally
-            {
-                DefaultFocusTextBox?.FocusTextBoxUi();
-            }
-        };
+        base.OnInitialized();
+        ViewModel.View = this;
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        DefaultFocusTextBox?.FocusTextBoxUi();
     }
 
     public T ViewModel

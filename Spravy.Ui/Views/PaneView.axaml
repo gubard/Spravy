@@ -23,7 +23,8 @@
         <Grid ColumnDefinitions="*,Auto">
             <TextBlock Classes="alignment-left" Margin="5,0,0,0" Text="{Binding Account.Login}" />
 
-            <Button Grid.Column="1" Classes="alignment-top alignment-right"
+            <Button Grid.Column="1" 
+                    Classes="label alignment-top alignment-right"
                     Command="{x:Static h:UiHelper.SwitchPane}">
                 <mi:MaterialIcon Kind="Close" />
             </Button>

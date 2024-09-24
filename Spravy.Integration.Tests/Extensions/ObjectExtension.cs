@@ -9,6 +9,60 @@ public static class ObjectExtension
         return obj;
     }
 
+    public static TObject WaitUntil<TObject>(this object _, Func<TObject> predicate)
+    {
+        return _.WaitUntil(predicate, TimeSpan.FromSeconds(60));
+    }
+
+    public static TObject WaitUntil<TObject>(
+        this object _,
+        Func<TObject> predicate,
+        TimeSpan timeout
+    )
+    {
+        var index = 0ul;
+        var currentTick = Environment.TickCount;
+
+        while (true)
+        {
+            var milliseconds = TimeSpan.FromMilliseconds(Environment.TickCount - currentTick);
+
+            if (milliseconds >= timeout)
+            {
+                throw new TimeoutException();
+            }
+
+            using (var cancellationTokenSource = new CancellationTokenSource())
+            {
+                cancellationTokenSource.CancelAfter(timeout - milliseconds);
+
+                try
+                {
+                    return predicate.Invoke();
+                }
+                catch
+                {
+                    var value = index;
+
+                    Dispatcher.UIThread.Post(
+                        () =>
+                            Task.Delay(
+                                    TimeSpan.FromSeconds(Math.Exp(value)),
+                                    cancellationTokenSource.Token
+                                )
+                                .ConfigureAwait(false)
+                                .GetAwaiter()
+                                .GetResult()
+                    );
+
+                    Dispatcher.UIThread.RunJobs();
+                }
+            }
+
+            index++;
+        }
+    }
+
     public static TObject RunJobsAll<TObject>(this TObject obj, ulong seconds)
     {
         for (ulong i = 0; i < seconds; i++)

@@ -103,7 +103,7 @@ public class Navigator : INavigator
                         .AwaitableSuccess.IfSuccessAsync(
                             () =>
                             {
-                                if (!mainSplitViewModel.Content.IsPooled)
+                                if (mainSplitViewModel.Content.IsPooled)
                                 {
                                     return list.Add(new(mainSplitViewModel.Content, lastSetup))
                                         .GetAwaitable();

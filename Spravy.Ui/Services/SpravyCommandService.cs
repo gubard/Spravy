@@ -2337,91 +2337,49 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        CreateUserViewEnter = SpravyCommand.Create<CreateUserView>(
-            (view, ct) =>
-                this.InvokeUiAsync(
-                        () =>
-                            view.FindControl<TextBox>(CreateUserView.EmailTextBoxName)
-                                .IfNotNull(CreateUserView.EmailTextBoxName)
-                                .IfSuccess(emailTextBox =>
-                                    view.FindControl<TextBox>(CreateUserView.LoginTextBoxName)
-                                        .IfNotNull(CreateUserView.LoginTextBoxName)
-                                        .IfSuccess(loginTextBox =>
-                                            view.FindControl<TextBox>(
-                                                    CreateUserView.PasswordTextBoxName
-                                                )
-                                                .IfNotNull(CreateUserView.PasswordTextBoxName)
-                                                .IfSuccess(passwordTextBox =>
-                                                    view.FindControl<TextBox>(
-                                                            CreateUserView.RepeatPasswordTextBoxName
-                                                        )
-                                                        .IfNotNull(
-                                                            CreateUserView.RepeatPasswordTextBoxName
-                                                        )
-                                                        .IfSuccess(repeatPasswordTextBox =>
-                                                            new
-                                                            {
-                                                                EmailTextBox = emailTextBox,
-                                                                PasswordTextBox = passwordTextBox,
-                                                                LoginTextBox = loginTextBox,
-                                                                RepeatPasswordTextBox = repeatPasswordTextBox,
-                                                            }.ToResult()
-                                                        )
-                                                )
-                                        )
-                                )
-                    )
+        CreateUserViewEnter = SpravyCommand.Create<CreateUserViewModel>(
+            (vm, ct) =>
+                vm
+                    .View.CastObject<CreateUserView>(nameof(vm.View))
                     .IfSuccessAsync(
-                        controls =>
+                        view =>
                         {
-                            if (controls.EmailTextBox.IsFocused)
+                            if (view.EmailTextBox.IsFocused)
                             {
                                 return this.InvokeUiAsync(() =>
                                 {
-                                    controls.LoginTextBox.Focus();
+                                    view.LoginTextBox.Focus();
 
                                     return Result.Success;
                                 });
                             }
 
-                            if (controls.LoginTextBox.IsFocused)
+                            if (view.LoginTextBox.IsFocused)
                             {
                                 return this.InvokeUiAsync(() =>
                                 {
-                                    controls.PasswordTextBox.Focus();
+                                    view.PasswordTextBox.Focus();
 
                                     return Result.Success;
                                 });
                             }
 
-                            if (controls.PasswordTextBox.IsFocused)
+                            if (view.PasswordTextBox.IsFocused)
                             {
                                 return this.InvokeUiAsync(() =>
                                 {
-                                    controls.RepeatPasswordTextBox.Focus();
+                                    view.RepeatPasswordTextBox.Focus();
 
                                     return Result.Success;
                                 });
                             }
 
-                            return this.InvokeUiAsync(
-                                    () =>
-                                        view.DataContext.CastObject<CreateUserViewModel>(
-                                            nameof(view.DataContext)
-                                        )
-                                )
-                                .IfSuccessAsync(
-                                    vm =>
-                                    {
-                                        if (vm.HasErrors)
-                                        {
-                                            return Result.AwaitableSuccess;
-                                        }
+                            if (vm.HasErrors)
+                            {
+                                return Result.AwaitableSuccess;
+                            }
 
-                                        return CreateUserAsync(vm, authenticationService, ct);
-                                    },
-                                    ct
-                                );
+                            return CreateUserAsync(vm, authenticationService, ct);
                         },
                         ct
                     ),

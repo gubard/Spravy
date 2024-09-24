@@ -244,15 +244,11 @@ public static class WindowExtension
             .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
             .GetVisualChildren()
             .Single()
-            .ThrowIfIsNotCast<Grid>()
-            .Children.TakeLast(1)
-            .Single()
-            .ThrowIfIsNotCast<Border>()
-            .GetVisualChildren()
-            .Single()
+            .ThrowIfIsNotCast<Panel>()
+            .Children.Last()
             .ThrowIfIsNotCast<ContentPresenter>()
-            .GetVisualChildren()
-            .Single()
+            .ThrowIfNull()
+            .Child.ThrowIfNull()
             .ThrowIfIsNotCast<TView>();
     }
 }

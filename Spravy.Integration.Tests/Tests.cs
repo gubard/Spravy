@@ -26,9 +26,7 @@ public class Tests
                             () =>
                                 w.Case(
                                         () =>
-                                            w.RunJobsAll(1)
-                                                .GetCurrentView<LoginView, LoginViewModel>()
-                                                .RunJobsAll(1)
+                                            w.WaitUntil(w.GetCurrentView<LoginView, LoginViewModel>)
                                                 .Case(l =>
                                                     l.GetControl<TextBox>(ElementNames.LoginTextBox)
                                                         .SetText(w, TextHelper.TextLength4)
@@ -54,13 +52,14 @@ public class Tests
                                                             RawInputModifiers.None
                                                         )
                                                 )
-                                                .RunJobsAll(5)
                                                 .Case(
                                                     () =>
-                                                        w.GetErrorDialogView<
-                                                            InfoView,
-                                                            InfoViewModel
-                                                        >()
+                                                        w.WaitUntil(
+                                                                w.GetErrorDialogView<
+                                                                    InfoView,
+                                                                    InfoViewModel
+                                                                >
+                                                            )
                                                             .Case(i =>
                                                                 i.FindControl<ContentControl>(
                                                                         ElementNames.ContentContentControl
@@ -355,7 +354,7 @@ public class Tests
                                     .FindControl<Button>(ElementNames.LoginButton)
                                     .ThrowIfNull()
                                     .ClickOn(w)
-                                    .RunJobsAll(3)
+                                    .RunJobsAll(11)
                         )
                         .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                         .Close(),
