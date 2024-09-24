@@ -65,11 +65,12 @@
         </Panel>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto">
-            <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
+            <Button Classes="horizontal-alignment-center alignment-top" Command="{x:Static h:UiHelper.SwitchPane}">
                 <mi:MaterialIcon Kind="Menu" />
             </Button>
 
-            <ContentControl Grid.Column="1" Classes="alignment-center"
+            <ContentControl Grid.Column="1" 
+                            Classes="horizontal-alignment-center alignment-top"
                             Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
 
             <StackPanel Grid.Column="2">
