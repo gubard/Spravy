@@ -350,7 +350,9 @@ public class ViewFactory : IViewFactory
     {
         return new(
             item,
-            CreateToDoItemSelectorViewModel(item, item.ToReadOnlyMemory()),
+            item.Reference is null
+                ? CreateToDoItemSelectorViewModel()
+                : CreateToDoItemSelectorViewModel(item.Reference),
             toDoService
         );
     }

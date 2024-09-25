@@ -1,3 +1,5 @@
+using System.ComponentModel.Design;
+
 namespace Spravy.Ui.Features.ToDo.Services;
 
 public class ToDoCache : IToDoCache
@@ -86,6 +88,10 @@ public class ToDoCache : IToDoCache
                 item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
+                item.Reference = item.ReferenceId is null
+                    ? null
+                    : GetToDoItem(item.ReferenceId.Value).ThrowIfError();
+
                 if (toDoItem.Active.TryGetValue(out var v))
                 {
                     var result = UpdateUi(v)
@@ -168,6 +174,10 @@ public class ToDoCache : IToDoCache
         item.OrderIndex = toDoItem.OrderIndex;
         item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
         item.IsIgnore = item.Type == ToDoItemType.Reference;
+
+        item.Reference = item.ReferenceId is null
+            ? null
+            : GetToDoItem(item.ReferenceId.Value).ThrowIfError();
 
         if (toDoItem.ParentId.TryGetValue(out var value))
         {

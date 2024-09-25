@@ -50,6 +50,9 @@ public partial class ToDoItemEntityNotify
     private ToDoItemEntityNotify? parent;
 
     [ObservableProperty]
+    private ToDoItemEntityNotify? reference;
+
+    [ObservableProperty]
     private Guid? referenceId;
 
     [ObservableProperty]
