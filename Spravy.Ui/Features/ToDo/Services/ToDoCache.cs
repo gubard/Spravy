@@ -85,12 +85,7 @@ public class ToDoCache : IToDoCache
                 item.IsFavorite = toDoItem.IsFavorite;
                 item.OrderIndex = toDoItem.OrderIndex;
                 item.IsBookmark = toDoItem.IsBookmark;
-                item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
-
-                item.Reference = item.ReferenceId is null
-                    ? null
-                    : GetToDoItem(item.ReferenceId.Value).ThrowIfError();
 
                 if (toDoItem.Active.TryGetValue(out var v))
                 {
@@ -112,9 +107,27 @@ public class ToDoCache : IToDoCache
                     item.Active = null;
                 }
 
-                if (toDoItem.ParentId.TryGetValue(out var value))
+                if (toDoItem.ReferenceId.TryGetValue(out var referenceId))
                 {
-                    var parent = GetToDoItem(value);
+                    var reference = GetToDoItem(referenceId);
+
+                    if (reference.TryGetValue(out var r))
+                    {
+                        item.Reference = r;
+                    }
+                    else
+                    {
+                        return reference;
+                    }
+                }
+                else
+                {
+                    item.Reference = null;
+                }
+
+                if (toDoItem.ParentId.TryGetValue(out var parentId))
+                {
+                    var parent = GetToDoItem(parentId);
 
                     if (parent.TryGetValue(out var p))
                     {
@@ -172,12 +185,7 @@ public class ToDoCache : IToDoCache
         item.IsFavorite = toDoItem.IsFavorite;
         item.IsBookmark = toDoItem.IsBookmark;
         item.OrderIndex = toDoItem.OrderIndex;
-        item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
         item.IsIgnore = item.Type == ToDoItemType.Reference;
-
-        item.Reference = item.ReferenceId is null
-            ? null
-            : GetToDoItem(item.ReferenceId.Value).ThrowIfError();
 
         if (toDoItem.ParentId.TryGetValue(out var value))
         {
@@ -193,6 +201,24 @@ public class ToDoCache : IToDoCache
         else
         {
             item.Parent = null;
+        }
+
+        if (toDoItem.ReferenceId.TryGetValue(out var referenceId))
+        {
+            var reference = GetToDoItem(referenceId);
+
+            if (reference.TryGetValue(out var r))
+            {
+                item.Reference = r;
+            }
+            else
+            {
+                return reference;
+            }
+        }
+        else
+        {
+            item.Reference = null;
         }
 
         return item.UpdateCommandsUi();

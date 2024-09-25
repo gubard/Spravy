@@ -353,7 +353,8 @@ public class ViewFactory : IViewFactory
             item.Reference is null
                 ? CreateToDoItemSelectorViewModel()
                 : CreateToDoItemSelectorViewModel(item.Reference),
-            toDoService
+            toDoService,
+            toDoCache
         );
     }
 

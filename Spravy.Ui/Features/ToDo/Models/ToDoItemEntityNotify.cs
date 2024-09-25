@@ -53,9 +53,6 @@ public partial class ToDoItemEntityNotify
     private ToDoItemEntityNotify? reference;
 
     [ObservableProperty]
-    private Guid? referenceId;
-
-    [ObservableProperty]
     private DescriptionType descriptionType;
 
     [ObservableProperty]
@@ -156,7 +153,7 @@ public partial class ToDoItemEntityNotify
 
     public Guid CurrentId
     {
-        get => ReferenceId ?? Id;
+        get => Reference?.Id ?? Id;
     }
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
@@ -307,7 +304,7 @@ public partial class ToDoItemEntityNotify
     {
         switch (e.PropertyName)
         {
-            case nameof(ReferenceId):
+            case nameof(Reference):
                 OnPropertyChanged(nameof(CurrentId));
 
                 break;
