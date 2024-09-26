@@ -297,11 +297,10 @@ public class EfToDoService : IToDoService
                             GetAllChildrenAsync(context, new[] { id }, ct)
                                 .IfSuccessAsync(
                                     items =>
-                                        getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                        getterToDoItemParametersService.GetToDoItemParameters(
                                             items,
                                             items[id],
-                                            offset,
-                                            ct
+                                            offset
                                         ),
                                     ct
                                 )
@@ -675,13 +674,12 @@ public class EfToDoService : IToDoService
                                     .IfSuccessAsync(
                                         item =>
                                             getterToDoItemParametersService
-                                                .GetToDoItemParametersAsync(
+                                                .GetToDoItemParameters(
                                                     items,
                                                     items[id],
                                                     httpContextAccessor
                                                         .HttpContext.ThrowIfNull()
-                                                        .GetTimeZoneOffset(),
-                                                    ct
+                                                        .GetTimeZoneOffset()
                                                 )
                                                 .IfSuccessAsync(
                                                     parameters =>
@@ -759,13 +757,12 @@ public class EfToDoService : IToDoService
                                     .IfSuccessForEachAsync(
                                         item =>
                                             getterToDoItemParametersService
-                                                .GetToDoItemParametersAsync(
+                                                .GetToDoItemParameters(
                                                     items,
                                                     item,
                                                     httpContextAccessor
                                                         .HttpContext.ThrowIfNull()
-                                                        .GetTimeZoneOffset(),
-                                                    ct
+                                                        .GetTimeZoneOffset()
                                                 )
                                                 .IfSuccessAsync(
                                                     parameters =>
@@ -1115,11 +1112,10 @@ public class EfToDoService : IToDoService
                                                 )
                                                 .IfSuccessAsync(
                                                     items =>
-                                                        getterToDoItemParametersService.GetToDoItemParametersAsync(
+                                                        getterToDoItemParametersService.GetToDoItemParameters(
                                                             items,
                                                             item,
-                                                            offset,
-                                                            ct
+                                                            offset
                                                         ),
                                                     ct
                                                 )
@@ -1881,35 +1877,25 @@ public class EfToDoService : IToDoService
                                     .ToArray()
                                     .ToReadOnlyMemory()
                                     .ToResult()
-                                    .IfSuccessForEachAsync(
-                                        item =>
-                                            getterToDoItemParametersService
-                                                .GetToDoItemParametersAsync(items, item, offset, ct)
-                                                .IfSuccessAsync(
-                                                    parameters =>
-                                                    {
-                                                        if (parameters.ActiveItem.IsHasValue)
-                                                        {
-                                                            return parameters.ActiveItem.ToResult();
-                                                        }
+                                    .IfSuccessForEach(item =>
+                                        getterToDoItemParametersService
+                                            .GetToDoItemParameters(items, item, offset)
+                                            .IfSuccess(parameters =>
+                                            {
+                                                if (parameters.ActiveItem.IsHasValue)
+                                                {
+                                                    return parameters.ActiveItem.ToResult();
+                                                }
 
-                                                        return new(
-                                                            new OptionStruct<ActiveToDoItem>()
-                                                        );
-                                                    },
-                                                    ct
-                                                ),
-                                        ct
+                                                return new(new OptionStruct<ActiveToDoItem>());
+                                            })
                                     )
-                                    .IfSuccessAsync(
-                                        i =>
-                                        {
-                                            var item = i.Span.FirstOrDefault(x => x.IsHasValue);
+                                    .IfSuccess(i =>
+                                    {
+                                        var item = i.Span.FirstOrDefault(x => x.IsHasValue);
 
-                                            return new Result<OptionStruct<ActiveToDoItem>>(item);
-                                        },
-                                        ct
-                                    ),
+                                        return new Result<OptionStruct<ActiveToDoItem>>(item);
+                                    }),
                             ct
                         ),
                 ct
@@ -2389,7 +2375,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessForEachAsync(
                             item =>
                                 getterToDoItemParametersService
-                                    .GetToDoItemParametersAsync(items, item, offset, ct)
+                                    .GetToDoItemParameters(items, item, offset)
                                     .IfSuccessAsync(
                                         parameters =>
                                         {
@@ -2721,7 +2707,7 @@ public class EfToDoService : IToDoService
                 break;
             }
             default:
-                throw new ArgumentOutOfRangeException();
+                return new(new TypeOfPeriodicityOutOfRangeError(item.TypeOfPeriodicity));
         }
 
         return Result.Success;
