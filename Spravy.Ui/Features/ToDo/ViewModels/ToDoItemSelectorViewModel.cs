@@ -41,6 +41,29 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
             errorHandler,
             taskProgressService
         );
+
+        PropertyChanged += (s, e) =>
+        {
+            if (s is not ToDoItemSelectorViewModel vm)
+            {
+                return;
+            }
+
+            switch (e.PropertyName)
+            {
+                case nameof(SelectedItem):
+                {
+                    if (vm.SelectedItem is null)
+                    {
+                        return;
+                    }
+
+                    vm.SelectedItem.IsExpanded = true;
+
+                    break;
+                }
+            }
+        };
     }
 
     public Option<ToDoItemEntityNotify> Item { get; }
