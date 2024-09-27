@@ -1,4 +1,5 @@
 using Avalonia.Layout;
+using HotAvalonia;
 
 namespace Spravy.Ui;
 
@@ -64,6 +65,7 @@ public class App : Application
 
     public override void Initialize()
     {
+        this.EnableHotReload();
         AvaloniaXamlLoader.Load(this);
         var dataTemplates = serviceFactory.CreateService<IEnumerable<IDataTemplate>>();
         DataTemplates.AddRange(dataTemplates);

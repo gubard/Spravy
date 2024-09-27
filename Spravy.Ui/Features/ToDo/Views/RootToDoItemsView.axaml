@@ -93,7 +93,7 @@
                 VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <mi:MaterialIcon Kind="Plus" Width="40" Height="40" />
-                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" />
+                <TextBlock Classes="h3" Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" />
             </StackPanel>
         </Button>
     </Grid>
