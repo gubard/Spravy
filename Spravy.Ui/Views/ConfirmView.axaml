@@ -6,6 +6,7 @@
                          xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                          xmlns:v="clr-namespace:Spravy.Ui.Views"
                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                          x:Class="Spravy.Ui.Views.ConfirmView"
                          x:DataType="vm:ConfirmViewModel">
@@ -13,20 +14,25 @@
         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand.Command}" />
     </UserControl.KeyBindings>
 
-    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
+    <Grid RowDefinitions="*,Auto">
         <ContentControl Name="{x:Static v:ConfirmView.ContentContentControlName}"
                         Grid.ColumnSpan="2"
                         Content="{Binding Content}" />
-        <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
-                Grid.Row="1"
-                Classes="mode-press"
-                Command="{Binding CancelCommand.Command}"
-                Content="{DynamicResource ConfirmView.Cancel}" />
-        <Button Name="{x:Static v:ConfirmView.OkButtonName}"
-                Grid.Row="1"
-                Grid.Column="1"
-                Classes="mode-press"
-                Command="{Binding ConfirmCommand.Command}"
-                Content="{DynamicResource ConfirmView.Ok}" />
+
+        <StackPanel Grid.Row="1" Classes="horizontal alignment-right">
+            <Button Name="{x:Static v:ConfirmView.OkButtonName}"
+                    Classes="mode-press"
+                    Command="{Binding ConfirmCommand.Command}"
+                    ToolTip.Tip="{DynamicResource ConfirmView.Ok}">
+                <mi:MaterialIcon Kind="Check" />
+            </Button>
+
+            <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
+                    Classes="mode-press"
+                    Command="{Binding CancelCommand.Command}"
+                    ToolTip.Tip="{DynamicResource ConfirmView.Cancel}">
+                <mi:MaterialIcon Kind="Cancel" />
+            </Button>
+        </StackPanel>
     </Grid>
 </c:DialogableUserControl>

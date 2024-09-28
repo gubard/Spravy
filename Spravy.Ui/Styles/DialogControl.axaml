@@ -14,6 +14,7 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <ControlTheme x:Key="DialogControlStyle" TargetType="c:DialogControl">
+        <Setter Property="MaxWidthDialog" Value="700" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>

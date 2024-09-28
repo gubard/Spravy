@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.InfoView"
              x:DataType="vm:InfoViewModel">
@@ -15,8 +16,10 @@
         <ContentControl Name="{x:Static v:InfoView.ContentContentControlName}" Content="{Binding Content}" />
         <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
-                Classes="mode-press"
+                Classes="mode-press alignment-right"
                 Command="{Binding OkCommand.Command}"
-                Content="{DynamicResource InfoView.Ok}" />
+                ToolTip.Tip="{DynamicResource InfoView.Ok}">
+            <mi:MaterialIcon Kind="Check" />
+        </Button>
     </Grid>
 </UserControl>
