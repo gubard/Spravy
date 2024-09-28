@@ -14,7 +14,6 @@
         <WasmEnableThreads>true</WasmEnableThreads>
         <WasmEnableMemory64Bit>true</WasmEnableMemory64Bit>
         <SelfContained>true</SelfContained>
-        <BlazorWebAssemblyEnableCompression>true</BlazorWebAssemblyEnableCompression>
         <WasmEnableInstructionSetOptimization>true</WasmEnableInstructionSetOptimization>
         <TrimMode>full</TrimMode>
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
