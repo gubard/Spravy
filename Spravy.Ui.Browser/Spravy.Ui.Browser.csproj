@@ -23,6 +23,11 @@
         <WasmEnableWebcil>false</WasmEnableWebcil>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
+        <WasmBuildNative>true</WasmBuildNative>
+        <EmccCompileOptimizationFlag>-O3</EmccCompileOptimizationFlag>
+        <EmccLinkOptimizationFlag>-O3</EmccLinkOptimizationFlag>
+        <WasmNativeStrip>true</WasmNativeStrip>
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
