@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net8.0-browser</TargetFramework>
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
@@ -7,13 +7,15 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PublishTrimmed>true</PublishTrimmed>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <IsTrimmed>true</IsTrimmed>
+        <BlazorWebAssemblyEnableCompression>true</BlazorWebAssemblyEnableCompression>
+        <WasmEnableInstructionSetOptimization>true</WasmEnableInstructionSetOptimization>
         <TrimMode>full</TrimMode>
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
-        <RunAOTCompilation>true</RunAOTCompilation>
+        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
         <InvariantGlobalization>true</InvariantGlobalization>
         <WasmEnableWebcil>false</WasmEnableWebcil>
         <DebugSymbols>false</DebugSymbols>
