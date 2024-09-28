@@ -11,6 +11,8 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <WasmEnableThreads>true</WasmEnableThreads>
+        <WasmEnableMemory64Bit>true</WasmEnableMemory64Bit>
         <SelfContained>true</SelfContained>
         <BlazorWebAssemblyEnableCompression>true</BlazorWebAssemblyEnableCompression>
         <WasmEnableInstructionSetOptimization>true</WasmEnableInstructionSetOptimization>
