@@ -12,12 +12,12 @@
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <!--<WasmEnableThreads>true</WasmEnableThreads>-->
+        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
         <WasmEnableMemory64Bit>true</WasmEnableMemory64Bit>
         <SelfContained>true</SelfContained>
         <WasmEnableInstructionSetOptimization>true</WasmEnableInstructionSetOptimization>
         <TrimMode>full</TrimMode>
         <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
-        <!--<RunAOTCompilation>true</RunAOTCompilation>-->
         <InvariantGlobalization>true</InvariantGlobalization>
         <WasmEnableWebcil>false</WasmEnableWebcil>
         <DebugSymbols>false</DebugSymbols>
