@@ -5,20 +5,23 @@ namespace Spravy.Ui.Services;
 
 public class AudioService : IAudioService
 {
-    public Result PlayComplete()
+    private const string AudioFileCompletePath = "avares://Spravy.Ui/Assets/Sounds/Complete.mp3";
+    private static readonly Uri audioFileCompleteUri = new(AudioFileCompletePath);
+
+    public Cvtar PlayCompleteAsync(CancellationToken ct)
     {
-        var uri = new Uri("Assets/Sounds/Complete.mp3", UriKind.RelativeOrAbsolute);
-        using var stream = AssetLoader.Open(uri);
-        using var audioFile = new Mp3FileReader(stream);
+        return PlayCompleteCore(ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> PlayCompleteCore(CancellationToken ct)
+    {
+        await using var stream = AssetLoader.Open(audioFileCompleteUri);
+        await using var reader = new Mp3FileReader(stream);
+        reader.Skip(0.1);
         using var outputDevice = new WaveOutEvent();
-        outputDevice.Init(audioFile);
+        outputDevice.Init(reader);
         outputDevice.Play();
-
-        while (outputDevice.PlaybackState == PlaybackState.Playing)
-        {
-            Thread.Sleep(100);
-        }
-
+        await Task.Delay(TimeSpan.FromMilliseconds(500), ct);
         outputDevice.Stop();
 
         return Result.Success;

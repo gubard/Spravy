@@ -1,5 +1,4 @@
 using Avalonia.Layout;
-using HotAvalonia;
 
 namespace Spravy.Ui;
 
@@ -32,15 +31,12 @@ public class App : Application
                 var currentType = topLevel.Width switch
                 {
                     <= MaterialDesign.MaxExtraSmall => MaterialDesignSizeType.ExtraSmall,
-                    > MaterialDesign.MaxExtraSmall
-                    and <= MaterialDesign.MaxSmall
-                        => MaterialDesignSizeType.Small,
-                    > MaterialDesign.MaxSmall
-                    and <= MaterialDesign.MaxMedium
-                        => MaterialDesignSizeType.Medium,
-                    > MaterialDesign.MaxMedium
-                    and <= MaterialDesign.MaxLarge
-                        => MaterialDesignSizeType.Large,
+                    > MaterialDesign.MaxExtraSmall and <= MaterialDesign.MaxSmall =>
+                        MaterialDesignSizeType.Small,
+                    > MaterialDesign.MaxSmall and <= MaterialDesign.MaxMedium =>
+                        MaterialDesignSizeType.Medium,
+                    > MaterialDesign.MaxMedium and <= MaterialDesign.MaxLarge =>
+                        MaterialDesignSizeType.Large,
                     > MaterialDesign.MaxLarge => MaterialDesignSizeType.ExtraLarge,
                     _ => MaterialDesignSizeType.ExtraSmall,
                 };
@@ -65,7 +61,6 @@ public class App : Application
 
     public override void Initialize()
     {
-        this.EnableHotReload();
         AvaloniaXamlLoader.Load(this);
         var dataTemplates = serviceFactory.CreateService<IEnumerable<IDataTemplate>>();
         DataTemplates.AddRange(dataTemplates);
