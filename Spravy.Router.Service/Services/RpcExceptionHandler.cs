@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Spravy.Domain.Models;
 
 namespace Spravy.Router.Service.Services;

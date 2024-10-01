@@ -1,5 +1,4 @@
 using Material.Icons.Avalonia;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Spravy.Ui.Controls;
 

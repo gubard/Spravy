@@ -1,5 +1,3 @@
-using Avalonia.Layout;
-
 namespace Spravy.Ui.Helpers;
 
 public static class MaterialDesign

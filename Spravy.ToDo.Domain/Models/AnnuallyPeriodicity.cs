@@ -1,9 +1,8 @@
 using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.ToDo.Domain.Models;
 
-public readonly struct AnnuallyPeriodicity : IPeriodicity
+public readonly struct AnnuallyPeriodicity
 {
     public AnnuallyPeriodicity(ReadOnlyMemory<DayOfYear> days)
     {

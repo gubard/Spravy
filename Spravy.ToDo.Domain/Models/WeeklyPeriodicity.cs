@@ -1,8 +1,6 @@
-using Spravy.ToDo.Domain.Interfaces;
-
 namespace Spravy.ToDo.Domain.Models;
 
-public readonly struct WeeklyPeriodicity : IPeriodicity
+public readonly struct WeeklyPeriodicity
 {
     public WeeklyPeriodicity(ReadOnlyMemory<DayOfWeek> days)
     {

@@ -1,5 +1,3 @@
-using Spravy.Client.Helpers;
-
 namespace Spravy.Schedule.Service.Extensions;
 
 public static class ServiceCollectionExtension

@@ -1,5 +1,3 @@
-using System.ComponentModel.Design;
-
 namespace Spravy.Ui.Features.ToDo.Services;
 
 public class ToDoCache : IToDoCache
