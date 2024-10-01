@@ -104,6 +104,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IKeeper<Guid>), typeof(StaticKeeper<Guid>))]
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
+[Transient(typeof(IAudioService), typeof(AudioService))]
 [Transient(typeof(IRpcExceptionHandler), typeof(RpcExceptionHandler))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
