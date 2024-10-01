@@ -3,6 +3,7 @@
         <TargetFramework>net8.0-browser</TargetFramework>
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <OutputType>Exe</OutputType>
+        <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -25,6 +26,7 @@
         <EmccCompileOptimizationFlag>-O3</EmccCompileOptimizationFlag>
         <EmccLinkOptimizationFlag>-O3</EmccLinkOptimizationFlag>
         <WasmNativeStrip>true</WasmNativeStrip>
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
