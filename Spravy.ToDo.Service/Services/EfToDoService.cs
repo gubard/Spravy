@@ -35,33 +35,11 @@ public class EfToDoService : IToDoService
 
     private ConfiguredValueTaskAwaitable<
         Result<FrozenDictionary<Guid, ToDoItemEntity>>
-    > GetAllItemsAsync(SpravyDbToDoDbContext context, CancellationToken ct)
-    {
-        return context
-            .Set<ToDoItemEntity>()
-            .ToArrayEntitiesAsync(ct)
-            .IfSuccessAsync(
-                items =>
-                {
-                    var dictionary = new Dictionary<Guid, ToDoItemEntity>();
-
-                    foreach (var item in items.Span)
-                    {
-                        dictionary.TryAdd(item.Id, item);
-                    }
-
-                    return dictionary.ToFrozenDictionary().ToResult();
-                },
-                ct
-            );
-    }
-
-    private ConfiguredValueTaskAwaitable<
-        Result<FrozenDictionary<Guid, ToDoItemEntity>>
     > GetAllChildrenAsync(SpravyDbToDoDbContext context, CancellationToken ct)
     {
         return context
             .Set<ToDoItemEntity>()
+            .AsNoTracking()
             .ToArrayEntitiesAsync(ct)
             .IfSuccessAsync(
                 items =>
@@ -1716,7 +1694,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    GetAllItemsAsync(context, ct)
+                    GetAllChildrenAsync(context, ct)
                         .IfSuccessAsync(
                             items =>
                                 items
