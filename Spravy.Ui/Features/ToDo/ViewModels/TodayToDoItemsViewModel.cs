@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView, IToDoMultiItems
+public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems
 {
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
@@ -76,20 +76,5 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemsView,
                 Commands.Clear();
             }
         }
-    }
-
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.ClearExceptUi(items);
-    }
-
-    public Result RemoveUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(item);
-    }
-
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.AddOrUpdateUi(item);
     }
 }

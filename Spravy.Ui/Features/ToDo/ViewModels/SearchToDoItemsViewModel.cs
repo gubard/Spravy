@@ -1,9 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class SearchToDoItemsViewModel
-    : NavigatableViewModelBase,
-        IToDoItemsView,
-        IToDoMultiItems
+public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
@@ -97,20 +94,5 @@ public partial class SearchToDoItemsViewModel
                 Commands.Clear();
             }
         }
-    }
-
-    public Result RemoveUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(item);
-    }
-
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.ClearExceptUi(items);
-    }
-
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.AddOrUpdateUi(item);
     }
 }

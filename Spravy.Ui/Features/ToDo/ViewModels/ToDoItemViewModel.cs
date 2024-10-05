@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemsView
+public class ToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
@@ -104,20 +104,5 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemsView
         {
             UpdateCommandItemsUi();
         }
-    }
-
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.ClearExceptUi(items);
-    }
-
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.AddOrUpdateUi(item);
-    }
-
-    public Result RemoveUi(ToDoItemEntityNotify item)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(item);
     }
 }

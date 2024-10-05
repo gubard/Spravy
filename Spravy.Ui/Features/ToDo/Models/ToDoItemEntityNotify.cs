@@ -190,7 +190,7 @@ public partial class ToDoItemEntityNotify
 
     public bool Equals(ToDoItemEntityNotify? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }

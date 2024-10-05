@@ -78,7 +78,7 @@ public class ToDoSubItemsViewModel(
                         item =>
                             items
                                 .ToResult()
-                                .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                                .IfSuccessForEach(toDoCache.GetToDoItem)
                                 .IfSuccessAsync(
                                     itemsNotify =>
                                         List.ClearFavoriteExceptUi(itemsNotify)
