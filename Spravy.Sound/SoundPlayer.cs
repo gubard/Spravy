@@ -87,7 +87,6 @@ public class SoundPlayer : ISoundPlayer
 
         public WaveHeaderOptions(ReadOnlySpan<byte> soundData)
         {
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
             var result = waveOutOpen(
                 out HWaveOut,
                 0xFFFFFFFF,
@@ -96,7 +95,6 @@ public class SoundPlayer : ISoundPlayer
                 nint.Zero,
                 CALLBACK_NULL
             );
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
 
             if (result != MMSYSERR_NOERROR)
             {
@@ -112,13 +110,13 @@ public class SoundPlayer : ISoundPlayer
                 dwBufferLength = (uint)soundData.Length,
                 dwFlags = 0,
             };
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
+
             result = waveOutPrepareHeader(
                 HWaveOut,
                 Header,
                 (uint)Marshal.SizeOf(typeof(WaveHeader))
             );
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
+
             if (result == MMSYSERR_NOERROR)
             {
                 return;
@@ -134,10 +132,8 @@ public class SoundPlayer : ISoundPlayer
 
         public void Dispose()
         {
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
             handle.Free();
             waveOutClose(HWaveOut);
-            File.AppendAllLines("D:\\logs.txt", [HWaveOut.ToString()]);
         }
     }
 
