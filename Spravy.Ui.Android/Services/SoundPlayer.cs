@@ -13,7 +13,10 @@ public class SoundPlayer : ISoundPlayer
 
     public Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
-        mediaPlayer.Stop();
+        if (mediaPlayer.IsPlaying)
+        {
+            mediaPlayer.Stop();
+        }
 
         if (!File.Exists(completeAudioPath))
         {
