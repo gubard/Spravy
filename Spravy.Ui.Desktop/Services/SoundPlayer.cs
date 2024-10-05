@@ -5,7 +5,7 @@ namespace Spravy.Ui.Desktop.Services;
 
 public class SoundPlayer : ISoundPlayer
 {
-    private ISoundPlayer soundPlayer;
+    private readonly ISoundPlayer soundPlayer;
 
     public SoundPlayer()
     {
