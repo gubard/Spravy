@@ -4,10 +4,15 @@ namespace Spravy.Ui.Android.Services;
 
 public class SoundPlayer : ISoundPlayer
 {
-    private static readonly string completeAudioPath = Path.Combine(
-        MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
-        "temp_audio.mp3"
-    );
+    private static readonly string completeAudioPath;
+
+    static SoundPlayer()
+    {
+        completeAudioPath = Path.Combine(
+            MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
+            "temp_audio.mp3"
+        );
+    }
 
     private readonly MediaPlayer mediaPlayer = new();
 
