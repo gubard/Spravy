@@ -11,23 +11,25 @@ public class SoundPlayer : ISoundPlayer
 
     private readonly MediaPlayer mediaPlayer = new();
 
-    public async Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
+    public Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
         mediaPlayer.Stop();
 
         if (!File.Exists(completeAudioPath))
         {
-            await using var fileStream = new FileStream(
+            using var fileStream = new FileStream(
                 completeAudioPath,
                 FileMode.Create,
                 FileAccess.Write
             );
 
-            await fileStream.WriteAsync(soundData, ct);
+            fileStream.Write(soundData.Span);
         }
 
-        await mediaPlayer.SetDataSourceAsync(completeAudioPath);
+        mediaPlayer.SetDataSource(completeAudioPath);
         mediaPlayer.Prepare();
         mediaPlayer.Start();
+
+        return Task.CompletedTask;
     }
 }
