@@ -52,16 +52,16 @@
                             <Grid ColumnDefinitions="Auto,*" Classes="alignment-top">
                                 <ToggleButton BorderThickness="1"
                                               BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
-                                              Width="65"
-                                              Height="65"
+                                              Width="50"
+                                              Height="50"
                                               Margin="0,0,5,5"
                                               Command="{x:Static h:UiHelper.Complete}"
                                               CommandParameter="{Binding}"
                                               IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                                               IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
                                     <mi:MaterialIcon Kind="Check"
-                                                     Width="60"
-                                                     Height="60"
+                                                     Width="45"
+                                                     Height="45"
                                                      IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
                                 </ToggleButton>
 
@@ -84,9 +84,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Grid Grid.Column="1"
-                                  ColumnDefinitions="Auto,Auto"
-                                  RowDefinitions="Auto,Auto">
+                            <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" Classes="alignment-top">
                                 <Button>
                                     <Button.DataTemplates>
                                         <DataTemplate x:DataType="m:SpravyCommandNotify">
@@ -128,14 +126,6 @@
                                         <mi:MaterialIcon Kind="StarOutline" />
                                     </Button>
                                 </Panel>
-
-                                <Button Grid.Row="1"
-                                        Grid.Column="1"
-                                        Command="{x:Static h:UiHelper.OpenLink}"
-                                        CommandParameter="{Binding}"
-                                        IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
-                                    <mi:MaterialIcon Kind="Link" />
-                                </Button>
                             </Grid>
                         </Grid>
                     </Button>

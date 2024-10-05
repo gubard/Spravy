@@ -272,12 +272,12 @@ public partial class ToDoItemEntityNotify
                 : spravyCommandNotifyService.AddToBookmark
         );
 
-        var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
-
         if (!Link.IsNullOrWhiteSpace())
         {
-            singleCommands.Add(spravyCommandNotifyService.OpenLink);
+            CompactCommands.Add(spravyCommandNotifyService.OpenLink);
         }
+
+        var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
 
         singleCommands.Add(
             IsFavorite
