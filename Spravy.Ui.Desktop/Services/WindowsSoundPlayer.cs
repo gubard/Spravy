@@ -110,7 +110,7 @@ public class WindowsSoundPlayer : ISoundPlayer
             result = waveOutPrepareHeader(
                 HWaveOut,
                 Header.Handle,
-                (uint)Marshal.SizeOf(typeof(WaveHeader))
+                (uint)Marshal.SizeOf(Header.Value)
             );
 
             if (result == MMSYSERR_NOERROR)
@@ -146,7 +146,7 @@ public class WindowsSoundPlayer : ISoundPlayer
         var result = waveOutWrite(
             options.HWaveOut,
             options.Header.Handle,
-            (uint)Marshal.SizeOf(typeof(WaveHeader))
+            (uint)Marshal.SizeOf(options.Header.Value)
         );
 
         if (result != MMSYSERR_NOERROR)
