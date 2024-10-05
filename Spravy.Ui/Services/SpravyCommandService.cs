@@ -864,7 +864,6 @@ public class SpravyCommandService
                                 ToDoItemIsCan.CanComplete =>
                                     Result.AwaitableSuccess.IfSuccessAllAsync(
                                         ct,
-                                        () => audioService.PlayCompleteAsync(ct),
                                         () =>
                                             this.PostUi(() =>
                                                 {
@@ -883,7 +882,8 @@ public class SpravyCommandService
                                                             ct
                                                         ),
                                                     ct
-                                                )
+                                                ),
+                                        () => audioService.PlayCompleteAsync(ct)
                                     ),
                                 ToDoItemIsCan.CanIncomplete => this.PostUi(() =>
                                     {
