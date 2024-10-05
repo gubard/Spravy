@@ -1,4 +1,9 @@
-namespace Spravy.Ui.Services;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
+
+namespace Spravy.Ui.Desktop.Services;
 
 public class OpenerLink : IOpenerLink
 {

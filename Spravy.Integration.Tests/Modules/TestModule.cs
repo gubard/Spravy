@@ -3,6 +3,7 @@ using Spavy.LocalStorage.Sqlite.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
 using Spravy.Integration.Tests.Services;
+using Spravy.Ui.Desktop.Services;
 using Spravy.Ui.Modules;
 
 namespace Spravy.Integration.Tests.Modules;
