@@ -865,15 +865,12 @@ public class SpravyCommandService
                                     Result.AwaitableSuccess.IfSuccessAllAsync(
                                         ct,
                                         () =>
-                                            this.PostUi(() =>
-                                                {
-                                                    item.IsCan = ToDoItemIsCan.None;
-                                                    item.Status = ToDoItemStatus.Completed;
-
-                                                    return uiApplicationService
-                                                        .GetCurrentView<IToDoItemsView>()
-                                                        .IfSuccess(x => x.RemoveUi(item));
-                                                })
+                                            this.PostUi(
+                                                    () =>
+                                                        uiApplicationService
+                                                            .GetCurrentView<IRemove>()
+                                                            .IfSuccess(x => x.RemoveUi(item))
+                                                )
                                                 .IfSuccessAsync(
                                                     () =>
                                                         toDoService.UpdateToDoItemCompleteStatusAsync(
@@ -885,15 +882,12 @@ public class SpravyCommandService
                                                 ),
                                         () => audioService.PlayCompleteAsync(ct)
                                     ),
-                                ToDoItemIsCan.CanIncomplete => this.PostUi(() =>
-                                    {
-                                        item.IsCan = ToDoItemIsCan.None;
-                                        item.Status = ToDoItemStatus.ReadyForComplete;
-
-                                        return uiApplicationService
-                                            .GetCurrentView<IToDoItemsView>()
-                                            .IfSuccess(x => x.RemoveUi(item));
-                                    })
+                                ToDoItemIsCan.CanIncomplete => this.PostUi(
+                                        () =>
+                                            uiApplicationService
+                                                .GetCurrentView<IRemove>()
+                                                .IfSuccess(x => x.RemoveUi(item))
+                                    )
                                     .IfSuccessAsync(
                                         () =>
                                             toDoService.UpdateToDoItemCompleteStatusAsync(

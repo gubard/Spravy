@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase
+public class ToDoItemViewModel : NavigatableViewModelBase, IRemove
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
@@ -104,5 +104,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase
         {
             UpdateCommandItemsUi();
         }
+    }
+
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
     }
 }

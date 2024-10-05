@@ -20,13 +20,17 @@
                    Classes.multi="{Binding IsMulti}">
     <UserControl.Styles>
         <Style Selector="TextBlock.miss">
-            <Setter Property="Foreground" Value="DarkRed" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
         </Style>
 
         <Style Selector="TextBlock.ready-for-complete" />
 
         <Style Selector="TextBlock.planned">
-            <Setter Property="Foreground" Value="DarkGray" />
+            <Setter Property="TextDecorations">
+                <TextDecorationCollection>
+                    <TextDecoration Location="Strikethrough" StrokeDashArray="10" />
+                </TextDecorationCollection>
+            </Setter>
         </Style>
 
         <Style Selector="TextBlock.completed">
