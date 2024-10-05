@@ -9,21 +9,17 @@ public class SoundPlayer : ISoundPlayer
     public static extern int waveOutOpen(
         out nint hWaveOut,
         uint uDeviceID,
-        WaveFormatEx lpFormat,
+        ref WaveFormatEx lpFormat,
         WaveOutProc? dwCallback,
         nint dwInstance,
         uint dwFlags
     );
 
     [DllImport("winmm.dll", SetLastError = true)]
-    public static extern int waveOutPrepareHeader(
-        nint hWaveOut,
-        WaveHeader lpWaveOutHdr,
-        uint uSize
-    );
+    public static extern int waveOutPrepareHeader(nint hWaveOut, nint lpWaveOutHdr, uint uSize);
 
     [DllImport("winmm.dll", SetLastError = true)]
-    public static extern int waveOutWrite(nint hWaveOut, WaveHeader lpWaveOutHdr, uint uSize);
+    public static extern int waveOutWrite(nint hWaveOut, nint lpWaveOutHdr, uint uSize);
 
     [DllImport("winmm.dll", SetLastError = true)]
     public static extern int waveOutClose(nint hWaveOut);
@@ -37,7 +33,7 @@ public class SoundPlayer : ISoundPlayer
     );
 
     [StructLayout(LayoutKind.Sequential)]
-    public class WaveHeader
+    public struct WaveHeader
     {
         public nint lpData; // Pointer to waveform data
         public uint dwBufferLength; // Length of data buffer
@@ -50,7 +46,7 @@ public class SoundPlayer : ISoundPlayer
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public class WaveFormatEx
+    public struct WaveFormatEx
     {
         public ushort wFormatTag; // Format category
         public ushort nChannels; // Number of channels
@@ -67,30 +63,28 @@ public class SoundPlayer : ISoundPlayer
     private const int WAVE_FORMAT_PCM = 1;
     private const int WHDR_DONE = 0x00000001;
 
-    private static readonly WaveFormatEx waveFormat =
-        new()
-        {
-            wFormatTag = WAVE_FORMAT_PCM,
-            nChannels = 2, // 2 for stereo, 1 for mono
-            nSamplesPerSec = 44100, // 44.1 kHz sample rate
-            wBitsPerSample = 16, // 16-bit samples
-            nBlockAlign = 2 * 16 / 8,
-            nAvgBytesPerSec = 44100 * 2 * 16 / 8,
-            cbSize =
-                0 // No extra information
-            ,
-        };
-
     private struct WaveHeaderOptions : IDisposable
     {
         private GCHandle handle;
 
         public WaveHeaderOptions(ReadOnlySpan<byte> soundData)
         {
+            var waveFormat = new WaveFormatEx
+            {
+                wFormatTag = WAVE_FORMAT_PCM,
+                nChannels = 2, // 2 for stereo, 1 for mono
+                nSamplesPerSec = 44100, // 44.1 kHz sample rate
+                wBitsPerSample = 16, // 16-bit samples
+                nBlockAlign = 2 * 16 / 8,
+                nAvgBytesPerSec = 44100 * 2 * 16 / 8,
+                cbSize =
+                    0 // No extra information
+                ,
+            };
             var result = waveOutOpen(
                 out HWaveOut,
                 0xFFFFFFFF,
-                waveFormat,
+                ref waveFormat,
                 null,
                 nint.Zero,
                 CALLBACK_NULL
@@ -104,16 +98,19 @@ public class SoundPlayer : ISoundPlayer
             // Prepare the wave header
             handle = GCHandle.Alloc(soundData.ToArray(), GCHandleType.Pinned);
 
-            Header = new()
+            var header = new WaveHeader
             {
                 lpData = handle.AddrOfPinnedObject(),
                 dwBufferLength = (uint)soundData.Length,
                 dwFlags = 0,
             };
 
+            HeaderPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            Marshal.StructureToPtr(header, HeaderPtr, true);
+
             result = waveOutPrepareHeader(
                 HWaveOut,
-                Header,
+                HeaderPtr,
                 (uint)Marshal.SizeOf(typeof(WaveHeader))
             );
 
@@ -128,33 +125,50 @@ public class SoundPlayer : ISoundPlayer
         }
 
         public nint HWaveOut;
-        public WaveHeader Header;
+        public nint HeaderPtr;
+
+        public WaveHeader GetHeader()
+        {
+            return (WaveHeader)(
+                Marshal.PtrToStructure(HeaderPtr, typeof(WaveHeader))
+                ?? throw new NullReferenceException(nameof(HeaderPtr))
+            );
+        }
 
         public void Dispose()
         {
             handle.Free();
-            waveOutClose(HWaveOut);
+            Marshal.FreeHGlobal(HeaderPtr);
+            var result = waveOutClose(HWaveOut);
+
+            if (result != MMSYSERR_NOERROR)
+            {
+                throw new("Failed to close waveform.");
+            }
         }
     }
 
     public async Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
-        using var options = new WaveHeaderOptions(soundData.Span);
-
-        var result = waveOutWrite(
-            options.HWaveOut,
-            options.Header,
-            (uint)Marshal.SizeOf(typeof(WaveHeader))
-        );
-
-        if (result != MMSYSERR_NOERROR)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            throw new("Failed to write waveform audio data.");
-        }
+            using var options = new WaveHeaderOptions(soundData.Span);
 
-        while ((options.Header.dwFlags & WHDR_DONE) != WHDR_DONE)
-        {
-            await Task.Delay(100, ct);
+            var result = waveOutWrite(
+                options.HWaveOut,
+                options.HeaderPtr,
+                (uint)Marshal.SizeOf(typeof(WaveHeader))
+            );
+
+            if (result != MMSYSERR_NOERROR)
+            {
+                throw new("Failed to write waveform audio data.");
+            }
+
+            while ((options.GetHeader().dwFlags & WHDR_DONE) != WHDR_DONE)
+            {
+                await Task.Delay(100, ct);
+            }
         }
     }
 }

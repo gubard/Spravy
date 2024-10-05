@@ -27,9 +27,9 @@ public class AudioService : IAudioService
 
     public Cvtar PlayCompleteAsync(CancellationToken ct)
     {
-        //return PlayCompleteCore(ct).ConfigureAwait(false);
+        return PlayCompleteCore(ct).ConfigureAwait(false);
 
-        return Result.AwaitableSuccess;
+        //return Result.AwaitableSuccess;
     }
 
     private async ValueTask<Result> PlayCompleteCore(CancellationToken ct)
