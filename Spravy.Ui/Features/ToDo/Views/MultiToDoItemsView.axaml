@@ -10,6 +10,7 @@
                    xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                    xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                    xmlns:m="clr-namespace:Spravy.Ui.Models"
+                   xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                    x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                    x:DataType="vm:MultiToDoItemsViewModel"
@@ -18,6 +19,24 @@
                    Classes.by-type="{Binding GroupBy, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static te:GroupBy.ByType}}"
                    Classes.multi="{Binding IsMulti}">
     <UserControl.Styles>
+        <Style Selector="TextBlock.miss">
+            <Setter Property="Foreground" Value="DarkRed" />
+        </Style>
+
+        <Style Selector="TextBlock.ready-for-complete" />
+
+        <Style Selector="TextBlock.planned">
+            <Setter Property="Foreground" Value="DarkGray" />
+        </Style>
+
+        <Style Selector="TextBlock.completed">
+            <Setter Property="TextDecorations">
+                <TextDecorationCollection>
+                    <TextDecoration Location="Strikethrough" />
+                </TextDecorationCollection>
+            </Setter>
+        </Style>
+
         <Style Selector="ItemsControl.none">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -29,9 +48,8 @@
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                             CommandParameter="{Binding}"
                             Classes="alignment-stretch content-alignment-stretch to-do-item">
-                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
-                            <ToggleButton Grid.Row="1"
-                                          Grid.RowSpan="2"
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*">
+                            <ToggleButton Grid.RowSpan="2"
                                           BorderThickness="1"
                                           BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                                           Classes="alignment-top"
@@ -48,38 +66,15 @@
                                                  IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
                             </ToggleButton>
 
-                            <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,*,Auto,Auto">
-                                <Rectangle Width="15"
-                                           Margin="0,0,3,0"
-                                           Height="2"
-                                           Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
-                                <Rectangle Grid.Column="2"
-                                           Margin="3,0,3,0"
-                                           Height="2"
-                                           Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                <mi:MaterialIcon Grid.Column="3"
-                                                 Background="Transparent"
-                                                 Width="20"
-                                                 Height="20"
-                                                 Kind="ReorderHorizontal" />
-                                <Rectangle Grid.Column="4"
-                                           Margin="3,0,3,0"
-                                           Height="2"
-                                           Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                <TextBlock Grid.Column="5"
-                                           Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
-                                <Rectangle Grid.Column="6"
-                                           Width="15"
-                                           Margin="3,0,0,0"
-                                           Height="2"
-                                           Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                            </Grid>
-
-                            <StackPanel Grid.Column="1" Grid.Row="2">
-                                <TextBlock Margin="5,5,0,0"
-                                           Classes="text-wrap vertical-alignment-center alignment-left h4"
+                            <StackPanel Grid.Column="1"
+                                        Grid.Row="1"
+                                        Classes="vertical-alignment-center alignment-left">
+                                <TextBlock Margin="5"
+                                           Classes="text-wrap alignment-left h4"
+                                           Classes.miss="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
+                                           Classes.completed="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
+                                           Classes.ready-for-complete="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
+                                           Classes.planned="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
                                            Text="{Binding Name}" />
 
                                 <Button Margin="0,0,0,5"
@@ -90,7 +85,7 @@
                                 </Button>
                             </StackPanel>
 
-                            <Grid Grid.Row="2"
+                            <Grid Grid.Row="1"
                                   Grid.Column="2"
                                   ColumnDefinitions="Auto,Auto"
                                   RowDefinitions="Auto,Auto">

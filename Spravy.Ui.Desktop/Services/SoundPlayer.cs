@@ -12,11 +12,15 @@ public class SoundPlayer : ISoundPlayer
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             soundPlayer = new WindowsSoundPlayer();
+
+            return;
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             soundPlayer = new LinuxSoundPlayer();
+
+            return;
         }
 
         throw new PlatformNotSupportedException(RuntimeInformation.OSDescription);
