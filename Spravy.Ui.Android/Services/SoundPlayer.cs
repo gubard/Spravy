@@ -27,7 +27,7 @@ public class SoundPlayer : ISoundPlayer
         }
 
         await mediaPlayer.SetDataSourceAsync(completeAudioPath);
-        mediaPlayer.PrepareAsync();
+        mediaPlayer.Prepare();
         mediaPlayer.Start();
     }
 }
