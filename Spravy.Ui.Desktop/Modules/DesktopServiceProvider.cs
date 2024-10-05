@@ -6,6 +6,7 @@ using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Desktop.Services;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
 using Spravy.Ui.Services;
@@ -19,6 +20,7 @@ namespace Spravy.Ui.Desktop.Modules;
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
+[Transient(typeof(ISoundPlayer), typeof(SoundPlayer))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory

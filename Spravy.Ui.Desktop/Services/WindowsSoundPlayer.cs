@@ -1,10 +1,11 @@
 ﻿using System.Runtime.InteropServices;
+using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
 
-namespace Spravy.Sound;
+namespace Spravy.Ui.Desktop.Services;
 
-public class SoundPlayer : ISoundPlayer
+public class WindowsSoundPlayer : ISoundPlayer
 {
-    // Define the necessary Windows API methods and structures
     [DllImport("winmm.dll", SetLastError = true)]
     public static extern int waveOutOpen(
         out nint hWaveOut,
@@ -35,29 +36,28 @@ public class SoundPlayer : ISoundPlayer
     [StructLayout(LayoutKind.Sequential)]
     public struct WaveHeader
     {
-        public nint lpData; // Pointer to waveform data
-        public uint dwBufferLength; // Length of data buffer
-        public uint dwBytesRecorded; // Used for input only
-        public nint dwUser; // User data
-        public uint dwFlags; // Flags
-        public uint dwLoops; // Loop control counter
-        public nint lpNext; // Reserved
-        public nint reserved; // Reserved
+        public nint lpData;
+        public uint dwBufferLength;
+        public uint dwBytesRecorded;
+        public nint dwUser;
+        public uint dwFlags;
+        public uint dwLoops;
+        public nint lpNext;
+        public nint reserved;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct WaveFormatEx
     {
-        public ushort wFormatTag; // Format category
-        public ushort nChannels; // Number of channels
-        public uint nSamplesPerSec; // Sampling rate
-        public uint nAvgBytesPerSec; // For buffer estimation
-        public ushort nBlockAlign; // Data block size
-        public ushort wBitsPerSample; // Bits per sample
-        public ushort cbSize; // Size of extra information (after this struct)
+        public ushort wFormatTag;
+        public ushort nChannels;
+        public uint nSamplesPerSec;
+        public uint nAvgBytesPerSec;
+        public ushort nBlockAlign;
+        public ushort wBitsPerSample;
+        public ushort cbSize;
     }
 
-    // Constants
     private const int MMSYSERR_NOERROR = 0;
     private const int CALLBACK_NULL = 0;
     private const int WAVE_FORMAT_PCM = 1;
@@ -105,12 +105,11 @@ public class SoundPlayer : ISoundPlayer
                 dwFlags = 0,
             };
 
-            HeaderPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, HeaderPtr, true);
+            Header = new(header);
 
             result = waveOutPrepareHeader(
                 HWaveOut,
-                HeaderPtr,
+                Header.Handle,
                 (uint)Marshal.SizeOf(typeof(WaveHeader))
             );
 
@@ -125,20 +124,12 @@ public class SoundPlayer : ISoundPlayer
         }
 
         public nint HWaveOut;
-        public nint HeaderPtr;
-
-        public WaveHeader GetHeader()
-        {
-            return (WaveHeader)(
-                Marshal.PtrToStructure(HeaderPtr, typeof(WaveHeader))
-                ?? throw new NullReferenceException(nameof(HeaderPtr))
-            );
-        }
+        public MarshalRef<WaveHeader> Header;
 
         public void Dispose()
         {
             handle.Free();
-            Marshal.FreeHGlobal(HeaderPtr);
+            Header.Dispose();
             var result = waveOutClose(HWaveOut);
 
             if (result != MMSYSERR_NOERROR)
@@ -150,25 +141,22 @@ public class SoundPlayer : ISoundPlayer
 
     public async Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        using var options = new WaveHeaderOptions(soundData.Span);
+
+        var result = waveOutWrite(
+            options.HWaveOut,
+            options.Header.Handle,
+            (uint)Marshal.SizeOf(typeof(WaveHeader))
+        );
+
+        if (result != MMSYSERR_NOERROR)
         {
-            using var options = new WaveHeaderOptions(soundData.Span);
+            throw new("Failed to write waveform audio data.");
+        }
 
-            var result = waveOutWrite(
-                options.HWaveOut,
-                options.HeaderPtr,
-                (uint)Marshal.SizeOf(typeof(WaveHeader))
-            );
-
-            if (result != MMSYSERR_NOERROR)
-            {
-                throw new("Failed to write waveform audio data.");
-            }
-
-            while ((options.GetHeader().dwFlags & WHDR_DONE) != WHDR_DONE)
-            {
-                await Task.Delay(100, ct);
-            }
+        while ((options.Header.Value.dwFlags & WHDR_DONE) != WHDR_DONE)
+        {
+            await Task.Delay(100, ct);
         }
     }
 }

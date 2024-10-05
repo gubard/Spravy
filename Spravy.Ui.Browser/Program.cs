@@ -13,6 +13,7 @@ internal class Program
         DiHelper.ServiceFactory = new BrowserServiceProvider();
         await JSHost.ImportAsync("localStorage.js", "./../localStorage.js");
         await JSHost.ImportAsync("window.js", "./../window.js");
+        await JSHost.ImportAsync("audio.js", "./../audio.js");
         await BuildAvaloniaApp().WithInterFont().StartBrowserAppAsync("out");
     }
 

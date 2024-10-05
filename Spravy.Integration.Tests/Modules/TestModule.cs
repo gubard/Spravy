@@ -2,6 +2,7 @@ using Jab;
 using Spavy.LocalStorage.Sqlite.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
+using Spravy.Integration.Tests.Services;
 using Spravy.Ui.Modules;
 
 namespace Spravy.Integration.Tests.Modules;
@@ -14,6 +15,7 @@ namespace Spravy.Integration.Tests.Modules;
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
+[Transient(typeof(ISoundPlayer), typeof(EmptySoundPlayer))]
 [Transient(typeof(IClipboardService), typeof(CodeClipboardService))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class TestServiceProvider : IServiceFactory

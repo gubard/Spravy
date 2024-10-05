@@ -12,6 +12,7 @@ namespace Spravy.Ui.Android.Modules;
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 [Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
+[Transient(typeof(ISoundPlayer), typeof(SoundPlayer))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 public partial class AndroidServiceProvider : IServiceFactory
 {

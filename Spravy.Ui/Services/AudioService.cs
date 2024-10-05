@@ -1,5 +1,5 @@
 using Avalonia.Platform;
-using Spravy.Sound;
+using ISoundPlayer = Spravy.Ui.Interfaces.ISoundPlayer;
 
 namespace Spravy.Ui.Services;
 
@@ -28,8 +28,6 @@ public class AudioService : IAudioService
     public Cvtar PlayCompleteAsync(CancellationToken ct)
     {
         return PlayCompleteCore(ct).ConfigureAwait(false);
-
-        //return Result.AwaitableSuccess;
     }
 
     private async ValueTask<Result> PlayCompleteCore(CancellationToken ct)

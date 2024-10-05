@@ -1,4 +1,4 @@
-﻿namespace Spravy.Sound;
+﻿namespace Spravy.Ui.Interfaces;
 
 public interface ISoundPlayer
 {

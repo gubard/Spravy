@@ -13,6 +13,7 @@ namespace Spravy.Ui.Browser.Modules;
 [Transient(typeof(IStringToBytes), typeof(StringToUtf8Bytes))]
 [Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
 [Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
+[Transient(typeof(ISoundPlayer), typeof(SoundPlayer))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
 public partial class BrowserServiceProvider : IServiceFactory

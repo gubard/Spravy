@@ -3,10 +3,10 @@ using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
 using Spravy.Schedule.Domain.Client.Modules;
-using Spravy.Sound;
 using Spravy.ToDo.Domain.Client.Modules;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
+using ISoundPlayer = Spravy.Ui.Interfaces.ISoundPlayer;
 
 namespace Spravy.Ui.Modules;
 
@@ -106,7 +106,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IKeeper<Guid>), typeof(StaticKeeper<Guid>))]
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
-[Transient(typeof(ISoundPlayer), typeof(SoundPlayer))]
 [Transient(typeof(IRpcExceptionHandler), typeof(RpcExceptionHandler))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule

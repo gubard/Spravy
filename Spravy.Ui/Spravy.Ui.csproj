@@ -41,7 +41,6 @@
         <ProjectReference Include="..\Spravy.PasswordGenerator.Domain\Spravy.PasswordGenerator.Domain.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
-        <ProjectReference Include="..\Spravy.Sound\Spravy.Sound.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
