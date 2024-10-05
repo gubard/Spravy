@@ -48,45 +48,43 @@
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                             CommandParameter="{Binding}"
                             Classes="alignment-stretch content-alignment-stretch to-do-item">
-                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*">
-                            <ToggleButton Grid.RowSpan="2"
-                                          BorderThickness="1"
-                                          BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
-                                          Classes="alignment-top"
-                                          Width="50"
-                                          Height="50"
-                                          Margin="0,0,5,5"
-                                          Command="{x:Static h:UiHelper.Complete}"
-                                          CommandParameter="{Binding}"
-                                          IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                          IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
-                                <mi:MaterialIcon Kind="Check"
-                                                 Width="45"
-                                                 Height="45"
-                                                 IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
-                            </ToggleButton>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Grid ColumnDefinitions="Auto,*" Classes="alignment-top">
+                                <ToggleButton BorderThickness="1"
+                                              BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                              Width="50"
+                                              Height="50"
+                                              Margin="0,0,5,5"
+                                              Command="{x:Static h:UiHelper.Complete}"
+                                              CommandParameter="{Binding}"
+                                              IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                              IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
+                                    <mi:MaterialIcon Kind="Check"
+                                                     Width="45"
+                                                     Height="45"
+                                                     IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                                </ToggleButton>
 
-                            <StackPanel Grid.Column="1"
-                                        Grid.Row="1"
-                                        Classes="vertical-alignment-center alignment-left">
-                                <TextBlock Margin="5"
-                                           Classes="text-wrap alignment-left h4"
-                                           Classes.miss="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
-                                           Classes.completed="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
-                                           Classes.ready-for-complete="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
-                                           Classes.planned="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
-                                           Text="{Binding Name}" />
+                                <StackPanel Grid.Column="1"
+                                            Classes="vertical-alignment-center alignment-left">
+                                    <TextBlock Margin="5"
+                                               Classes="text-wrap alignment-left h4"
+                                               Classes.miss="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
+                                               Classes.completed="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
+                                               Classes.ready-for-complete="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
+                                               Classes.planned="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
+                                               Text="{Binding Name}" />
 
-                                <Button Margin="0,0,0,5"
-                                        IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                        Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
-                                        CommandParameter="{Binding}">
-                                    <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
-                                </Button>
-                            </StackPanel>
+                                    <Button Margin="0,0,0,5"
+                                            IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                            Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
+                                            CommandParameter="{Binding}">
+                                        <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
 
-                            <Grid Grid.Row="1"
-                                  Grid.Column="2"
+                            <Grid Grid.Column="1"
                                   ColumnDefinitions="Auto,Auto"
                                   RowDefinitions="Auto,Auto">
                                 <Button>
@@ -177,27 +175,8 @@
             <Setter Property="ItemTemplate">
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch to-do-item"
-                                  Padding="0"
                                   IsChecked="{Binding IsSelected}">
-                        <Border Margin="0" CornerRadius="0" Padding="5">
-                            <StackPanel>
-                                <Grid ColumnDefinitions="*,Auto,*">
-                                    <Rectangle Margin="0,0,3,0"
-                                               Height="2"
-                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
-                                    <Rectangle Grid.Column="2"
-                                               Margin="3,0,3,0"
-                                               Height="2"
-                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                </Grid>
-
-                                <ScrollViewer Classes="horizontal">
-                                    <TextBlock Classes="alignment-left h4" Text="{Binding Name}" />
-                                </ScrollViewer>
-                            </StackPanel>
-                        </Border>
+                        <TextBlock Classes="text-wrap alignment-left h4" Text="{Binding Name}" />
                     </ToggleButton>
                 </DataTemplate>
             </Setter>
