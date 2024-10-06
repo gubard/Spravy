@@ -12,10 +12,8 @@ public class AudioService : IAudioService
     static AudioService()
     {
         using var stream = AssetLoader.Open(audioFileCompleteUri);
-        stream.Position = (int)(44100 * 2 * 2 * .1);
-        var buffer = new byte[(int)(44100 * 2 * 2 * .5)];
-        var read = stream.Read(buffer);
-        completeSoundData = buffer;
+        var span = stream.ToByteArray();
+        completeSoundData = span.ToArray();
     }
 
     private readonly ISoundPlayer soundPlayer;

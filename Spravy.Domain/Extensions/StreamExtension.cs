@@ -2,12 +2,12 @@ namespace Spravy.Domain.Extensions;
 
 public static class StreamExtension
 {
-    public static byte[] ToByteArray(this Stream stream)
+    public static Span<byte> ToByteArray(this Stream stream)
     {
-        var buffer = new byte[stream.Length];
-        stream.Read(buffer);
+        Span<byte> buffer = new byte[stream.Length];
+        var length = stream.Read(buffer);
 
-        return buffer;
+        return buffer.Slice(0, length);
     }
 
     public static async Task<byte[]> ToByteArrayAsync(this Stream stream)
