@@ -1,4 +1,7 @@
-﻿using Avalonia.Android;
+﻿using System.Threading;
+using Android.App;
+using Android.OS;
+using Avalonia.Android;
 using Spravy.Ui.Android.Modules;
 
 namespace Spravy.Ui.Android;
@@ -34,6 +37,12 @@ public class MainActivity : AvaloniaMainActivity<App>
         _instance = this;
         DiHelper.ServiceFactory = new AndroidServiceProvider();
         base.OnCreate(savedInstanceState);
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SoundPlayer.Instance.Dispose();
     }
 
     public override void OnBackPressed()

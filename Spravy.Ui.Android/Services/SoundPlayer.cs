@@ -1,18 +1,25 @@
-﻿using Android.Media;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Android.Media;
 
 namespace Spravy.Ui.Android.Services;
 
-public class SoundPlayer : ISoundPlayer
+public class SoundPlayer : ISoundPlayer, IDisposable
 {
     private static readonly string completeAudioPath;
+    public static readonly SoundPlayer Instance = new();
 
     static SoundPlayer()
     {
         completeAudioPath = Path.Combine(
             MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
-            "temp_audio.mp3"
+            "complete_audio.mp3"
         );
     }
+
+    private SoundPlayer() { }
 
     private readonly MediaPlayer mediaPlayer = new();
 
@@ -39,5 +46,12 @@ public class SoundPlayer : ISoundPlayer
         mediaPlayer.Start();
 
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        File.Delete(completeAudioPath);
+        mediaPlayer.Release();
+        mediaPlayer.Dispose();
     }
 }

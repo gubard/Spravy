@@ -1,9 +1,7 @@
 // Global using directives
-global using System.Runtime.CompilerServices;
 global using Android.Content;
 global using Android.Content.PM;
 global using Avalonia;
-global using Avalonia.Controls;
 global using Jab;
 global using Microsoft.Extensions.Configuration;
 global using Spavy.LocalStorage.Sqlite.Services;
