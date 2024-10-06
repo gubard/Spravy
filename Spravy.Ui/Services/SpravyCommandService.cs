@@ -768,21 +768,22 @@ public class SpravyCommandService
             (verificationEmail, ct) =>
                 verificationEmail.IdentifierType switch
                 {
-                    UserIdentifierType.Email =>
-                        authenticationService.UpdateVerificationCodeByEmailAsync(
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
                             verificationEmail.EmailOrLogin,
                             ct
                         ),
-                    UserIdentifierType.Login =>
-                        authenticationService.UpdateVerificationCodeByLoginAsync(
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
                             verificationEmail.EmailOrLogin,
                             ct
                         ),
-                    _ => new Result(
-                        new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
-                    )
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
+                    _
+                        => new Result(
+                            new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
+                        )
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                 },
             errorHandler,
             taskProgressService
@@ -861,16 +862,19 @@ public class SpravyCommandService
                             item.IsCan switch
                             {
                                 ToDoItemIsCan.None => Result.AwaitableSuccess,
-                                ToDoItemIsCan.CanComplete =>
-                                    Result.AwaitableSuccess.IfSuccessAllAsync(
+                                ToDoItemIsCan.CanComplete
+                                    => Result.AwaitableSuccess.IfSuccessAllAsync(
                                         ct,
                                         () =>
-                                            this.PostUi(
-                                                    () =>
-                                                        uiApplicationService
-                                                            .GetCurrentView<IRemove>()
-                                                            .IfSuccess(x => x.RemoveUi(item))
-                                                )
+                                            this.PostUi(() =>
+                                                {
+                                                    item.IsCan = ToDoItemIsCan.None;
+                                                    item.Status = ToDoItemStatus.Completed;
+
+                                                    return uiApplicationService
+                                                        .GetCurrentView<IRemove>()
+                                                        .IfSuccess(x => x.RemoveUi(item));
+                                                })
                                                 .IfSuccessAsync(
                                                     () =>
                                                         toDoService.UpdateToDoItemCompleteStatusAsync(
@@ -882,24 +886,29 @@ public class SpravyCommandService
                                                 ),
                                         () => audioService.PlayCompleteAsync(ct)
                                     ),
-                                ToDoItemIsCan.CanIncomplete => this.PostUi(
-                                        () =>
-                                            uiApplicationService
+                                ToDoItemIsCan.CanIncomplete
+                                    => this.PostUi(() =>
+                                        {
+                                            item.IsCan = ToDoItemIsCan.None;
+                                            item.Status = ToDoItemStatus.ReadyForComplete;
+
+                                            return uiApplicationService
                                                 .GetCurrentView<IRemove>()
-                                                .IfSuccess(x => x.RemoveUi(item))
-                                    )
-                                    .IfSuccessAsync(
-                                        () =>
-                                            toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                item.CurrentId,
-                                                false,
-                                                ct
-                                            ),
-                                        ct
-                                    ),
-                                _ => new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan))
-                                    .ToValueTaskResult()
-                                    .ConfigureAwait(false),
+                                                .IfSuccess(x => x.RemoveUi(item));
+                                        })
+                                        .IfSuccessAsync(
+                                            () =>
+                                                toDoService.UpdateToDoItemCompleteStatusAsync(
+                                                    item.CurrentId,
+                                                    false,
+                                                    ct
+                                                ),
+                                            ct
+                                        ),
+                                _
+                                    => new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan))
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false),
                             },
                         ct
                     )
@@ -1967,21 +1976,22 @@ public class SpravyCommandService
                                     i.IsCan switch
                                     {
                                         ToDoItemIsCan.None => Result.AwaitableSuccess,
-                                        ToDoItemIsCan.CanComplete =>
-                                            toDoService.UpdateToDoItemCompleteStatusAsync(
+                                        ToDoItemIsCan.CanComplete
+                                            => toDoService.UpdateToDoItemCompleteStatusAsync(
                                                 i.Id,
                                                 true,
                                                 ct
                                             ),
-                                        ToDoItemIsCan.CanIncomplete =>
-                                            toDoService.UpdateToDoItemCompleteStatusAsync(
+                                        ToDoItemIsCan.CanIncomplete
+                                            => toDoService.UpdateToDoItemCompleteStatusAsync(
                                                 i.Id,
                                                 false,
                                                 ct
                                             ),
-                                        _ => new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan))
-                                            .ToValueTaskResult()
-                                            .ConfigureAwait(false),
+                                        _
+                                            => new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan))
+                                                .ToValueTaskResult()
+                                                .ConfigureAwait(false),
                                     },
                                 ct
                             ),
@@ -2286,19 +2296,20 @@ public class SpravyCommandService
             (vm, ct) =>
                 vm.IdentifierType switch
                 {
-                    UserIdentifierType.Email =>
-                        authenticationService.UpdateVerificationCodeByEmailAsync(
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
                             vm.EmailOrLogin,
                             ct
                         ),
-                    UserIdentifierType.Login =>
-                        authenticationService.UpdateVerificationCodeByLoginAsync(
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
                             vm.EmailOrLogin,
                             ct
                         ),
-                    _ => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
+                    _
+                        => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                 },
             errorHandler,
             taskProgressService
@@ -2311,25 +2322,26 @@ public class SpravyCommandService
                         () =>
                             vm.IdentifierType switch
                             {
-                                UserIdentifierType.Email =>
-                                    authenticationService.UpdatePasswordByEmailAsync(
+                                UserIdentifierType.Email
+                                    => authenticationService.UpdatePasswordByEmailAsync(
                                         vm.EmailOrLogin,
                                         vm.VerificationCode.ToUpperInvariant(),
                                         vm.NewPassword,
                                         ct
                                     ),
-                                UserIdentifierType.Login =>
-                                    authenticationService.UpdatePasswordByLoginAsync(
+                                UserIdentifierType.Login
+                                    => authenticationService.UpdatePasswordByLoginAsync(
                                         vm.EmailOrLogin,
                                         vm.VerificationCode.ToUpperInvariant(),
                                         vm.NewPassword,
                                         ct
                                     ),
-                                _ => new Result(
-                                    new UserIdentifierTypeOutOfRangeError(vm.IdentifierType)
-                                )
-                                    .ToValueTaskResult()
-                                    .ConfigureAwait(false),
+                                _
+                                    => new Result(
+                                        new UserIdentifierTypeOutOfRangeError(vm.IdentifierType)
+                                    )
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false),
                             },
                         ct
                     )
@@ -2626,19 +2638,20 @@ public class SpravyCommandService
             (vm, ct) =>
                 vm.IdentifierType switch
                 {
-                    UserIdentifierType.Email =>
-                        authenticationService.UpdateVerificationCodeByEmailAsync(
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
                             vm.EmailOrLogin,
                             ct
                         ),
-                    UserIdentifierType.Login =>
-                        authenticationService.UpdateVerificationCodeByLoginAsync(
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
                             vm.EmailOrLogin,
                             ct
                         ),
-                    _ => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
+                    _
+                        => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                 },
             errorHandler,
             taskProgressService
@@ -2653,25 +2666,26 @@ public class SpravyCommandService
                     text =>
                         verificationEmail.IdentifierType switch
                         {
-                            UserIdentifierType.Email =>
-                                authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+                            UserIdentifierType.Email
+                                => authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
                                     verificationEmail.EmailOrLogin,
                                     text.Text,
                                     ct
                                 ),
-                            UserIdentifierType.Login =>
-                                authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+                            UserIdentifierType.Login
+                                => authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
                                     verificationEmail.EmailOrLogin,
                                     text.Text,
                                     ct
                                 ),
-                            _ => new Result(
-                                new UserIdentifierTypeOutOfRangeError(
-                                    verificationEmail.IdentifierType
+                            _
+                                => new Result(
+                                    new UserIdentifierTypeOutOfRangeError(
+                                        verificationEmail.IdentifierType
+                                    )
                                 )
-                            )
-                                .ToValueTaskResult()
-                                .ConfigureAwait(false),
+                                    .ToValueTaskResult()
+                                    .ConfigureAwait(false),
                         },
                     ct
                 ),
@@ -2683,31 +2697,42 @@ public class SpravyCommandService
             (verificationEmail, ct) =>
                 verificationEmail.IdentifierType switch
                 {
-                    UserIdentifierType.Email => authenticationService
-                        .VerifiedEmailByEmailAsync(
-                            verificationEmail.EmailOrLogin,
-                            verificationEmail.VerificationCode.ToUpperInvariant(),
-                            ct
+                    UserIdentifierType.Email
+                        => authenticationService
+                            .VerifiedEmailByEmailAsync(
+                                verificationEmail.EmailOrLogin,
+                                verificationEmail.VerificationCode.ToUpperInvariant(),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                    navigator.NavigateToAsync(
+                                        viewFactory.CreateLoginViewModel(),
+                                        ct
+                                    ),
+                                ct
+                            ),
+                    UserIdentifierType.Login
+                        => authenticationService
+                            .VerifiedEmailByLoginAsync(
+                                verificationEmail.EmailOrLogin,
+                                verificationEmail.VerificationCode.ToUpperInvariant(),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                    navigator.NavigateToAsync(
+                                        viewFactory.CreateLoginViewModel(),
+                                        ct
+                                    ),
+                                ct
+                            ),
+                    _
+                        => new Result(
+                            new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
                         )
-                        .IfSuccessAsync(
-                            () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
-                            ct
-                        ),
-                    UserIdentifierType.Login => authenticationService
-                        .VerifiedEmailByLoginAsync(
-                            verificationEmail.EmailOrLogin,
-                            verificationEmail.VerificationCode.ToUpperInvariant(),
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
-                            ct
-                        ),
-                    _ => new Result(
-                        new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
-                    )
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false),
                 },
             errorHandler,
             taskProgressService
