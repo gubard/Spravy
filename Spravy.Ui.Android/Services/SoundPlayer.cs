@@ -15,7 +15,7 @@ public class SoundPlayer : ISoundPlayer, IDisposable
     {
         completeAudioPath = Path.Combine(
             MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
-            "complete_audio.mp3"
+            "complete_audio.wav"
         );
     }
 
