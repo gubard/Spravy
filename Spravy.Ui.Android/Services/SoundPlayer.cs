@@ -9,6 +9,7 @@ namespace Spravy.Ui.Android.Services;
 public class SoundPlayer : ISoundPlayer, IDisposable
 {
     private static readonly string completeAudioPath;
+    private static readonly AndroidUri completeAudioUri;
     public static readonly SoundPlayer Instance = new();
 
     static SoundPlayer()
@@ -17,18 +18,19 @@ public class SoundPlayer : ISoundPlayer, IDisposable
             MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
             "complete_audio.wav"
         );
+
+        completeAudioUri =
+            AndroidUri.FromFile(new(completeAudioPath))
+            ?? throw new ArgumentNullException(nameof(completeAudioUri));
     }
 
     private SoundPlayer() { }
 
-    private readonly MediaPlayer mediaPlayer = new();
+    private MediaPlayer? mediaPlayer;
 
     public Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
-        if (mediaPlayer.IsPlaying)
-        {
-            mediaPlayer.Stop();
-        }
+        DisposeMediaPlayer();
 
         if (!File.Exists(completeAudioPath))
         {
@@ -41,6 +43,10 @@ public class SoundPlayer : ISoundPlayer, IDisposable
             fileStream.Write(soundData.Span);
         }
 
+        mediaPlayer =
+            MediaPlayer.Create(MainActivity.Instance, completeAudioUri)
+            ?? throw new ArgumentNullException(nameof(mediaPlayer));
+
         mediaPlayer.SetDataSource(completeAudioPath);
         mediaPlayer.Prepare();
         mediaPlayer.Start();
@@ -51,6 +57,21 @@ public class SoundPlayer : ISoundPlayer, IDisposable
     public void Dispose()
     {
         File.Delete(completeAudioPath);
+        DisposeMediaPlayer();
+    }
+
+    private void DisposeMediaPlayer()
+    {
+        if (mediaPlayer is null)
+        {
+            return;
+        }
+
+        if (mediaPlayer.IsPlaying)
+        {
+            mediaPlayer.Stop();
+        }
+
         mediaPlayer.Release();
         mediaPlayer.Dispose();
     }
