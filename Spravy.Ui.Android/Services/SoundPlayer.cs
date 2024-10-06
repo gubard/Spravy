@@ -28,13 +28,13 @@ public class SoundPlayer : ISoundPlayer, IDisposable
 
     private MediaPlayer? mediaPlayer;
 
-    public Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
+    public async Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
         DisposeMediaPlayer();
 
         if (!File.Exists(completeAudioPath))
         {
-            using var fileStream = new FileStream(
+            await using var fileStream = new FileStream(
                 completeAudioPath,
                 FileMode.Create,
                 FileAccess.Write
@@ -47,11 +47,8 @@ public class SoundPlayer : ISoundPlayer, IDisposable
             MediaPlayer.Create(MainActivity.Instance, completeAudioUri)
             ?? throw new ArgumentNullException(nameof(mediaPlayer));
 
-        mediaPlayer.SetDataSource(completeAudioPath);
         mediaPlayer.Prepare();
         mediaPlayer.Start();
-
-        return Task.CompletedTask;
     }
 
     public void Dispose()
