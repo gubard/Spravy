@@ -43,10 +43,8 @@ public class SoundPlayer : ISoundPlayer, IDisposable
             fileStream.Write(soundData.Span);
         }
 
-        mediaPlayer =
-            MediaPlayer.Create(MainActivity.Instance, completeAudioUri)
-            ?? throw new ArgumentNullException(nameof(mediaPlayer));
-
+        mediaPlayer = new();
+        await mediaPlayer.SetDataSourceAsync(completeAudioPath);
         mediaPlayer.Prepare();
         mediaPlayer.Start();
     }
