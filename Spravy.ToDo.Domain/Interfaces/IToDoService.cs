@@ -30,6 +30,7 @@ public interface IToDoService
     Cvtar UpdateToDoItemLinkAsync(Guid id, Option<Uri> link, CancellationToken ct);
     Cvtar UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type, CancellationToken ct);
     Cvtar UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken ct);
+    Cvtar UpdateIconAsync(Guid id, string icon, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(

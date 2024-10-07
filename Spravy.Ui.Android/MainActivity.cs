@@ -2,6 +2,8 @@
 using Android.App;
 using Android.OS;
 using Avalonia.Android;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using Spravy.Ui.Android.Modules;
 
 namespace Spravy.Ui.Android;
@@ -19,6 +21,11 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     private static MainActivity? _instance;
     private INavigator? navigator;
+
+    static MainActivity()
+    {
+        IconProvider.Current.Register<MaterialDesignIconProvider>();
+    }
 
     public static MainActivity Instance => _instance.ThrowIfNull();
 

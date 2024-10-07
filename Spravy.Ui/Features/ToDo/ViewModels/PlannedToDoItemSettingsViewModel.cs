@@ -13,6 +13,9 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
     [ObservableProperty]
     private DateOnly dueDate;
 
+    [ObservableProperty]
+    private string icon = string.Empty;
+
     public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
     {
         Item = item;
@@ -20,6 +23,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
         DueDate = item.DueDate;
         IsRequiredCompleteInDueDate = Item.IsRequiredCompleteInDueDate;
         ChildrenType = item.ChildrenType;
+        Icon = item.Icon;
     }
 
     private ToDoItemEntityNotify Item { get; }
@@ -29,6 +33,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
         return toDoService
             .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
             .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
+            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
             .IfSuccessAsync(
                 () =>
                     toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
@@ -45,6 +50,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
         Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
         Item.ChildrenType = ChildrenType;
         Item.DueDate = DueDate;
+        Item.Icon = Icon;
 
         return Result.Success;
     }

@@ -60,4 +60,5 @@ service ToDoService {
     rpc UpdateEvents (UpdateEventsRequest) returns (UpdateEventsReply);
     rpc UpdateIsBookmark (UpdateIsBookmarkRequest) returns (UpdateIsBookmarkReply);
     rpc GetBookmarkToDoItemIds (GetBookmarkToDoItemIdsRequest) returns (GetBookmarkToDoItemIdsRequestReply);
+    rpc UpdateIcon (UpdateIconRequest) returns (UpdateIconReply);
 }

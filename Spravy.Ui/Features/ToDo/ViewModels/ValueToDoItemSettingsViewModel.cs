@@ -7,6 +7,9 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
     [ObservableProperty]
     private ToDoItemChildrenType childrenType;
 
+    [ObservableProperty]
+    private string icon = string.Empty;
+
     public ValueToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         IToDoService toDoService,
@@ -16,6 +19,8 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
     {
         this.toDoService = toDoService;
         Item = item;
+        Icon = item.Icon;
+        ChildrenType = item.ChildrenType;
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -29,12 +34,15 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct);
+        return toDoService
+            .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
+            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct);
     }
 
     public Result UpdateItemUi()
     {
         Item.ChildrenType = ChildrenType;
+        Item.Icon = Icon;
 
         return Result.Success;
     }

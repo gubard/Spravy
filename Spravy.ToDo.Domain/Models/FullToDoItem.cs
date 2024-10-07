@@ -31,7 +31,8 @@ public readonly struct FullToDoItem
         bool isRequiredCompleteInDueDate,
         TypeOfPeriodicity typeOfPeriodicity,
         ReadOnlyMemory<DayOfWeek> weeklyDays,
-        bool isBookmark
+        bool isBookmark,
+        string icon
     )
     {
         Id = id;
@@ -59,6 +60,7 @@ public readonly struct FullToDoItem
         TypeOfPeriodicity = typeOfPeriodicity;
         WeeklyDays = weeklyDays;
         IsBookmark = isBookmark;
+        Icon = icon;
     }
 
     public Guid Id { get; }
@@ -86,4 +88,5 @@ public readonly struct FullToDoItem
     public TypeOfPeriodicity TypeOfPeriodicity { get; }
     public ReadOnlyMemory<DayOfWeek> WeeklyDays { get; }
     public bool IsBookmark { get; }
+    public string Icon { get; }
 }

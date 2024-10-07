@@ -20,6 +20,7 @@
                 <MergeResourceInclude Source="ListControl.axaml" />
                 <MergeResourceInclude Source="TimeSpanAddItemControl.axaml" />
                 <MergeResourceInclude Source="DeleteItemControl.axaml" />
+                <MergeResourceInclude Source="IconSelectorControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -47,4 +48,5 @@
     <StyleInclude Source="TreeViewItem.axaml" />
     <StyleInclude Source="ToggleSwitch.axaml" />
     <StyleInclude Source="StackPanel.axaml" />
+    <StyleInclude Source="Icon.axaml" />
 </Styles>

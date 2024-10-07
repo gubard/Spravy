@@ -1,4 +1,6 @@
 ﻿using Avalonia;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Desktop.Modules;
@@ -17,6 +19,7 @@ public class Program
     public static AppBuilder BuildAvaloniaApp()
     {
         DiHelper.ServiceFactory = new DesktopServiceProvider();
+        IconProvider.Current.Register<MaterialDesignIconProvider>();
 
         return AppBuilder
             .Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())

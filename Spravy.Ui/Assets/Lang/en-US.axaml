@@ -295,6 +295,7 @@
     <!--ValueToDoItemSettingsView-->
     <sys:String x:Key="ValueToDoItemSettingsView.Type">Type</sys:String>
     <sys:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
+    <sys:String x:Key="ValueToDoItemSettingsView.Icon">Icon</sys:String>
 
     <!--PolicyView-->
     <sys:String x:Key="PolicyView.Header">Policy</sys:String>

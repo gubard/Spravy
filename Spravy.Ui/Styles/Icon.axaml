@@ -1,0 +1,31 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="https://github.com/projektanker/icons.avalonia">
+    <Style Selector="i|Icon">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+    </Style>
+
+    <Style Selector="i|Icon.h1">
+        <Setter Property="FontSize" Value="35" />
+    </Style>
+
+    <Style Selector="i|Icon.h2">
+        <Setter Property="FontSize" Value="27" />
+    </Style>
+
+    <Style Selector="i|Icon.h3">
+        <Setter Property="FontSize" Value="21" />
+    </Style>
+
+    <Style Selector="i|Icon.h4">
+        <Setter Property="FontSize" Value="17" />
+    </Style>
+
+    <Style Selector="i|Icon.h5">
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <Style Selector="i|Icon.h6">
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+</Styles>

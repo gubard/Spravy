@@ -1,3 +1,5 @@
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using Spravy.Core.Helpers;
 
 namespace Spravy.Integration.Tests;
@@ -18,6 +20,7 @@ public class TestAppBuilder
     public static AppBuilder BuildAvaloniaApp()
     {
         DiHelper.ServiceFactory = new TestServiceProvider();
+        IconProvider.Current.Register<MaterialDesignIconProvider>();
 
         return AppBuilder
             .Configure<App>()

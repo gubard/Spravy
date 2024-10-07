@@ -341,16 +341,18 @@ public class GetterToDoItemParametersService
         {
             return entity.ChildrenType switch
             {
-                ToDoItemChildrenType.RequireCompletion => parameters
-                    .With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstMiss)
-                    .ToResult(),
-                ToDoItemChildrenType.IgnoreCompletion => parameters
-                    .With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.CanComplete)
-                    .With(firstMiss)
-                    .ToResult(),
+                ToDoItemChildrenType.RequireCompletion
+                    => parameters
+                        .With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.None)
+                        .With(firstMiss)
+                        .ToResult(),
+                ToDoItemChildrenType.IgnoreCompletion
+                    => parameters
+                        .With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.CanComplete)
+                        .With(firstMiss)
+                        .ToResult(),
                 _ => new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType)),
             };
         }
@@ -359,16 +361,18 @@ public class GetterToDoItemParametersService
         {
             return entity.ChildrenType switch
             {
-                ToDoItemChildrenType.RequireCompletion => parameters
-                    .With(ToDoItemStatus.ReadyForComplete)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstReadyForComplete)
-                    .ToResult(),
-                ToDoItemChildrenType.IgnoreCompletion => parameters
-                    .With(ToDoItemStatus.ReadyForComplete)
-                    .With(ToDoItemIsCan.CanComplete)
-                    .With(firstReadyForComplete)
-                    .ToResult(),
+                ToDoItemChildrenType.RequireCompletion
+                    => parameters
+                        .With(ToDoItemStatus.ReadyForComplete)
+                        .With(ToDoItemIsCan.None)
+                        .With(firstReadyForComplete)
+                        .ToResult(),
+                ToDoItemChildrenType.IgnoreCompletion
+                    => parameters
+                        .With(ToDoItemStatus.ReadyForComplete)
+                        .With(ToDoItemIsCan.CanComplete)
+                        .With(firstReadyForComplete)
+                        .ToResult(),
                 _ => new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType)),
             };
         }
@@ -394,9 +398,10 @@ public class GetterToDoItemParametersService
             ToDoItemType.PeriodicityOffset => true.ToResult(),
             ToDoItemType.Circle => false.ToResult(),
             ToDoItemType.Step => false.ToResult(),
-            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                ? IsDueable(allItems, allItems[entity.ReferenceId.Value])
-                : false.ToResult(),
+            ToDoItemType.Reference
+                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
+                    ? IsDueable(allItems, allItems[entity.ReferenceId.Value])
+                    : false.ToResult(),
             _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
@@ -437,6 +442,11 @@ public class GetterToDoItemParametersService
     {
         return entity.ParentId is null
             ? new()
-            : new ActiveToDoItem(entity.Id, entity.Name, entity.ParentId.ToOption()).ToOption();
+            : new ActiveToDoItem(
+                entity.Id,
+                entity.Name,
+                entity.ParentId.ToOption(),
+                entity.Icon
+            ).ToOption();
     }
 }

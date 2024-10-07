@@ -20,6 +20,9 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
     [ObservableProperty]
     private TypeOfPeriodicity typeOfPeriodicity;
 
+    [ObservableProperty]
+    private string icon = string.Empty;
+
     public PeriodicityToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         IToDoService toDoService,
@@ -33,6 +36,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
         childrenType = item.ChildrenType;
         dueDate = item.DueDate;
         typeOfPeriodicity = item.TypeOfPeriodicity;
+        Icon = item.Icon;
         Periodicity = CreatePeriodicity();
         PropertyChanged += OnPropertyChanged;
     }
@@ -62,6 +66,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
                     ),
                 ct
             )
+            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
             .IfSuccessAsync(() => Periodicity.ApplySettingsAsync(ct), ct);
     }
 
@@ -71,17 +76,16 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
         {
             TypeOfPeriodicity.Daily => new EmptyApplySettings(),
             TypeOfPeriodicity.Weekly => viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item),
-            TypeOfPeriodicity.Monthly => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(
-                Item
-            ),
-            TypeOfPeriodicity.Annually => viewFactory.CreateToDoItemDayOfYearSelectorViewModel(
-                Item
-            ),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(TypeOfPeriodicity),
-                TypeOfPeriodicity,
-                null
-            ),
+            TypeOfPeriodicity.Monthly
+                => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item),
+            TypeOfPeriodicity.Annually
+                => viewFactory.CreateToDoItemDayOfYearSelectorViewModel(Item),
+            _
+                => throw new ArgumentOutOfRangeException(
+                    nameof(TypeOfPeriodicity),
+                    TypeOfPeriodicity,
+                    null
+                ),
         };
     }
 
@@ -99,6 +103,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
         Item.ChildrenType = ChildrenType;
         Item.TypeOfPeriodicity = TypeOfPeriodicity;
         Item.DueDate = DueDate;
+        Item.Icon = Icon;
         Periodicity.UpdateItemUi();
 
         return Result.Success;

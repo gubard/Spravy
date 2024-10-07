@@ -25,6 +25,9 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     [ObservableProperty]
     private ushort yearsOffset;
 
+    [ObservableProperty]
+    private string icon = string.Empty;
+
     public PeriodicityOffsetToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         IToDoService toDoService
@@ -39,6 +42,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         MonthsOffset = item.MonthsOffset;
         WeeksOffset = item.WeeksOffset;
         YearsOffset = item.YearsOffset;
+        Icon = item.Icon;
     }
 
     public ToDoItemEntityNotify Item { get; }
@@ -63,6 +67,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 () => toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct),
                 ct
             )
+            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
             .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
             .IfSuccessAsync(
                 () =>
@@ -84,6 +89,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         Item.MonthsOffset = MonthsOffset;
         Item.WeeksOffset = WeeksOffset;
         Item.YearsOffset = YearsOffset;
+        Item.Icon = Icon;
 
         return Result.Success;
     }

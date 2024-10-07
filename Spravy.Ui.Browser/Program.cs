@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using Spravy.Ui.Browser.Modules;
 
 [assembly: SupportedOSPlatform("browser")]
@@ -19,6 +21,8 @@ internal class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
+        IconProvider.Current.Register<MaterialDesignIconProvider>();
+
         return AppBuilder
             .Configure(() => DiHelper.ServiceFactory.CreateService<App>())
             .WithInterFont()

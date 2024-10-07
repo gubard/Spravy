@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:i="https://github.com/projektanker/icons.avalonia">
+    <ControlTheme x:Key="IconSelectorControlStyle" TargetType="c:IconSelectorControl">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,2,0,2" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ListBox x:Name="PART_SelectingItemsControl" 
+                         ItemsSource="{TemplateBinding ItemsSource}"
+                         SelectedItem="{TemplateBinding SelectedIcon}" 
+                         SelectionMode="Single" />
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ ListBox#PART_SelectingItemsControl">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter>
+
+            <Setter Property="ItemTemplate">
+                <DataTemplate x:DataType="s:String">
+                    <i:Icon Classes="h3" Value="{Binding}" />
+                </DataTemplate>
+            </Setter>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:IconSelectorControl}"
+                  BasedOn="{StaticResource IconSelectorControlStyle}"
+                  TargetType="c:IconSelectorControl" />
+</ResourceDictionary>

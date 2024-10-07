@@ -174,6 +174,29 @@ public class GrpcToDoService
         );
     }
 
+    public Cvtar UpdateIconAsync(Guid id, string icon, CancellationToken ct)
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                            client
+                                .UpdateIconAsync(
+                                    new() { Id = id.ToByteString(), Icon = icon, },
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false),
+                        ct
+                    ),
+            ct
+        );
+    }
+
     public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
     {
         return CallClientAsync(

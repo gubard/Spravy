@@ -8,6 +8,8 @@ public static class UiHelper
     public static Control? DragControl;
     public static Panel? DragPanel;
 
+    public static IEnumerable<string> Icons = [string.Empty, "mdi-github"];
+
     static UiHelper()
     {
         try

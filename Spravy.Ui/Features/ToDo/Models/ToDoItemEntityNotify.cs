@@ -88,6 +88,9 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private ushort loadedIndex;
 
+    [ObservableProperty]
+    private string icon;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -107,6 +110,7 @@ public partial class ToDoItemEntityNotify
         DaysOfWeek = new();
         DaysOfMonth = new();
         DaysOfYear = new();
+        icon = string.Empty;
 
         MultiCommands.AddRange(
             [

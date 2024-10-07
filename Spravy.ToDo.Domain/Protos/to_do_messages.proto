@@ -6,6 +6,13 @@ package spravy.to_do;
 
 import "google/protobuf/timestamp.proto";
 
+message UpdateIconRequest {
+  bytes id = 1;
+  string icon = 2;
+}
+
+message UpdateIconReply {
+}
 
 message GetBookmarkToDoItemIdsRequest {
 }
@@ -129,6 +136,7 @@ message ToDoItemGrpc {
   DescriptionTypeGrpc description_type = 12;
   bytes referenceId = 13;
   bool is_bookmark = 14; 
+  string icon = 15;
 }
 
 message GetToDoItemsReply {
@@ -263,6 +271,7 @@ message GetToDoItemReply {
   TypeOfPeriodicityGrpc TypeOfPeriodicity= 23;
   repeated DayOfWeekGrpc WeeklyDays = 24;
   bool is_bookmark = 25;
+  string icon = 26;
 }
 
 message GetChildrenToDoItemIdsRequest {
@@ -314,6 +323,7 @@ message GetSiblingsReply {
 message ToDoShortItemGrpc {
   bytes id = 1;
   string name = 2;
+  string icon = 3;
 }
 
 message UpdateToDoItemChildrenTypeRequest {
@@ -394,6 +404,7 @@ message ToDoSelectorItemGrpc {
   string name = 2;
   repeated ToDoSelectorItemGrpc children = 3;
   uint32 order_index = 4;
+  string icon = 5;
 }
 
 message UpdateToDoItemWeeklyPeriodicityRequest {
@@ -424,6 +435,7 @@ message ActiveToDoItemGrpc {
   bytes id = 1;
   string name = 2;
   bytes parent_id = 3;
+  string icon = 4;
 }
 
 message RemoveFavoriteToDoItemRequest {
