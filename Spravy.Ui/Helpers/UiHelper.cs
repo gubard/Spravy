@@ -17,6 +17,14 @@ public static class UiHelper
         "mdi-chess-queen",
         "mdi-gymnastics",
         "mdi-hair-dryer",
+        "mdi-shoe-sneaker",
+        "mdi-tshirt-crew",
+        "mdi-hand-wash",
+        "mdi-bowl",
+        "mdi-food-drumstick",
+        "mdi-weather-partly-cloudy",
+        "mdi-record-rec",
+        "mdi-food-steak",
     ];
 
     static UiHelper()
