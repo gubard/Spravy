@@ -8,7 +8,15 @@ public static class UiHelper
     public static Control? DragControl;
     public static Panel? DragPanel;
 
-    public static IEnumerable<string> Icons = [string.Empty];
+    public static IEnumerable<string> Icons =
+    [
+        string.Empty,
+        "mdi-android",
+        "mdi-spray-bottle",
+        "mdi-water",
+        "mdi-chess-queen",
+        "mdi-gymnastics",
+    ];
 
     static UiHelper()
     {
