@@ -83,6 +83,7 @@ public class ToDoCache : IToDoCache
                 item.IsFavorite = toDoItem.IsFavorite;
                 item.OrderIndex = toDoItem.OrderIndex;
                 item.IsBookmark = toDoItem.IsBookmark;
+                item.Icon = toDoItem.Icon;
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
                 if (toDoItem.Active.TryGetValue(out var v))
@@ -151,6 +152,7 @@ public class ToDoCache : IToDoCache
             .IfSuccess(item =>
             {
                 item.Name = activeToDoItem.Name;
+                item.Icon = activeToDoItem.Icon;
 
                 if (activeToDoItem.ParentId.TryGetValue(out var parentId))
                 {
@@ -183,6 +185,7 @@ public class ToDoCache : IToDoCache
         item.IsFavorite = toDoItem.IsFavorite;
         item.IsBookmark = toDoItem.IsBookmark;
         item.OrderIndex = toDoItem.OrderIndex;
+        item.Icon = toDoItem.Icon;
         item.IsIgnore = item.Type == ToDoItemType.Reference;
 
         if (toDoItem.ParentId.TryGetValue(out var value))
@@ -256,6 +259,7 @@ public class ToDoCache : IToDoCache
             {
                 x.Name = item.Name;
                 x.OrderIndex = item.OrderIndex;
+                x.Icon = item.Icon;
 
                 return item
                     .Children.ToResult()
@@ -369,6 +373,7 @@ public class ToDoCache : IToDoCache
             .IfSuccess(item =>
             {
                 item.Name = shortItem.Name;
+                item.Icon = shortItem.Icon;
 
                 return item.ToResult();
             });

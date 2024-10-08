@@ -11,7 +11,7 @@
             <ControlTemplate>
                 <ListBox x:Name="PART_SelectingItemsControl" 
                          ItemsSource="{TemplateBinding ItemsSource}"
-                         SelectedItem="{TemplateBinding SelectedIcon}" 
+                         SelectedItem="{TemplateBinding SelectedIcon}"
                          SelectionMode="Single" />
             </ControlTemplate>
         </Setter>

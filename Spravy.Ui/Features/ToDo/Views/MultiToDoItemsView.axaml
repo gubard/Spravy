@@ -11,6 +11,7 @@
                    xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                    xmlns:m="clr-namespace:Spravy.Ui.Models"
                    xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
+                   xmlns:i="https://github.com/projektanker/icons.avalonia"
                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                    x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                    x:DataType="vm:MultiToDoItemsViewModel"
@@ -62,11 +63,16 @@
                                               Command="{x:Static h:UiHelper.Complete}"
                                               CommandParameter="{Binding}"
                                               IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                              IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
-                                    <mi:MaterialIcon Kind="Check"
-                                                     Width="45"
-                                                     Height="45"
-                                                     IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                                              IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
+                                    <Panel>
+                                        <mi:MaterialIcon Kind="Check"
+                                                         Width="45"
+                                                         Height="45"
+                                                         IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}" />
+                                        <i:Icon Classes="h2"
+                                                Value="{Binding Icon}"
+                                                IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                                    </Panel>
                                 </ToggleButton>
 
                                 <StackPanel Grid.Column="1"

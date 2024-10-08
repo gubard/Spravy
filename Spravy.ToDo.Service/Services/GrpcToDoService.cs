@@ -12,6 +12,16 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<UpdateIconReply> UpdateIcon(
+        UpdateIconRequest request,
+        ServerCallContext context
+    )
+    {
+        return toDoService
+            .UpdateIconAsync(request.Id.ToGuid(), request.Icon, context.CancellationToken)
+            .HandleAsync<UpdateIconReply>(serializer, context.CancellationToken);
+    }
+
     public override Task<GetBookmarkToDoItemIdsRequestReply> GetBookmarkToDoItemIds(
         GetBookmarkToDoItemIdsRequest request,
         ServerCallContext context
