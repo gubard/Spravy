@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             xmlns:ai="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.SettingView"
              x:DataType="vm:SettingViewModel">
@@ -17,7 +17,7 @@
                         <Grid ColumnDefinitions="Auto,*">
                             <StackPanel Orientation="Horizontal">
                                 <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                                    <ai:MaterialIcon Kind="Menu" />
+                                    <i:Icon Value="mdi-menu" />
                                 </Button>
 
                                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
@@ -43,7 +43,7 @@
 
                                         <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
                                                 CommandParameter="{Binding AccountNotify.Login}">
-                                            <ai:MaterialIcon Kind="ContentCopy" />
+                                            <i:Icon Value="mdi-content-copy" />
                                         </Button>
                                     </StackPanel>
 
@@ -75,7 +75,7 @@
 
                                         <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
                                                 CommandParameter="{Binding Version}">
-                                            <ai:MaterialIcon Kind="ContentCopy" />
+                                            <i:Icon Value="mdi-content-copy" />
                                         </Button>
                                     </StackPanel>
                                 </StackPanel>

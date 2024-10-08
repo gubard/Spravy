@@ -40,7 +40,6 @@ global using Avalonia.Threading;
 global using Avalonia.VisualTree;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using Grpc.Core;
-global using Material.Icons;
 global using Spravy.Authentication.Domain.Interfaces;
 global using Spravy.Authentication.Domain.Models;
 global using Spravy.Authentication.Domain.Services;

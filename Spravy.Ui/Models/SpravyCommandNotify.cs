@@ -2,7 +2,7 @@ namespace Spravy.Ui.Models;
 
 public class SpravyCommandNotify : NotifyBase
 {
-    public SpravyCommandNotify(MaterialIconKind kind, TextLocalization text, SpravyCommand item)
+    public SpravyCommandNotify(string kind, TextLocalization text, SpravyCommand item)
     {
         Item = item;
         Text = text;
@@ -10,7 +10,7 @@ public class SpravyCommandNotify : NotifyBase
     }
 
     public SpravyCommandNotify(
-        MaterialIconKind kind,
+        string kind,
         TextLocalization text,
         SpravyCommand item,
         KeyGesture hotKey
@@ -23,7 +23,7 @@ public class SpravyCommandNotify : NotifyBase
     }
 
     public SpravyCommand Item { get; }
-    public MaterialIconKind Kind { get; }
+    public string Kind { get; }
     public TextLocalization Text { get; }
     public KeyGesture? HotKey { get; }
 }

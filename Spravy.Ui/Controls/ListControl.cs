@@ -1,4 +1,4 @@
-using Material.Icons.Avalonia;
+using Projektanker.Icons.Avalonia;
 
 namespace Spravy.Ui.Controls;
 
@@ -122,7 +122,7 @@ public class ListControl : TemplatedControl
                     .OfType<object>()
                     .Select(x =>
                     {
-                        var item = new DeleteItemControl { Content = x };
+                        var item = new DeleteItemControl { Content = x, };
 
                         item.ClickDelete += (_, _) =>
                         {
@@ -154,7 +154,8 @@ public class ListControl : TemplatedControl
 
     private Button CreateEditButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Pencil } };
+        var result = new Button { Content = new Icon { Value = "mdi-pencil", }, };
+
         result.Click += (_, _) => UpdateEditingItems();
 
         return result;
@@ -162,7 +163,7 @@ public class ListControl : TemplatedControl
 
     private Button CreateAddButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Plus } };
+        var result = new Button { Content = new Icon { Value = "mdi-plus", }, };
 
         result.Click += (_, _) =>
         {
@@ -184,7 +185,8 @@ public class ListControl : TemplatedControl
 
     private Button CreateCancelButton()
     {
-        var result = new Button { Content = new MaterialIcon { Kind = MaterialIconKind.Close } };
+        var result = new Button { Content = new Icon { Value = "mdi-close", }, };
+
         result.Click += (_, _) => UpdateDefaultItems();
 
         return result;

@@ -1,11 +1,11 @@
-using Material.Icons.Avalonia;
+using Projektanker.Icons.Avalonia;
 
 namespace Spravy.Ui.Controls;
 
 public class PathControl : TemplatedControl
 {
     private static readonly FuncTemplate<Control?> defaultSeparator =
-        new(() => new MaterialIcon { Kind = MaterialIconKind.ChevronRight });
+        new(() => new Icon { Value = "mdi-chevron-right" });
 
     public static readonly StyledProperty<ITemplate<Control?>> SeparatorProperty =
         AvaloniaProperty.Register<PathControl, ITemplate<Control?>>(

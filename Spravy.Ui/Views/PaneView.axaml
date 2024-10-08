@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.PaneView"
              x:DataType="vm:PaneViewModel">
@@ -26,7 +26,7 @@
             <Button Grid.Column="1" 
                     Classes="label alignment-top alignment-right"
                     Command="{x:Static h:UiHelper.SwitchPane}">
-                <mi:MaterialIcon Kind="Close" />
+                <i:Icon Value="mdi-close" />
             </Button>
         </Grid>
 
@@ -37,7 +37,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Checks" />
+                <i:Icon Value="mdi-check-all" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
             </Grid>
         </Button>
@@ -45,7 +45,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="CalendarToday" />
+                <i:Icon Value="mdi-calendar-today" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
             </Grid>
         </Button>
@@ -53,7 +53,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Search" />
+                <i:Icon Value="mdi-magnify" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
             </Grid>
         </Button>
@@ -62,7 +62,7 @@
                 Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
                 IsVisible="{Binding IsShowPasswordGenerator}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Password" />
+                <i:Icon Value="mdi-lock" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
             </Grid>
         </Button>
@@ -70,7 +70,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToTimers}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Timer" />
+                <i:Icon Value="mdi-timer" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Timers}" />
             </Grid>
         </Button>
@@ -78,7 +78,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToSetting}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Settings" />
+                <i:Icon Value="mdi-cog" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
             </Grid>
         </Button>
@@ -86,7 +86,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToPolicy}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="FileDocument" />
+                <i:Icon Value="mdi-file-document" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Policy}" />
             </Grid>
         </Button>
@@ -94,7 +94,7 @@
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.Logout}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <mi:MaterialIcon Kind="Logout" />
+                <i:Icon Value="mdi-logout" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
             </Grid>
         </Button>

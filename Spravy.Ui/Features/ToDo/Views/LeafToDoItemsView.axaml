@@ -1,21 +1,21 @@
 <c:NavigatableUserControl x:TypeArguments="vm:LeafToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                   xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                   xmlns:m="clr-namespace:Spravy.Ui.Models"
-                   xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                   xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                   x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
-                   x:DataType="vm:LeafToDoItemsViewModel">
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                          xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                          xmlns:m="clr-namespace:Spravy.Ui.Models"
+                          xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                          xmlns:i="https://github.com/projektanker/icons.avalonia"
+                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                          x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
+                          x:DataType="vm:LeafToDoItemsViewModel">
     <Grid RowDefinitions="Auto, *">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
                 <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                    <mi:MaterialIcon Kind="Menu" />
+                    <i:Icon Value="mdi-menu" Margin="5,0,5,0" />
                 </Button>
 
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
@@ -45,8 +45,9 @@
                             <DataTemplate DataType="m:SpravyCommandNotify">
                                 <Button Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[v:LeafToDoItemsView].ViewModel}"
-                                        Content="{Binding Kind}"
-                                        ToolTip.Tip="{Binding Text}" />
+                                        ToolTip.Tip="{Binding Text}">
+                                    <i:Icon Value="{Binding Kind}" />
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
@@ -66,7 +67,7 @@
 
                                 <Setter Property="Icon">
                                     <Template>
-                                        <mi:MaterialIcon Kind="{Binding Kind}" />
+                                        <i:Icon Value="{Binding Kind}" />
                                     </Template>
                                 </Setter>
                             </Style>
@@ -76,7 +77,7 @@
                             <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
-                        <mi:MaterialIcon Kind="DotsHorizontal" />
+                        <i:Icon Value="dots-horizontal" />
                     </Button>
                 </Panel>
             </StackPanel>

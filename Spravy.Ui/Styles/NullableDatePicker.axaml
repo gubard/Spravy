@@ -1,8 +1,8 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="using:System"
-                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                     xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                    xmlns:i="https://github.com/projektanker/icons.avalonia"
                     x:ClassModifier="internal">
     <Design.PreviewWith>
         <Border Padding="20" Height="500">
@@ -33,7 +33,7 @@
 
                     <Button Grid.Column="1"
                             Name="{x:Static controls:NullableDatePicker.ClearButtonPartName}">
-                        <avalonia:MaterialIcon Kind="CloseCircle" />
+                        <i:Icon Value="mdi-close-circle" />
                     </Button>
                 </Grid>
             </ControlTemplate>

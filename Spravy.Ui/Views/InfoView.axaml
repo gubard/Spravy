@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.InfoView"
              x:DataType="vm:InfoViewModel">
@@ -19,7 +19,7 @@
                 Classes="mode-press alignment-right"
                 Command="{Binding OkCommand.Command}"
                 ToolTip.Tip="{DynamicResource InfoView.Ok}">
-            <mi:MaterialIcon Kind="Check" />
+            <i:Icon Value="mdi-check" />
         </Button>
     </Grid>
 </UserControl>

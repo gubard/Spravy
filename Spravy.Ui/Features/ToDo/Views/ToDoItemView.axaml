@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
              xmlns:sm="clr-namespace:Spravy.Ui.Models"
@@ -10,6 +9,7 @@
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:e="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia.Tight"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
              x:DataType="vm:ToDoItemViewModel">
@@ -19,7 +19,7 @@
                 <Grid ColumnDefinitions="Auto,*,Auto">
                     <StackPanel Orientation="Horizontal">
                         <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                            <mi:MaterialIcon Kind="Menu" />
+                            <i:Icon Value="mdi-menu" />
                         </Button>
 
                         <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
@@ -47,8 +47,9 @@
                                     <Button Classes="mode-press"
                                             Command="{Binding Item.Command}"
                                             CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel.Item}"
-                                            Content="{Binding Kind}"
-                                            ToolTip.Tip="{Binding Text}" />
+                                            ToolTip.Tip="{Binding Text}">
+                                        <i:Icon Value="{Binding Kind}" />
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
@@ -68,7 +69,7 @@
 
                                     <Setter Property="Icon">
                                         <Template>
-                                            <mi:MaterialIcon Kind="{Binding Kind}" />
+                                            <i:Icon Value="{Binding Kind}" />
                                         </Template>
                                     </Setter>
                                 </Style>
@@ -78,7 +79,7 @@
                                 <MenuFlyout ItemsSource="{Binding CommandItems}" />
                             </Button.Flyout>
 
-                            <mi:MaterialIcon Kind="DotsHorizontal" />
+                            <i:Icon Value="mdi-dots-horizontal" />
                         </Button>
                     </Panel>
                 </Grid>
@@ -104,7 +105,7 @@
                                 CommandParameter="{Binding Item}"
                                 Classes="mode-press alignment-left">
                             <StackPanel Orientation="Horizontal">
-                                <mi:MaterialIcon Kind="Pencil" Margin="0,0,3,0" />
+                                <i:Icon Value="mdi-pencil" Margin="0,0,3,0" />
                                 <TextBlock Text="{DynamicResource ToDoItemView.Description}"
                                            Classes="alignment-center" />
                             </StackPanel>

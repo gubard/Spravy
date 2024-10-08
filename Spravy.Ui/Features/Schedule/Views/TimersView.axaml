@@ -3,15 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.Schedule.ViewModels"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.Schedule.Views.TimersView"
              x:DataType="vm:TimersViewModel">
     <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel Classes="horizontal alignment-left">
             <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
-                <mi:MaterialIcon Kind="Menu" />
+                <i:Icon Value="mdi-menu" />
             </Button>
 
             <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
@@ -29,7 +29,7 @@
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <mi:MaterialIcon Kind="Plus" Width="40" Height="40" />
+                <i:Icon Value="mdi-plus" />
                 <TextBlock Text="{DynamicResource TimersView.CreateTimer}" VerticalAlignment="Center" />
             </StackPanel>
         </Button>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsView"
              x:DataType="vm:ToDoItemsViewModel">
@@ -18,7 +18,7 @@
                     <Button Grid.Column="1"
                             Classes="mode-press select-all"
                             Command="{Binding SwitchAllSelectionCommand.Command}">
-                        <mi:MaterialIcon Kind="CheckAll" />
+                        <i:Icon Value="mdi-check-all" />
                     </Button>
                 </Grid>
 

@@ -16,6 +16,7 @@ public static class UiHelper
         "mdi-water",
         "mdi-chess-queen",
         "mdi-gymnastics",
+        "mdi-hair-dryer",
     ];
 
     static UiHelper()

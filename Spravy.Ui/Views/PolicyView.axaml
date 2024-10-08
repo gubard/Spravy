@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.PolicyView"
              x:DataType="vm:PolicyViewModel">
@@ -12,7 +12,7 @@
         <Grid ColumnDefinitions="Auto,*">
             <StackPanel Orientation="Horizontal">
                 <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                    <mi:MaterialIcon Kind="Menu" />
+                    <i:Icon Value="mdi-menu" />
                 </Button>
 
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />

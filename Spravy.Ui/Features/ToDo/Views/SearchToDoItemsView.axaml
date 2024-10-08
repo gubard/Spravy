@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
              x:DataType="vm:SearchToDoItemsViewModel">
@@ -29,8 +29,9 @@
                     <DataTemplate DataType="m:SpravyCommandNotify">
                         <Button Command="{Binding Item.Command}"
                                 CommandParameter="{Binding $parent[v:SearchToDoItemsView].ViewModel}"
-                                Content="{Binding Kind}"
-                                ToolTip.Tip="{Binding Text}" />
+                                ToolTip.Tip="{Binding Text}">
+                            <i:Icon Value="{Binding Kind}" />
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.DataTemplates>
             </ItemsControl>
@@ -50,7 +51,7 @@
 
                         <Setter Property="Icon">
                             <Template>
-                                <mi:MaterialIcon Kind="{Binding Kind}" />
+                                <i:Icon Value="{Binding Kind}" />
                             </Template>
                         </Setter>
                     </Style>
@@ -60,16 +61,16 @@
                     <MenuFlyout ItemsSource="{Binding Commands}" />
                 </Button.Flyout>
 
-                <mi:MaterialIcon Kind="DotsHorizontal" />
+                <i:Icon Value="mdi-dots-horizontal" />
             </Button>
         </Panel>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto">
             <Button Classes="horizontal-alignment-center alignment-top" Command="{x:Static h:UiHelper.SwitchPane}">
-                <mi:MaterialIcon Kind="Menu" />
+                <i:Icon Value="mdi-menu" />
             </Button>
 
-            <ContentControl Grid.Column="1" 
+            <ContentControl Grid.Column="1"
                             Classes="horizontal-alignment-center alignment-top"
                             Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
 
@@ -83,7 +84,7 @@
             <Button Grid.Column="3"
                     Classes="mode-press alignment-bottom"
                     Command="{x:Static h:UiHelper.RefreshCurrentView}">
-                <mi:MaterialIcon Kind="Search" />
+                <i:Icon Value="mdi-magnify" />
             </Button>
         </Grid>
 

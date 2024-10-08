@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
-             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.TodayToDoItemsView"
              x:DataType="vm:TodayToDoItemsViewModel">
@@ -13,7 +13,7 @@
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
                 <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                    <mi:MaterialIcon Kind="Menu" />
+                    <i:Icon Value="mdi-menu" />
                 </Button>
 
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
@@ -42,8 +42,9 @@
                             <DataTemplate DataType="m:SpravyCommandNotify">
                                 <Button Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[ItemsControl].DataContext}"
-                                        Content="{Binding Kind}"
-                                        ToolTip.Tip="{Binding Text}" />
+                                        ToolTip.Tip="{Binding Text}">
+                                    <i:Icon Value="{Binding Kind}" />
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
@@ -62,7 +63,7 @@
 
                                 <Setter Property="Icon">
                                     <Template>
-                                        <mi:MaterialIcon Kind="{Binding Kind}" />
+                                        <i:Icon Value="{Binding Kind}" />
                                     </Template>
                                 </Setter>
                             </Style>
@@ -72,7 +73,7 @@
                             <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
-                        <mi:MaterialIcon Kind="DotsHorizontal" />
+                        <i:Icon Value="mdi-dots-horizontal" />
                     </Button>
                 </Panel>
             </StackPanel>

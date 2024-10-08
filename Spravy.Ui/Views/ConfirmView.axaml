@@ -6,7 +6,7 @@
                          xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                          xmlns:v="clr-namespace:Spravy.Ui.Views"
                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                         xmlns:i="https://github.com/projektanker/icons.avalonia"
                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                          x:Class="Spravy.Ui.Views.ConfirmView"
                          x:DataType="vm:ConfirmViewModel">
@@ -24,14 +24,14 @@
                     Classes="mode-press"
                     Command="{Binding ConfirmCommand.Command}"
                     ToolTip.Tip="{DynamicResource ConfirmView.Ok}">
-                <mi:MaterialIcon Kind="Check" />
+                <i:Icon Value="mdi-check" />
             </Button>
 
             <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
                     Classes="mode-press"
                     Command="{Binding CancelCommand.Command}"
                     ToolTip.Tip="{DynamicResource ConfirmView.Cancel}">
-                <mi:MaterialIcon Kind="Cancel" />
+                <i:Icon Value="mdi-cancel" />
             </Button>
         </StackPanel>
     </Grid>
