@@ -10,84 +10,85 @@
              xmlns:e="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia.Tight"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
              x:DataType="vm:ToDoItemViewModel">
     <Grid RowDefinitions="Auto, Auto,*">
-        <Grid RowDefinitions="*,4">
-            <Panel>
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                            <i:Icon Value="mdi-menu" />
-                        </Button>
+        <Panel>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{x:Static h:UiHelper.SwitchPane}">
+                        <i:Icon Value="mdi-menu" />
+                    </Button>
 
-                        <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
-                    </StackPanel>
+                    <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+                </StackPanel>
 
-                    <ScrollViewer Grid.Column="1"
-                                  Classes="alignment-stretch horizontal">
-                        <TextBlock Classes="alignment-left h3" Text="{Binding Item.Name}" />
-                    </ScrollViewer>
+                <ScrollViewer Grid.Column="1"
+                              Classes="alignment-stretch horizontal">
+                    <TextBlock Classes="alignment-left h3"
+                               Classes.miss="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
+                               Classes.completed="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
+                               Classes.ready-for-complete="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
+                               Classes.planned="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
+                               Text="{Binding Item.Name}" />
+                </ScrollViewer>
 
-                    <Panel Grid.Column="2"
-                           IsVisible="{Binding CommandItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
-                        <ItemsControl HorizontalAlignment="Right"
-                                      VerticalAlignment="Center"
-                                      ItemsSource="{Binding CommandItems}"
-                                      Classes="adaptive-commands-items-control">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
+                <Panel Grid.Column="2"
+                       IsVisible="{Binding CommandItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                    <ItemsControl HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding CommandItems}"
+                                  Classes="adaptive-commands-items-control">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                            <ItemsControl.DataTemplates>
-                                <DataTemplate DataType="sm:SpravyCommandNotify">
-                                    <Button Classes="mode-press"
-                                            Command="{Binding Item.Command}"
-                                            CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel.Item}"
-                                            ToolTip.Tip="{Binding Text}">
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="sm:SpravyCommandNotify">
+                                <Button Classes="mode-press"
+                                        Command="{Binding Item.Command}"
+                                        CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel.Item}"
+                                        ToolTip.Tip="{Binding Text}">
+                                    <i:Icon Value="{Binding Kind}" />
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+
+                    <Button Classes="adaptive-commands-button mode-press alignment-right">
+                        <Button.DataTemplates>
+                            <DataTemplate x:DataType="sm:SpravyCommandNotify">
+                                <ContentControl Content="{Binding Text}" />
+                            </DataTemplate>
+                        </Button.DataTemplates>
+
+                        <Button.Styles>
+                            <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
+                                <Setter Property="Command" Value="{Binding Item.Command}" />
+                                <Setter Property="CommandParameter"
+                                        Value="{Binding $parent[v:ToDoItemView].ViewModel.Item}" />
+
+                                <Setter Property="Icon">
+                                    <Template>
                                         <i:Icon Value="{Binding Kind}" />
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.DataTemplates>
-                        </ItemsControl>
+                                    </Template>
+                                </Setter>
+                            </Style>
+                        </Button.Styles>
 
-                        <Button Classes="adaptive-commands-button mode-press alignment-right">
-                            <Button.DataTemplates>
-                                <DataTemplate x:DataType="sm:SpravyCommandNotify">
-                                    <ContentControl Content="{Binding Text}" />
-                                </DataTemplate>
-                            </Button.DataTemplates>
+                        <Button.Flyout>
+                            <MenuFlyout ItemsSource="{Binding CommandItems}" />
+                        </Button.Flyout>
 
-                            <Button.Styles>
-                                <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
-                                    <Setter Property="Command" Value="{Binding Item.Command}" />
-                                    <Setter Property="CommandParameter"
-                                            Value="{Binding $parent[v:ToDoItemView].ViewModel.Item}" />
-
-                                    <Setter Property="Icon">
-                                        <Template>
-                                            <i:Icon Value="{Binding Kind}" />
-                                        </Template>
-                                    </Setter>
-                                </Style>
-                            </Button.Styles>
-
-                            <Button.Flyout>
-                                <MenuFlyout ItemsSource="{Binding CommandItems}" />
-                            </Button.Flyout>
-
-                            <i:Icon Value="mdi-dots-horizontal" />
-                        </Button>
-                    </Panel>
-                </Grid>
-            </Panel>
-
-            <Rectangle Grid.Row="1"
-                       Fill="{Binding Item.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-        </Grid>
+                        <i:Icon Value="mdi-dots-horizontal" />
+                    </Button>
+                </Panel>
+            </Grid>
+        </Panel>
 
         <ScrollViewer Grid.Row="1"
                       Classes="horizontal"

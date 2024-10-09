@@ -11,6 +11,28 @@
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
     <UserControl.Styles>
+        <Style Selector="TextBlock.miss">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.ready-for-complete" />
+
+        <Style Selector="TextBlock.planned">
+            <Setter Property="TextDecorations">
+                <TextDecorationCollection>
+                    <TextDecoration Location="Strikethrough" StrokeDashArray="10" />
+                </TextDecorationCollection>
+            </Setter>
+        </Style>
+
+        <Style Selector="TextBlock.completed">
+            <Setter Property="TextDecorations">
+                <TextDecorationCollection>
+                    <TextDecoration Location="Strikethrough" />
+                </TextDecorationCollection>
+            </Setter>
+        </Style>
+
         <!-- Items group -->
         <Style Selector="v|MainView:small ItemsControl.to-do-items-group">
             <Setter Property="ItemsPanel">
