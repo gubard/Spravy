@@ -93,7 +93,7 @@
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <i:Icon Value="mdi-plus" />
+                <i:Icon Value="mdi-plus" Classes="h1" />
                 <TextBlock Classes="h3"
                            Text="{DynamicResource RootToDoItemsView.CreateTask}"
                            VerticalAlignment="Center" />

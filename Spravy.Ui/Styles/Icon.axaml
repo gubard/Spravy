@@ -3,6 +3,7 @@
         xmlns:i="https://github.com/projektanker/icons.avalonia">
     <Style Selector="i|Icon">
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="FontSize" Value="17" />
     </Style>
 
     <Style Selector="i|Icon.h1">
