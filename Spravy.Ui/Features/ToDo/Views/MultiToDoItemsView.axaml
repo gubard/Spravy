@@ -151,7 +151,11 @@
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch to-do-item"
                                   IsChecked="{Binding IsSelected}">
-                        <TextBlock Classes="text-wrap alignment-left h4" Text="{Binding Name}" />
+                        <StackPanel Classes="horizontal">
+                            <i:Icon Margin="0,0,4,0" Value="{Binding Icon}" Classes="h3"
+                                    IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                            <TextBlock Classes="text-wrap alignment-left h4" Text="{Binding Name}" />
+                        </StackPanel>
                     </ToggleButton>
                 </DataTemplate>
             </Setter>

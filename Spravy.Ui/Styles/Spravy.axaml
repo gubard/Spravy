@@ -9,7 +9,11 @@
         <Setter Property="ItemTemplate">
             <c:SelectorDataTemplate>
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
-                    <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                    <StackPanel Classes="alignment-center horizontal" Margin="5">
+                        <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
+                                IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="m:RootItem">
@@ -30,8 +34,13 @@
 
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
                     <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                            CommandParameter="{Binding}"
-                            Content="{Binding Name}" />
+                            CommandParameter="{Binding}">
+                        <StackPanel Classes="horizontal">
+                            <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
+                                    IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </Button>
                 </DataTemplate>
             </c:SelectorDataTemplate>
         </Setter>

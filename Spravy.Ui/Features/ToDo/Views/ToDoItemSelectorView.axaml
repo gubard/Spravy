@@ -37,7 +37,11 @@
 
                 <TreeView.DataTemplates>
                     <TreeDataTemplate DataType="tm:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Name}" />
+                        <StackPanel Classes="horizontal">
+                            <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
+                                    IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
                     </TreeDataTemplate>
                 </TreeView.DataTemplates>
             </TreeView>

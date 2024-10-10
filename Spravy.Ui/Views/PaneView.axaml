@@ -23,7 +23,7 @@
         <Grid ColumnDefinitions="*,Auto">
             <TextBlock Classes="alignment-left" Margin="5,0,0,0" Text="{Binding Account.Login}" />
 
-            <Button Grid.Column="1" 
+            <Button Grid.Column="1"
                     Classes="label alignment-top alignment-right"
                     Command="{x:Static h:UiHelper.SwitchPane}">
                 <i:Icon Value="mdi-close" />
@@ -109,8 +109,14 @@
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
                     <Button x:Name="RootToDoItemButton"
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                            CommandParameter="{Binding}"
-                            Content="{Binding Name}" />
+                            CommandParameter="{Binding}">
+                        <StackPanel Classes="horizontal">
+                            <i:Icon  Value="{Binding Icon}"
+                                     Margin="0,0,4,0"
+                                     IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </Button>
                 </DataTemplate>
             </ItemsControl.DataTemplates>
         </ItemsControl>

@@ -20,15 +20,15 @@
         <PackageReference Include="Grpc.Net.Client" Version="$(GrpcVersion)" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="$(GrpcVersion)" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="$(GrpcVersion)" />
-        <PackageReference Include="Grpc.Tools" Version="2.66.0">
+        <PackageReference Include="Grpc.Tools" Version="2.67.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
         <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.1" />
         <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.4.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     </ItemGroup>
 
     <ItemGroup>

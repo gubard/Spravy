@@ -6,6 +6,7 @@
              xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
              x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
@@ -42,7 +43,11 @@
                          SelectedItem="{Binding SelectedItem}">
                     <ListBox.DataTemplates>
                         <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                            <TextBlock Text="{Binding Name}" />
+                            <StackPanel Classes="horizontal">
+                                <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
+                                        IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.DataTemplates>
                 </ListBox>
