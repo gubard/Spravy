@@ -130,7 +130,7 @@ public class ToDoUiService : IToDoUiService
     }
 
     public Cvtar UpdateSiblingsAsync(
-        ToDoItemEntityNotify? item,
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
@@ -141,18 +141,20 @@ public class ToDoUiService : IToDoUiService
             () => toDoItemsView.RefreshAsync(ct),
             () =>
             {
-                if (item is null)
+                if (item.TryGetValue(out var i))
                 {
-                    return Result.AwaitableSuccess;
+                    return UpdateItemAsync(i, ct);
                 }
 
-                return UpdateItemAsync(item, ct);
+                return Result.AwaitableSuccess;
             },
             () =>
                 toDoService
                     .GetChildrenToDoItemIdsAsync(
-                        (item?.Parent?.Id).ToOption(),
-                        ignoreItems.Select(x => x.Id),
+                        (item.GetNullable()?.Parent?.Id).ToOption(),
+                        ignoreItems.IsEmpty && item.TryGetValue(out var i)
+                            ? new[] { i.Id }
+                            : ignoreItems.Select(x => x.Id),
                         ct
                     )
                     .IfSuccessAsync(ids => toDoService.GetShortToDoItemsAsync(ids, ct), ct)

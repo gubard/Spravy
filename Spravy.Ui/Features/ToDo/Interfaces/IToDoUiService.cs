@@ -19,7 +19,7 @@ public interface IToDoUiService
     );
 
     Cvtar UpdateSiblingsAsync(
-        ToDoItemEntityNotify? item,
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoItemsView toDoItemsView,
         CancellationToken ct

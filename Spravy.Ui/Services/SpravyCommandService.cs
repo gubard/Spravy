@@ -479,19 +479,32 @@ public class SpravyCommandService
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateChangeToDoItemOrderIndexViewModel(
-                                    editId.Item,
-                                    editId.Items
-                                ),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
-                                ct
-                            ),
+                        {
+                            var viewModel = viewFactory.CreateChangeToDoItemOrderIndexViewModel(
+                                editId.Item,
+                                editId.Items
+                            );
+
+                            return toDoUiService
+                                .UpdateSiblingsAsync(editId.Item, editId.Items, viewModel, ct)
+                                .IfSuccessAsync(
+                                    () =>
+                                        dialogViewer.ShowConfirmDialogAsync(
+                                            viewFactory,
+                                            DialogViewLayer.Content,
+                                            viewModel,
+                                            vm =>
+                                                dialogViewer
+                                                    .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                                    .IfSuccessAsync(
+                                                        () => vm.ApplySettingsAsync(ct),
+                                                        ct
+                                                    ),
+                                            ct
+                                        ),
+                                    ct
+                                );
+                        },
                         ct
                     ),
             errorHandler,

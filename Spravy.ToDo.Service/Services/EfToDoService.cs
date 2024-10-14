@@ -1111,6 +1111,7 @@ public class EfToDoService : IToDoService
                         .Set<ToDoItemEntity>()
                         .AsNoTracking()
                         .Where(x => idsArray.Contains(x.Id))
+                        .OrderBy(x => x.OrderIndex)
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessForEachAsync(x => x.ToToDoShortItem().ToResult(), ct),
                 ct
