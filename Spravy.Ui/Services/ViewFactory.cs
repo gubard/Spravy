@@ -21,6 +21,7 @@ public class ViewFactory : IViewFactory
     private readonly Application application;
     private readonly IScheduleService scheduleService;
     private readonly ISerializer serializer;
+    private readonly IClipboardService clipboardService;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -39,7 +40,8 @@ public class ViewFactory : IViewFactory
         Application application,
         IServiceFactory serviceFactory,
         IScheduleService scheduleService,
-        ISerializer serializer
+        ISerializer serializer,
+        IClipboardService clipboardService
     )
     {
         this.toDoService = toDoService;
@@ -59,6 +61,7 @@ public class ViewFactory : IViewFactory
         this.serviceFactory = serviceFactory;
         this.scheduleService = scheduleService;
         this.serializer = serializer;
+        this.clipboardService = clipboardService;
     }
 
     public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
@@ -73,7 +76,15 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(
+            item,
+            items,
+            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
+            errorHandler,
+            objectStorage,
+            taskProgressService,
+            toDoUiService
+        );
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
@@ -205,36 +216,6 @@ public class ViewFactory : IViewFactory
         return new(propertyValidator);
     }
 
-    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(
-            null,
-            items,
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
-            errorHandler,
-            objectStorage,
-            taskProgressService,
-            serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            toDoUiService
-        );
-    }
-
-    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item)
-    {
-        return new(
-            item,
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
-            errorHandler,
-            objectStorage,
-            taskProgressService,
-            serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            toDoUiService
-        );
-    }
-
     public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel()
     {
         return new(CreateToDoItemSelectorViewModel(), serializer, objectStorage, toDoCache);
@@ -245,7 +226,15 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(
+            item,
+            items,
+            objectStorage,
+            serializer,
+            scheduleService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public EditDescriptionViewModel CreateEditDescriptionViewModel(
@@ -253,7 +242,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(item, items, CreateEditDescriptionContentViewModel(), toDoService);
     }
 
     public CloneViewModel CreateCloneViewModel(
@@ -261,7 +250,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(item, items, CreateToDoItemSelectorViewModel(), toDoService, toDoCache);
     }
 
     public ResetToDoItemViewModel CreateResetToDoItemViewModel(
@@ -278,23 +267,6 @@ public class ViewFactory : IViewFactory
     )
     {
         return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService);
-    }
-
-    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(
-            item,
-            items,
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
-            errorHandler,
-            objectStorage,
-            taskProgressService,
-            serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            toDoUiService
-        );
     }
 
     public DeleteAccountViewModel CreateDeleteAccountViewModel(
@@ -475,20 +447,6 @@ public class ViewFactory : IViewFactory
         );
     }
 
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
-    )
-    {
-        return new(
-            Option<ToDoItemEntityNotify>.None,
-            ignoreItems,
-            toDoCache,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
-        );
-    }
-
     public ConfirmViewModel CreateConfirmViewModel(
         IDialogable content,
         Func<IDialogable, Cvtar> confirmTask,
@@ -503,7 +461,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(item, items, toDoService);
     }
 
     public ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
@@ -511,7 +469,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(item, items, toDoService, clipboardService);
     }
 
     public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
@@ -519,7 +477,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        throw new NotImplementedException();
+        return new(item, items, toDoService);
     }
 
     public TextViewModel CreateTextViewModel()

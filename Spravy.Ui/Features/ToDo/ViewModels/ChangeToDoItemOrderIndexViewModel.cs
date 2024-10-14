@@ -17,12 +17,11 @@ public partial class ChangeToDoItemOrderIndexViewModel
     public ChangeToDoItemOrderIndexViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
-        AvaloniaList<ToDoItemEntityNotify> items,
         IToDoService toDoService
     )
         : base(editItem, editItems)
     {
-        this.items = items;
+        items = new();
         this.toDoService = toDoService;
     }
 

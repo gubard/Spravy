@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class LeafToDoItemsViewModel
+public class LeafToDoItemsViewModel
     : NavigatableViewModelBase,
         IObjectParameters,
         IToDoItemEditId,
@@ -8,28 +8,23 @@ public partial class LeafToDoItemsViewModel
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
 
-    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
-
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoUiService toDoUiService;
-    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public LeafToDoItemsViewModel(
-        ToDoItemEntityNotify? item,
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
         ITaskProgressService taskProgressService,
-        SpravyCommandNotifyService spravyCommandNotifyService,
         IToDoUiService toDoUiService
     )
         : base(true)
     {
         Item = item;
-        this.items.AddRange(items.ToArray());
-        this.spravyCommandNotifyService = spravyCommandNotifyService;
+        Items = items;
         this.toDoUiService = toDoUiService;
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
@@ -47,19 +42,32 @@ public partial class LeafToDoItemsViewModel
 
     public SpravyCommand InitializedCommand { get; }
 
-    public ToDoItemEntityNotify? Item { get; }
-    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
+    public Option<ToDoItemEntityNotify> Item { get; }
+    public ReadOnlyMemory<ToDoItemEntityNotify> Items { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
     public string Header
     {
-        get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+        get
+        {
+            if (!Item.TryGetValue(out var item))
+            {
+                return Items.Select(x => x.Name).JoinString(",");
+            }
+
+            if (Items.IsEmpty)
+            {
+                return item.Name;
+            }
+
+            return Items.Select(x => x.Name).JoinString(",");
+        }
     }
 
     public override string ViewId
     {
-        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
+        get => TypeCache<LeafToDoItemsViewModel>.Type.Name;
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -76,9 +84,9 @@ public partial class LeafToDoItemsViewModel
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        if (Items.IsEmpty())
+        if (Items.IsEmpty)
         {
-            return Item.IfNotNull(nameof(Item))
+            return Item.GetValue()
                 .IfSuccessAsync(
                     i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
                     ct
@@ -138,7 +146,7 @@ public partial class LeafToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
+                Commands.UpdateUi(UiHelper.ToDoItemCommands);
             }
             else
             {
@@ -176,6 +184,6 @@ public partial class LeafToDoItemsViewModel
 
         return ToDoSubItemsViewModel
             .GetSelectedItems()
-            .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
+            .IfSuccess(selected => new ToDoItemEditId(Item, selected).ToResult());
     }
 }
