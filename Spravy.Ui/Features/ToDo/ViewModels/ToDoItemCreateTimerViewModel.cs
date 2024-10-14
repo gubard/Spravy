@@ -1,14 +1,13 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemCreateTimerViewModel
-    : DialogableViewModelBase,
-        IAddTimerParametersFactory
+public partial class ToDoItemCreateTimerViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IObjectStorage objectStorage;
     private readonly ISerializer serializer;
+    private readonly IScheduleService scheduleService;
 
     [ObservableProperty]
-    private string name;
+    private string name = string.Empty;
 
     [ObservableProperty]
     private DateTime date = DateTime.Today;
@@ -17,17 +16,19 @@ public partial class ToDoItemCreateTimerViewModel
     private TimeSpan time = DateTime.Now.TimeOfDay;
 
     public ToDoItemCreateTimerViewModel(
-        ToDoItemEntityNotify item,
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IObjectStorage objectStorage,
         ISerializer serializer,
+        IScheduleService scheduleService,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )
+        : base(editItem, editItems)
     {
-        Item = item;
         this.objectStorage = objectStorage;
         this.serializer = serializer;
-        name = item.Name;
+        this.scheduleService = scheduleService;
 
         AddTime = SpravyCommand.Create<TimeSpan>(
             (t, ct) =>
@@ -45,16 +46,23 @@ public partial class ToDoItemCreateTimerViewModel
             errorHandler,
             taskProgressService
         );
+
+        if (editItem.TryGetValue(out var item))
+        {
+            name = item.Name;
+        }
     }
 
     public SpravyCommand AddTime { get; }
-    public ToDoItemEntityNotify Item { get; }
     public AvaloniaList<TimeSpan> Times { get; } = new();
     public AvaloniaList<string> Names { get; } = new();
 
     public override string ViewId
     {
-        get => $"{TypeCache<ToDoItemCreateTimerViewModel>.Type}:{Item.Id}";
+        get =>
+            EditItem.TryGetValue(out var editItem)
+                ? $"{TypeCache<ToDoItemCreateTimerViewModel>.Type.Name}:{editItem.Id}"
+                : $"{TypeCache<ToDoItemCreateTimerViewModel>.Type.Name}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -86,21 +94,41 @@ public partial class ToDoItemCreateTimerViewModel
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<AddTimerParameters>> CreateAddTimerParametersAsync(
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<AddTimerParameters>>
+    > CreateAddTimerParametersAsync(CancellationToken ct)
     {
-        return serializer
-            .SerializeAsync(new AddToDoItemToFavoriteEventOptions { ToDoItemId = Item.Id, }, ct)
-            .IfSuccessAsync(
-                content =>
-                    new AddTimerParameters(
-                        Date.Date.Add(Time),
-                        AddToDoItemToFavoriteEventOptions.EventId,
-                        content,
-                        Name
-                    ).ToResult(),
+        return ResultCurrentIds
+            .ToResult()
+            .IfSuccessForEachAsync(
+                id =>
+                    serializer
+                        .SerializeAsync(
+                            new AddToDoItemToFavoriteEventOptions { ToDoItemId = id, },
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            content =>
+                                new AddTimerParameters(
+                                    Date.Date.Add(Time),
+                                    AddToDoItemToFavoriteEventOptions.EventId,
+                                    content,
+                                    Name
+                                ).ToResult(),
+                            ct
+                        ),
                 ct
             );
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return CreateAddTimerParametersAsync(ct)
+            .IfSuccessAsync(parameters => scheduleService.AddTimerAsync(parameters, ct), ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

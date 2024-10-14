@@ -30,7 +30,7 @@ public class GrpcScheduleService
         return new(grpcClientFactory, host, metadataFactory, handler, retryService);
     }
 
-    public Cvtar AddTimerAsync(AddTimerParameters parameters, CancellationToken ct)
+    public Cvtar AddTimerAsync(ReadOnlyMemory<AddTimerParameters> parameters, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -38,14 +38,18 @@ public class GrpcScheduleService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .AddTimerAsync(
-                                    parameters.ToAddTimerRequest(),
-                                    metadata,
-                                    cancellationToken: ct
-                                )
+                        {
+                            var request = new AddTimerRequest();
+
+                            request.Items.AddRange(
+                                parameters.Select(x => x.ToAddTimerRequestGrpc()).ToArray()
+                            );
+
+                            return client
+                                .AddTimerAsync(request, metadata, cancellationToken: ct)
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
+                                .ConfigureAwait(false);
+                        },
                         ct
                     ),
             ct

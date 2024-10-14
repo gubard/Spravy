@@ -1,25 +1,17 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RandomizeChildrenOrderViewModel : DialogableViewModelBase
+public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
-    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
+    private readonly IToDoService toDoService;
 
-    public RandomizeChildrenOrderViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public RandomizeChildrenOrderViewModel(
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
+        IToDoService toDoService
+    )
+        : base(editItem, editItems)
     {
-        this.items.AddRange(items.ToArray());
-    }
-
-    public RandomizeChildrenOrderViewModel(ToDoItemEntityNotify item)
-    {
-        Item = item;
-    }
-
-    public ToDoItemEntityNotify? Item { get; }
-    public IEnumerable<ToDoItemEntityNotify> Items => items;
-
-    public string Name
-    {
-        get => Item?.Name ?? Items.Select(x => x.Name).JoinString(", ");
+        this.toDoService = toDoService;
     }
 
     public override string ViewId
@@ -35,5 +27,18 @@ public class RandomizeChildrenOrderViewModel : DialogableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return toDoService.RandomizeChildrenOrderIndexAsync(
+            ResultItems.Select(x => x.CurrentId),
+            ct
+        );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

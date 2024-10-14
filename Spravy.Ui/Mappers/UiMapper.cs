@@ -38,17 +38,6 @@ public static partial class UiMapper
         );
     }
 
-    public static ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemViewModel value)
-    {
-        return new(
-            value.Item?.CurrentId ?? throw new NullReferenceException(nameof(value.Item)),
-            value.IsCompleteChildrenTask,
-            value.IsMoveCircleOrderIndex,
-            value.IsOnlyCompletedTasks,
-            value.IsCompleteCurrentTask
-        );
-    }
-
     public static ThemeType ToThemeType(this ThemeVariant value)
     {
         var key = value.Key.ThrowIfIsNotCast<string>();

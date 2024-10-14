@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Spravy.Ui.Features.ToDo.Services;
 
 public class ToDoUiService : IToDoUiService
@@ -132,7 +130,8 @@ public class ToDoUiService : IToDoUiService
     }
 
     public Cvtar UpdateSiblingsAsync(
-        ToDoItemEntityNotify item,
+        ToDoItemEntityNotify? item,
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoItemsView toDoItemsView,
         CancellationToken ct
     )
@@ -140,10 +139,23 @@ public class ToDoUiService : IToDoUiService
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
             () => toDoItemsView.RefreshAsync(ct),
-            () => UpdateItemAsync(item, ct),
+            () =>
+            {
+                if (item is null)
+                {
+                    return Result.AwaitableSuccess;
+                }
+
+                return UpdateItemAsync(item, ct);
+            },
             () =>
                 toDoService
-                    .GetSiblingsAsync(item.Id, ct)
+                    .GetChildrenToDoItemIdsAsync(
+                        (item?.Parent?.Id).ToOption(),
+                        ignoreItems.Select(x => x.Id),
+                        ct
+                    )
+                    .IfSuccessAsync(ids => toDoService.GetShortToDoItemsAsync(ids, ct), ct)
                     .IfSuccessAsync(
                         ids =>
                             this.PostUiBackground(
@@ -222,7 +234,11 @@ public class ToDoUiService : IToDoUiService
             () => toDoItemsView.RefreshAsync(ct),
             () =>
                 toDoService
-                    .GetRootToDoItemIdsAsync(ct)
+                    .GetChildrenToDoItemIdsAsync(
+                        OptionStruct<Guid>.Default,
+                        ReadOnlyMemory<Guid>.Empty,
+                        ct
+                    )
                     .IfSuccessAsync(
                         ids =>
                             toDoCache
@@ -329,7 +345,7 @@ public class ToDoUiService : IToDoUiService
             () => UpdateItemAsync(item, ct),
             () =>
                 toDoService
-                    .GetChildrenToDoItemIdsAsync(item.Id, ct)
+                    .GetChildrenToDoItemIdsAsync(item.Id.ToOption(), ReadOnlyMemory<Guid>.Empty, ct)
                     .IfSuccessAsync(
                         ids =>
                             ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))

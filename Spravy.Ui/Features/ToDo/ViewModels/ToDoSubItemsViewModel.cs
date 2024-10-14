@@ -99,4 +99,16 @@ public class ToDoSubItemsViewModel(
                 ct
             );
     }
+
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
+    {
+        var selected = List.Items.Items.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
+
+        if (selected.IsEmpty)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return new(selected);
+    }
 }

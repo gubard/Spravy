@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     private readonly IToDoService toDoService;
 
@@ -47,37 +47,18 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public ToDoItemEntityNotify Item { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService
-            .UpdateToDoItemDaysOffsetAsync(Item.Id, DaysOffset, ct)
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemWeeksOffsetAsync(Item.Id, WeeksOffset, ct),
-                ct
-            )
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemYearsOffsetAsync(Item.Id, YearsOffset, ct),
-                ct
-            )
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemMonthsOffsetAsync(Item.Id, MonthsOffset, ct),
-                ct
-            )
-            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct),
-                ct
-            )
-            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
-            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
-            .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        Item.Id,
-                        IsRequiredCompleteInDueDate,
-                        ct
-                    ),
-                ct
-            );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetChildrenType(new(ChildrenType))
+            .SetDueDate(new(DueDate))
+            .SetDaysOffset(new(DaysOffset))
+            .SetMonthsOffset(new(MonthsOffset))
+            .SetWeeksOffset(new(WeeksOffset))
+            .SetYearsOffset(new(YearsOffset))
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate))
+            .SetIcon(new(Icon));
     }
 
     public Result UpdateItemUi()

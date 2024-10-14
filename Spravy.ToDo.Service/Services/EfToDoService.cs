@@ -1,7 +1,4 @@
 using System.Collections.Frozen;
-using System.Data.Common;
-using Microsoft.Data.Sqlite;
-using Spravy.Db.Models;
 using Spravy.EventBus.Domain.Errors;
 using Spravy.EventBus.Domain.Interfaces;
 
@@ -57,8 +54,8 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
-        Guid cloneId,
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> CloneToDoItemAsync(
+        ReadOnlyMemory<Guid> cloneIds,
         OptionStruct<Guid> parentId,
         CancellationToken ct
     )
@@ -69,43 +66,20 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(cloneId)
-                                .IfSuccessAsync(
+                        {
+                            var ids = cloneIds.ToArray();
+
+                            return context
+                                .Set<ToDoItemEntity>()
+                                .Where(x => ids.Contains(x.Id))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessForEachAsync(
                                     clone =>
                                         AddCloneAsync(context, clone, parentId, ct)
                                             .ConfigureAwait(false),
                                     ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemDescriptionTypeAsync(
-        Guid id,
-        DescriptionType type,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.DescriptionType = type;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
+                                );
+                        },
                         ct
                     ),
                 ct
@@ -141,34 +115,14 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateReferenceToDoItemAsync(Guid id, Guid referenceId, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.ReferenceId = referenceId;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar ResetToDoItemAsync(ResetToDoItemOptions options, CancellationToken ct)
+    public Cvtar ResetToDoItemAsync(
+        ReadOnlyMemory<ResetToDoItemOptions> options,
+        CancellationToken ct
+    )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
+        var dir = options.ToArray().ToDictionary(x => x.Id, x => x).ToFrozenDictionary();
+        var keys = dir.Keys;
 
         return dbContextFactory
             .Create()
@@ -177,42 +131,57 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .GetEntityAsync<ToDoItemEntity>(options.Id)
-                                .IfSuccessAsync(
+                                .Set<ToDoItemEntity>()
+                                .Where(x => keys.Contains(x.Id))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessForEachAsync(
                                     item =>
-                                    {
-                                        if (options.IsCompleteCurrentTask)
-                                        {
-                                            item.IsCompleted = true;
-
-                                            return UpdateDueDateAsync(context, item, offset, ct)
-                                                .IfSuccessAsync(item.ToResult, ct);
-                                        }
-
-                                        return item.ToResult()
-                                            .ToValueTaskResult()
-                                            .ConfigureAwait(false);
-                                    },
-                                    ct
-                                )
-                                .IfSuccessAsync(
-                                    item =>
-                                        CircleCompletionAsync(
-                                                context,
-                                                item,
-                                                options.IsMoveCircleOrderIndex,
-                                                options.IsCompleteChildrenTask,
-                                                options.IsOnlyCompletedTasks,
-                                                ct
-                                            )
+                                        dir[item.Id]
+                                            .ToResult()
                                             .IfSuccessAsync(
-                                                () =>
-                                                    StepCompletionAsync(
-                                                        context,
-                                                        item,
-                                                        options.IsCompleteChildrenTask,
-                                                        ct
-                                                    ),
+                                                o =>
+                                                    Result
+                                                        .AwaitableSuccess.IfSuccessAsync(
+                                                            () =>
+                                                            {
+                                                                if (o.IsCompleteCurrentTask)
+                                                                {
+                                                                    item.IsCompleted = true;
+
+                                                                    return UpdateDueDateAsync(
+                                                                        context,
+                                                                        item,
+                                                                        offset,
+                                                                        ct
+                                                                    );
+                                                                }
+
+                                                                return Result.AwaitableSuccess;
+                                                            },
+                                                            ct
+                                                        )
+                                                        .IfSuccessAsync(
+                                                            () =>
+                                                                CircleCompletionAsync(
+                                                                        context,
+                                                                        item,
+                                                                        o.IsMoveCircleOrderIndex,
+                                                                        o.IsCompleteChildrenTask,
+                                                                        o.IsOnlyCompletedTasks,
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        () =>
+                                                                            StepCompletionAsync(
+                                                                                context,
+                                                                                item,
+                                                                                o.IsCompleteChildrenTask,
+                                                                                ct
+                                                                            ),
+                                                                        ct
+                                                                    ),
+                                                            ct
+                                                        ),
                                                 ct
                                             ),
                                     ct
@@ -223,7 +192,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateIconAsync(Guid id, string icon, CancellationToken ct)
+    public Cvtar EditToDoItemsAsync(EditToDoItems options, CancellationToken ct)
     {
         return dbContextFactory
             .Create()
@@ -231,17 +200,141 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
+                        {
+                            var ids = options.Ids.ToArray();
+
+                            return context
+                                .Set<ToDoItemEntity>()
+                                .Where(x => ids.Contains(x.Id))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessForEachAsync(
                                     item =>
                                     {
-                                        item.Icon = icon;
+                                        if (options.Name.IsEdit)
+                                        {
+                                            item.Name = options.Name.Value;
+                                        }
 
-                                        return Result.Success;
+                                        if (options.IsFavorite.IsEdit)
+                                        {
+                                            item.IsFavorite = options.IsFavorite.Value;
+                                        }
+
+                                        if (options.Type.IsEdit)
+                                        {
+                                            item.Type = options.Type.Value;
+                                        }
+
+                                        if (options.Description.IsEdit)
+                                        {
+                                            item.Description = options.Description.Value;
+                                        }
+
+                                        if (options.Link.IsEdit)
+                                        {
+                                            item.Link = options.Link.Value.TryGetValue(out var link)
+                                                ? link.AbsoluteUri
+                                                : string.Empty;
+                                        }
+
+                                        if (options.ParentId.IsEdit)
+                                        {
+                                            item.ParentId = options.ParentId.Value.TryGetValue(
+                                                out var parentId
+                                            )
+                                                ? parentId
+                                                : null;
+                                        }
+
+                                        if (options.DescriptionType.IsEdit)
+                                        {
+                                            item.DescriptionType = options.DescriptionType.Value;
+                                        }
+
+                                        if (options.ReferenceId.IsEdit)
+                                        {
+                                            item.ReferenceId =
+                                                options.ReferenceId.Value.TryGetValue(
+                                                    out var referenceId
+                                                )
+                                                    ? referenceId
+                                                    : null;
+                                        }
+
+                                        if (options.AnnuallyDays.IsEdit)
+                                        {
+                                            item.SetDaysOfYear(options.AnnuallyDays.Value);
+                                        }
+
+                                        if (options.MonthlyDays.IsEdit)
+                                        {
+                                            item.SetDaysOfMonth(options.MonthlyDays.Value);
+                                        }
+
+                                        if (options.ChildrenType.IsEdit)
+                                        {
+                                            item.ChildrenType = options.ChildrenType.Value;
+                                        }
+
+                                        if (options.DueDate.IsEdit)
+                                        {
+                                            item.DueDate = options.DueDate.Value;
+                                        }
+
+                                        if (options.DaysOffset.IsEdit)
+                                        {
+                                            item.DaysOffset = options.DaysOffset.Value;
+                                        }
+
+                                        if (options.MonthsOffset.IsEdit)
+                                        {
+                                            item.MonthsOffset = options.MonthsOffset.Value;
+                                        }
+
+                                        if (options.WeeksOffset.IsEdit)
+                                        {
+                                            item.WeeksOffset = options.WeeksOffset.Value;
+                                        }
+
+                                        if (options.YearsOffset.IsEdit)
+                                        {
+                                            item.YearsOffset = options.YearsOffset.Value;
+                                        }
+
+                                        if (options.IsRequiredCompleteInDueDate.IsEdit)
+                                        {
+                                            item.IsRequiredCompleteInDueDate = options
+                                                .IsRequiredCompleteInDueDate
+                                                .Value;
+                                        }
+
+                                        if (options.TypeOfPeriodicity.IsEdit)
+                                        {
+                                            item.TypeOfPeriodicity = options
+                                                .TypeOfPeriodicity
+                                                .Value;
+                                        }
+
+                                        if (options.WeeklyDays.IsEdit)
+                                        {
+                                            item.SetDaysOfWeek(options.WeeklyDays.Value);
+                                        }
+
+                                        if (options.IsBookmark.IsEdit)
+                                        {
+                                            item.IsBookmark = options.IsBookmark.Value;
+                                        }
+
+                                        if (options.Icon.IsEdit)
+                                        {
+                                            item.Icon = options.Icon.Value;
+                                        }
+
+                                        return Result.AwaitableSuccess;
                                     },
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     ),
                 ct
@@ -336,7 +429,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateIsBookmarkAsync(Guid id, bool isBookmark, CancellationToken ct)
+    public Cvtar RandomizeChildrenOrderIndexAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         return dbContextFactory
             .Create()
@@ -344,50 +437,31 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.IsBookmark = isBookmark;
+                            ids.IfSuccessForEachAsync(
+                                id =>
+                                    context
+                                        .Set<ToDoItemEntity>()
+                                        .Where(x => x.ParentId == id)
+                                        .ToArrayEntitiesAsync(ct)
+                                        .IfSuccessAsync(
+                                            children =>
+                                            {
+                                                SetRandomOrderIndex(children);
+                                                var items = children.Span.OrderBy(x =>
+                                                    x.OrderIndex
+                                                );
 
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
+                                                for (var i = 0; items.Length > i; i++)
+                                                {
+                                                    items[i].OrderIndex = (uint)i;
+                                                }
 
-    public Cvtar RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .Set<ToDoItemEntity>()
-                                .Where(x => x.ParentId == id)
-                                .ToArrayEntitiesAsync(ct)
-                                .IfSuccessAsync(
-                                    children =>
-                                    {
-                                        SetRandomOrderIndex(children);
-                                        var items = children.Span.OrderBy(x => x.OrderIndex);
-
-                                        for (var i = 0; items.Length > i; i++)
-                                        {
-                                            items[i].OrderIndex = (uint)i;
-                                        }
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
+                                                return Result.Success;
+                                            },
+                                            ct
+                                        ),
+                                ct
+                            ),
                         ct
                     ),
                 ct
@@ -677,10 +751,14 @@ public class EfToDoService : IToDoService
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
-        Guid id,
+        OptionStruct<Guid> id,
+        ReadOnlyMemory<Guid> ignoreIds,
         CancellationToken ct
     )
     {
+        var ignoreIdsArray = ignoreIds.ToArray();
+        var i = id.GetValueOrNull();
+
         return dbContextFactory
             .Create()
             .IfSuccessDisposeAsync(
@@ -688,7 +766,7 @@ public class EfToDoService : IToDoService
                     context
                         .Set<ToDoItemEntity>()
                         .AsNoTracking()
-                        .Where(x => x.ParentId == id)
+                        .Where(x => x.ParentId == i && !ignoreIdsArray.Contains(x.Id))
                         .OrderBy(x => x.OrderIndex)
                         .Select(x => x.Id)
                         .ToArrayEntitiesAsync(ct),
@@ -753,13 +831,11 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
-        AddToDoItemOptions options,
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(
+        ReadOnlyMemory<AddToDoItemOptions> o,
         CancellationToken ct
     )
     {
-        var parentId = options.ParentId.GetValueOrNull();
-        var id = Guid.NewGuid();
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
 
         return dbContextFactory
@@ -768,187 +844,128 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                        {
-                            if (parentId is not null)
-                            {
-                                return context
-                                    .GetEntityAsync<ToDoItemEntity>(parentId)
-                                    .IfSuccessAsync(
-                                        parent =>
-                                            context
-                                                .Set<ToDoItemEntity>()
-                                                .AsNoTracking()
-                                                .Where(x => x.ParentId == parentId)
-                                                .Select(x => x.OrderIndex)
-                                                .ToArrayEntitiesAsync(ct)
-                                                .IfSuccessAsync(
-                                                    items =>
-                                                    {
-                                                        var toDoItem = options.ToToDoItemEntity();
-                                                        toDoItem.Description = options.Description;
-                                                        toDoItem.Id = id;
-                                                        toDoItem.OrderIndex =
-                                                            items.Length == 0 ? 0 : items.Max() + 1;
+                            o.IfSuccessForEachAsync(
+                                options =>
+                                {
+                                    var parentId = options.ParentId.GetValueOrNull();
+                                    var id = Guid.NewGuid();
 
-                                                        toDoItem.DueDate =
-                                                            parent.DueDate
-                                                            < DateTimeOffset
-                                                                .UtcNow.Add(offset)
-                                                                .Date.ToDateOnly()
-                                                                ? DateTimeOffset
-                                                                    .UtcNow.Add(offset)
-                                                                    .Date.ToDateOnly()
-                                                                : parent.DueDate;
-
-                                                        toDoItem.TypeOfPeriodicity =
-                                                            parent.TypeOfPeriodicity;
-                                                        toDoItem.DaysOfMonth = parent.DaysOfMonth;
-                                                        toDoItem.DaysOfWeek = parent.DaysOfWeek;
-                                                        toDoItem.DaysOfYear = parent.DaysOfYear;
-                                                        toDoItem.WeeksOffset = parent.WeeksOffset;
-                                                        toDoItem.DaysOffset = parent.DaysOffset;
-                                                        toDoItem.MonthsOffset = parent.MonthsOffset;
-                                                        toDoItem.YearsOffset = parent.YearsOffset;
-                                                        toDoItem.Link = options.Link.TryGetValue(
-                                                            out var uri
-                                                        )
-                                                            ? uri.AbsoluteUri
-                                                            : string.Empty;
-                                                        toDoItem.DescriptionType =
-                                                            options.DescriptionType;
-
-                                                        return context
-                                                            .AddEntityAsync(toDoItem, ct)
-                                                            .IfSuccessAsync(_ => id.ToResult(), ct);
-                                                    },
-                                                    ct
-                                                ),
-                                        ct
-                                    );
-                            }
-
-                            return context
-                                .Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.ParentId == parentId)
-                                .Select(x => x.OrderIndex)
-                                .ToArrayEntitiesAsync(ct)
-                                .IfSuccessAsync(
-                                    items =>
+                                    if (parentId is not null)
                                     {
-                                        var toDoItem = options.ToToDoItemEntity();
-                                        toDoItem.Description = options.Description;
-                                        toDoItem.Id = id;
-                                        toDoItem.OrderIndex =
-                                            items.Length == 0 ? 0 : items.Max() + 1;
-                                        toDoItem.DueDate = DateTimeOffset
-                                            .UtcNow.Add(offset)
-                                            .Date.ToDateOnly();
-                                        toDoItem.Link = options.Link.TryGetValue(out var uri)
-                                            ? uri.AbsoluteUri
-                                            : string.Empty;
-                                        toDoItem.DescriptionType = options.DescriptionType;
-
                                         return context
-                                            .AddEntityAsync(toDoItem, ct)
-                                            .IfSuccessAsync(_ => id.ToResult(), ct);
-                                    },
-                                    ct
-                                );
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar DeleteToDoItemAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                        DeleteToDoItemAsync(id, context, ct)
+                                            .GetEntityAsync<ToDoItemEntity>(parentId)
                                             .IfSuccessAsync(
-                                                () =>
-                                                    NormalizeOrderIndexAsync(
-                                                        context,
-                                                        item.ParentId.ToOption(),
-                                                        ct
-                                                    ),
+                                                parent =>
+                                                    context
+                                                        .Set<ToDoItemEntity>()
+                                                        .AsNoTracking()
+                                                        .Where(x => x.ParentId == parentId)
+                                                        .Select(x => x.OrderIndex)
+                                                        .ToArrayEntitiesAsync(ct)
+                                                        .IfSuccessAsync(
+                                                            items =>
+                                                            {
+                                                                var toDoItem =
+                                                                    options.ToToDoItemEntity();
+                                                                toDoItem.Description =
+                                                                    options.Description;
+                                                                toDoItem.Id = id;
+                                                                toDoItem.OrderIndex =
+                                                                    items.Length == 0
+                                                                        ? 0
+                                                                        : items.Max() + 1;
+
+                                                                toDoItem.DueDate =
+                                                                    parent.DueDate
+                                                                    < DateTimeOffset
+                                                                        .UtcNow.Add(offset)
+                                                                        .Date.ToDateOnly()
+                                                                        ? DateTimeOffset
+                                                                            .UtcNow.Add(offset)
+                                                                            .Date.ToDateOnly()
+                                                                        : parent.DueDate;
+
+                                                                toDoItem.TypeOfPeriodicity =
+                                                                    parent.TypeOfPeriodicity;
+                                                                toDoItem.DaysOfMonth =
+                                                                    parent.DaysOfMonth;
+                                                                toDoItem.DaysOfWeek =
+                                                                    parent.DaysOfWeek;
+                                                                toDoItem.DaysOfYear =
+                                                                    parent.DaysOfYear;
+                                                                toDoItem.WeeksOffset =
+                                                                    parent.WeeksOffset;
+                                                                toDoItem.DaysOffset =
+                                                                    parent.DaysOffset;
+                                                                toDoItem.MonthsOffset =
+                                                                    parent.MonthsOffset;
+                                                                toDoItem.YearsOffset =
+                                                                    parent.YearsOffset;
+                                                                toDoItem.Link =
+                                                                    options.Link.TryGetValue(
+                                                                        out var uri
+                                                                    )
+                                                                        ? uri.AbsoluteUri
+                                                                        : string.Empty;
+                                                                toDoItem.DescriptionType =
+                                                                    options.DescriptionType;
+
+                                                                return context
+                                                                    .AddEntityAsync(toDoItem, ct)
+                                                                    .IfSuccessAsync(
+                                                                        _ => id.ToResult(),
+                                                                        ct
+                                                                    );
+                                                            },
+                                                            ct
+                                                        ),
                                                 ct
-                                            ),
-                                    ct
-                                ),
+                                            );
+                                    }
+
+                                    return context
+                                        .Set<ToDoItemEntity>()
+                                        .AsNoTracking()
+                                        .Where(x => x.ParentId == parentId)
+                                        .Select(x => x.OrderIndex)
+                                        .ToArrayEntitiesAsync(ct)
+                                        .IfSuccessAsync(
+                                            items =>
+                                            {
+                                                var toDoItem = options.ToToDoItemEntity();
+                                                toDoItem.Description = options.Description;
+                                                toDoItem.Id = id;
+                                                toDoItem.OrderIndex =
+                                                    items.Length == 0 ? 0 : items.Max() + 1;
+                                                toDoItem.DueDate = DateTimeOffset
+                                                    .UtcNow.Add(offset)
+                                                    .Date.ToDateOnly();
+                                                toDoItem.Link = options.Link.TryGetValue(
+                                                    out var uri
+                                                )
+                                                    ? uri.AbsoluteUri
+                                                    : string.Empty;
+                                                toDoItem.DescriptionType = options.DescriptionType;
+
+                                                return context
+                                                    .AddEntityAsync(toDoItem, ct)
+                                                    .IfSuccessAsync(_ => id.ToResult(), ct);
+                                            },
+                                            ct
+                                        );
+                                },
+                                ct
+                            ),
                         ct
                     ),
                 ct
             );
     }
 
-    public Cvtar UpdateToDoItemTypeOfPeriodicityAsync(
-        Guid id,
-        TypeOfPeriodicity type,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.TypeOfPeriodicity = type;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.DueDate = dueDate;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken ct)
+    public Cvtar SwitchCompleteAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
+        var idsArray = ids.ToArray();
 
         return dbContextFactory
             .Create()
@@ -957,11 +974,13 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
+                                .Set<ToDoItemEntity>()
+                                .Where(x => idsArray.Contains(x.Id))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessForEachAsync(
                                     item =>
                                     {
-                                        if (isComplete)
+                                        if (!item.IsCompleted)
                                         {
                                             return GetAllChildrenAsync(context, ct)
                                                 .IfSuccessAsync(
@@ -1078,33 +1097,28 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateToDoItemNameAsync(Guid id, string name, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<ToDoShortItem>>
+    > GetShortToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
+        var idsArray = ids.ToArray();
+
         return dbContextFactory
             .Create()
-            .IfSuccessAsync(
+            .IfSuccessDisposeAsync(
                 context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.Name = name;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
+                    context
+                        .Set<ToDoItemEntity>()
+                        .AsNoTracking()
+                        .Where(x => idsArray.Contains(x.Id))
+                        .ToArrayEntitiesAsync(ct)
+                        .IfSuccessForEachAsync(x => x.ToToDoShortItem().ToResult(), ct),
                 ct
             );
     }
 
     public Cvtar UpdateToDoItemOrderIndexAsync(
-        UpdateOrderIndexToDoItemOptions options,
+        ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> o,
         CancellationToken ct
     )
     {
@@ -1114,178 +1128,59 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(options.Id)
-                                .IfSuccessAsync(
-                                    item =>
-                                        context
-                                            .GetEntityAsync<ToDoItemEntity>(options.TargetId)
-                                            .IfSuccessAsync(
-                                                targetItem =>
-                                                {
-                                                    var orderIndex = options.IsAfter
-                                                        ? targetItem.OrderIndex + 1
-                                                        : targetItem.OrderIndex;
+                            o.IfSuccessForEachAsync(
+                                options =>
+                                    context
+                                        .GetEntityAsync<ToDoItemEntity>(options.Id)
+                                        .IfSuccessAsync(
+                                            item =>
+                                                context
+                                                    .GetEntityAsync<ToDoItemEntity>(
+                                                        options.TargetId
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        targetItem =>
+                                                        {
+                                                            var orderIndex = options.IsAfter
+                                                                ? targetItem.OrderIndex + 1
+                                                                : targetItem.OrderIndex;
 
-                                                    return context
-                                                        .Set<ToDoItemEntity>()
-                                                        .Where(x =>
-                                                            x.ParentId == item.ParentId
-                                                            && x.Id != item.Id
-                                                            && x.OrderIndex >= orderIndex
-                                                        )
-                                                        .ToArrayEntitiesAsync(ct)
-                                                        .IfSuccessAsync(
-                                                            items =>
-                                                            {
-                                                                foreach (
-                                                                    var itemEntity in items.Span
+                                                            return context
+                                                                .Set<ToDoItemEntity>()
+                                                                .Where(x =>
+                                                                    x.ParentId == item.ParentId
+                                                                    && x.Id != item.Id
+                                                                    && x.OrderIndex >= orderIndex
                                                                 )
-                                                                {
-                                                                    itemEntity.OrderIndex++;
-                                                                }
+                                                                .ToArrayEntitiesAsync(ct)
+                                                                .IfSuccessAsync(
+                                                                    items =>
+                                                                    {
+                                                                        foreach (
+                                                                            var itemEntity in items.Span
+                                                                        )
+                                                                        {
+                                                                            itemEntity.OrderIndex++;
+                                                                        }
 
-                                                                item.OrderIndex = orderIndex;
+                                                                        item.OrderIndex =
+                                                                            orderIndex;
 
-                                                                return NormalizeOrderIndexAsync(
-                                                                    context,
-                                                                    item.ParentId.ToOption(),
+                                                                        return NormalizeOrderIndexAsync(
+                                                                            context,
+                                                                            item.ParentId.ToOption(),
+                                                                            ct
+                                                                        );
+                                                                    },
                                                                     ct
                                                                 );
-                                                            },
-                                                            ct
-                                                        );
-                                                },
-                                                ct
-                                            ),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .Set<ToDoItemEntity>()
-                                .Where(x => x.Id == id)
-                                .ExecuteUpdateEntityAsync(
-                                    x => x.SetProperty(y => y.Description, description),
-                                    ct
-                                )
-                                .ToResultOnlyAsync(),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.Type = type;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar AddFavoriteToDoItemAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.IsFavorite = true;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.IsFavorite = false;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-        Guid id,
-        bool value,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.IsRequiredCompleteInDueDate = value;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
+                                                        },
+                                                        ct
+                                                    ),
+                                            ct
+                                        ),
+                                ct
+                            ),
                         ct
                     ),
                 ct
@@ -1333,93 +1228,6 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateToDoItemAnnuallyPeriodicityAsync(
-        Guid id,
-        AnnuallyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.SetDaysOfYear(periodicity.Days);
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemMonthlyPeriodicityAsync(
-        Guid id,
-        MonthlyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.SetDaysOfMonth(periodicity.Days);
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemWeeklyPeriodicityAsync(
-        Guid id,
-        WeeklyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.SetDaysOfWeek(periodicity.Days);
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
     public ConfiguredValueTaskAwaitable<
         Result<ReadOnlyMemory<ToDoSelectorItem>>
     > GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct)
@@ -1459,84 +1267,8 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public Cvtar UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    entity =>
-                                        context
-                                            .Set<ToDoItemEntity>()
-                                            .AsNoTracking()
-                                            .Where(x => x.ParentId == parentId)
-                                            .Select(x => x.OrderIndex)
-                                            .ToArrayEntitiesAsync(ct)
-                                            .IfSuccessAsync(
-                                                items =>
-                                                {
-                                                    entity = entity.ThrowIfNull();
-                                                    entity.ParentId = parentId;
-                                                    entity.OrderIndex =
-                                                        items.Length == 0 ? 0 : items.Max() + 1;
-
-                                                    return Result.Success;
-                                                },
-                                                ct
-                                            ),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar ToDoItemToRootAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    entity =>
-                                        context
-                                            .Set<ToDoItemEntity>()
-                                            .AsNoTracking()
-                                            .Where(x => x.ParentId == null)
-                                            .Select(x => x.OrderIndex)
-                                            .ToArrayEntitiesAsync(ct)
-                                            .IfSuccessAsync(
-                                                items =>
-                                                {
-                                                    entity = entity.ThrowIfNull();
-                                                    entity.ParentId = null;
-                                                    entity.OrderIndex =
-                                                        items.Length == 0 ? 0 : items.Max() + 1;
-
-                                                    return Result.Success;
-                                                },
-                                                ct
-                                            ),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
     public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
-        ToDoItemToStringOptions options,
+        ReadOnlyMemory<ToDoItemToStringOptions> options,
         CancellationToken ct
     )
     {
@@ -1549,166 +1281,13 @@ public class EfToDoService : IToDoService
                 {
                     var builder = new StringBuilder();
 
-                    return ToDoItemToStringAsync(context, options, 0, builder, offset, ct)
+                    return options
+                        .IfSuccessForEachAsync(
+                            o => ToDoItemToStringAsync(context, o, 0, builder, offset, ct),
+                            ct
+                        )
                         .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), ct);
                 },
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.DaysOffset = days;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.MonthsOffset = months;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.WeeksOffset = weeks;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.YearsOffset = years;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemChildrenTypeAsync(
-        Guid id,
-        ToDoItemChildrenType type,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.ChildrenType = type;
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(
-                            item =>
-                                context
-                                    .Set<ToDoItemEntity>()
-                                    .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
-                                    .OrderBy(x => x.OrderIndex)
-                                    .ToArrayEntitiesAsync(ct)
-                                    .IfSuccessAsync(
-                                        items => items.ToToDoShortItem().ToResult(),
-                                        ct
-                                    ),
-                            ct
-                        ),
                 ct
             );
     }
@@ -1751,145 +1330,6 @@ public class EfToDoService : IToDoService
 
                                         return new Result<OptionStruct<ActiveToDoItem>>(item);
                                     }),
-                            ct
-                        ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateToDoItemLinkAsync(Guid id, Option<Uri> link, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    value =>
-                                    {
-                                        value.Link = link.MapToString();
-
-                                        return Result.Success;
-                                    },
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PlannedToDoItemSettings>
-    > GetPlannedToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(item => item.ToPlannedToDoItemSettings().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<ValueToDoItemSettings>
-    > GetValueToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(item => item.ToValueToDoItemSettings().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PeriodicityToDoItemSettings>
-    > GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(
-                            item => item.ToPeriodicityToDoItemSettings().ToResult(),
-                            ct
-                        ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(item => item.ToWeeklyPeriodicity().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(item => item.ToMonthlyPeriodicity().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(item => item.ToAnnuallyPeriodicity().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PeriodicityOffsetToDoItemSettings>
-    > GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .GetEntityAsync<ToDoItemEntity>(id)
-                        .IfSuccessAsync(
-                            item => item.ToPeriodicityOffsetToDoItemSettings().ToResult(),
                             ct
                         ),
                 ct
@@ -1962,6 +1402,40 @@ public class EfToDoService : IToDoService
         }
 
         return clone.Id.ToResult();
+    }
+
+    public Cvtar DeleteToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
+    {
+        var idsArray = ids.Span.ToArray();
+
+        return dbContextFactory
+            .Create()
+            .IfSuccessDisposeAsync(
+                context =>
+                    context.AtomicExecuteAsync(
+                        () =>
+                            context
+                                .Set<ToDoItemEntity>()
+                                .Where(x => idsArray.Contains(x.Id))
+                                .ToArrayEntitiesAsync(ct)
+                                .IfSuccessForEachAsync(
+                                    item =>
+                                        DeleteToDoItemAsync(item.Id, context, ct)
+                                            .IfSuccessAsync(
+                                                () =>
+                                                    NormalizeOrderIndexAsync(
+                                                        context,
+                                                        item.ParentId.ToOption(),
+                                                        ct
+                                                    ),
+                                                ct
+                                            ),
+                                    ct
+                                ),
+                        ct
+                    ),
+                ct
+            );
     }
 
     private Cvtar DeleteToDoItemAsync(Guid id, SpravyDbToDoDbContext context, CancellationToken ct)

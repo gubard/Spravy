@@ -49,675 +49,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiCreateReference = SpravyCommand.Create<IToDoMultiItems>(
-            (property, ct) =>
-                property
-                    .GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                property.Item is null
-                                    ? viewFactory.CreateToDoItemSelectorViewModel(selected)
-                                    : viewFactory.CreateToDoItemSelectorViewModel(
-                                        property.Item,
-                                        selected
-                                    ),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService
-                                                    .RunProgressAsync(
-                                                        selected,
-                                                        i =>
-                                                            toDoService
-                                                                .CloneToDoItemAsync(
-                                                                    i.Id,
-                                                                    (
-                                                                        vm.SelectedItem?.Id
-                                                                    ).ToOption(),
-                                                                    ct
-                                                                )
-                                                                .IfSuccessAsync(
-                                                                    id =>
-                                                                        toDoService
-                                                                            .UpdateToDoItemTypeAsync(
-                                                                                id,
-                                                                                ToDoItemType.Reference,
-                                                                                ct
-                                                                            )
-                                                                            .IfSuccessAsync(
-                                                                                () =>
-                                                                                    toDoService.UpdateReferenceToDoItemAsync(
-                                                                                        id,
-                                                                                        i.Id,
-                                                                                        ct
-                                                                                    ),
-                                                                                ct
-                                                                            ),
-                                                                    ct
-                                                                ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiClone = SpravyCommand.Create<IToDoMultiItems>(
-            (property, ct) =>
-                property
-                    .GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
-                    .IfSuccessAsync(
-                        selectedIds =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                property.Item is null
-                                    ? viewFactory.CreateToDoItemSelectorViewModel()
-                                    : viewFactory.CreateToDoItemSelectorViewModel(property.Item),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService
-                                                    .RunProgressAsync(
-                                                        selectedIds,
-                                                        i =>
-                                                            toDoService.CloneToDoItemAsync(
-                                                                i,
-                                                                (vm.SelectedItem?.Id).ToOption(),
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        _ =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiReset = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccess(selected => selected.ToResult())
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                view.Item is not null
-                                    ? viewFactory.CreateResetToDoItemViewModel(view.Item)
-                                    : viewFactory.CreateResetToDoItemViewModel(selected),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.ResetToDoItemAsync(
-                                                            new(
-                                                                i.Id,
-                                                                vm.IsCompleteChildrenTask,
-                                                                vm.IsMoveCircleOrderIndex,
-                                                                vm.IsOnlyCompletedTasks,
-                                                                vm.IsCompleteCurrentTask
-                                                            ),
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiChangeOrder = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            view.GetNotSelectedItems()
-                                .IfSuccessAsync(
-                                    noSelected =>
-                                        dialogViewer.ShowConfirmDialogAsync(
-                                            viewFactory,
-                                            DialogViewLayer.Content,
-                                            viewFactory.CreateChangeToDoItemOrderIndexViewModel(
-                                                noSelected
-                                            ),
-                                            vm =>
-                                                dialogViewer
-                                                    .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            taskProgressService.RunProgressAsync(
-                                                                selected,
-                                                                i =>
-                                                                    vm.SelectedItem.IfNotNull(
-                                                                            nameof(vm.SelectedItem)
-                                                                        )
-                                                                        .IfSuccessAsync(
-                                                                            selectedItem =>
-                                                                                toDoService.UpdateToDoItemOrderIndexAsync(
-                                                                                    new(
-                                                                                        i.Id,
-                                                                                        selectedItem.Id,
-                                                                                        vm.IsAfter
-                                                                                    ),
-                                                                                    ct
-                                                                                ),
-                                                                            ct
-                                                                        ),
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                    ct
-                                ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiRandomizeChildrenOrder = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateRandomizeChildrenOrderViewModel(selected),
-                                _ =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.RandomizeChildrenOrderIndexAsync(
-                                                            i.Id,
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiCopyToClipboard = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccess(selected => selected.ToResult())
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                view.Item is not null
-                                    ? viewFactory.CreateToDoItemToStringSettingsViewModel(view.Item)
-                                    : viewFactory.CreateToDoItemToStringSettingsViewModel(selected),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService
-                                                    .RunProgressAsync(
-                                                        selected,
-                                                        i =>
-                                                            toDoService.ToDoItemToStringAsync(
-                                                                new(
-                                                                    vm.Statuses.Where(x =>
-                                                                            x.IsChecked
-                                                                        )
-                                                                        .Select(x => x.Item)
-                                                                        .ToArray(),
-                                                                    i.Id
-                                                                ),
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        items =>
-                                                            clipboardService.SetTextAsync(
-                                                                items
-                                                                    .Span.Join(Environment.NewLine)
-                                                                    .ToString(),
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiMakeAsRoot = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.ToDoItemToRootAsync(i, ct),
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiChangeParent = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                view.Item is not null
-                                    ? viewFactory.CreateToDoItemSelectorViewModel(
-                                        view.Item,
-                                        selected
-                                    )
-                                    : viewFactory.CreateToDoItemSelectorViewModel(selected),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            selectedItem =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.UpdateToDoItemParentAsync(
-                                                            i.Id,
-                                                            selectedItem.Id,
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiOpenLeaf = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            navigator.NavigateToAsync(
-                                viewFactory.CreateLeafToDoItemsViewModel(selected),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiShowSetting = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                viewFactory.CreateMultiToDoItemSettingViewModel(),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    item =>
-                                                        Result
-                                                            .AwaitableSuccess.IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsLink)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemLinkAsync(
-                                                                            item.Id,
-                                                                            vm.Link.ToOptionUri(),
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsName)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemNameAsync(
-                                                                            item.Id,
-                                                                            vm.Name,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsDueDate)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemDueDateAsync(
-                                                                            item.Id,
-                                                                            vm.DueDate,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsType)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemTypeAsync(
-                                                                            item.Id,
-                                                                            vm.Type,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiDelete = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                view.Item is not null
-                                    ? viewFactory.CreateDeleteToDoItemViewModel(view.Item, selected)
-                                    : viewFactory.CreateDeleteToDoItemViewModel(selected),
-                                _ =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i => toDoService.DeleteToDoItemAsync(i.Id, ct),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiAddChild = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                view.Item is not null
-                                    ? viewFactory.CreateAddToDoItemViewModel(view.Item)
-                                    : viewFactory.CreateAddToDoItemViewModel(),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    item =>
-                                                        vm.ConverterToAddToDoItemOptions(item.Id)
-                                                            .IfSuccessAsync(
-                                                                options =>
-                                                                    toDoService
-                                                                        .AddToDoItemAsync(
-                                                                            options,
-                                                                            ct
-                                                                        )
-                                                                        .IfSuccessAsync(
-                                                                            _ =>
-                                                                                uiApplicationService.RefreshCurrentViewAsync(
-                                                                                    ct
-                                                                                ),
-                                                                            ct
-                                                                        ),
-                                                                ct
-                                                            ),
-                                                    ct
-                                                ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiOpenLink = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        items =>
-                            taskProgressService.RunProgressAsync(
-                                items,
-                                i =>
-                                    i.Link.IfNotNull(nameof(i.Link))
-                                        .IfSuccessAsync(
-                                            link => openerLink.OpenLinkAsync(link.ToUri(), ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiRemoveFromFavorite = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.RemoveFavoriteToDoItemAsync(i, ct),
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiAddToFavorite = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.AddFavoriteToDoItemAsync(i, ct),
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiComplete = SpravyCommand.Create<IToDoMultiItems>(
-            (view, ct) =>
-                view.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected,
-                                i =>
-                                {
-                                    switch (i.IsCan)
-                                    {
-                                        case ToDoItemIsCan.None:
-                                            return Result.AwaitableSuccess;
-                                        case ToDoItemIsCan.CanComplete:
-                                            return toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                i.Id,
-                                                true,
-                                                ct
-                                            );
-                                        case ToDoItemIsCan.CanIncomplete:
-                                            return toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                i.Id,
-                                                false,
-                                                ct
-                                            );
-                                        default:
-                                            return new Result(
-                                                new ToDoItemIsCanOutOfRangeError(i.IsCan)
-                                            )
-                                                .ToValueTaskResult()
-                                                .ConfigureAwait(false);
-                                    }
-                                },
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
         NavigateToCurrentToDoItem = SpravyCommand.Create(
             ct =>
                 toDoService
@@ -851,64 +182,73 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        Complete = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
+        Complete = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
             {
-                uiApplicationService.StopCurrentView();
+                var playComplete = false;
 
-                Result
-                    .AwaitableSuccess.IfSuccessAsync(
-                        () =>
-                            item.IsCan switch
-                            {
-                                ToDoItemIsCan.None => Result.AwaitableSuccess,
-                                ToDoItemIsCan.CanComplete
-                                    => this.PostUi(() =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            uiApplicationService
+                                .GetCurrentView<IRemove>()
+                                .IfSuccess(remove =>
+                                    this.PostUi(
+                                        () =>
+                                            editId
+                                                .ResultItems.ToResult()
+                                                .IfSuccessForEach(item =>
+                                                {
+                                                    switch (item.IsCan)
+                                                    {
+                                                        case ToDoItemIsCan.None:
+                                                            return Result.Success;
+                                                        case ToDoItemIsCan.CanComplete:
+                                                        {
+                                                            playComplete = true;
+                                                            item.IsCan = ToDoItemIsCan.None;
+                                                            item.Status = ToDoItemStatus.Completed;
+                                                            return remove.RemoveUi(item);
+                                                        }
+                                                        case ToDoItemIsCan.CanIncomplete:
+                                                        {
+                                                            item.IsCan = ToDoItemIsCan.None;
+                                                            item.Status =
+                                                                ToDoItemStatus.ReadyForComplete;
+
+                                                            return remove.RemoveUi(item);
+                                                        }
+                                                        default:
+                                                            return new(
+                                                                new ToDoItemIsCanOutOfRangeError(
+                                                                    item.IsCan
+                                                                )
+                                                            );
+                                                    }
+                                                })
+                                    )
+                                )
+                                .IfSuccessAsync(
+                                    () =>
+                                    {
+                                        if (playComplete)
                                         {
-                                            item.IsCan = ToDoItemIsCan.None;
-                                            item.Status = ToDoItemStatus.Completed;
+                                            return audioService.PlayCompleteAsync(ct);
+                                        }
 
-                                            return uiApplicationService
-                                                .GetCurrentView<IRemove>()
-                                                .IfSuccess(x => x.RemoveUi(item));
-                                        })
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                    item.CurrentId,
-                                                    true,
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => audioService.PlayCompleteAsync(ct),
+                                        return Result.AwaitableSuccess;
+                                    },
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    () =>
+                                        toDoService.SwitchCompleteAsync(
+                                            editId.ResultCurrentIds,
                                             ct
                                         ),
-                                ToDoItemIsCan.CanIncomplete
-                                    => this.PostUi(() =>
-                                        {
-                                            item.IsCan = ToDoItemIsCan.None;
-                                            item.Status = ToDoItemStatus.ReadyForComplete;
-
-                                            return uiApplicationService
-                                                .GetCurrentView<IRemove>()
-                                                .IfSuccess(x => x.RemoveUi(item));
-                                        })
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                    item.CurrentId,
-                                                    false,
-                                                    ct
-                                                ),
-                                            ct
-                                        ),
-                                _
-                                    => new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan))
-                                        .ToValueTaskResult()
-                                        .ConfigureAwait(false),
-                            },
+                                    ct
+                                ),
                         ct
                     )
                     .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
@@ -919,129 +259,72 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        AddChild = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateAddToDoItemViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    vm.ConverterToAddToDoItemOptions()
-                                        .IfSuccessAsync(
-                                            options =>
-                                                toDoService
-                                                    .AddToDoItemAsync(options, ct)
-                                                    .IfSuccessAsync(
-                                                        _ =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        Delete = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateDeleteToDoItemViewModel(item),
-                    _ =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(() => toDoService.DeleteToDoItemAsync(item.Id, ct), ct)
-                            .IfSuccessAsync(uiApplicationService.GetCurrentViewType, ct)
-                            .IfSuccessAsync(
-                                type =>
-                                {
-                                    if (type != typeof(ToDoItemViewModel))
-                                    {
-                                        return Result.AwaitableSuccess;
-                                    }
-
-                                    if (item.Parent is null)
-                                    {
-                                        return navigator.NavigateToAsync(
-                                            viewFactory.CreateRootToDoItemsViewModel(),
-                                            ct
-                                        );
-                                    }
-
-                                    return navigator.NavigateToAsync(
-                                        viewFactory.CreateToDoItemViewModel(item.Parent),
-                                        ct
-                                    );
-                                },
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        ShowSetting = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoUiService
-                    .UpdateItemAsync(item, ct)
+        AddChild = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        () =>
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
-                                viewFactory.CreateToDoItemSettingsViewModel(item),
+                                viewFactory.CreateAddToDoItemViewModel(editId.Item, editId.Items),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        Delete = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateDeleteToDoItemViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(uiApplicationService.GetCurrentViewType, ct)
                                         .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemNameAsync(
-                                                    item.Id,
-                                                    vm.ToDoItemContent.Name,
+                                            type =>
+                                            {
+                                                if (type != typeof(ToDoItemViewModel))
+                                                {
+                                                    return Result.AwaitableSuccess;
+                                                }
+
+                                                if (
+                                                    editId.Item.TryGetValue(out var item)
+                                                    && item.Parent is not null
+                                                )
+                                                {
+                                                    return navigator.NavigateToAsync(
+                                                        viewFactory.CreateToDoItemViewModel(
+                                                            item.Parent
+                                                        ),
+                                                        ct
+                                                    );
+                                                }
+
+                                                return navigator.NavigateToAsync(
+                                                    viewFactory.CreateRootToDoItemsViewModel(),
                                                     ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemLinkAsync(
-                                                    item.Id,
-                                                    vm.ToDoItemContent.Link.ToOptionUri(),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemTypeAsync(
-                                                    item.Id,
-                                                    vm.ToDoItemContent.Type,
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => vm.Settings.ApplySettingsAsync(ct),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => toDoUiService.UpdateItemAsync(item, ct),
+                                                );
+                                            },
                                             ct
                                         )
                                         .IfSuccessAsync(
@@ -1056,557 +339,40 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        OpenLeaf = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                navigator.NavigateToAsync(viewFactory.CreateLeafToDoItemsViewModel(item), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        ChangeParent = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Input,
-                    item.Parent is null
-                        ? viewFactory.CreateToDoItemSelectorViewModel(new[] { item })
-                        : viewFactory.CreateToDoItemSelectorViewModel(item.Parent, new[] { item }),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Input, ct)
-                            .IfSuccessAsync(
-                                () => vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                selectedItem =>
-                                    toDoService.UpdateToDoItemParentAsync(
-                                        item.Id,
-                                        selectedItem.Id,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MakeAsRoot = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoService
-                    .ToDoItemToRootAsync(item.Id, ct)
+        ShowSetting = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        () =>
-                            navigator.NavigateToAsync(
-                                viewFactory.CreateRootToDoItemsViewModel(),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
+                        editId =>
+                        {
+                            if (editId.ResultItems.Length == 1)
+                            {
+                                return dialogViewer.ShowConfirmDialogAsync(
+                                    viewFactory,
+                                    DialogViewLayer.Content,
+                                    viewFactory.CreateToDoItemSettingsViewModel(
+                                        editId.ResultItems.Span[0]
+                                    ),
+                                    vm =>
+                                        dialogViewer
+                                            .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                            .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                    ct
+                                );
+                            }
 
-        ToDoItemCopyToClipboard = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateToDoItemToStringSettingsViewModel(item),
-                    vm =>
-                    {
-                        var statuses = vm
-                            .Statuses.Where(x => x.IsChecked)
-                            .Select(x => x.Item)
-                            .ToArray();
-
-                        var options = new ToDoItemToStringOptions(statuses, item.CurrentId);
-
-                        return dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService
-                                        .ToDoItemToStringAsync(options, ct)
-                                        .IfSuccessAsync(
-                                            text => clipboardService.SetTextAsync(text, ct),
-                                            ct
-                                        ),
+                            return dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateMultiToDoItemSettingViewModel(editId.ResultItems),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
                                 ct
                             );
-                    },
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        RandomizeChildrenOrder = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateRandomizeChildrenOrderViewModel(item),
-                    _ =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.RandomizeChildrenOrderIndexAsync(
-                                        item.CurrentId,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        ChangeOrder = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateChangeToDoItemOrderIndexViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () => vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                selectedItem =>
-                                {
-                                    var options = new UpdateOrderIndexToDoItemOptions(
-                                        item.Id,
-                                        selectedItem.Id,
-                                        vm.IsAfter
-                                    );
-
-                                    return dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.UpdateToDoItemOrderIndexAsync(
-                                                    options,
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        );
-                                },
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        Reset = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoUiService
-                    .UpdateItemAsync(item, ct)
-                    .IfSuccessAsync(
-                        () =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateResetToDoItemViewModel(item),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                toDoService.ResetToDoItemAsync(
-                                                    vm.ToResetToDoItemOptions(),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        AddToFavorite = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoService
-                    .AddFavoriteToDoItemAsync(item.Id, ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        RemoveFromFavorite = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoService
-                    .RemoveFavoriteToDoItemAsync(item.Id, ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        OpenLink = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-            {
-                var link = item.Link.ThrowIfNull().ToUri();
-
-                return openerLink.OpenLinkAsync(link, ct);
-            },
-            errorHandler,
-            taskProgressService
-        );
-
-        Clone = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Input,
-                    viewFactory.CreateToDoItemSelectorViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Input, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.CloneToDoItemAsync(
-                                        item.Id,
-                                        (vm.SelectedItem?.Id).ToOption(),
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                _ => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        CreateReference = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Input,
-                    item.Reference is null
-                        ? viewFactory.CreateToDoItemSelectorViewModel(item, item.Children.ToArray())
-                        : viewFactory.CreateToDoItemSelectorViewModel(
-                            item.Reference,
-                            item.Reference.Children.ToArray()
-                        ),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Input, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService
-                                        .CloneToDoItemAsync(
-                                            item.Id,
-                                            (vm.SelectedItem?.Id).ToOption(),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            id =>
-                                                toDoService
-                                                    .UpdateToDoItemTypeAsync(
-                                                        id,
-                                                        ToDoItemType.Reference,
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            toDoService.UpdateReferenceToDoItemAsync(
-                                                                id,
-                                                                item.Id,
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
-                                            ct
-                                        ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiAddChildToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateAddToDoItemViewModel(item),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        vm.ConverterToAddToDoItemOptions(i.Id)
-                                                            .IfSuccessAsync(
-                                                                options =>
-                                                                    toDoService
-                                                                        .AddToDoItemAsync(
-                                                                            options,
-                                                                            ct
-                                                                        )
-                                                                        .IfSuccessAsync(
-                                                                            _ =>
-                                                                                uiApplicationService.RefreshCurrentViewAsync(
-                                                                                    ct
-                                                                                ),
-                                                                            ct
-                                                                        ),
-                                                                ct
-                                                            ),
-                                                    ct
-                                                ),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiShowSettingToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateMultiToDoItemSettingViewModel(),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        Result
-                                                            .AwaitableSuccess.IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsLink)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemLinkAsync(
-                                                                            i.Id,
-                                                                            vm.Link.ToOptionUri(),
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsName)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemNameAsync(
-                                                                            i.Id,
-                                                                            vm.Name,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsDueDate)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemDueDateAsync(
-                                                                            i.Id,
-                                                                            vm.DueDate,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () =>
-                                                                {
-                                                                    if (vm.IsType)
-                                                                    {
-                                                                        return toDoService.UpdateToDoItemTypeAsync(
-                                                                            i.Id,
-                                                                            vm.Type,
-                                                                            ct
-                                                                        );
-                                                                    }
-
-                                                                    return Result.AwaitableSuccess;
-                                                                },
-                                                                ct
-                                                            ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiDeleteToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateDeleteToDoItemViewModel(selected),
-                                _ =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i => toDoService.DeleteToDoItemAsync(i.Id, ct),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiOpenLeafToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            navigator.NavigateToAsync(
-                                viewFactory.CreateLeafToDoItemsViewModel(item, selected),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiChangeParentToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                viewFactory.CreateToDoItemSelectorViewModel(item, selected),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                vm.SelectedItem.IfNotNull(nameof(vm.SelectedItem)),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            selectedItem =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.UpdateToDoItemParentAsync(
-                                                            i.Id,
-                                                            selectedItem.Id,
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiMakeAsRootToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.ToDoItemToRootAsync(i, ct),
-                                ct
-                            ),
+                        },
                         ct
                     )
                     .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
@@ -1614,49 +380,14 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiCopyToClipboardToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
+        OpenLeaf = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateToDoItemToStringSettingsViewModel(item),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                vm
-                                                    .Statuses.Where(x => x.IsChecked)
-                                                    .Select(x => x.Item)
-                                                    .ToArray()
-                                                    .ToReadOnlyMemory()
-                                                    .ToResult(),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            statuses =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.ToDoItemToStringAsync(
-                                                            new(statuses, i.Id),
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            items =>
-                                                clipboardService.SetTextAsync(
-                                                    items.Span.Join(Environment.NewLine).ToString(),
-                                                    ct
-                                                ),
-                                            ct
-                                        ),
+                        editId =>
+                            navigator.NavigateToAsync(
+                                viewFactory.CreateLeafToDoItemsViewModel(editId.Item, editId.Items),
                                 ct
                             ),
                         ct
@@ -1665,31 +396,20 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiRandomizeChildrenOrderToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
+        ChangeParent = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        selected =>
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateRandomizeChildrenOrderViewModel(item),
-                                _ =>
+                                DialogViewLayer.Input,
+                                viewFactory.CreateChangeParentViewModel(editId.Item, editId.Items),
+                                vm =>
                                     dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.RandomizeChildrenOrderIndexAsync(
-                                                            i.Id,
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
+                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
                                         .IfSuccessAsync(
                                             () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
@@ -1702,57 +422,123 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiChangeOrderToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
+        ToDoItemCopyToClipboard = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        selected =>
-                            item.GetNotSelectedItems()
-                                .IfSuccessAsync(
-                                    noSelected =>
-                                        dialogViewer.ShowConfirmDialogAsync(
-                                            viewFactory,
-                                            DialogViewLayer.Content,
-                                            viewFactory.CreateChangeToDoItemOrderIndexViewModel(
-                                                item,
-                                                noSelected
-                                            ),
-                                            vm =>
-                                                dialogViewer
-                                                    .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            vm.SelectedItem.IfNotNull(
-                                                                nameof(vm.SelectedItem)
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        selectedItem =>
-                                                            taskProgressService.RunProgressAsync(
-                                                                selected,
-                                                                i =>
-                                                                    toDoService.UpdateToDoItemOrderIndexAsync(
-                                                                        new(
-                                                                            i.Id,
-                                                                            selectedItem.Id,
-                                                                            vm.IsAfter
-                                                                        ),
-                                                                        ct
-                                                                    ),
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    ),
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateToDoItemToStringSettingsViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm => vm.ApplySettingsAsync(ct),
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        RandomizeChildrenOrder = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateRandomizeChildrenOrderViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
                                         ),
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        ChangeOrder = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateChangeToDoItemOrderIndexViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        Reset = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateResetToDoItemViewModel(editId.Item, editId.Items),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        AddToFavorite = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            toDoService
+                                .EditToDoItemsAsync(
+                                    new EditToDoItems()
+                                        .SetIds(editId.ResultIds)
+                                        .SetIsFavorite(new(true)),
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                     ct
                                 ),
                         ct
@@ -1761,44 +547,63 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiResetToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoUiService
-                    .UpdateItemAsync(item, ct)
+        RemoveFromFavorite = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        () =>
-                            item.GetSelectedItems()
-                                .IfSuccess(selected => selected.Select(x => x.Id).ToResult()),
+                        editId =>
+                            toDoService
+                                .EditToDoItemsAsync(
+                                    new EditToDoItems()
+                                        .SetIds(editId.ResultIds)
+                                        .SetIsFavorite(new(false)),
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                    ct
+                                ),
                         ct
-                    )
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        OpenLink = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        selected =>
+                        editId =>
+                            editId
+                                .ResultItems.Select(x => x.Link)
+                                .Where(x => !x.IsNullOrWhiteSpace())
+                                .ToResult()
+                                .IfSuccessForEachAsync(
+                                    link => openerLink.OpenLinkAsync(link.ToUri(), ct),
+                                    ct
+                                ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        Clone = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
-                                DialogViewLayer.Content,
-                                viewFactory.CreateResetToDoItemViewModel(item),
+                                DialogViewLayer.Input,
+                                viewFactory.CreateCloneViewModel(editId.Item, editId.Items),
                                 vm =>
                                     dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.ResetToDoItemAsync(
-                                                            new(
-                                                                i,
-                                                                vm.IsCompleteChildrenTask,
-                                                                vm.IsMoveCircleOrderIndex,
-                                                                vm.IsOnlyCompletedTasks,
-                                                                vm.IsCompleteCurrentTask
-                                                            ),
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
+                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
                                         .IfSuccessAsync(
                                             () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
@@ -1811,92 +616,23 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        MultiCloneToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+        CreateReference = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
                     .IfSuccessAsync(
-                        selected =>
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
-                                viewFactory.CreateToDoItemSelectorViewModel(item),
+                                viewFactory.CreateCreateReferenceViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService.CloneToDoItemAsync(
-                                                            i,
-                                                            (vm.SelectedItem?.Id).ToOption(),
-                                                            ct
-                                                        ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
-                                        .IfSuccessAsync(
-                                            _ => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiCreateReferenceToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccess(selected => selected.ToResult())
-                    .IfSuccessAsync(
-                        selected =>
-                            dialogViewer.ShowConfirmDialogAsync(
-                                viewFactory,
-                                DialogViewLayer.Input,
-                                viewFactory.CreateToDoItemSelectorViewModel(item, selected),
-                                vm =>
-                                    dialogViewer
-                                        .CloseDialogAsync(DialogViewLayer.Input, ct)
-                                        .IfSuccessAsync(
-                                            () =>
-                                                taskProgressService.RunProgressAsync(
-                                                    selected,
-                                                    i =>
-                                                        toDoService
-                                                            .CloneToDoItemAsync(
-                                                                i.Id,
-                                                                (vm.SelectedItem?.Id).ToOption(),
-                                                                ct
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                id =>
-                                                                    toDoService
-                                                                        .UpdateToDoItemTypeAsync(
-                                                                            id,
-                                                                            ToDoItemType.Reference,
-                                                                            ct
-                                                                        )
-                                                                        .IfSuccessAsync(
-                                                                            () =>
-                                                                                toDoService.UpdateReferenceToDoItemAsync(
-                                                                                    id,
-                                                                                    i.Id,
-                                                                                    ct
-                                                                                ),
-                                                                            ct
-                                                                        ),
-                                                                ct
-                                                            ),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
                                         .IfSuccessAsync(
                                             () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                             ct
@@ -1905,98 +641,6 @@ public class SpravyCommandService
                             ),
                         ct
                     ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiOpenLinkToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected,
-                                i =>
-                                    i.Link.IfNotNull(nameof(i.Link))
-                                        .IfSuccessAsync(
-                                            link => openerLink.OpenLinkAsync(link.ToUri(), ct),
-                                            ct
-                                        ),
-                                ct
-                            ),
-                        ct
-                    ),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiAddToFavoriteToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.AddFavoriteToDoItemAsync(i, ct),
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiRemoveFromFavoriteToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected.Select(x => x.Id),
-                                i => toDoService.RemoveFavoriteToDoItemAsync(i, ct),
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        MultiCompleteToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                item.GetSelectedItems()
-                    .IfSuccessAsync(
-                        selected =>
-                            taskProgressService.RunProgressAsync(
-                                selected,
-                                i =>
-                                    i.IsCan switch
-                                    {
-                                        ToDoItemIsCan.None => Result.AwaitableSuccess,
-                                        ToDoItemIsCan.CanComplete
-                                            => toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                i.Id,
-                                                true,
-                                                ct
-                                            ),
-                                        ToDoItemIsCan.CanIncomplete
-                                            => toDoService.UpdateToDoItemCompleteStatusAsync(
-                                                i.Id,
-                                                false,
-                                                ct
-                                            ),
-                                        _
-                                            => new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan))
-                                                .ToValueTaskResult()
-                                                .ConfigureAwait(false),
-                                    },
-                                ct
-                            ),
-                        ct
-                    )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
             errorHandler,
             taskProgressService
         );
@@ -2011,30 +655,6 @@ public class SpravyCommandService
 
                     return Result.Success;
                 }),
-            errorHandler,
-            taskProgressService
-        );
-
-        AddRootToDoItem = SpravyCommand.Create(
-            ct =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateAddToDoItemViewModel(),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(vm.ConverterToAddToDoItemOptions, ct)
-                            .IfSuccessAsync(
-                                options => toDoService.AddToDoItemAsync(options, ct),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                _ => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                ct
-                            ),
-                    ct
-                ),
             errorHandler,
             taskProgressService
         );
@@ -2081,39 +701,31 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        SetToDoItemDescription = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateEditDescriptionViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.UpdateToDoItemDescriptionAsync(
-                                        item.Id,
-                                        vm.Content.Description,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () =>
-                                    toDoService.UpdateToDoItemDescriptionTypeAsync(
-                                        item.Id,
-                                        vm.Content.DescriptionType,
-                                        ct
-                                    ),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+        SetToDoItemDescription = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateEditDescriptionViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
-                    ct
-                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -2456,13 +1068,6 @@ public class SpravyCommandService
                                                     )
                                                     .IfSuccessAsync(
                                                         () =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        () =>
                                                             navigator.NavigateToAsync(
                                                                 viewFactory.CreateRootToDoItemsViewModel(),
                                                                 ct
@@ -2764,11 +1369,7 @@ public class SpravyCommandService
                     vm =>
                         dialogViewer
                             .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(() => vm.CreateAddTimerParametersAsync(ct), ct)
-                            .IfSuccessAsync(
-                                parameters => scheduleService.AddTimerAsync(parameters, ct),
-                                ct
-                            )
+                            .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
                             .IfSuccessAsync(
                                 () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                 ct
@@ -2802,26 +1403,39 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        CreateTimer = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                dialogViewer.ShowConfirmDialogAsync(
-                    viewFactory,
-                    DialogViewLayer.Content,
-                    viewFactory.CreateToDoItemCreateTimerViewModel(item),
-                    vm =>
-                        dialogViewer
-                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                            .IfSuccessAsync(() => vm.CreateAddTimerParametersAsync(ct), ct)
-                            .IfSuccessAsync(
-                                parameters => scheduleService.AddTimerAsync(parameters, ct),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () => uiApplicationService.RefreshCurrentViewAsync(ct),
+        CreateTimer = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            dialogViewer.ShowConfirmDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Content,
+                                viewFactory.CreateToDoItemCreateTimerViewModel(
+                                    editId.Item,
+                                    editId.Items
+                                ),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(
+                                            () => vm.CreateAddTimerParametersAsync(ct),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            parameters =>
+                                                scheduleService.AddTimerAsync(parameters, ct),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
-                    ct
-                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -2865,41 +1479,52 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        AddToBookmark = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoService
-                    .UpdateIsBookmarkAsync(item.Id, true, ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+        AddToBookmark = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            toDoService
+                                .EditToDoItemsAsync(
+                                    new EditToDoItems()
+                                        .SetIds(editId.ResultCurrentIds)
+                                        .SetIsBookmark(new(true)),
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                    ct
+                                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
 
-        RemoveFromBookmark = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) =>
-                toDoService
-                    .UpdateIsBookmarkAsync(item.Id, false, ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+        RemoveFromBookmark = SpravyCommand.Create<IToDoItemEditId>(
+            (toDoItemEditId, ct) =>
+                toDoItemEditId
+                    .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                            toDoService
+                                .EditToDoItemsAsync(
+                                    new EditToDoItems()
+                                        .SetIds(editId.ResultCurrentIds)
+                                        .SetIsBookmark(new(false)),
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                    ct
+                                ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
     }
-
-    public SpravyCommand MultiCompleteToDoItem { get; }
-    public SpravyCommand MultiAddToFavoriteToDoItem { get; }
-    public SpravyCommand MultiRemoveFromFavoriteToDoItem { get; }
-    public SpravyCommand MultiOpenLinkToDoItem { get; }
-    public SpravyCommand MultiAddChildToDoItem { get; }
-    public SpravyCommand MultiDeleteToDoItem { get; }
-    public SpravyCommand MultiShowSettingToDoItem { get; }
-    public SpravyCommand MultiOpenLeafToDoItem { get; }
-    public SpravyCommand MultiChangeParentToDoItem { get; }
-    public SpravyCommand MultiMakeAsRootToDoItem { get; }
-    public SpravyCommand MultiCopyToClipboardToDoItem { get; }
-    public SpravyCommand MultiRandomizeChildrenOrderToDoItem { get; }
-    public SpravyCommand MultiChangeOrderToDoItem { get; }
-    public SpravyCommand MultiResetToDoItem { get; }
-    public SpravyCommand MultiCloneToDoItem { get; }
-    public SpravyCommand MultiCreateReferenceToDoItem { get; }
 
     public SpravyCommand CopyLogin { get; }
     public SpravyCommand CopyToClipboard { get; }
@@ -2913,7 +1538,6 @@ public class SpravyCommandService
     public SpravyCommand ShowSetting { get; }
     public SpravyCommand OpenLeaf { get; }
     public SpravyCommand ChangeParent { get; }
-    public SpravyCommand MakeAsRoot { get; }
     public SpravyCommand ToDoItemCopyToClipboard { get; }
     public SpravyCommand RandomizeChildrenOrder { get; }
     public SpravyCommand ChangeOrder { get; }
@@ -2925,23 +1549,6 @@ public class SpravyCommandService
     public SpravyCommand AddToBookmark { get; }
     public SpravyCommand RemoveFromBookmark { get; }
 
-    public SpravyCommand MultiComplete { get; }
-    public SpravyCommand MultiAddToFavorite { get; }
-    public SpravyCommand MultiRemoveFromFavorite { get; }
-    public SpravyCommand MultiAddChild { get; }
-    public SpravyCommand MultiDelete { get; }
-    public SpravyCommand MultiShowSetting { get; }
-    public SpravyCommand MultiOpenLeaf { get; }
-    public SpravyCommand MultiChangeParent { get; }
-    public SpravyCommand MultiMakeAsRoot { get; }
-    public SpravyCommand MultiCopyToClipboard { get; }
-    public SpravyCommand MultiRandomizeChildrenOrder { get; }
-    public SpravyCommand MultiChangeOrder { get; }
-    public SpravyCommand MultiReset { get; }
-    public SpravyCommand MultiClone { get; }
-    public SpravyCommand MultiCreateReference { get; }
-    public SpravyCommand MultiOpenLink { get; }
-
     public SpravyCommand GeneratePassword { get; }
     public SpravyCommand DeletePasswordItem { get; }
     public SpravyCommand AddPasswordItem { get; }
@@ -2951,7 +1558,6 @@ public class SpravyCommandService
     public SpravyCommand SendNewVerificationCode { get; }
     public SpravyCommand Back { get; }
     public SpravyCommand NavigateToCurrentToDoItem { get; }
-    public SpravyCommand AddRootToDoItem { get; }
     public SpravyCommand Logout { get; }
     public SpravyCommand RefreshCurrentView { get; }
     public SpravyCommand SetToDoItemDescription { get; }

@@ -31,12 +31,15 @@ public class App : Application
                 var currentType = topLevel.Width switch
                 {
                     <= MaterialDesign.MaxExtraSmall => MaterialDesignSizeType.ExtraSmall,
-                    > MaterialDesign.MaxExtraSmall and <= MaterialDesign.MaxSmall =>
-                        MaterialDesignSizeType.Small,
-                    > MaterialDesign.MaxSmall and <= MaterialDesign.MaxMedium =>
-                        MaterialDesignSizeType.Medium,
-                    > MaterialDesign.MaxMedium and <= MaterialDesign.MaxLarge =>
-                        MaterialDesignSizeType.Large,
+                    > MaterialDesign.MaxExtraSmall
+                    and <= MaterialDesign.MaxSmall
+                        => MaterialDesignSizeType.Small,
+                    > MaterialDesign.MaxSmall
+                    and <= MaterialDesign.MaxMedium
+                        => MaterialDesignSizeType.Medium,
+                    > MaterialDesign.MaxMedium
+                    and <= MaterialDesign.MaxLarge
+                        => MaterialDesignSizeType.Large,
                     > MaterialDesign.MaxLarge => MaterialDesignSizeType.ExtraLarge,
                     _ => MaterialDesignSizeType.ExtraSmall,
                 };
@@ -138,9 +141,7 @@ public class App : Application
             pointerPosition.Y > button.Bounds.Height / 2
                 ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
                 : new(dataItem.Id, sourceItem.Id, false);
-        await serviceFactory
-            .CreateService<IToDoService>()
-            .UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
+
         await serviceFactory
             .CreateService<IUiApplicationService>()
             .RefreshCurrentViewAsync(CancellationToken.None);

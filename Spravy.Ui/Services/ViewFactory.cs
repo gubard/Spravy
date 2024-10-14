@@ -11,7 +11,6 @@ public class ViewFactory : IViewFactory
     private readonly IToDoUiService toDoUiService;
     private readonly IToDoCache toDoCache;
     private readonly IObjectStorage objectStorage;
-    private readonly ToDoItemCommands toDoItemCommands;
     private readonly AppOptions appOptions;
     private readonly IAuthenticationService authenticationService;
     private readonly IPropertyValidator propertyValidator;
@@ -30,7 +29,6 @@ public class ViewFactory : IViewFactory
         IToDoUiService toDoUiService,
         IToDoCache toDoCache,
         IObjectStorage objectStorage,
-        ToDoItemCommands toDoItemCommands,
         AppOptions appOptions,
         INavigator navigator,
         IAuthenticationService authenticationService,
@@ -50,7 +48,6 @@ public class ViewFactory : IViewFactory
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
-        this.toDoItemCommands = toDoItemCommands;
         this.appOptions = appOptions;
         this.navigator = navigator;
         this.authenticationService = authenticationService;
@@ -64,9 +61,24 @@ public class ViewFactory : IViewFactory
         this.serializer = serializer;
     }
 
+    public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(items, toDoService);
+    }
+
+    public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
-        return new(item, CreateToDoItemContentViewModel(), this);
+        return new(item, CreateToDoItemContentViewModel(), this, toDoService);
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item)
@@ -79,10 +91,10 @@ public class ViewFactory : IViewFactory
         return new(
             item,
             objectStorage,
-            toDoItemCommands,
             CreateToDoSubItemsViewModel(SortBy.OrderIndex),
             errorHandler,
-            toDoUiService
+            toDoUiService,
+            taskProgressService
         );
     }
 
@@ -96,11 +108,6 @@ public class ViewFactory : IViewFactory
     )
     {
         return new(item, toDoService, errorHandler, taskProgressService);
-    }
-
-    public EditDescriptionViewModel CreateEditDescriptionViewModel(ToDoItemEntityNotify item)
-    {
-        return new(item, CreateEditDescriptionContentViewModel());
     }
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(SortBy sortBy)
@@ -233,12 +240,44 @@ public class ViewFactory : IViewFactory
         return new(CreateToDoItemSelectorViewModel(), serializer, objectStorage, toDoCache);
     }
 
-    public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
+    public ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService, toDoUiService, errorHandler, taskProgressService);
+        throw new NotImplementedException();
+    }
+
+    public EditDescriptionViewModel CreateEditDescriptionViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public CloneViewModel CreateCloneViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public ResetToDoItemViewModel CreateResetToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(item, items, objectStorage, toDoService);
+    }
+
+    public CreateReferenceViewModel CreateCreateReferenceViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService);
     }
 
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
@@ -294,21 +333,21 @@ public class ViewFactory : IViewFactory
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService);
+        return new(item);
     }
 
     public ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService);
+        return new(item);
     }
 
     public ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, toDoService);
+        return new(item);
     }
 
     public PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
@@ -358,13 +397,6 @@ public class ViewFactory : IViewFactory
         );
     }
 
-    public ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item, objectStorage, serializer, errorHandler, taskProgressService);
-    }
-
     public ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header)
     {
         return new(sortBy, header, errorHandler, taskProgressService);
@@ -377,7 +409,7 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new(this, objectStorage, errorHandler, taskProgressService);
+        return new(this, objectStorage, errorHandler, taskProgressService, scheduleService);
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
@@ -390,6 +422,22 @@ public class ViewFactory : IViewFactory
             errorHandler,
             taskProgressService
         );
+    }
+
+    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(item, items, toDoCache, toDoUiService, errorHandler, taskProgressService);
+    }
+
+    public ChangeParentViewModel CreateChangeParentViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        return new(item, items, toDoService, CreateToDoItemSelectorViewModel());
     }
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(SortBy sortBy)
@@ -450,6 +498,30 @@ public class ViewFactory : IViewFactory
         return new(content, errorHandler, taskProgressService, confirmTask, cancelTask);
     }
 
+    public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
+    {
+        throw new NotImplementedException();
+    }
+
     public TextViewModel CreateTextViewModel()
     {
         return new();
@@ -465,79 +537,26 @@ public class ViewFactory : IViewFactory
         return new(exception);
     }
 
-    public ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item)
-    {
-        return new(item.ToOption(), objectStorage);
-    }
-
-    public ResetToDoItemViewModel CreateResetToDoItemViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(Option<ToDoItemEntityNotify>.None, objectStorage);
-    }
-
-    public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(items);
-    }
-
-    public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
-    public ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
-    }
-
-    public ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(Option<ToDoItemEntityNotify>.None, items);
-    }
-
     public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(items, toDoService, toDoUiService, errorHandler, taskProgressService);
+        return new(item, items, toDoService, errorHandler, taskProgressService);
     }
 
-    public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel()
-    {
-        return new();
-    }
-
-    public DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item)
-    {
-        return new(item, toDoService, toDoUiService, errorHandler, taskProgressService);
-    }
-
-    public AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent)
+    public AddToDoItemViewModel CreateAddToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    )
     {
         return new(
-            parent,
+            item,
+            items,
+            objectStorage,
             CreateToDoItemContentViewModel(),
             CreateEditDescriptionContentViewModel(),
-            objectStorage
-        );
-    }
-
-    public AddToDoItemViewModel CreateAddToDoItemViewModel()
-    {
-        return new(
-            CreateToDoItemContentViewModel(),
-            CreateEditDescriptionContentViewModel(),
-            objectStorage
+            toDoService
         );
     }
 
@@ -556,27 +575,5 @@ public class ViewFactory : IViewFactory
     )
     {
         return new(item);
-    }
-
-    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item, errorHandler, taskProgressService, toDoUiService);
-    }
-
-    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(item, items, errorHandler, taskProgressService, toDoUiService);
-    }
-
-    public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
-    {
-        return new(items, errorHandler, taskProgressService, toDoUiService);
     }
 }

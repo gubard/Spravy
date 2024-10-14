@@ -31,6 +31,65 @@ public static class ResultExtension
         return Result.Success;
     }
 
+    public static ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<TReturn>>
+    > IfSuccessForEachAsync<TValue, TReturn>(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    )
+        where TReturn : notnull
+    {
+        return IfSuccessForEachCore(values, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachCore<
+        TValue,
+        TReturn
+    >(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    )
+        where TReturn : notnull
+    {
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
+
+        var array = new Memory<TReturn>(new TReturn[values.Length]);
+
+        for (var index = 0; index < values.Length; index++)
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
+            var result = await func.Invoke(values.Span[index]);
+
+            if (!result.TryGetValue(out var rv))
+            {
+                return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
+            array.Span[index] = rv;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
+
+        return array.ToReadOnlyMemory().ToResult();
+    }
+
     public static Cvtar IfSuccessForEachAsync<TValue>(
         this ReadOnlyMemory<TValue> values,
         Func<TValue, Cvtar> func,
@@ -404,6 +463,61 @@ public static class ResultExtension
         for (var index = 0; index < v.Length; index++)
         {
             var result = await func.Invoke(v.Span[index]);
+
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
+        return Result.Success;
+    }
+
+    public static Cvtar IfSuccessForEachAsync<TValue>(
+        this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
+        Func<TValue, Result> func,
+        CancellationToken ct
+    )
+    {
+        return IfSuccessForEachCore(task, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
+        this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
+        Func<TValue, Result> func,
+        CancellationToken ct
+    )
+    {
+        var values = await task;
+
+        if (!values.TryGetValue(out var v))
+        {
+            return new(values.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
+        for (var index = 0; index < v.Length; index++)
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            var result = func.Invoke(v.Span[index]);
 
             if (result.IsHasError)
             {

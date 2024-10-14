@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-
 namespace Spravy.Ui.Android.Services;
 
 public class AndroidOpenerLink : IOpenerLink

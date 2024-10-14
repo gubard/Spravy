@@ -1,13 +1,13 @@
-<c:NavigatableUserControl x:TypeArguments="vm:AddToDoItemViewModel"
-                          xmlns="https://github.com/avaloniaui"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                          x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
-                          x:DataType="vm:AddToDoItemViewModel">
+<c:DialogableUserControl x:TypeArguments="vm:AddToDoItemViewModel"
+                         xmlns="https://github.com/avaloniaui"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                         x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
+                         x:DataType="vm:AddToDoItemViewModel">
     <ScrollViewer Classes="vertical">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
@@ -16,7 +16,7 @@
 
             <StackPanel>
                 <ScrollViewer Classes="horizontal">
-                    <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Parent.Path}" />
+                    <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
                 </ScrollViewer>
 
                 <ContentControl Content="{Binding ToDoItemContent}" />
@@ -24,4 +24,4 @@
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
-</c:NavigatableUserControl>
+</c:DialogableUserControl>

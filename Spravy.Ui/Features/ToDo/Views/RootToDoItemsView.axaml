@@ -7,6 +7,7 @@
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:s="clr-namespace:Spravy.Ui.Features.ToDo.Services"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Features.ToDo.Views.RootToDoItemsView"
              x:DataType="vm:RootToDoItemsViewModel">
@@ -42,7 +43,7 @@
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="m:SpravyCommandNotify">
                                 <Button Command="{Binding Item.Command}"
-                                        CommandParameter="{Binding $parent[ItemsControl].DataContext}"
+                                        CommandParameter="{Binding $parent[v:RootToDoItemsView].DataContext}"
                                         ToolTip.Tip="{Binding Text}">
                                     <i:Icon Value="{Binding Kind}" />
                                 </Button>
@@ -60,7 +61,8 @@
                         <Button.Styles>
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
-                                <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
+                                <Setter Property="CommandParameter"
+                                        Value="{Binding $parent[v:RootToDoItemsView].DataContext}" />
 
                                 <Setter Property="Icon">
                                     <Template>
@@ -88,11 +90,10 @@
         <Button Grid.Row="2"
                 Name="{x:Static v:RootToDoItemsView.AddRootToDoItemButtonName}"
                 Classes="mode-press"
-                Command="{x:Static h:UiHelper.AddRootToDoItem}"
-                Height="64"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center">
-            <StackPanel Orientation="Horizontal">
+                Command="{x:Static h:UiHelper.AddChild}"
+                CommandParameter="{x:Static s:EmptyToDoItemEditId.Default}"
+                Height="64">
+            <StackPanel Classes="horizontal alignment-center">
                 <i:Icon Value="mdi-plus" Classes="h1" />
                 <TextBlock Classes="h3"
                            Text="{DynamicResource RootToDoItemsView.CreateTask}"

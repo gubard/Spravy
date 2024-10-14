@@ -16,7 +16,7 @@
             <StackPanel>
                 <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
                 <ContentControl Content="{Binding ToDoItemContent}" />
-                <ContentControl Content="{Binding Settings}" />
+                <ContentControl Content="{Binding Edit}" />
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>

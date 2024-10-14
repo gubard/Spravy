@@ -1,25 +1,28 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IStateHolder
+public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApplySettings
 {
     private readonly IViewFactory viewFactory;
+    private readonly IToDoService toDoService;
 
     [ObservableProperty]
-    private IApplySettings settings;
+    private IEditToDoItems edit;
 
     public ToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         ToDoItemContentViewModel toDoItemContent,
-        IViewFactory viewFactory
+        IViewFactory viewFactory,
+        IToDoService toDoService
     )
     {
         Item = item;
         ToDoItemContent = toDoItemContent;
         this.viewFactory = viewFactory;
+        this.toDoService = toDoService;
         ToDoItemContent.Type = Item.Type;
         ToDoItemContent.Name = Item.Name;
         ToDoItemContent.Link = Item.Link;
-        settings = CreateSettings();
+        edit = CreateEdit();
         ToDoItemContent.PropertyChanged += OnPropertyChanged;
     }
 
@@ -41,12 +44,12 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IState
         return Result.AwaitableSuccess;
     }
 
-    private IApplySettings CreateSettings()
+    private IEditToDoItems CreateEdit()
     {
         return ToDoItemContent.Type switch
         {
             ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-            ToDoItemType.Group => new EmptyApplySettings(),
+            ToDoItemType.Group => new EmptyEditToDoItems(),
             ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
             ToDoItemType.Periodicity
                 => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
@@ -63,7 +66,23 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IState
     {
         if (e.PropertyName == nameof(ToDoItemContent.Type))
         {
-            Settings = CreateSettings();
+            Edit = CreateEdit();
         }
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return toDoService.EditToDoItemsAsync(
+            Edit.GetEditToDoItems()
+                .SetType(new(ToDoItemContent.Type))
+                .SetName(new(ToDoItemContent.Name))
+                .SetLink(new(ToDoItemContent.Link.ToOptionUri())),
+            ct
+        );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

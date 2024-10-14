@@ -15,19 +15,6 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         this.serializer = serializer;
     }
 
-    public override async Task<AddTimerReply> AddTimer(
-        AddTimerRequest request,
-        ServerCallContext context
-    )
-    {
-        await scheduleService.AddTimerAsync(
-            request.ToAddTimerParameters(),
-            context.CancellationToken
-        );
-
-        return new();
-    }
-
     public override async Task<RemoveTimerReply> RemoveTimer(
         RemoveTimerRequest request,
         ServerCallContext context

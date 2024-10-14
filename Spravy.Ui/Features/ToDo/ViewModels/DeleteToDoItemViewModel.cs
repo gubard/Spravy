@@ -1,27 +1,22 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class DeleteToDoItemViewModel : DialogableViewModelBase
+public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly IToDoUiService toDoUiService;
-    private readonly AvaloniaList<ToDoItemEntityNotify> items = new();
 
     [ObservableProperty]
     private string childrenText = string.Empty;
 
     public DeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService,
-        IToDoUiService toDoUiService,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )
+        : base(editItem, editItems)
     {
         this.toDoService = toDoService;
-        this.toDoUiService = toDoUiService;
-        Item = item;
-        this.items.AddRange(items.ToArray());
 
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
@@ -30,52 +25,14 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
         );
     }
 
-    public DeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IToDoUiService toDoUiService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
-    {
-        this.toDoService = toDoService;
-        this.toDoUiService = toDoUiService;
-        Item = item;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-    }
-
-    public DeleteToDoItemViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        IToDoService toDoService,
-        IToDoUiService toDoUiService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
-    {
-        this.toDoService = toDoService;
-        this.toDoUiService = toDoUiService;
-        Item = null;
-        this.items.AddRange(items.ToArray());
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-    }
-
-    public ToDoItemEntityNotify? Item { get; }
     public SpravyCommand InitializedCommand { get; }
-    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
 
     public override string ViewId
     {
-        get => $"{TypeCache<DeleteToDoItemViewModel>.Type}";
+        get =>
+            EditItem.TryGetValue(out var editItem)
+                ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{editItem.Id}"
+                : $"{TypeCache<AddToDoItemViewModel>.Type.Name}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -92,68 +49,48 @@ public partial class DeleteToDoItemViewModel : DialogableViewModelBase
     {
         var statuses = UiHelper.ToDoItemStatuses;
 
-        return Result.AwaitableSuccess.IfSuccessAllAsync(
-            ct,
-            () => Item is null ? Result.AwaitableSuccess : toDoUiService.UpdateItemAsync(Item, ct),
-            () =>
-            {
-                if (Items.IsEmpty())
-                {
-                    return Item.IfNotNull(nameof(Item))
-                        .IfSuccessAsync(
-                            i =>
-                                toDoService
-                                    .ToDoItemToStringAsync(new(statuses, i.Id), ct)
-                                    .IfSuccessAsync(
-                                        text =>
-                                            this.PostUiBackground(
-                                                () =>
-                                                {
-                                                    ChildrenText = text;
-
-                                                    return Result.Success;
-                                                },
-                                                ct
-                                            ),
-                                        ct
-                                    ),
+        return ResultItems
+            .ToResult()
+            .IfSuccessForEachAsync(
+                id =>
+                    toDoService
+                        .ToDoItemToStringAsync(
+                            new ToDoItemToStringOptions[] { new(statuses, id.Id) },
                             ct
-                        );
-                }
+                        )
+                        .IfSuccessAsync(
+                            str =>
+                                $"{id.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}".ToResult(),
+                            ct
+                        ),
+                ct
+            )
+            .IfSuccessAsync(
+                values =>
+                {
+                    var text = string.Join(Environment.NewLine, values.ToArray());
 
-                return Items
-                    .ToArray()
-                    .ToReadOnlyMemory()
-                    .ToResult()
-                    .IfSuccessForEachAsync(
-                        i =>
-                            toDoService
-                                .ToDoItemToStringAsync(new(statuses, i.Id), ct)
-                                .IfSuccessAsync(
-                                    str =>
-                                        $"{i.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}".ToResult(),
-                                    ct
-                                ),
-                        ct
-                    )
-                    .IfSuccessAsync(
-                        values =>
+                    return this.PostUiBackground(
+                        () =>
                         {
-                            var text = string.Join(Environment.NewLine, values.ToArray());
+                            ChildrenText = text;
 
-                            return this.PostUiBackground(
-                                () =>
-                                {
-                                    ChildrenText = text;
-
-                                    return Result.Success;
-                                },
-                                ct
-                            );
+                            return Result.Success;
                         },
                         ct
                     );
-            }
-        );
+                },
+                ct
+            );
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return toDoService.DeleteToDoItemsAsync(ResultIds, ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

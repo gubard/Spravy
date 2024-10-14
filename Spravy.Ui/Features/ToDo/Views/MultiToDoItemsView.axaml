@@ -92,7 +92,7 @@
                                     </Button.Styles>
 
                                     <Button.Flyout>
-                                        <MenuFlyout ItemsSource="{Binding CompactCommands}" />
+                                        <MenuFlyout ItemsSource="{Binding Commands}" />
                                     </Button.Flyout>
 
                                     <i:Icon Value="mdi-dots-horizontal" />

@@ -3,7 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class LeafToDoItemsViewModel
     : NavigatableViewModelBase,
         IObjectParameters,
-        IToDoMultiItems,
+        IToDoItemEditId,
         IRemove
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
@@ -138,7 +138,7 @@ public partial class LeafToDoItemsViewModel
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.UpdateUi(spravyCommandNotifyService.LeafToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
             }
             else
             {
@@ -165,5 +165,17 @@ public partial class LeafToDoItemsViewModel
     public Result RemoveUi(ToDoItemEntityNotify item)
     {
         return ToDoSubItemsViewModel.RemoveUi(item);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel
+            .GetSelectedItems()
+            .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
     }
 }

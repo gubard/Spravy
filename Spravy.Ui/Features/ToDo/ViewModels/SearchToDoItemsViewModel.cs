@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems, IRemove
+public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId, IRemove
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
@@ -29,7 +29,6 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoM
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
-    public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<string> SearchTexts { get; }
@@ -87,7 +86,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoM
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.UpdateUi(spravyCommandNotifyService.SearchToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
             }
             else
             {
@@ -99,5 +98,17 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoM
     public Result RemoveUi(ToDoItemEntityNotify item)
     {
         return ToDoSubItemsViewModel.RemoveUi(item);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel
+            .GetSelectedItems()
+            .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 }

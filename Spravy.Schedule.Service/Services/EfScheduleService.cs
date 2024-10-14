@@ -14,27 +14,32 @@ public class EfScheduleService : IScheduleService
         this.eventBusService = eventBusService;
     }
 
-    public Cvtar AddTimerAsync(AddTimerParameters parameters, CancellationToken ct)
+    public Cvtar AddTimerAsync(ReadOnlyMemory<AddTimerParameters> parameters, CancellationToken ct)
     {
-        var newTimer = new TimerEntity
-        {
-            Id = Guid.NewGuid(),
-            EventId = parameters.EventId,
-            DueDateTime = parameters.DueDateTime,
-            Content = parameters.Content.ToArray(),
-            Name = parameters.Name,
-        };
-
         return dbContextFactory
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .Set<TimerEntity>()
-                                .AddEntityAsync(newTimer, ct)
-                                .ToResultOnlyAsync(),
+                            parameters.IfSuccessForEachAsync(
+                                p =>
+                                    context
+                                        .Set<TimerEntity>()
+                                        .AddEntityAsync(
+                                            new()
+                                            {
+                                                Id = Guid.NewGuid(),
+                                                EventId = p.EventId,
+                                                DueDateTime = p.DueDateTime,
+                                                Content = p.Content.ToArray(),
+                                                Name = p.Name,
+                                            },
+                                            ct
+                                        )
+                                        .ToResultOnlyAsync(),
+                                ct
+                            ),
                         ct
                     ),
                 ct

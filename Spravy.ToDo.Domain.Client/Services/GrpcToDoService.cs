@@ -1,5 +1,4 @@
 using Spravy.Domain.Helpers;
-using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Mapper.Mappers;
 using Spravy.ToDo.Domain.Models;
 
@@ -48,22 +47,26 @@ public class GrpcToDoService
                     .IfSuccessAsync(
                         metadata =>
                             client
-                                .GetActiveToDoItem(
+                                .GetActiveToDoItemAsync(
                                     new() { Id = id.ToByteString() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
-                                .ToResult(),
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    reply => reply.Item.ToOptionActiveToDoItem().ToResult(),
+                                    ct
+                                ),
                         ct
-                    )
-                    .IfSuccessAsync(reply => reply.Item.ToOptionActiveToDoItem().ToResult(), ct),
+                    ),
             ct
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
-        Guid cloneId,
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> CloneToDoItemAsync(
+        ReadOnlyMemory<Guid> cloneIds,
         OptionStruct<Guid> parentId,
         CancellationToken ct
     )
@@ -74,28 +77,43 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .CloneToDoItem(
-                                    new()
-                                    {
-                                        CloneId = cloneId.ToByteString(),
-                                        ParentId = parentId.ToByteString(),
-                                    },
+                        {
+                            var request = new CloneToDoItemRequest
+                            {
+                                ParentId = parentId.ToByteString()
+                            };
+
+                            request.CloneIds.AddRange(
+                                cloneIds.Select(x => x.ToByteString()).ToArray()
+                            );
+
+                            return client
+                                .CloneToDoItemAsync(
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
-                                .ToResult()
-                                .IfSuccess(reply => reply.NewItemId.ToGuid().ToResult()),
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    reply =>
+                                        reply
+                                            .NewItemIds.Select(x => x.ToGuid())
+                                            .ToArray()
+                                            .ToReadOnlyMemory()
+                                            .ToResult(),
+                                    ct
+                                );
+                        },
                         ct
                     ),
             ct
         );
     }
 
-    public Cvtar UpdateToDoItemDescriptionTypeAsync(
-        Guid id,
-        DescriptionType type,
+    public Cvtar ResetToDoItemAsync(
+        ReadOnlyMemory<ResetToDoItemOptions> options,
         CancellationToken ct
     )
     {
@@ -105,76 +123,30 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .UpdateToDoItemDescriptionTypeAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        Type = (DescriptionTypeGrpc)type,
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
+                        {
+                            var request = new ResetToDoItemRequest();
 
-    public Cvtar UpdateReferenceToDoItemAsync(Guid id, Guid referenceId, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateReferenceToDoItemAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        ReferenceId = referenceId.ToByteString(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
+                            request.Items.AddRange(
+                                options.Select(x => x.ToResetToDoItemOptionsGrpc()).ToArray()
+                            );
 
-    public Cvtar ResetToDoItemAsync(ResetToDoItemOptions options, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
+                            return client
                                 .ResetToDoItemAsync(
-                                    options.ToResetToDoItemRequest(),
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
+                                .ConfigureAwait(false);
+                        },
                         ct
                     ),
             ct
         );
     }
 
-    public Cvtar UpdateIconAsync(Guid id, string icon, CancellationToken ct)
+    public Cvtar EditToDoItemsAsync(EditToDoItems options, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -183,8 +155,8 @@ public class GrpcToDoService
                     .IfSuccessAsync(
                         metadata =>
                             client
-                                .UpdateIconAsync(
-                                    new() { Id = id.ToByteString(), Icon = icon, },
+                                .EditToDoItemsAsync(
+                                    new() { Value = options.ToEditToDoItemsGrpc() },
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -210,6 +182,70 @@ public class GrpcToDoService
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(reply => reply.IsUpdated.ToResult(), ct),
+                        ct
+                    ),
+            ct
+        );
+    }
+
+    public Cvtar SwitchCompleteAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                        {
+                            var request = new SwitchCompleteRequest();
+                            request.Ids.AddRange(ids.Select(x => x.ToByteString()).ToArray());
+
+                            return client
+                                .SwitchCompleteAsync(
+                                    request,
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false);
+                        },
+                        ct
+                    ),
+            ct
+        );
+    }
+
+    public Cvtar UpdateToDoItemOrderIndexAsync(
+        ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> options,
+        CancellationToken ct
+    )
+    {
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                        {
+                            var request = new UpdateToDoItemOrderIndexRequest();
+
+                            request.Items.AddRange(
+                                options
+                                    .Select(x => x.ToUpdateOrderIndexToDoItemOptionsGrpc())
+                                    .ToArray()
+                            );
+
+                            return client
+                                .UpdateToDoItemOrderIndexAsync(
+                                    request,
+                                    metadata,
+                                    DateTime.UtcNow.Add(Timeout),
+                                    ct
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false);
+                        },
                         ct
                     ),
             ct
@@ -242,7 +278,7 @@ public class GrpcToDoService
         );
     }
 
-    public Cvtar UpdateIsBookmarkAsync(Guid id, bool isBookmark, CancellationToken ct)
+    public Cvtar RandomizeChildrenOrderIndexAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -250,38 +286,20 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .UpdateIsBookmarkAsync(
-                                    new() { Id = id.ToByteString(), IsBookmark = isBookmark },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
+                        {
+                            var request = new RandomizeChildrenOrderIndexRequest();
+                            request.Ids.AddRange(ids.Select(x => x.ToByteString()).ToArray());
 
-    public Cvtar RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
+                            return client
                                 .RandomizeChildrenOrderIndexAsync(
-                                    new() { Id = id.ToByteString() },
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
+                                .ConfigureAwait(false);
+                        },
                         ct
                     ),
             ct
@@ -399,36 +417,9 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetChildrenToDoItemIdsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(reply => reply.Ids.ToGuid().ToResult(), ct),
-                        ct
-                    ),
-            ct
-        );
-    }
-
     public ConfiguredValueTaskAwaitable<
         Result<ReadOnlyMemory<ToDoShortItem>>
-    > GetChildrenToDoItemShortsAsync(Guid id, CancellationToken ct)
+    > GetShortToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -436,9 +427,13 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .GetChildrenToDoItemShortsAsync(
-                                    new() { Id = id.ToByteString() },
+                        {
+                            var request = new GetShortToDoItemsRequest();
+                            request.Ids.AddRange(ids.Select(x => x.ToByteString()).ToArray());
+
+                            return client
+                                .GetShortToDoItemsAsync(
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -446,16 +441,24 @@ public class GrpcToDoService
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
-                                    reply => reply.Items.ToToDoShortItem().ToResult(),
+                                    reply =>
+                                        reply
+                                            .Items.Select(x => x.ToToDoShortItem())
+                                            .ToArray()
+                                            .ToReadOnlyMemory()
+                                            .ToResult(),
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     ),
             ct
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
+        OptionStruct<Guid> id,
+        ReadOnlyMemory<Guid> ignoreIds,
         CancellationToken ct
     )
     {
@@ -465,16 +468,25 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
-                                .GetRootToDoItemIdsAsync(
-                                    new(),
+                        {
+                            var request = new GetChildrenToDoItemIdsRequest()
+                            {
+                                Id = id.ToByteString()
+                            };
+
+                            request.IgnoreIds.AddRange(ignoreIds.ToByteString().ToArray());
+
+                            return client
+                                .GetChildrenToDoItemIdsAsync(
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
-                                .IfSuccessAsync(reply => reply.Ids.ToGuid().ToResult(), ct),
+                                .IfSuccessAsync(reply => reply.Ids.ToGuid().ToResult(), ct);
+                        },
                         ct
                     ),
             ct
@@ -507,8 +519,8 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
-        AddToDoItemOptions options,
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(
+        ReadOnlyMemory<AddToDoItemOptions> options,
         CancellationToken ct
     )
     {
@@ -518,23 +530,31 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
+                        {
+                            var request = new AddToDoItemRequest();
+
+                            request.Items.AddRange(
+                                options.Select(x => x.ToAddToDoItemOptionsGrpc()).ToArray()
+                            );
+
+                            return client
                                 .AddToDoItemAsync(
-                                    options.ToAddToDoItemRequest(),
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
-                                .IfSuccessAsync(id => id.Id.ToGuid().ToResult(), ct),
+                                .IfSuccessAsync(id => id.Ids.ToGuid().ToResult(), ct);
+                        },
                         ct
                     ),
             ct
         );
     }
 
-    public Cvtar DeleteToDoItemAsync(Guid id, CancellationToken ct)
+    public Cvtar DeleteToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         return CallClientAsync(
             client =>
@@ -542,268 +562,20 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
+                        {
+                            var request = new DeleteToDoItemRequest();
+                            request.Ids.AddRange(ids.Select(x => x.ToByteString()).ToArray());
+
+                            return client
                                 .DeleteToDoItemAsync(
-                                    new() { Id = id.ToByteString() },
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemTypeOfPeriodicityAsync(
-        Guid id,
-        TypeOfPeriodicity type,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemTypeOfPeriodicityAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        Type = (TypeOfPeriodicityGrpc)type,
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemDueDateAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        DueDate = dueDate.ToTimestamp(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(CancellationToken.None)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemCompleteStatusAsync(
-                                    new() { Id = id.ToByteString(), IsCompleted = isComplete },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    CancellationToken.None
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        CancellationToken.None
-                    ),
-            CancellationToken.None
-        );
-    }
-
-    public Cvtar UpdateToDoItemNameAsync(Guid id, string name, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemNameAsync(
-                                    new() { Id = id.ToByteString(), Name = name },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemOrderIndexAsync(
-        UpdateOrderIndexToDoItemOptions options,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemOrderIndexAsync(
-                                    options.ToUpdateToDoItemOrderIndexRequest(),
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemDescriptionAsync(
-                                    new() { Description = description, Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemTypeAsync(
-                                    new() { Id = id.ToByteString(), Type = (ToDoItemTypeGrpc)type },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar AddFavoriteToDoItemAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .AddFavoriteToDoItemAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .RemoveFavoriteToDoItemAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-        Guid id,
-        bool value,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        IsRequiredCompleteInDueDate = value,
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
+                                .ConfigureAwait(false);
+                        },
                         ct
                     ),
             ct
@@ -830,99 +602,6 @@ public class GrpcToDoService
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(reply => reply.Ids.ToGuid().ToResult(), ct),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemAnnuallyPeriodicityAsync(
-        Guid id,
-        AnnuallyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemAnnuallyPeriodicityAsync(
-                                    new()
-                                    {
-                                        Periodicity = periodicity.ToAnnuallyPeriodicityGrpc(),
-                                        Id = id.ToByteString(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemMonthlyPeriodicityAsync(
-        Guid id,
-        MonthlyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemMonthlyPeriodicityAsync(
-                                    new()
-                                    {
-                                        Periodicity = periodicity.ToMonthlyPeriodicityGrpc(),
-                                        Id = id.ToByteString(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemWeeklyPeriodicityAsync(
-        Guid id,
-        WeeklyPeriodicity periodicity,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemWeeklyPeriodicityAsync(
-                                    new()
-                                    {
-                                        Periodicity = periodicity.ToWeeklyPeriodicityGrpc(),
-                                        Id = id.ToByteString(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
                         ct
                     ),
             ct
@@ -963,58 +642,8 @@ public class GrpcToDoService
         );
     }
 
-    public Cvtar UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemParentAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        ParentId = parentId.ToByteString(),
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar ToDoItemToRootAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .ToDoItemToRootAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
     public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
-        ToDoItemToStringOptions options,
+        ReadOnlyMemory<ToDoItemToStringOptions> options,
         CancellationToken ct
     )
     {
@@ -1024,9 +653,16 @@ public class GrpcToDoService
                     .CreateAsync(ct)
                     .IfSuccessAsync(
                         metadata =>
-                            client
+                        {
+                            var request = new ToDoItemToStringRequest();
+
+                            request.Items.AddRange(
+                                options.Select(x => x.ToToDoItemToStringOptionsGrpc()).ToArray()
+                            );
+
+                            return client
                                 .ToDoItemToStringAsync(
-                                    options.ToToDoItemToStringRequest(),
+                                    request,
                                     metadata,
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
@@ -1040,160 +676,8 @@ public class GrpcToDoService
                                             .ToValueTaskResult()
                                             .ConfigureAwait(false),
                                     ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemDaysOffsetAsync(
-                                    new() { Id = id.ToByteString(), Days = days },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemMonthsOffsetAsync(
-                                    new() { Id = id.ToByteString(), Months = months },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemWeeksOffsetAsync(
-                                    new() { Id = id.ToByteString(), Weeks = weeks },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemYearsOffsetAsync(
-                                    new() { Id = id.ToByteString(), Years = years },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemChildrenTypeAsync(
-        Guid id,
-        ToDoItemChildrenType type,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemChildrenTypeAsync(
-                                    new()
-                                    {
-                                        Id = id.ToByteString(),
-                                        Type = (ToDoItemChildrenTypeGrpc)type,
-                                    },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetSiblingsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    items => items.Items.ToToDoShortItem().ToResult(),
-                                    ct
-                                ),
+                                );
+                        },
                         ct
                     ),
             ct
@@ -1221,235 +705,6 @@ public class GrpcToDoService
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
                                     reply => reply.Item.ToOptionActiveToDoItem().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public Cvtar UpdateToDoItemLinkAsync(Guid id, Option<Uri> link, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateToDoItemLinkAsync(
-                                    new() { Id = id.ToByteString(), Link = link.MapToString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PlannedToDoItemSettings>
-    > GetPlannedToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetPlannedToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToPlannedToDoItemSettings().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<ValueToDoItemSettings>
-    > GetValueToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetValueToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToValueToDoItemSettings().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PeriodicityToDoItemSettings>
-    > GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetPeriodicityToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToPeriodicityToDoItemSettings().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetWeeklyPeriodicityAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToWeeklyPeriodicity().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetMonthlyPeriodicityAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToMonthlyPeriodicity().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetAnnuallyPeriodicityAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToAnnuallyPeriodicity().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<
-        Result<PeriodicityOffsetToDoItemSettings>
-    > GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetPeriodicityOffsetToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString() },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    reply => reply.ToPeriodicityOffsetToDoItemSettings().ToResult(),
                                     ct
                                 ),
                         ct

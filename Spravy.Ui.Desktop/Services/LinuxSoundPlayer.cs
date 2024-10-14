@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Desktop.Services;

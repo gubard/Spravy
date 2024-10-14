@@ -124,7 +124,7 @@ public class Navigator : INavigator
                                     )
                                     .IfSuccessAsync(
                                         () =>
-                                            this.InvokeUiBackgroundAsync(() =>
+                                            this.InvokeUiAsync(() =>
                                             {
                                                 mainSplitViewModel.Content = parameter;
 

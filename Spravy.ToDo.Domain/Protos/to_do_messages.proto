@@ -6,6 +6,28 @@ package spravy.to_do;
 
 import "google/protobuf/timestamp.proto";
 
+message SwitchCompleteRequest {
+  repeated bytes ids = 1;
+}
+
+message SwitchCompleteReply {
+}
+
+message GetShortToDoItemsRequest {
+  repeated bytes ids = 1;
+}
+
+message GetShortToDoItemsReply {
+  repeated ToDoShortItemGrpc items = 1;
+}
+
+message EditToDoItemsRequest {
+  EditToDoItemsGrpc value = 1; 
+}
+
+message EditToDoItemsReply {
+}
+
 message UpdateIconRequest {
   bytes id = 1;
   string icon = 2;
@@ -61,12 +83,12 @@ message UpdateReferenceToDoItemReply {
 }
 
 message CloneToDoItemRequest {
-  bytes clone_id = 1;
+  repeated bytes clone_ids = 1;
   bytes parent_id = 2;
 }
 
 message CloneToDoItemReply {
-  bytes new_item_id = 1;
+  repeated bytes new_item_ids = 1;
 }
 
 message GetChildrenToDoItemShortsRequest {
@@ -75,11 +97,6 @@ message GetChildrenToDoItemShortsRequest {
 
 message GetChildrenToDoItemShortsReply {
   repeated ToDoShortItemGrpc items = 1;
-}
-
-enum DescriptionTypeGrpc {
-  DESCRIPTION_TYPE_GRPC_PLAINTEXT = 0;
-  DESCRIPTION_TYPE_GRPC_MARKDOWN = 1;
 }
 
 message UpdateToDoItemDescriptionTypeRequest {
@@ -91,6 +108,10 @@ message UpdateToDoItemDescriptionTypeReply {
 }
 
 message ResetToDoItemRequest {
+  repeated ResetToDoItemOptionsGrpc items = 1;
+}
+
+message ResetToDoItemOptionsGrpc {
   bytes id = 1;
   bool is_complete_children_task = 2;
   bool is_move_circle_order_index = 3;
@@ -147,7 +168,7 @@ message RandomizeChildrenOrderIndexReply {
 }
 
 message RandomizeChildrenOrderIndexRequest {
-  bytes id = 1;
+  repeated bytes ids = 1;
 }
 
 message GetPeriodicityOffsetToDoItemSettingsRequest {
@@ -276,6 +297,7 @@ message GetToDoItemReply {
 
 message GetChildrenToDoItemIdsRequest {
   bytes id = 1;
+  repeated bytes ignore_ids = 2;
 }
 
 message GetChildrenToDoItemIdsReply {
@@ -368,6 +390,10 @@ message UpdateToDoItemDaysOffsetReply {
 }
 
 message ToDoItemToStringRequest {
+  repeated ToDoItemToStringOptionsGrpc items = 1;
+}
+
+message ToDoItemToStringOptionsGrpc {
   bytes id = 1;
   repeated ToDoItemStatusGrpc statuses = 2;
 }
@@ -461,12 +487,16 @@ message UpdateToDoItemDescriptionReply {
 }
 
 message UpdateToDoItemOrderIndexRequest {
-  bytes id = 1;
-  bytes target_id = 2;
-  bool is_after = 3;
+  repeated UpdateOrderIndexToDoItemOptionsGrpc items = 1;
 }
 
 message UpdateToDoItemOrderIndexReply {
+}
+
+message UpdateOrderIndexToDoItemOptionsGrpc {
+  bytes id = 1;
+  bytes target_id = 2;
+  bool is_after = 3;
 }
 
 message UpdateToDoItemTypeRequest {
@@ -510,30 +540,28 @@ message UpdateToDoItemTypeOfPeriodicityReply {
 }
 
 message DeleteToDoItemRequest {
-  bytes id = 1;
+  repeated bytes ids = 1;
 }
 
 message DeleteToDoItemReply {
 }
 
 message AddToDoItemRequest {
+  repeated AddToDoItemOptionsGrpc items = 1;
+}
+
+message AddToDoItemOptionsGrpc {
   bytes parent_id = 1;
   string name = 2;
   ToDoItemTypeGrpc type = 3;
   string link = 4;
   string description = 5;
   DescriptionTypeGrpc description_type = 6;
+  bytes reference_id = 7;
 }
 
 message AddToDoItemReply {
-  bytes id = 1;
-}
-
-enum TypeOfPeriodicityGrpc {
-  TYPE_OF_PERIODICITY_GRPC_DAILY = 0;
-  TYPE_OF_PERIODICITY_GRPC_WEEKLY = 1;
-  TYPE_OF_PERIODICITY_GRPC_MONTHLY = 2;
-  TYPE_OF_PERIODICITY_GRPC_ANNUALLY = 3;
+  repeated bytes ids = 1;
 }
 
 message DailyPeriodicityGrpc {
@@ -554,6 +582,103 @@ message AnnuallyPeriodicityGrpc {
 message DayOfYearGrpc {
   uint32 month = 1;
   uint32 day = 2;
+}
+
+message EditPropertyStringGrpc {
+  bool is_edit = 1;
+  string value = 2;
+}
+
+message EditPropertyBooleanGrpc {
+  bool is_edit = 1;
+  bool value = 2;
+}
+
+message EditPropertyToDoItemTypeGrpc {
+  bool is_edit = 1;
+  ToDoItemTypeGrpc value = 2;
+}
+
+message EditPropertyUInt32Grpc {
+  bool is_edit = 1;
+  uint32 value = 2;
+}
+
+message EditPropertyBytesGrpc {
+  bool is_edit = 1;
+  bytes value = 2;
+}
+
+message EditPropertyDescriptionTypeGrpc {
+  bool is_edit = 1;
+  DescriptionTypeGrpc value = 2;
+}
+
+message EditPropertyDaysOfYearGrpc {
+  bool is_edit = 1;
+  repeated DayOfYearGrpc value = 2;
+}
+
+message EditPropertyUInt32sGrpc {
+  bool is_edit = 1;
+  repeated uint32 value = 2;
+}
+
+message EditPropertyToDoItemChildrenTypeGrpc {
+  bool is_edit = 1;
+  ToDoItemChildrenTypeGrpc value = 2;
+}
+
+message EditPropertyTimestampGrpc {
+  bool is_edit = 1;
+  google.protobuf.Timestamp value = 2;
+}
+
+message EditPropertyTypeOfPeriodicityGrpc {
+  bool is_edit = 1;
+  TypeOfPeriodicityGrpc value = 2;
+}
+
+message EditPropertyDaysOfWeekGrpc {
+  bool is_edit = 1;
+  repeated DayOfWeekGrpc value = 2;
+}
+
+message EditToDoItemsGrpc {
+  repeated bytes ids = 1;
+  EditPropertyStringGrpc name = 2;
+  EditPropertyBooleanGrpc is_favorite = 3;
+  EditPropertyToDoItemTypeGrpc type = 4;
+  EditPropertyStringGrpc description = 5;
+  EditPropertyStringGrpc link = 6;
+  EditPropertyBytesGrpc parent_id = 7;
+  EditPropertyDescriptionTypeGrpc description_type = 8;
+  EditPropertyBytesGrpc reference_id = 9;
+  EditPropertyDaysOfYearGrpc annually_days = 10;
+  EditPropertyUInt32sGrpc monthly_days = 11;
+  EditPropertyToDoItemChildrenTypeGrpc children_type = 12;
+  EditPropertyTimestampGrpc due_date = 13;
+  EditPropertyUInt32Grpc DaysOffset = 14;
+  EditPropertyUInt32Grpc MonthsOffset = 15;
+  EditPropertyUInt32Grpc WeeksOffset = 16;
+  EditPropertyUInt32Grpc YearsOffset = 17;
+  EditPropertyBooleanGrpc is_required_complete_in_due_date = 18;
+  EditPropertyTypeOfPeriodicityGrpc type_of_periodicity = 19;
+  EditPropertyDaysOfWeekGrpc weekly_days = 20;
+  EditPropertyBooleanGrpc is_bookmark = 21;
+  EditPropertyStringGrpc icon = 22;
+}
+
+enum DescriptionTypeGrpc {
+  DESCRIPTION_TYPE_GRPC_PLAINTEXT = 0;
+  DESCRIPTION_TYPE_GRPC_MARKDOWN = 1;
+}
+
+enum TypeOfPeriodicityGrpc {
+  TYPE_OF_PERIODICITY_GRPC_DAILY = 0;
+  TYPE_OF_PERIODICITY_GRPC_WEEKLY = 1;
+  TYPE_OF_PERIODICITY_GRPC_MONTHLY = 2;
+  TYPE_OF_PERIODICITY_GRPC_ANNUALLY = 3;
 }
 
 enum DayOfWeekGrpc {

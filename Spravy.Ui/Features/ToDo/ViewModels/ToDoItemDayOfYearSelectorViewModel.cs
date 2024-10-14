@@ -1,12 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
+public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IEditToDoItems
 {
-    private readonly IToDoService toDoService;
-
-    public ToDoItemDayOfYearSelectorViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
+    public ToDoItemDayOfYearSelectorViewModel(ToDoItemEntityNotify item)
     {
-        this.toDoService = toDoService;
         Item = item;
 
         DaysOfYear = new(
@@ -35,19 +32,20 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     public AvaloniaList<DayOfYearSelectItem> DaysOfYear { get; }
     public ToDoItemEntityNotify Item { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
-            Item.Id,
-            new(
-                DaysOfYear
-                    .SelectMany(x =>
-                        x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
-                    )
-                    .ToArray()
-            ),
-            ct
-        );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetAnnuallyDays(
+                new(
+                    DaysOfYear
+                        .SelectMany(x =>
+                            x.Days.Where(y => y.IsSelected)
+                                .Select(y => new DayOfYear(y.Day, x.Month))
+                        )
+                        .ToArray()
+                )
+            );
     }
 
     public Result UpdateItemUi()

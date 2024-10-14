@@ -1,8 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ResetToDoItemViewModel : DialogableViewModelBase
+public partial class ResetToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IObjectStorage objectStorage;
+    private readonly IToDoService toDoService;
 
     [ObservableProperty]
     private bool isCompleteCurrentTask;
@@ -16,25 +17,24 @@ public partial class ResetToDoItemViewModel : DialogableViewModelBase
     [ObservableProperty]
     private bool isOnlyCompletedTasks;
 
-    public ResetToDoItemViewModel(Option<ToDoItemEntityNotify> item, IObjectStorage objectStorage)
+    public ResetToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        IObjectStorage objectStorage,
+        IToDoService toDoService
+    )
+        : base(item, items)
     {
         this.objectStorage = objectStorage;
-        Item = item.GetNullable();
+        this.toDoService = toDoService;
     }
-
-    public ToDoItemEntityNotify? Item { get; }
 
     public override string ViewId
     {
         get =>
-            Item is null
-                ? $"{TypeCache<ResetToDoItemViewModel>.Type.Name}"
-                : $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Item.CurrentId}";
-    }
-
-    public Result Stop()
-    {
-        return Result.Success;
+            EditItem.TryGetValue(out var editItem)
+                ? $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{editItem.Id}"
+                : $"{TypeCache<ResetToDoItemViewModel>.Type.Name}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -62,5 +62,26 @@ public partial class ResetToDoItemViewModel : DialogableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return ResultCurrentIds
+            .ToResult()
+            .IfSuccessForEach(id =>
+                new ResetToDoItemOptions(
+                    id,
+                    IsCompleteChildrenTask,
+                    IsMoveCircleOrderIndex,
+                    IsOnlyCompletedTasks,
+                    IsCompleteCurrentTask
+                ).ToResult()
+            )
+            .IfSuccessAsync(options => toDoService.ResetToDoItemAsync(options, ct), ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

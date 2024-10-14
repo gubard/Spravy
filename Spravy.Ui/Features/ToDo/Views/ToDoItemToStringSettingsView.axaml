@@ -9,11 +9,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemToStringSettingsView"
              x:DataType="vm:ToDoItemToStringSettingsViewModel">
-    <v:GroupBoxControl Header="{Binding Item.Name}">
+    <v:GroupBoxControl Header="{Binding Name}">
         <StackPanel>
-            <v:PathControl IsVisible="{Binding Item, Converter={StaticResource NullToBooleanConverter}}"
-                           Classes="alignment-center read-only-to-do-item"
-                           Segments="{Binding Item.Path}" />
+            <v:PathControl Classes="alignment-center read-only-to-do-item"
+                           Segments="{Binding Path}" />
 
             <ItemsControl ItemsSource="{Binding Statuses}">
                 <ItemsControl.DataTemplates>

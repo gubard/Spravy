@@ -1,19 +1,29 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class EditDescriptionViewModel : DialogableViewModelBase
+public class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
+    private readonly IToDoService toDoService;
+
     public EditDescriptionViewModel(
-        ToDoItemEntityNotify item,
-        EditDescriptionContentViewModel content
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
+        EditDescriptionContentViewModel content,
+        IToDoService toDoService
     )
+        : base(editItem, editItems)
     {
-        Item = item;
         Content = content;
+        this.toDoService = toDoService;
+
+        if (!editItem.TryGetValue(out var item))
+        {
+            return;
+        }
+
         Content.DescriptionType = item.DescriptionType;
         Content.Description = item.Description;
     }
 
-    public ToDoItemEntityNotify Item { get; }
     public EditDescriptionContentViewModel Content { get; }
 
     public override string ViewId
@@ -29,5 +39,21 @@ public class EditDescriptionViewModel : DialogableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return toDoService.EditToDoItemsAsync(
+            new EditToDoItems()
+                .SetIds(ResultIds)
+                .SetDescriptionType(new(Content.DescriptionType))
+                .SetDescription(new(Content.Description)),
+            ct
+        );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

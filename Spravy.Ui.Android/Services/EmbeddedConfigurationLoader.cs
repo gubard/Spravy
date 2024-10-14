@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Spravy.Ui.Android.Services;
 
 public class EmbeddedConfigurationLoader : IConfigurationLoader

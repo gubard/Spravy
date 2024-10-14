@@ -90,7 +90,7 @@ public static class UiHelper
             Complete = commands.Complete.Command;
             RemoveFromFavorite = commands.RemoveFromFavorite.Command;
             AddToFavorite = commands.AddToFavorite.Command;
-            OpenLink = commands.OpenLink.Command;
+            AddChild = commands.AddChild.Command;
             SendNewVerificationCode = commands.SendNewVerificationCode.Command;
             VerificationCodeViewModelInitialized = commands
                 .VerificationCodeViewModelInitialized
@@ -98,7 +98,6 @@ public static class UiHelper
             NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
             Back = commands.Back.Command;
             SwitchPane = commands.SwitchPane.Command;
-            AddRootToDoItem = commands.AddRootToDoItem.Command;
             Logout = commands.Logout.Command;
             RefreshCurrentView = commands.RefreshCurrentView.Command;
             SetToDoItemDescription = commands.SetToDoItemDescription.Command;
@@ -141,6 +140,7 @@ public static class UiHelper
     }
 
     public static readonly ICommand CopyLogin;
+    public static readonly ICommand AddChild;
     public static readonly ICommand MainSplitViewModelInitialized;
     public static readonly ICommand UpdateEmail;
     public static readonly ICommand NavigateToPolicy;
@@ -152,7 +152,6 @@ public static class UiHelper
     public static readonly ICommand Complete;
     public static readonly ICommand RemoveFromFavorite;
     public static readonly ICommand AddToFavorite;
-    public static readonly ICommand OpenLink;
     public static readonly ICommand SendNewVerificationCode;
     public static readonly ICommand NavigateToRootToDoItems;
     public static readonly ICommand NavigateToTodayToDoItems;
@@ -163,7 +162,6 @@ public static class UiHelper
     public static readonly ICommand NavigateToCreateUser;
     public static readonly ICommand NavigateToSetting;
     public static readonly ICommand SwitchPane;
-    public static readonly ICommand AddRootToDoItem;
     public static readonly ICommand AddTimer;
     public static readonly ICommand DeleteTimer;
     public static readonly ICommand Logout;

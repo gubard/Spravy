@@ -36,10 +36,10 @@
                 </ScrollViewer>
 
                 <Panel Grid.Column="2"
-                       IsVisible="{Binding CommandItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                       IsVisible="{Binding Item.Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                     <ItemsControl HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
-                                  ItemsSource="{Binding CommandItems}"
+                                  ItemsSource="{Binding Item.Commands}"
                                   Classes="adaptive-commands-items-control">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -51,7 +51,7 @@
                             <DataTemplate DataType="sm:SpravyCommandNotify">
                                 <Button Classes="mode-press"
                                         Command="{Binding Item.Command}"
-                                        CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel.Item}"
+                                        CommandParameter="{Binding $parent[v:ToDoItemView].ViewModel}"
                                         ToolTip.Tip="{Binding Text}">
                                     <i:Icon Value="{Binding Kind}" />
                                 </Button>
@@ -70,7 +70,7 @@
                             <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
                                 <Setter Property="CommandParameter"
-                                        Value="{Binding $parent[v:ToDoItemView].ViewModel.Item}" />
+                                        Value="{Binding $parent[v:ToDoItemView].ViewModel}" />
 
                                 <Setter Property="Icon">
                                     <Template>
@@ -81,7 +81,7 @@
                         </Button.Styles>
 
                         <Button.Flyout>
-                            <MenuFlyout ItemsSource="{Binding CommandItems}" />
+                            <MenuFlyout ItemsSource="{Binding Item.Commands}" />
                         </Button.Flyout>
 
                         <i:Icon Value="mdi-dots-horizontal" />

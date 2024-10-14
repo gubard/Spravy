@@ -143,7 +143,6 @@ public partial class MainView : UserControl
         }
 
         UiHelper.DragPanel.Children.Remove(UiHelper.DragControl);
-        await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
         await uiApplicationService.RefreshCurrentViewAsync(CancellationToken.None);
     }
 }

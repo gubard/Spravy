@@ -1,16 +1,21 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemToStringSettingsViewModel : DialogableViewModelBase
+public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly AvaloniaList<CheckedItem<ToDoItemStatus>> statuses = new();
+    private readonly IToDoService toDoService;
+    private readonly IClipboardService clipboardService;
 
     public ToDoItemToStringSettingsViewModel(
         Option<ToDoItemEntityNotify> item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        IToDoService toDoService,
+        IClipboardService clipboardService
     )
+        : base(item, items)
     {
-        Item = item.GetNullable();
-        Items = new(items.ToArray());
+        this.toDoService = toDoService;
+        this.clipboardService = clipboardService;
 
         var select = UiHelper
             .ToDoItemStatuses.ToArray()
@@ -19,8 +24,6 @@ public class ToDoItemToStringSettingsViewModel : DialogableViewModelBase
         statuses.AddRange(select);
     }
 
-    public ToDoItemEntityNotify? Item { get; }
-    public AvaloniaList<ToDoItemEntityNotify> Items { get; }
     public IEnumerable<CheckedItem<ToDoItemStatus>> Statuses => statuses;
 
     public override string ViewId
@@ -36,5 +39,26 @@ public class ToDoItemToStringSettingsViewModel : DialogableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        var status = Statuses.Where(x => x.IsChecked).Select(x => x.Item).ToArray();
+
+        return ResultItems
+            .ToResult()
+            .IfSuccessForEach(x => new ToDoItemToStringOptions(status, x.CurrentId).ToResult())
+            .IfSuccessAsync(
+                options =>
+                    toDoService
+                        .ToDoItemToStringAsync(options, ct)
+                        .IfSuccessAsync(text => clipboardService.SetTextAsync(text, ct), ct),
+                ct
+            );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

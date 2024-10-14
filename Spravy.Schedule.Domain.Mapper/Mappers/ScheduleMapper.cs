@@ -9,9 +9,11 @@ public static partial class ScheduleMapper
 
     public static partial TimerItemGrpc ToTimerItemGrpc(this TimerItem grpc);
 
-    public static partial AddTimerParameters ToAddTimerParameters(this AddTimerRequest grpc);
+    public static partial AddTimerParameters ToAddTimerParameters(this AddTimerParametersGrpc grpc);
 
-    public static partial AddTimerRequest ToAddTimerRequest(this AddTimerParameters grpc);
+    public static partial AddTimerParametersGrpc ToAddTimerRequestGrpc(
+        this AddTimerParameters grpc
+    );
 
     public static partial ReadOnlyMemory<TimerItem> ToTimerItem(
         this IEnumerable<TimerItemGrpc> grpc

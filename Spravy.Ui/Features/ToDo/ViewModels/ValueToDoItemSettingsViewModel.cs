@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     private readonly IToDoService toDoService;
 
@@ -21,22 +21,16 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
         Item = item;
         Icon = item.Icon;
         ChildrenType = item.ChildrenType;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
     }
 
     public ToDoItemEntityNotify Item { get; }
-    public SpravyCommand InitializedCommand { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
-            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct);
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetChildrenType(new(ChildrenType))
+            .SetIcon(new(Icon));
     }
 
     public Result UpdateItemUi()
@@ -45,29 +39,5 @@ public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IApplySetti
         Item.Icon = Icon;
 
         return Result.Success;
-    }
-
-    public Cvtar RefreshAsync(CancellationToken ct)
-    {
-        return toDoService
-            .GetValueToDoItemSettingsAsync(Item.Id, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ChildrenType = setting.ChildrenType;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
     }
 }

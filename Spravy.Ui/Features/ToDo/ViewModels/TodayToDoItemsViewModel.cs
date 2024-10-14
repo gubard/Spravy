@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems
+public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 {
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
@@ -69,12 +69,24 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.UpdateUi(spravyCommandNotifyService.TodayToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
             }
             else
             {
                 Commands.Clear();
             }
         }
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel
+            .GetSelectedItems()
+            .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 }

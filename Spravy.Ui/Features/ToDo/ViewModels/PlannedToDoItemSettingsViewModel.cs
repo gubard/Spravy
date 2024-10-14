@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     private readonly IToDoService toDoService;
 
@@ -28,21 +28,14 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IApplySet
 
     private ToDoItemEntityNotify Item { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
-            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
-            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
-            .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        Item.Id,
-                        IsRequiredCompleteInDueDate,
-                        ct
-                    ),
-                ct
-            );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetChildrenType(new(ChildrenType))
+            .SetDueDate(new(DueDate))
+            .SetIcon(new(Icon))
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate));
     }
 
     public Result UpdateItemUi()

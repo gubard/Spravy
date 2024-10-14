@@ -1,12 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
+public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IEditToDoItems
 {
-    private readonly IToDoService toDoService;
-
-    public ToDoItemDayOfWeekSelectorViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
+    public ToDoItemDayOfWeekSelectorViewModel(ToDoItemEntityNotify item)
     {
-        this.toDoService = toDoService;
         Item = item;
         DayOfWeeks = new(UiHelper.DayOfWeeks.Select(x => new Selected<DayOfWeek>(x)).ToArray());
         Update();
@@ -15,13 +12,11 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     public AvaloniaList<Selected<DayOfWeek>> DayOfWeeks { get; }
     public ToDoItemEntityNotify Item { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-            Item.Id,
-            new(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value).ToArray()),
-            ct
-        );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetWeeklyDays(new(DayOfWeeks.Where(x => x.IsSelect).Select(x => x.Value).ToArray()));
     }
 
     private Result Update()

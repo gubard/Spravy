@@ -18,7 +18,7 @@ public partial class ToDoItemView : NavigatableUserControl<ToDoItemViewModel>
                 return;
             }
 
-            viewModel.Commands.InitializedCommand.Command.Execute(viewModel);
+            viewModel.InitializedCommand.Command.Execute(viewModel);
         };
     }
 }

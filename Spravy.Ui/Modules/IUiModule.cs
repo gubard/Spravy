@@ -6,7 +6,6 @@ using Spravy.Schedule.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
 using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
-using ISoundPlayer = Spravy.Ui.Interfaces.ISoundPlayer;
 
 namespace Spravy.Ui.Modules;
 
@@ -61,7 +60,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(MultiToDoItemsView))]
 [Transient(typeof(TimersView))]
 [Transient(typeof(ToDoItemView))]
-[Transient(typeof(ToDoItemCommands))]
 [Transient(typeof(ResetToDoItemView))]
 [Transient(typeof(RootToDoItemsView))]
 [Transient(typeof(ToDoItemContentView))]

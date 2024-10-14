@@ -1,12 +1,12 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     private readonly IToDoService toDoService;
     private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
-    private IApplySettings periodicity;
+    private IEditToDoItems periodicity;
 
     [ObservableProperty]
     private bool isRequiredCompleteInDueDate;
@@ -43,38 +43,23 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
 
     public ToDoItemEntityNotify Item { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService
-            .UpdateToDoItemChildrenTypeAsync(Item.Id, ChildrenType, ct)
-            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Item.Id, DueDate, ct), ct)
-            .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        Item.Id,
-                        IsRequiredCompleteInDueDate,
-                        ct
-                    ),
-                ct
-            )
-            .IfSuccessAsync(
-                () =>
-                    toDoService.UpdateToDoItemTypeOfPeriodicityAsync(
-                        Item.Id,
-                        TypeOfPeriodicity,
-                        ct
-                    ),
-                ct
-            )
-            .IfSuccessAsync(() => toDoService.UpdateIconAsync(Item.Id, Icon, ct), ct)
-            .IfSuccessAsync(() => Periodicity.ApplySettingsAsync(ct), ct);
+        return Periodicity
+            .GetEditToDoItems()
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate))
+            .SetChildrenType(new(ChildrenType))
+            .SetDueDate(new(DueDate))
+            .SetTypeOfPeriodicity(new(TypeOfPeriodicity))
+            .SetIcon(new(Icon))
+            .SetIds(new[] { Item.Id });
     }
 
-    private IApplySettings CreatePeriodicity()
+    private IEditToDoItems CreatePeriodicity()
     {
         return TypeOfPeriodicity switch
         {
-            TypeOfPeriodicity.Daily => new EmptyApplySettings(),
+            TypeOfPeriodicity.Daily => new EmptyEditToDoItems(),
             TypeOfPeriodicity.Weekly => viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item),
             TypeOfPeriodicity.Monthly
                 => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item),
@@ -104,8 +89,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IAppl
         Item.TypeOfPeriodicity = TypeOfPeriodicity;
         Item.DueDate = DueDate;
         Item.Icon = Icon;
-        Periodicity.UpdateItemUi();
 
-        return Result.Success;
+        return Periodicity.UpdateItemUi();
     }
 }

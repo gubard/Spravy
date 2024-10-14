@@ -1,44 +1,35 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class AddToDoItemViewModel : DialogableViewModelBase
+public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IObjectStorage objectStorage;
+    private readonly IToDoService toDoService;
 
     public AddToDoItemViewModel(
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
+        IObjectStorage objectStorage,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
-        IObjectStorage objectStorage
+        IToDoService toDoService
     )
+        : base(editItem, editItems)
     {
+        this.objectStorage = objectStorage;
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
-        this.objectStorage = objectStorage;
-        Parent = null;
+        this.toDoService = toDoService;
     }
 
-    public AddToDoItemViewModel(
-        ToDoItemEntityNotify parent,
-        ToDoItemContentViewModel toDoItemContent,
-        EditDescriptionContentViewModel descriptionContent,
-        IObjectStorage objectStorage
-    )
-    {
-        ToDoItemContent = toDoItemContent;
-        DescriptionContent = descriptionContent;
-        this.objectStorage = objectStorage;
-        Parent = parent;
-    }
-
-    public ToDoItemEntityNotify? Parent { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
 
     public override string ViewId
     {
         get =>
-            Parent is null
-                ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}"
-                : $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{Parent.Id}";
+            EditItem.TryGetValue(out var editItem)
+                ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{editItem.Id}"
+                : $"{TypeCache<AddToDoItemViewModel>.Type.Name}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -70,32 +61,58 @@ public class AddToDoItemViewModel : DialogableViewModelBase
         return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
     }
 
-    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
+    private AddToDoItemOptions ConverterToAddToDoItemOptions()
     {
-        if (Parent is null)
-        {
-            return new AddToDoItemOptions(
-                new(),
-                ToDoItemContent.Name,
-                ToDoItemContent.Type,
-                DescriptionContent.Description,
-                DescriptionContent.DescriptionType,
-                ToDoItemContent.Link.ToOptionUri()
-            ).ToResult();
-        }
-
-        return ConverterToAddToDoItemOptions(Parent.Id);
+        return new(
+            new(),
+            ToDoItemContent.Name,
+            ToDoItemContent.Type,
+            DescriptionContent.Description,
+            DescriptionContent.DescriptionType,
+            ToDoItemContent.Link.ToOptionUri(),
+            new()
+        );
     }
 
-    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId)
+    private AddToDoItemOptions ConverterToAddToDoItemOptions(Guid parentId)
     {
-        return new AddToDoItemOptions(
+        return new(
             parentId.ToOption(),
             ToDoItemContent.Name,
             ToDoItemContent.Type,
             DescriptionContent.Description,
             DescriptionContent.DescriptionType,
-            ToDoItemContent.Link.ToOptionUri()
-        ).ToResult();
+            ToDoItemContent.Link.ToOptionUri(),
+            new()
+        );
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return Result
+            .AwaitableSuccess.IfSuccessAsync(
+                () =>
+                {
+                    if (ResultIds.IsEmpty)
+                    {
+                        return toDoService.AddToDoItemAsync(
+                            new[] { ConverterToAddToDoItemOptions() },
+                            ct
+                        );
+                    }
+
+                    return ResultIds
+                        .ToResult()
+                        .IfSuccessForEach(x => ConverterToAddToDoItemOptions(x).ToResult())
+                        .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct);
+                },
+                ct
+            )
+            .ToResultOnlyAsync();
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

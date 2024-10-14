@@ -21,25 +21,9 @@ public class AddToDoItemToFavoriteEventViewModel : ViewModelBase, IEventViewMode
         this.toDoCache = toDoCache;
     }
 
-    public string ViewId => TypeCache<AddToDoItemToFavoriteEventViewModel>.Type.ToString();
+    public string ViewId => TypeCache<AddToDoItemToFavoriteEventViewModel>.Type.Name;
     public Guid Id => AddToDoItemToFavoriteEventOptions.EventId;
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetContentAsync(
-        CancellationToken ct
-    )
-    {
-        return ToDoItemSelectorViewModel
-            .GetSelectedItem()
-            .IfSuccessAsync(
-                selectedItem =>
-                    serializer.SerializeAsync(
-                        new AddToDoItemToFavoriteEventOptions { ToDoItemId = selectedItem.Id, },
-                        ct
-                    ),
-                ct
-            );
-    }
 
     public Cvtar LoadStateAsync(CancellationToken ct)
     {
@@ -69,5 +53,21 @@ public class AddToDoItemToFavoriteEventViewModel : ViewModelBase, IEventViewMode
             new AddToDoItemToFavoriteEventViewModelSettings(this),
             ct
         );
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetContentAsync(
+        CancellationToken ct
+    )
+    {
+        return ToDoItemSelectorViewModel
+            .GetSelectedItem()
+            .IfSuccessAsync(
+                selectedItem =>
+                    serializer.SerializeAsync(
+                        new AddToDoItemToFavoriteEventOptions { ToDoItemId = selectedItem.Id, },
+                        ct
+                    ),
+                ct
+            );
     }
 }

@@ -13,7 +13,7 @@
     <c:GroupBoxControl Header="{DynamicResource ToDoItemCreateTimerView.Header}">
         <StackPanel>
             <ScrollViewer Classes="horizontal">
-                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
+                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
             </ScrollViewer>
 
             <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />

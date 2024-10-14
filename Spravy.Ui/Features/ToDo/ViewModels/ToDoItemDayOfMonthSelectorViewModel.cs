@@ -1,12 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
+public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IEditToDoItems
 {
-    private readonly IToDoService toDoService;
-
-    public ToDoItemDayOfMonthSelectorViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
+    public ToDoItemDayOfMonthSelectorViewModel(ToDoItemEntityNotify item)
     {
-        this.toDoService = toDoService;
         Item = item;
         DaysOfMonth = new();
         DaysOfMonth.AddRange(Item.DaysOfMonth);
@@ -15,13 +12,11 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     public ToDoItemEntityNotify Item { get; }
     public AvaloniaList<int> DaysOfMonth { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
-            Item.Id,
-            new(DaysOfMonth.Select(x => (byte)x).ToArray()),
-            ct
-        );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetMonthlyDays(new(DaysOfMonth.Select(x => (byte)x).ToArray()));
     }
 
     public Result UpdateItemUi()

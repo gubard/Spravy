@@ -3,10 +3,11 @@ using Spravy.Ui.Features.Schedule.Settings;
 
 namespace Spravy.Ui.Features.Schedule.ViewModels;
 
-public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParametersFactory
+public partial class AddTimerViewModel : DialogableViewModelBase, IApplySettings, IStateHolder
 {
     private readonly IViewFactory viewFactory;
     private readonly IObjectStorage objectStorage;
+    private readonly IScheduleService scheduleService;
 
     [ObservableProperty]
     private string name = string.Empty;
@@ -27,11 +28,13 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParam
         IViewFactory viewFactory,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        IScheduleService scheduleService
     )
     {
         this.viewFactory = viewFactory;
         this.objectStorage = objectStorage;
+        this.scheduleService = scheduleService;
         eventViewModel = GetEventViewModel();
 
         AddTime = SpravyCommand.Create<TimeSpan>(
@@ -71,32 +74,37 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParam
         };
     }
 
-    public ConfiguredValueTaskAwaitable<Result<AddTimerParameters>> CreateAddTimerParametersAsync(
-        CancellationToken ct
-    )
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return EventViewModel
             .GetContentAsync(ct)
             .IfSuccessAsync(
                 content =>
-                    new AddTimerParameters(
-                        Date.Date.Add(Time),
-                        EventViewModel.Id,
-                        content,
-                        Name
-                    ).ToResult(),
+                    scheduleService.AddTimerAsync(
+                        new[]
+                        {
+                            new AddTimerParameters(
+                                Date.Date.Add(Time),
+                                EventViewModel.Id,
+                                content,
+                                Name
+                            )
+                        },
+                        ct
+                    ),
                 ct
             );
     }
 
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
+    }
+
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return EventViewModel
-            .LoadStateAsync(ct)
-            .IfSuccessAsync(
-                () => objectStorage.GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct),
-                ct
-            )
+        return objectStorage
+            .GetObjectOrDefaultAsync<AddTimerViewModelSettings>(ViewId, ct)
             .IfSuccessAsync(
                 setting =>
                     this.PostUiBackground(
@@ -116,8 +124,6 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IAddTimerParam
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct)
-            .IfSuccessAsync(() => EventViewModel.SaveStateAsync(ct), ct);
+        return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
     }
 }

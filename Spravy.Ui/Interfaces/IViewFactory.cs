@@ -1,34 +1,17 @@
-using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
 {
     AddTimerViewModel CreateAddTimerViewModel();
-    ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(ToDoItemEntityNotify item);
-    ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header);
     DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item);
-    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel();
-    MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(SortBy sortBy);
     TextViewModel CreateTextViewModel();
     ErrorViewModel CreateErrorViewModel(ReadOnlyMemory<Error> errors);
     ExceptionViewModel CreateExceptionViewModel(Exception exception);
-    ResetToDoItemViewModel CreateResetToDoItemViewModel(ToDoItemEntityNotify item);
-    ResetToDoItemViewModel CreateResetToDoItemViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
-    DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(ToDoItemEntityNotify item);
-    AddToDoItemViewModel CreateAddToDoItemViewModel(ToDoItemEntityNotify parent);
-    AddToDoItemViewModel CreateAddToDoItemViewModel();
-    ToDoItemContentViewModel CreateToDoItemContentViewModel();
     DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item);
-    MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel();
     ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item);
-    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item);
     ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item);
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
     ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
-    EditDescriptionContentViewModel CreateEditDescriptionContentViewModel();
-    EditDescriptionViewModel CreateEditDescriptionViewModel(ToDoItemEntityNotify item);
-    ToDoSubItemsViewModel CreateToDoSubItemsViewModel(SortBy sortBy);
     LoginViewModel CreateLoginViewModel();
     RootToDoItemsViewModel CreateRootToDoItemsViewModel();
     TodayToDoItemsViewModel CreateTodayToDoItemsViewModel();
@@ -39,17 +22,60 @@ public interface IViewFactory
     PolicyViewModel CreatePolicyViewModel();
     EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel();
     CreateUserViewModel CreateCreateUserViewModel();
-    LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ReadOnlyMemory<ToDoItemEntityNotify> items);
-    LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(ToDoItemEntityNotify item);
+    InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask);
     AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel();
 
+    ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    EditDescriptionViewModel CreateEditDescriptionViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    CloneViewModel CreateCloneViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    ResetToDoItemViewModel CreateResetToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    ChangeParentViewModel CreateChangeParentViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
     DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
-        ToDoItemEntityNotify item,
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    AddToDoItemViewModel CreateAddToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
-        ToDoItemEntityNotify item,
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
+
+    CreateReferenceViewModel CreateCreateReferenceViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
@@ -92,23 +118,12 @@ public interface IViewFactory
         ToDoItemEntityNotify item
     );
 
-    InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask);
-
     PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(
         PasswordItemEntityNotify item
     );
 
     ReferenceToDoItemSettingsViewModel CreateReferenceToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
-    );
-
-    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
-    );
-
-    ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     );
 
     ConfirmViewModel CreateConfirmViewModel(
@@ -118,35 +133,17 @@ public interface IViewFactory
     );
 
     RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
-    );
-
-    RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
-        ToDoItemEntityNotify item
     );
 
     ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    ToDoItemToStringSettingsViewModel CreateToDoItemToStringSettingsViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    );
-
-    DeleteToDoItemViewModel CreateDeleteToDoItemViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
     ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    );
-
-    ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 }

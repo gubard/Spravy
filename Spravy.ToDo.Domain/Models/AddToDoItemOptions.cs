@@ -12,7 +12,8 @@ public readonly struct AddToDoItemOptions
         ToDoItemType type,
         string description,
         DescriptionType descriptionType,
-        Option<Uri> link
+        Option<Uri> link,
+        OptionStruct<Guid> referenceId
     )
     {
         ParentId = parentId;
@@ -21,6 +22,7 @@ public readonly struct AddToDoItemOptions
         Description = description;
         DescriptionType = descriptionType;
         Link = link;
+        ReferenceId = referenceId;
     }
 
     public OptionStruct<Guid> ParentId { get; }
@@ -29,4 +31,5 @@ public readonly struct AddToDoItemOptions
     public Option<Uri> Link { get; }
     public string Description { get; }
     public DescriptionType DescriptionType { get; }
+    public OptionStruct<Guid> ReferenceId { get; }
 }

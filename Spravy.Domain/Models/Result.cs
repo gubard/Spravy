@@ -61,6 +61,11 @@ public class Result<TValue>
     where TValue : notnull
 {
     public static readonly Result<TValue> CanceledByUserError = new(new CanceledByUserError());
+    public static readonly ValueTask<Result<TValue>> CanceledByUserErrorValueTask =
+        ValueTask.FromResult(CanceledByUserError);
+    public static readonly ConfiguredValueTaskAwaitable<
+        Result<TValue>
+    > AwaitableCanceledByUserError = CanceledByUserErrorValueTask.ConfigureAwait(false);
 
     public static readonly Func<TValue, Cvtar> EmptyFunc = _ => Result.AwaitableSuccess;
 

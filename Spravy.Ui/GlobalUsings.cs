@@ -85,7 +85,6 @@ global using Spravy.Ui.Features.Schedule.Interfaces;
 global using Spravy.Ui.Features.Schedule.Models;
 global using Spravy.Ui.Features.Schedule.ViewModels;
 global using Spravy.Ui.Features.Schedule.Views;
-global using Spravy.Ui.Features.ToDo.Commands;
 global using Spravy.Ui.Features.ToDo.Enums;
 global using Spravy.Ui.Features.ToDo.Interfaces;
 global using Spravy.Ui.Features.ToDo.Models;

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
+public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
@@ -21,15 +21,11 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     public ToDoItemEntityNotify Item { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
 
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    public EditToDoItems GetEditToDoItems()
     {
-        return ToDoItemSelector
-            .SelectedItem.IfNotNull(nameof(ToDoItemSelector.SelectedItem))
-            .IfSuccessAsync(
-                selectedItem =>
-                    toDoService.UpdateReferenceToDoItemAsync(Item.Id, selectedItem.Id, ct),
-                ct
-            );
+        return new EditToDoItems()
+            .SetIds(new[] { Item.Id })
+            .SetReferenceId(new((ToDoItemSelector.SelectedItem?.Id).ToOption()));
     }
 
     public Result UpdateItemUi()

@@ -36,7 +36,7 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         ServerCallContext context
     )
     {
-        var parameters = request.ToAddTimerParameters();
+        var parameters = request.Items.Select(x => x.ToAddTimerParameters()).ToArray();
         await scheduleService.AddTimerAsync(parameters, context.CancellationToken);
 
         return new();

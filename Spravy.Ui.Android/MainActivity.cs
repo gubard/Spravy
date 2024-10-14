@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using Android.App;
-using Android.OS;
-using Avalonia.Android;
+﻿using Avalonia.Android;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 using Spravy.Ui.Android.Modules;

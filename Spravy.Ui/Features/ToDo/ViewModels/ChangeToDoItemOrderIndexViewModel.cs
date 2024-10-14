@@ -1,9 +1,12 @@
 ﻿namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase, IToDoItemsView
+public partial class ChangeToDoItemOrderIndexViewModel
+    : ToDoItemEditIdViewModel,
+        IToDoItemsView,
+        IApplySettings
 {
     private readonly AvaloniaList<ToDoItemEntityNotify> items;
-    private readonly IToDoUiService toDoUiService;
+    private readonly IToDoService toDoService;
 
     [ObservableProperty]
     private ToDoItemEntityNotify? selectedItem;
@@ -12,73 +15,18 @@ public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase
     private bool isAfter = true;
 
     public ChangeToDoItemOrderIndexViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
+        AvaloniaList<ToDoItemEntityNotify> items,
+        IToDoService toDoService
     )
+        : base(editItem, editItems)
     {
-        this.items = new(items.ToArray());
-        this.toDoUiService = toDoUiService;
-        Item = null;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
+        this.items = items;
+        this.toDoService = toDoService;
     }
 
-    public ChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
-    )
-    {
-        items = new();
-        this.toDoUiService = toDoUiService;
-        Item = item;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-    }
-
-    public ChangeToDoItemOrderIndexViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
-        IToDoUiService toDoUiService
-    )
-    {
-        this.items = new(items.ToArray());
-        this.toDoUiService = toDoUiService;
-        Item = item;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-    }
-
-    public ToDoItemEntityNotify? Item { get; }
-    public SpravyCommand InitializedCommand { get; }
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        if (Item is not null && items.IsEmpty())
-        {
-            return toDoUiService.UpdateSiblingsAsync(Item, this, ct);
-        }
-
-        return toDoUiService.UpdateItemsAsync(items.ToArray(), ct);
-    }
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
@@ -115,5 +63,29 @@ public partial class ChangeToDoItemOrderIndexViewModel : DialogableViewModelBase
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        return SelectedItem
+            .IfNotNull(nameof(SelectedItem))
+            .IfSuccessAsync(
+                si =>
+                    ResultIds
+                        .ToResult()
+                        .IfSuccessForEach(x =>
+                            new UpdateOrderIndexToDoItemOptions(x, si.Id, IsAfter).ToResult()
+                        )
+                        .IfSuccessAsync(
+                            options => toDoService.UpdateToDoItemOrderIndexAsync(options, ct),
+                            ct
+                        ),
+                ct
+            );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 }

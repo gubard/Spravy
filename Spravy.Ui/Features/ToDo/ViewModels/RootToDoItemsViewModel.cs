@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems, IRemove
+public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
@@ -103,7 +103,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems,
         {
             if (ToDoSubItemsViewModel.List.IsMulti)
             {
-                Commands.UpdateUi(spravyCommandNotifyService.RootToDoItemsMulti);
+                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
             }
             else
             {
@@ -115,5 +115,17 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoMultiItems,
     public Result RemoveUi(ToDoItemEntityNotify item)
     {
         return ToDoSubItemsViewModel.RemoveUi(item);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel
+            .GetSelectedItems()
+            .IfSuccess(items => new ToDoItemEditId(new(), items).ToResult());
     }
 }

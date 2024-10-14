@@ -3,7 +3,8 @@ namespace Spravy.Ui.Features.ToDo.Models;
 public partial class ToDoItemEntityNotify
     : NotifyBase,
         IEquatable<ToDoItemEntityNotify>,
-        IObjectParameters
+        IObjectParameters,
+        IToDoItemEditId
 {
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
@@ -103,43 +104,18 @@ public partial class ToDoItemEntityNotify
         orderIndex = uint.MaxValue;
         isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;
-        CompactCommands = new();
-        SingleCommands = new();
+        Commands = new();
         Children = new();
-        MultiCommands = new();
         DaysOfWeek = new();
         DaysOfMonth = new();
         DaysOfYear = new();
         icon = string.Empty;
 
-        MultiCommands.AddRange(
-            [
-                spravyCommandNotifyService.MultiAddChildToDoItem,
-                spravyCommandNotifyService.MultiShowSettingToDoItem,
-                spravyCommandNotifyService.MultiDeleteToDoItem,
-                spravyCommandNotifyService.MultiOpenLeafToDoItem,
-                spravyCommandNotifyService.MultiChangeParentToDoItem,
-                spravyCommandNotifyService.MultiMakeAsRootToDoItem,
-                spravyCommandNotifyService.MultiCopyToClipboardToDoItem,
-                spravyCommandNotifyService.MultiRandomizeChildrenOrderToDoItem,
-                spravyCommandNotifyService.MultiChangeOrderToDoItem,
-                spravyCommandNotifyService.MultiResetToDoItem,
-                spravyCommandNotifyService.MultiCloneToDoItem,
-                spravyCommandNotifyService.MultiOpenLinkToDoItem,
-                spravyCommandNotifyService.MultiAddToFavoriteToDoItem,
-                spravyCommandNotifyService.MultiRemoveFromFavoriteToDoItem,
-                spravyCommandNotifyService.MultiCompleteToDoItem,
-                spravyCommandNotifyService.MultiCreateReferenceToDoItem,
-            ]
-        );
-
         PropertyChanged += OnPropertyChanged;
     }
 
     public Guid Id { get; }
-    public AvaloniaList<SpravyCommandNotify> CompactCommands { get; }
-    public AvaloniaList<SpravyCommandNotify> SingleCommands { get; }
-    public AvaloniaList<SpravyCommandNotify> MultiCommands { get; }
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
     public AvaloniaList<DayOfWeek> DaysOfWeek { get; }
     public AvaloniaList<int> DaysOfMonth { get; }
@@ -158,38 +134,6 @@ public partial class ToDoItemEntityNotify
     public Guid CurrentId
     {
         get => Reference?.Id ?? Id;
-    }
-
-    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
-    {
-        var selected = Children
-            .Where(x => x.IsSelected)
-            .OrderBy(x => x.OrderIndex)
-            .ToArray()
-            .ToReadOnlyMemory();
-
-        if (selected.IsEmpty)
-        {
-            return new(new NonItemSelectedError());
-        }
-
-        return new(selected);
-    }
-
-    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetNotSelectedItems()
-    {
-        var selected = Children
-            .Where(x => !x.IsSelected)
-            .OrderBy(x => x.OrderIndex)
-            .ToArray()
-            .ToReadOnlyMemory();
-
-        if (selected.IsEmpty)
-        {
-            return new(new AllItemSelectedError());
-        }
-
-        return new(selected);
     }
 
     public bool Equals(ToDoItemEntityNotify? other)
@@ -232,6 +176,14 @@ public partial class ToDoItemEntityNotify
         return Id.GetHashCode();
     }
 
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        return new ToDoItemEditId(
+            this.ToOption(),
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty
+        ).ToResult();
+    }
+
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
         if (idParameterName.Span.AreEquals(parameterName))
@@ -249,17 +201,15 @@ public partial class ToDoItemEntityNotify
 
     public Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {
-        CompactCommands.Clear();
-        SingleCommands.Clear();
+        Commands.Clear();
 
-        CompactCommands.AddRange(
+        Commands.AddRange(
             [
                 spravyCommandNotifyService.AddChild,
                 spravyCommandNotifyService.ShowSetting,
                 spravyCommandNotifyService.Delete,
                 spravyCommandNotifyService.OpenLeaf,
                 spravyCommandNotifyService.ChangeParent,
-                spravyCommandNotifyService.MakeAsRoot,
                 spravyCommandNotifyService.CopyToClipboard,
                 spravyCommandNotifyService.RandomizeChildrenOrder,
                 spravyCommandNotifyService.ChangeOrder,
@@ -270,7 +220,7 @@ public partial class ToDoItemEntityNotify
             ]
         );
 
-        CompactCommands.Add(
+        Commands.Add(
             IsBookmark
                 ? spravyCommandNotifyService.RemoveFromBookmark
                 : spravyCommandNotifyService.AddToBookmark
@@ -278,12 +228,10 @@ public partial class ToDoItemEntityNotify
 
         if (!Link.IsNullOrWhiteSpace())
         {
-            CompactCommands.Add(spravyCommandNotifyService.OpenLink);
+            Commands.Add(spravyCommandNotifyService.OpenLink);
         }
 
-        var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
-
-        singleCommands.Add(
+        Commands.Add(
             IsFavorite
                 ? spravyCommandNotifyService.RemoveFromFavorite
                 : spravyCommandNotifyService.AddToFavorite
@@ -291,10 +239,8 @@ public partial class ToDoItemEntityNotify
 
         if (IsCan != ToDoItemIsCan.None)
         {
-            singleCommands.Add(spravyCommandNotifyService.Complete);
+            Commands.Add(spravyCommandNotifyService.Complete);
         }
-
-        SingleCommands.AddRange(singleCommands);
 
         return this.ToResult();
     }

@@ -10,11 +10,11 @@
     <ScrollViewer Classes="vertical">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Classes="alignment-left text-wrap" Text="{Binding Item.Name}" />
+                <TextBlock Classes="alignment-left text-wrap" Text="{Binding Name}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
-                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Item.Path}" />
+                <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
                 <ContentControl Content="{Binding Content}" />
             </StackPanel>
         </c:GroupBoxControl>
