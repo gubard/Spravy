@@ -14,7 +14,7 @@
 
                     <ListBox x:Name="PART_SelectingItemsControl"
                              Grid.Row="1"
-                             ItemsSource="{TemplateBinding CurrentItems}"
+                             ItemsSource="{TemplateBinding Items}"
                              SelectedItem="{TemplateBinding SelectedIcon}"
                              SelectionMode="Single" />
                 </Grid>

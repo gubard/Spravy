@@ -15,15 +15,15 @@ public class IconSelectorControl : TemplatedControl
         string?
     >(nameof(SearchText), defaultBindingMode: BindingMode.TwoWay);
 
-    public static readonly DirectProperty<IconSelectorControl, IEnumerable> CurrentItemsProperty =
+    public static readonly DirectProperty<IconSelectorControl, IEnumerable> ItemsProperty =
         AvaloniaProperty.RegisterDirect<IconSelectorControl, IEnumerable>(
-            nameof(CurrentItems),
-            x => x.CurrentItems
+            nameof(Items),
+            x => x.Items
         );
 
     private SelectingItemsControl? selectingItemsControl;
     private TextBox? searchTextBox;
-    private AvaloniaList<string> currentItems = new();
+    private readonly AvaloniaList<string> items = new();
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -34,7 +34,7 @@ public class IconSelectorControl : TemplatedControl
         UpdateSearchTextBox(tb);
     }
 
-    public IEnumerable CurrentItems => currentItems;
+    public IEnumerable Items => items;
 
     public string? SearchText
     {
@@ -58,46 +58,65 @@ public class IconSelectorControl : TemplatedControl
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == ItemsSourceProperty)
+        if (change.Property == SelectedIconProperty)
         {
-            var itemsSource = change.GetNewValue<IEnumerable<string>?>();
-            UpdateCurrentItems(itemsSource, null);
-        }
-        else if (change.Property == SearchTextProperty)
-        {
-            if (ItemsSource is null)
+            if (selectingItemsControl is null)
             {
                 return;
             }
 
-            var searchText = change.GetNewValue<string?>();
-            UpdateCurrentItems(ItemsSource, searchText);
+            var icon = change.GetNewValue<string?>();
+            var selectedItem = selectingItemsControl.SelectedItem;
 
-            if (searchTextBox is not null)
+            if (icon is null && selectedItem is not null)
+            {
+                selectingItemsControl.SelectedItem = null;
+            }
+            else if (selectedItem is string item && item != icon)
+            {
+                selectingItemsControl.SelectedItem = icon;
+            }
+        }
+        else if (change.Property == ItemsSourceProperty)
+        {
+            var itemsSource = change.GetNewValue<IEnumerable<string>?>();
+            UpdateItems(itemsSource, null);
+        }
+        else if (change.Property == SearchTextProperty)
+        {
+            var searchText = change.GetNewValue<string?>();
+            UpdateItems(ItemsSource, searchText);
+
+            if (searchTextBox is null)
+            {
+                return;
+            }
+
+            if (searchTextBox.Text != searchText)
             {
                 searchTextBox.Text = searchText;
             }
         }
     }
 
-    private void UpdateCurrentItems(IEnumerable<string>? items, string? searchText)
+    private void UpdateItems(IEnumerable<string>? currentItems, string? searchText)
     {
-        currentItems.Clear();
+        items.Clear();
 
-        if (items is null)
+        if (currentItems is null)
         {
             return;
         }
 
         if (searchText.IsNullOrWhiteSpace())
         {
-            currentItems.AddRange(items);
+            items.AddRange(currentItems);
 
             return;
         }
 
         var searchTextUpper = searchText.ToUpperInvariant();
-        currentItems.AddRange(items.Where(x => x.ToUpperInvariant().Contains(searchTextUpper)));
+        items.AddRange(currentItems.Where(x => x.ToUpperInvariant().Contains(searchTextUpper)));
     }
 
     private void UpdateSearchTextBox(TextBox? tb)
@@ -109,11 +128,13 @@ public class IconSelectorControl : TemplatedControl
 
         searchTextBox = tb;
 
-        if (searchTextBox is not null)
+        if (searchTextBox is null)
         {
-            searchTextBox.TextChanged += SearchTextBoxTextChanged;
-            SearchText = searchTextBox.Text;
+            return;
         }
+
+        searchTextBox.TextChanged += SearchTextBoxTextChanged;
+        SearchText = searchTextBox.Text;
     }
 
     private void UpdateSelectingItemsControl(SelectingItemsControl? lb)
@@ -125,11 +146,13 @@ public class IconSelectorControl : TemplatedControl
 
         selectingItemsControl = lb;
 
-        if (selectingItemsControl is not null)
+        if (selectingItemsControl is null)
         {
-            selectingItemsControl.PropertyChanged += SelectingItemsControlPropertyChanged;
-            UpdateSelectedItem(selectingItemsControl);
+            return;
         }
+
+        selectingItemsControl.PropertyChanged += SelectingItemsControlPropertyChanged;
+        UpdateSelectedItem(selectingItemsControl);
     }
 
     private void UpdateSelectedItem(SelectingItemsControl itemsControl)
