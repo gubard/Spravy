@@ -265,6 +265,20 @@ public class SpravyCommandService
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
@@ -272,7 +286,11 @@ public class SpravyCommandService
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
                         ct
@@ -285,6 +303,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -346,6 +378,20 @@ public class SpravyCommandService
                     .IfSuccessAsync(
                         editId =>
                         {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
+                        {
                             if (editId.ResultItems.Length == 1)
                             {
                                 return dialogViewer.ShowConfirmDialogAsync(
@@ -357,7 +403,14 @@ public class SpravyCommandService
                                     vm =>
                                         dialogViewer
                                             .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                            .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                            .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                            .IfSuccessAsync(
+                                                () =>
+                                                    uiApplicationService.RefreshCurrentViewAsync(
+                                                        ct
+                                                    ),
+                                                ct
+                                            ),
                                     ct
                                 );
                             }
@@ -369,7 +422,11 @@ public class SpravyCommandService
                                 vm =>
                                     dialogViewer
                                         .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct),
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             );
                         },
@@ -402,6 +459,20 @@ public class SpravyCommandService
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
@@ -428,6 +499,20 @@ public class SpravyCommandService
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Content,
@@ -435,7 +520,14 @@ public class SpravyCommandService
                                     editId.Item,
                                     editId.Items
                                 ),
-                                vm => vm.ApplySettingsAsync(ct),
+                                vm =>
+                                    dialogViewer
+                                        .CloseDialogAsync(DialogViewLayer.Content, ct)
+                                        .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
                                 ct
                             ),
                         ct
@@ -448,6 +540,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -480,6 +586,20 @@ public class SpravyCommandService
                     .IfSuccessAsync(
                         editId =>
                         {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
+                        {
                             var viewModel = viewFactory.CreateChangeToDoItemOrderIndexViewModel(
                                 editId.Item,
                                 editId.Items
@@ -499,6 +619,13 @@ public class SpravyCommandService
                                                     .IfSuccessAsync(
                                                         () => vm.ApplySettingsAsync(ct),
                                                         ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            uiApplicationService.RefreshCurrentViewAsync(
+                                                                ct
+                                                            ),
+                                                        ct
                                                     ),
                                             ct
                                         ),
@@ -515,6 +642,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -609,6 +750,20 @@ public class SpravyCommandService
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        editId =>
                             dialogViewer.ShowConfirmDialogAsync(
                                 viewFactory,
                                 DialogViewLayer.Input,
@@ -633,6 +788,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -718,6 +887,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(
@@ -1420,6 +1603,20 @@ public class SpravyCommandService
             (toDoItemEditId, ct) =>
                 toDoItemEditId
                     .GetToDoItemEditId()
+                    .IfSuccessAsync(
+                        editId =>
+                        {
+                            if (editId.Item.TryGetValue(out var item))
+                            {
+                                return toDoUiService
+                                    .UpdateItemAsync(item, ct)
+                                    .IfSuccessAsync(() => editId.ToResult(), ct);
+                            }
+
+                            return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                        },
+                        ct
+                    )
                     .IfSuccessAsync(
                         editId =>
                             dialogViewer.ShowConfirmDialogAsync(

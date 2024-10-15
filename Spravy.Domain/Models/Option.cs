@@ -49,4 +49,22 @@ public readonly struct Option<TValue>
 
         return false;
     }
+
+    public Option<TResult> Map<TResult>(Func<TValue, TResult?> func)
+        where TResult : class
+    {
+        if (!TryGetValue(out var result))
+        {
+            return Option<TResult>.None;
+        }
+
+        var v = func.Invoke(result);
+
+        if (v is null)
+        {
+            return Option<TResult>.None;
+        }
+
+        return new(v);
+    }
 }

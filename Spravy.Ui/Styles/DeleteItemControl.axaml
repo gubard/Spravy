@@ -8,7 +8,7 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <ContentPresenter Content="{TemplateBinding Content}" />
                     <Button x:Name="PART_DeleteButton" Grid.Column="1">
-                        <i:Icon Value="mdi-trash" />
+                        <i:Icon Value="mdi-delete" />
                     </Button>
                 </Grid>
             </ControlTemplate>

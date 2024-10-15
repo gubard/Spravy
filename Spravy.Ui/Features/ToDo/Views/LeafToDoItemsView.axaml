@@ -78,7 +78,7 @@
                             <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
-                        <i:Icon Value="dots-horizontal" />
+                        <i:Icon Value="mdi-dots-horizontal" />
                     </Button>
                 </Panel>
             </StackPanel>

@@ -286,6 +286,21 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<DeleteTimerView>());
         }
 
+        if (typeof(ChangeParentViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<ChangeParentView>());
+        }
+
+        if (typeof(CloneViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<CloneView>());
+        }
+
+        if (typeof(CreateReferenceViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<CreateReferenceView>());
+        }
+
         return new(new NotViewForViewModelError(viewModelType.Name));
     }
 }

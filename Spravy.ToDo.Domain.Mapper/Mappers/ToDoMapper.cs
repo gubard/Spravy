@@ -298,9 +298,17 @@ public static partial class ToDoMapper
         this EditPropertyValue<uint> value
     );
 
-    public static partial EditPropertyTimestampGrpc ToEditPropertyTimestampGrpc(
+    public static EditPropertyTimestampGrpc ToEditPropertyTimestampGrpc(
         this EditPropertyValue<DateOnly> value
-    );
+    )
+    {
+        if (value.IsEdit)
+        {
+            return new() { IsEdit = true, Value = value.Value.ToTimestamp() };
+        }
+
+        return new() { IsEdit = false, Value = null };
+    }
 
     public static partial EditPropertyDescriptionTypeGrpc ToEditPropertyDescriptionTypeGrpc(
         this EditPropertyValue<DescriptionType> value
@@ -326,17 +334,12 @@ public static partial class ToDoMapper
         this EditPropertyValue<OptionStruct<Guid>> value
     )
     {
-        if (value.IsEdit)
+        if (!value.IsEdit)
         {
             return new() { IsEdit = false, Value = ByteString.Empty, };
         }
 
-        if (value.Value.TryGetValue(out var guid))
-        {
-            return new() { IsEdit = true, Value = guid.ToByteString(), };
-        }
-
-        return new() { IsEdit = true, Value = ByteString.Empty, };
+        return new() { IsEdit = true, Value = value.Value.ToByteString(), };
     }
 
     public static partial EditPropertyDaysOfYearGrpc ToEditPropertyDaysOfYearGrpc(
@@ -364,9 +367,17 @@ public static partial class ToDoMapper
         return new() { IsEdit = true, Value = string.Empty, };
     }
 
-    public static partial EditPropertyStringGrpc ToEditPropertyStringGrpc(
+    public static EditPropertyStringGrpc ToEditPropertyStringGrpc(
         this EditPropertyValue<string> value
-    );
+    )
+    {
+        if (value.IsEdit)
+        {
+            return new() { IsEdit = true, Value = value.Value, };
+        }
+
+        return new() { IsEdit = false, Value = string.Empty, };
+    }
 
     private static ByteString ToByteString(Guid id)
     {

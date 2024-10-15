@@ -250,7 +250,13 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, CreateToDoItemSelectorViewModel(), toDoService, toDoCache);
+        return new(
+            item,
+            items,
+            CreateToDoItemSelectorViewModel(item, items),
+            toDoService,
+            toDoCache
+        );
     }
 
     public ResetToDoItemViewModel CreateResetToDoItemViewModel(
@@ -266,6 +272,21 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
+        if (items.IsEmpty)
+        {
+            if (item.TryGetValue(out var i))
+            {
+                return new(
+                    item,
+                    items,
+                    CreateToDoItemSelectorViewModel(i.Parent.ToOption(), new[] { i }),
+                    toDoService
+                );
+            }
+
+            return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService);
+        }
+
         return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService);
     }
 
@@ -361,9 +382,10 @@ public class ViewFactory : IViewFactory
     {
         return new(
             item,
-            item.Reference is null
-                ? CreateToDoItemSelectorViewModel()
-                : CreateToDoItemSelectorViewModel(item.Reference),
+            CreateToDoItemSelectorViewModel(
+                item.Reference.ToOption(),
+                ReadOnlyMemory<ToDoItemEntityNotify>.Empty
+            ),
             toDoService,
             toDoCache
         );
@@ -409,7 +431,22 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService, CreateToDoItemSelectorViewModel());
+        if (items.IsEmpty)
+        {
+            if (item.TryGetValue(out var i))
+            {
+                return new(
+                    item,
+                    items,
+                    toDoService,
+                    CreateToDoItemSelectorViewModel(i.Parent.ToOption(), new[] { i })
+                );
+            }
+
+            return new(item, items, toDoService, CreateToDoItemSelectorViewModel(item, items));
+        }
+
+        return new(item, items, toDoService, CreateToDoItemSelectorViewModel(item, items));
     }
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(SortBy sortBy)

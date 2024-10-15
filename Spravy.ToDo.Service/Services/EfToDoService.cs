@@ -774,44 +774,6 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<ToDoShortItem>>
-    > GetChildrenToDoItemShortsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .Set<ToDoItemEntity>()
-                        .AsNoTracking()
-                        .Where(x => x.ParentId == id)
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
-                        .IfSuccessAsync(items => items.ToToDoShortItem().ToResult(), ct),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context
-                        .Set<ToDoItemEntity>()
-                        .AsNoTracking()
-                        .Where(x => x.ParentId == null)
-                        .OrderBy(x => x.OrderIndex)
-                        .Select(x => x.Id)
-                        .ToArrayEntitiesAsync(ct),
-                ct
-            );
-    }
-
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
         CancellationToken ct
     )

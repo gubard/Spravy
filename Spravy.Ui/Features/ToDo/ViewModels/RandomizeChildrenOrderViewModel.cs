@@ -31,10 +31,7 @@ public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySe
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.RandomizeChildrenOrderIndexAsync(
-            ResultItems.Select(x => x.CurrentId),
-            ct
-        );
+        return toDoService.RandomizeChildrenOrderIndexAsync(ResultCurrentIds, ct);
     }
 
     public Result UpdateItemUi()
