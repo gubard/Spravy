@@ -185,13 +185,18 @@ public class SpravyCommandService
         Complete = SpravyCommand.Create<IToDoItemEditId>(
             (toDoItemEditId, ct) =>
             {
-                var playComplete = false;
+                uiApplicationService.StopCurrentView();
 
                 toDoItemEditId
                     .GetToDoItemEditId()
                     .IfSuccessAsync(
                         editId =>
-                            uiApplicationService
+                        {
+                            var playComplete = editId.ResultItems.Any(x =>
+                                x.IsCan == ToDoItemIsCan.CanComplete
+                            );
+
+                            return uiApplicationService
                                 .GetCurrentView<IRemove>()
                                 .IfSuccess(remove =>
                                     this.PostUi(
@@ -206,9 +211,9 @@ public class SpravyCommandService
                                                             return Result.Success;
                                                         case ToDoItemIsCan.CanComplete:
                                                         {
-                                                            playComplete = true;
                                                             item.IsCan = ToDoItemIsCan.None;
                                                             item.Status = ToDoItemStatus.Completed;
+
                                                             return remove.RemoveUi(item);
                                                         }
                                                         case ToDoItemIsCan.CanIncomplete:
@@ -248,7 +253,8 @@ public class SpravyCommandService
                                             ct
                                         ),
                                     ct
-                                ),
+                                );
+                        },
                         ct
                     )
                     .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);

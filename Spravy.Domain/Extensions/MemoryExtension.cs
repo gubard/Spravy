@@ -90,6 +90,27 @@ public static class MemoryExtension
         return result;
     }
 
+    public static bool Any<TSource>(
+        this ReadOnlyMemory<TSource> memory,
+        Func<TSource, bool> predicate
+    )
+    {
+        if (memory.IsEmpty)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < memory.Length; index++)
+        {
+            if (predicate.Invoke(memory.Span[index]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static ReadOnlyMemory<TSource> OrderBy<TSource>(
         this ReadOnlyMemory<TSource> source,
         Func<TSource, uint> keySelector
