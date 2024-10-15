@@ -9,10 +9,15 @@
         <Setter Property="Margin" Value="0,2,0,2" />
         <Setter Property="Template">
             <ControlTemplate>
-                <ListBox x:Name="PART_SelectingItemsControl" 
-                         ItemsSource="{TemplateBinding ItemsSource}"
-                         SelectedItem="{TemplateBinding SelectedIcon}"
-                         SelectionMode="Single" />
+                <Grid RowDefinitions="Auto,*">
+                    <TextBox x:Name="PART_SearchTextBox" Text="{TemplateBinding SearchText}" />
+
+                    <ListBox x:Name="PART_SelectingItemsControl"
+                             Grid.Row="1"
+                             ItemsSource="{TemplateBinding CurrentItems}"
+                             SelectedItem="{TemplateBinding SelectedIcon}"
+                             SelectionMode="Single" />
+                </Grid>
             </ControlTemplate>
         </Setter>
 
