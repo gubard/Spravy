@@ -36,10 +36,10 @@
                 </ScrollViewer>
 
                 <Panel Grid.Column="2"
-                       IsVisible="{Binding Item.Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                       IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                     <ItemsControl HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
-                                  ItemsSource="{Binding Item.Commands}"
+                                  ItemsSource="{Binding Commands}"
                                   Classes="adaptive-commands-items-control">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -81,7 +81,7 @@
                         </Button.Styles>
 
                         <Button.Flyout>
-                            <MenuFlyout ItemsSource="{Binding Item.Commands}" />
+                            <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
                         <i:Icon Value="mdi-dots-horizontal" />

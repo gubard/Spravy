@@ -935,122 +935,125 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .Set<ToDoItemEntity>()
-                                .Where(x => idsArray.Contains(x.Id))
-                                .ToArrayEntitiesAsync(ct)
-                                .IfSuccessForEachAsync(
-                                    item =>
-                                    {
-                                        if (!item.IsCompleted)
-                                        {
-                                            return GetAllChildrenAsync(context, ct)
-                                                .IfSuccessAsync(
-                                                    items =>
-                                                        getterToDoItemParametersService.GetToDoItemParameters(
-                                                            items,
-                                                            item,
-                                                            offset
-                                                        ),
-                                                    ct
-                                                )
-                                                .IfSuccessAsync(
-                                                    parameters =>
+                            GetAllChildrenAsync(context, ct)
+                                .IfSuccessAsync(
+                                    items =>
+                                        context
+                                            .Set<ToDoItemEntity>()
+                                            .Where(x => idsArray.Contains(x.Id))
+                                            .ToArrayEntitiesAsync(ct)
+                                            .IfSuccessForEachAsync(
+                                                item =>
+                                                {
+                                                    if (!item.IsCompleted)
                                                     {
-                                                        if (
-                                                            !parameters.IsCan.HasFlag(
-                                                                ToDoItemIsCan.CanComplete
-                                                            )
-                                                        )
-                                                        {
-                                                            return new Result(
-                                                                new ToDoItemAlreadyCompleteError(
-                                                                    item.Id,
-                                                                    item.Name
-                                                                )
-                                                            )
-                                                                .ToValueTaskResult()
-                                                                .ConfigureAwait(false);
-                                                        }
-
-                                                        switch (item.Type)
-                                                        {
-                                                            case ToDoItemType.Value:
-                                                                item.IsCompleted = true;
-
-                                                                break;
-                                                            case ToDoItemType.Group:
-                                                                break;
-                                                            case ToDoItemType.Planned:
-                                                                item.IsCompleted = true;
-
-                                                                break;
-                                                            case ToDoItemType.Periodicity:
-                                                                break;
-                                                            case ToDoItemType.PeriodicityOffset:
-                                                                break;
-                                                            case ToDoItemType.Circle:
-                                                                item.IsCompleted = true;
-
-                                                                break;
-                                                            case ToDoItemType.Step:
-                                                                item.IsCompleted = true;
-
-                                                                break;
-                                                            case ToDoItemType.Reference:
-                                                                break;
-                                                            default:
-                                                                return new Result(
-                                                                    new ToDoItemTypeOutOfRangeError(
-                                                                        item.Type
-                                                                    )
-                                                                )
-                                                                    .ToValueTaskResult()
-                                                                    .ConfigureAwait(false);
-                                                        }
-
-                                                        return UpdateDueDateAsync(
-                                                                context,
+                                                        return getterToDoItemParametersService
+                                                            .GetToDoItemParameters(
+                                                                items,
                                                                 item,
-                                                                offset,
-                                                                ct
+                                                                offset
                                                             )
                                                             .IfSuccessAsync(
-                                                                () =>
+                                                                parameters =>
                                                                 {
-                                                                    item.LastCompleted =
-                                                                        DateTimeOffset.Now;
+                                                                    if (
+                                                                        !parameters.IsCan.HasFlag(
+                                                                            ToDoItemIsCan.CanComplete
+                                                                        )
+                                                                    )
+                                                                    {
+                                                                        return new Result(
+                                                                            new ToDoItemAlreadyCompleteError(
+                                                                                item.Id,
+                                                                                item.Name
+                                                                            )
+                                                                        )
+                                                                            .ToValueTaskResult()
+                                                                            .ConfigureAwait(false);
+                                                                    }
 
-                                                                    return CircleCompletionAsync(
+                                                                    switch (item.Type)
+                                                                    {
+                                                                        case ToDoItemType.Value:
+                                                                            item.IsCompleted = true;
+
+                                                                            break;
+                                                                        case ToDoItemType.Group:
+                                                                            break;
+                                                                        case ToDoItemType.Planned:
+                                                                            item.IsCompleted = true;
+
+                                                                            break;
+                                                                        case ToDoItemType.Periodicity:
+                                                                            break;
+                                                                        case ToDoItemType.PeriodicityOffset:
+                                                                            break;
+                                                                        case ToDoItemType.Circle:
+                                                                            item.IsCompleted = true;
+
+                                                                            break;
+                                                                        case ToDoItemType.Step:
+                                                                            item.IsCompleted = true;
+
+                                                                            break;
+                                                                        case ToDoItemType.Reference:
+                                                                            break;
+                                                                        default:
+                                                                            return new Result(
+                                                                                new ToDoItemTypeOutOfRangeError(
+                                                                                    item.Type
+                                                                                )
+                                                                            )
+                                                                                .ToValueTaskResult()
+                                                                                .ConfigureAwait(
+                                                                                    false
+                                                                                );
+                                                                    }
+
+                                                                    return UpdateDueDateAsync(
                                                                             context,
                                                                             item,
-                                                                            true,
-                                                                            false,
-                                                                            false,
+                                                                            offset,
                                                                             ct
                                                                         )
                                                                         .IfSuccessAsync(
                                                                             () =>
-                                                                                StepCompletionAsync(
-                                                                                    context,
-                                                                                    item,
-                                                                                    false,
-                                                                                    ct
-                                                                                ),
+                                                                            {
+                                                                                item.LastCompleted =
+                                                                                    DateTimeOffset.Now;
+
+                                                                                return CircleCompletionAsync(
+                                                                                        context,
+                                                                                        item,
+                                                                                        true,
+                                                                                        false,
+                                                                                        false,
+                                                                                        ct
+                                                                                    )
+                                                                                    .IfSuccessAsync(
+                                                                                        () =>
+                                                                                            StepCompletionAsync(
+                                                                                                context,
+                                                                                                item,
+                                                                                                false,
+                                                                                                ct
+                                                                                            ),
+                                                                                        ct
+                                                                                    );
+                                                                            },
                                                                             ct
                                                                         );
                                                                 },
                                                                 ct
                                                             );
-                                                    },
-                                                    ct
-                                                );
-                                        }
+                                                    }
 
-                                        item.IsCompleted = false;
+                                                    item.IsCompleted = false;
 
-                                        return Result.AwaitableSuccess;
-                                    },
+                                                    return Result.AwaitableSuccess;
+                                                },
+                                                ct
+                                            ),
                                     ct
                                 ),
                         ct

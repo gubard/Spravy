@@ -83,8 +83,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService
-            .SwitchCompleteAsync(request.Ids.ToGuid(), context.CancellationToken)
-            .HandleAsync<SwitchCompleteReply>(serializer, context.CancellationToken);
+            .SwitchCompleteAsync(request.Ids.ToGuid(), CancellationToken.None)
+            .HandleAsync<SwitchCompleteReply>(serializer, CancellationToken.None);
     }
 
     public override Task<GetBookmarkToDoItemIdsRequestReply> GetBookmarkToDoItemIds(

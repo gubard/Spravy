@@ -198,41 +198,44 @@ public class SpravyCommandService
 
                             return uiApplicationService
                                 .GetCurrentView<IRemove>()
-                                .IfSuccess(remove =>
-                                    this.PostUi(
-                                        () =>
-                                            editId
-                                                .ResultItems.ToResult()
-                                                .IfSuccessForEach(item =>
-                                                {
-                                                    switch (item.IsCan)
+                                .IfSuccessAsync(
+                                    remove =>
+                                        this.InvokeUiBackgroundAsync(
+                                            () =>
+                                                editId
+                                                    .ResultItems.ToResult()
+                                                    .IfSuccessForEach(item =>
                                                     {
-                                                        case ToDoItemIsCan.None:
-                                                            return Result.Success;
-                                                        case ToDoItemIsCan.CanComplete:
+                                                        switch (item.IsCan)
                                                         {
-                                                            item.IsCan = ToDoItemIsCan.None;
-                                                            item.Status = ToDoItemStatus.Completed;
+                                                            case ToDoItemIsCan.None:
+                                                                return Result.Success;
+                                                            case ToDoItemIsCan.CanComplete:
+                                                            {
+                                                                item.IsCan = ToDoItemIsCan.None;
+                                                                item.Status =
+                                                                    ToDoItemStatus.Completed;
 
-                                                            return remove.RemoveUi(item);
-                                                        }
-                                                        case ToDoItemIsCan.CanIncomplete:
-                                                        {
-                                                            item.IsCan = ToDoItemIsCan.None;
-                                                            item.Status =
-                                                                ToDoItemStatus.ReadyForComplete;
+                                                                return remove.RemoveUi(item);
+                                                            }
+                                                            case ToDoItemIsCan.CanIncomplete:
+                                                            {
+                                                                item.IsCan = ToDoItemIsCan.None;
+                                                                item.Status =
+                                                                    ToDoItemStatus.ReadyForComplete;
 
-                                                            return remove.RemoveUi(item);
+                                                                return remove.RemoveUi(item);
+                                                            }
+                                                            default:
+                                                                return new(
+                                                                    new ToDoItemIsCanOutOfRangeError(
+                                                                        item.IsCan
+                                                                    )
+                                                                );
                                                         }
-                                                        default:
-                                                            return new(
-                                                                new ToDoItemIsCanOutOfRangeError(
-                                                                    item.IsCan
-                                                                )
-                                                            );
-                                                    }
-                                                })
-                                    )
+                                                    })
+                                        ),
+                                    ct
                                 )
                                 .IfSuccessAsync(
                                     () =>

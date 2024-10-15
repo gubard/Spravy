@@ -27,11 +27,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
             errorHandler,
             taskProgressService
         );
+
+        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }
     public ToDoItemEntityNotify Item { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
+    public AvaloniaList<SpravyCommandNotify> Commands { get; } = new();
 
     public override string ViewId
     {
@@ -110,5 +113,20 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
         return ToDoSubItemsViewModel
             .GetSelectedItems()
             .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.UpdateUi(UiHelper.ToDoItemCommands);
+            }
+            else
+            {
+                Commands.UpdateUi(Item.Commands);
+            }
+        }
     }
 }
