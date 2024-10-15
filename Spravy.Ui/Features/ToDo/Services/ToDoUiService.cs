@@ -380,9 +380,16 @@ public class ToDoUiService : IToDoUiService
                                             () =>
                                                 x.IfSuccessForEach(
                                                     i =>
-                                                        toDoCache
+                                                    {
+                                                        if (ct.IsCancellationRequested)
+                                                        {
+                                                            return Result.CanceledByUserError;
+                                                        }
+
+                                                        return toDoCache
                                                             .UpdateUi(i)
-                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                            .IfSuccess(toDoItemsView.AddOrUpdateUi);
+                                                    },
                                                     ct
                                                 ),
                                             ct

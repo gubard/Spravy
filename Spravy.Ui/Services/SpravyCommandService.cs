@@ -235,30 +235,32 @@ public class SpravyCommandService
                                                         }
                                                     })
                                         ),
-                                    ct
+                                    CancellationToken.None
                                 )
                                 .IfSuccessAsync(
                                     () =>
                                     {
                                         if (playComplete)
                                         {
-                                            return audioService.PlayCompleteAsync(ct);
+                                            return audioService.PlayCompleteAsync(
+                                                CancellationToken.None
+                                            );
                                         }
 
                                         return Result.AwaitableSuccess;
                                     },
-                                    ct
+                                    CancellationToken.None
                                 )
                                 .IfSuccessAsync(
                                     () =>
                                         toDoService.SwitchCompleteAsync(
                                             editId.ResultCurrentIds,
-                                            ct
+                                            CancellationToken.None
                                         ),
-                                    ct
+                                    CancellationToken.None
                                 );
                         },
-                        ct
+                        CancellationToken.None
                     )
                     .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
 
