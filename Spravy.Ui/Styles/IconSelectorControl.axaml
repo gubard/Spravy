@@ -10,12 +10,23 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid RowDefinitions="Auto,*">
-                    <TextBox x:Name="PART_SearchTextBox" Text="{TemplateBinding SearchText}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox x:Name="PART_SearchTextBox" Text="{TemplateBinding SearchText}" />
+                        <ListBox x:Name="PART_FavoriteSelectingItemsControl"
+                                 Grid.Column="1"
+                                 ItemsSource="{TemplateBinding FavoriteItemsSource}"
+                                 SelectionMode="Single">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
 
                     <ListBox x:Name="PART_SelectingItemsControl"
                              Grid.Row="1"
                              ItemsSource="{TemplateBinding Items}"
-                             SelectedItem="{TemplateBinding SelectedIcon}"
                              SelectionMode="Single" />
                 </Grid>
             </ControlTemplate>

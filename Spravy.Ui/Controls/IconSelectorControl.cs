@@ -10,6 +10,11 @@ public class IconSelectorControl : TemplatedControl
     public static readonly StyledProperty<IEnumerable<string>?> ItemsSourceProperty =
         AvaloniaProperty.Register<IconSelectorControl, IEnumerable<string>?>(nameof(ItemsSource));
 
+    public static readonly StyledProperty<IEnumerable<string>?> FavoriteItemsSourceProperty =
+        AvaloniaProperty.Register<IconSelectorControl, IEnumerable<string>?>(
+            nameof(FavoriteItemsSource)
+        );
+
     public static readonly StyledProperty<string?> SearchTextProperty = AvaloniaProperty.Register<
         IconSelectorControl,
         string?
@@ -22,6 +27,7 @@ public class IconSelectorControl : TemplatedControl
         );
 
     private SelectingItemsControl? selectingItemsControl;
+    private SelectingItemsControl? favoriteSelectingItemsControl;
     private TextBox? searchTextBox;
     private readonly AvaloniaList<string> items = new();
 
@@ -29,8 +35,10 @@ public class IconSelectorControl : TemplatedControl
     {
         base.OnApplyTemplate(e);
         var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
+        var flb = e.NameScope.Find<SelectingItemsControl>("PART_FavoriteSelectingItemsControl");
         var tb = e.NameScope.Find<TextBox>("PART_SearchTextBox");
-        UpdateSelectingItemsControl(lb);
+        UpdateSelectingItemsControl(ref selectingItemsControl, lb);
+        UpdateSelectingItemsControl(ref favoriteSelectingItemsControl, flb);
         UpdateSearchTextBox(tb);
     }
 
@@ -54,27 +62,28 @@ public class IconSelectorControl : TemplatedControl
         set => SetValue(ItemsSourceProperty, value);
     }
 
+    public IEnumerable<string>? FavoriteItemsSource
+    {
+        get => GetValue(FavoriteItemsSourceProperty);
+        set => SetValue(FavoriteItemsSourceProperty, value);
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
         if (change.Property == SelectedIconProperty)
         {
-            if (selectingItemsControl is null)
-            {
-                return;
-            }
-
             var icon = change.GetNewValue<string?>();
-            var selectedItem = selectingItemsControl.SelectedItem;
 
-            if (icon is null && selectedItem is not null)
+            if (selectingItemsControl is not null)
             {
-                selectingItemsControl.SelectedItem = null;
+                UpdateSelectedItem(selectingItemsControl, icon);
             }
-            else if (selectedItem is string item && item != icon)
+
+            if (favoriteSelectingItemsControl is not null)
             {
-                selectingItemsControl.SelectedItem = icon;
+                UpdateSelectedItem(favoriteSelectingItemsControl, icon);
             }
         }
         else if (change.Property == ItemsSourceProperty)
@@ -137,33 +146,56 @@ public class IconSelectorControl : TemplatedControl
         SearchText = searchTextBox.Text;
     }
 
-    private void UpdateSelectingItemsControl(SelectingItemsControl? lb)
+    private void UpdateSelectingItemsControl(
+        ref SelectingItemsControl? itemsControl,
+        SelectingItemsControl? lb
+    )
     {
-        if (selectingItemsControl is not null)
+        if (itemsControl is not null)
         {
-            selectingItemsControl.PropertyChanged -= SelectingItemsControlPropertyChanged;
+            itemsControl.PropertyChanged -= SelectingItemsControlPropertyChanged;
         }
 
-        selectingItemsControl = lb;
+        itemsControl = lb;
 
-        if (selectingItemsControl is null)
+        if (itemsControl is null)
         {
             return;
         }
 
-        selectingItemsControl.PropertyChanged += SelectingItemsControlPropertyChanged;
-        UpdateSelectedItem(selectingItemsControl);
+        itemsControl.PropertyChanged += SelectingItemsControlPropertyChanged;
+        UpdateSelectedItem(itemsControl, SelectedIcon);
     }
 
-    private void UpdateSelectedItem(SelectingItemsControl itemsControl)
+    private void UpdateSelectedItem(SelectingItemsControl sic, string? icon)
     {
-        if (itemsControl.SelectedItem is null && SelectedIcon is not null)
+        var selectedItem = sic.SelectedItem;
+
+        if (icon is null)
         {
-            SelectedIcon = null;
+            if (sic.SelectedItem is not null)
+            {
+                sic.SelectedItem = null;
+            }
         }
-        else if (itemsControl.SelectedItem is string item && item != SelectedIcon)
+        else if (!icon.Equals(selectedItem))
         {
-            SelectedIcon = item;
+            sic.SelectedItem = icon;
+        }
+    }
+
+    private void UpdateSelectedIcon(SelectingItemsControl itemsControl)
+    {
+        if (itemsControl.SelectedItem is null)
+        {
+            if (SelectedIcon is not null)
+            {
+                SelectedIcon = null;
+            }
+        }
+        else if (!itemsControl.SelectedItem.Equals(SelectedIcon))
+        {
+            SelectedIcon = itemsControl.SelectedItem.ToString();
         }
     }
 
@@ -194,7 +226,7 @@ public class IconSelectorControl : TemplatedControl
 
         if (e.Property == SelectingItemsControl.SelectedItemProperty)
         {
-            UpdateSelectedItem(itemsControl);
+            UpdateSelectedIcon(itemsControl);
         }
     }
 }

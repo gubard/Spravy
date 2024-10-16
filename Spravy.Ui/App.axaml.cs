@@ -5,6 +5,7 @@ namespace Spravy.Ui;
 public class App : Application
 {
     private static MaterialDesignSizeType materialDesignSizeType;
+    public static readonly string ViewId;
 
     public static App? CurrentApp
     {
@@ -25,6 +26,8 @@ public class App : Application
 
     static App()
     {
+        ViewId = TypeCache<App>.Type.Name;
+
         Layoutable.WidthProperty.Changed.AddClassHandler<TopLevel>(
             (topLevel, _) =>
             {
