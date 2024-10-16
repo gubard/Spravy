@@ -1,3 +1,10 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector=":is(TemplatedControl).bold">
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+    
+    <Style Selector=":is(TemplatedControl).accept">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+    </Style>
 </Styles>

@@ -28,13 +28,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
             taskProgressService
         );
 
+        Commands = new(Item.Commands);
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public SpravyCommand InitializedCommand { get; }
     public ToDoItemEntityNotify Item { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-    public AvaloniaList<SpravyCommandNotify> Commands { get; } = new();
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
     public override string ViewId
     {
@@ -60,7 +61,17 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct);
+        return toDoUiService
+            .UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
+            .IfSuccessAsync(
+                () =>
+                {
+                    UpdateCommands();
+
+                    return Result.Success;
+                },
+                ct
+            );
     }
 
     public override Result Stop()
@@ -119,14 +130,19 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
     {
         if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
         {
-            if (ToDoSubItemsViewModel.List.IsMulti)
-            {
-                Commands.UpdateUi(UiHelper.ToDoItemCommands);
-            }
-            else
-            {
-                Commands.UpdateUi(Item.Commands);
-            }
+            UpdateCommands();
+        }
+    }
+
+    private void UpdateCommands()
+    {
+        if (ToDoSubItemsViewModel.List.IsMulti)
+        {
+            Commands.UpdateUi(UiHelper.ToDoItemCommands);
+        }
+        else
+        {
+            Commands.UpdateUi(Item.Commands);
         }
     }
 }

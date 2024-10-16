@@ -4,9 +4,7 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                         xmlns:v="clr-namespace:Spravy.Ui.Views"
                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                         xmlns:i="https://github.com/projektanker/icons.avalonia"
                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                          x:Class="Spravy.Ui.Views.ConfirmView"
                          x:DataType="vm:ConfirmViewModel">
@@ -15,24 +13,17 @@
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto">
-        <ContentControl Name="{x:Static v:ConfirmView.ContentContentControlName}"
-                        Grid.ColumnSpan="2"
+        <ContentControl Grid.ColumnSpan="2"
                         Content="{Binding Content}" />
 
         <StackPanel Grid.Row="1" Classes="horizontal alignment-right">
-            <Button Name="{x:Static v:ConfirmView.OkButtonName}"
-                    Classes="mode-press"
+            <Button Classes="mode-press label bold accept"
                     Command="{Binding ConfirmCommand.Command}"
-                    ToolTip.Tip="{DynamicResource ConfirmView.Ok}">
-                <i:Icon Value="mdi-check" />
-            </Button>
-
-            <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
-                    Classes="mode-press"
+                    Content="{DynamicResource ConfirmView.Apply}" />
+            <Button Classes="mode-press label bold"
                     Command="{Binding CancelCommand.Command}"
-                    ToolTip.Tip="{DynamicResource ConfirmView.Cancel}">
-                <i:Icon Value="mdi-cancel" />
-            </Button>
+                    Content="{DynamicResource ConfirmView.Cancel}"
+                    ToolTip.Tip="{DynamicResource ConfirmView.Cancel}" />
         </StackPanel>
     </Grid>
 </c:DialogableUserControl>

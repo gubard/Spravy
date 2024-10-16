@@ -147,7 +147,7 @@
     <sys:String x:Key="DeleteToDoItemView.Body">You also delete all child to-do items:</sys:String>
 
     <!--ConfirmView-->
-    <sys:String x:Key="ConfirmView.Ok">Ok</sys:String>
+    <sys:String x:Key="ConfirmView.Apply">Apply</sys:String>
     <sys:String x:Key="ConfirmView.Cancel">Cancel</sys:String>
 
     <!--MultiToDoItemsView-->
