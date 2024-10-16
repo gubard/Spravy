@@ -2081,7 +2081,8 @@ public class EfToDoService : IToDoService
                      DescriptionType,
                      ReferenceId,
                      ParentId,
-                     IsBookmark
+                     IsBookmark,
+                     Icon
                  ) AS (
                      SELECT
                      Id,
@@ -2109,7 +2110,8 @@ public class EfToDoService : IToDoService
                      DescriptionType,
                      ReferenceId,
                      ParentId,
-                     IsBookmark
+                     IsBookmark,
+                     Icon
                      FROM ToDoItem
                      WHERE Id IN ({idsString})
 
@@ -2141,7 +2143,8 @@ public class EfToDoService : IToDoService
                      t.DescriptionType,
                      t.ReferenceId,
                      t.ParentId,
-                     t.IsBookmark
+                     t.IsBookmark,
+                     t.Icon
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.ParentId = h.Id
 
@@ -2173,7 +2176,8 @@ public class EfToDoService : IToDoService
                      t.DescriptionType,
                      t.ReferenceId,
                      t.ParentId,
-                     t.IsBookmark
+                     t.IsBookmark,
+                     t.Icon
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.Id = h.ReferenceId
                      WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id
