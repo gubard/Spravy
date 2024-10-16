@@ -30,6 +30,8 @@ public class IconSelectorControl : TemplatedControl
     private SelectingItemsControl? favoriteSelectingItemsControl;
     private TextBox? searchTextBox;
     private readonly AvaloniaList<string> items = new();
+    private bool bockSelectedIcon;
+    private bool bockSelectedItem;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -76,14 +78,28 @@ public class IconSelectorControl : TemplatedControl
         {
             var icon = change.GetNewValue<string?>();
 
-            if (selectingItemsControl is not null)
+            if (bockSelectedItem)
             {
-                UpdateSelectedItem(selectingItemsControl, icon);
+                return;
             }
 
-            if (favoriteSelectingItemsControl is not null)
+            bockSelectedItem = true;
+
+            try
             {
-                UpdateSelectedItem(favoriteSelectingItemsControl, icon);
+                if (selectingItemsControl is not null)
+                {
+                    UpdateSelectedItem(selectingItemsControl, icon);
+                }
+
+                if (favoriteSelectingItemsControl is not null)
+                {
+                    UpdateSelectedItem(favoriteSelectingItemsControl, icon);
+                }
+            }
+            finally
+            {
+                bockSelectedItem = false;
             }
         }
         else if (change.Property == ItemsSourceProperty)
@@ -186,16 +202,30 @@ public class IconSelectorControl : TemplatedControl
 
     private void UpdateSelectedIcon(SelectingItemsControl itemsControl)
     {
-        if (itemsControl.SelectedItem is null)
+        if (bockSelectedIcon)
         {
-            if (SelectedIcon is not null)
+            return;
+        }
+
+        bockSelectedIcon = true;
+
+        try
+        {
+            if (itemsControl.SelectedItem is null)
             {
-                SelectedIcon = null;
+                if (SelectedIcon is not null)
+                {
+                    SelectedIcon = null;
+                }
+            }
+            else if (!itemsControl.SelectedItem.Equals(SelectedIcon))
+            {
+                SelectedIcon = itemsControl.SelectedItem.ToString();
             }
         }
-        else if (!itemsControl.SelectedItem.Equals(SelectedIcon))
+        finally
         {
-            SelectedIcon = itemsControl.SelectedItem.ToString();
+            bockSelectedIcon = false;
         }
     }
 

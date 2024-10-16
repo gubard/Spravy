@@ -1,9 +1,7 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
+public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
 {
-    private readonly IToDoService toDoService;
-
     [ObservableProperty]
     private bool isRequiredCompleteInDueDate;
 
@@ -25,15 +23,12 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     [ObservableProperty]
     private ushort yearsOffset;
 
-    [ObservableProperty]
-    private string icon = string.Empty;
-
     public PeriodicityOffsetToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
-        IToDoService toDoService
+        IObjectStorage objectStorage
     )
+        : base(objectStorage)
     {
-        this.toDoService = toDoService;
         Item = item;
         IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
         ChildrenType = item.ChildrenType;
@@ -46,6 +41,9 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     }
 
     public ToDoItemEntityNotify Item { get; }
+
+    public override string ViewId =>
+        TypeCache<PeriodicityOffsetToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {

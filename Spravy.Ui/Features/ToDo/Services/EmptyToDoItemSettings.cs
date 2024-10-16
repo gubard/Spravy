@@ -1,8 +1,10 @@
 namespace Spravy.Ui.Features.ToDo.Services;
 
-public class EmptyEditToDoItems : IEditToDoItems
+public class EmptyToDoItemSettings : IToDoItemSettings
 {
-    public static EmptyEditToDoItems Default = new();
+    public static readonly EmptyToDoItemSettings Default = new();
+
+    public string ViewId => TypeCache<EmptyToDoItemSettings>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -13,8 +15,6 @@ public class EmptyEditToDoItems : IEditToDoItems
     {
         return Result.Success;
     }
-
-    public string ViewId => TypeCache<EmptyEditToDoItems>.Type.Name;
 
     public Cvtar LoadStateAsync(CancellationToken ct)
     {

@@ -62,4 +62,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(AddTimerViewModelSettings))]
 [JsonSerializable(typeof(AddToDoItemToFavoriteEventViewModelSettings))]
 [JsonSerializable(typeof(ToDoItemCreateTimerViewModelSettings))]
+[JsonSerializable(typeof(AppSetting))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

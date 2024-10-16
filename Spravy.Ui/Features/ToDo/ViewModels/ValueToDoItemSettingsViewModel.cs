@@ -1,29 +1,20 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ValueToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
+public partial class ValueToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
 {
-    private readonly IToDoService toDoService;
-
     [ObservableProperty]
     private ToDoItemChildrenType childrenType;
 
-    [ObservableProperty]
-    private string icon = string.Empty;
-
-    public ValueToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
+    public ValueToDoItemSettingsViewModel(ToDoItemEntityNotify item, IObjectStorage objectStorage)
+        : base(objectStorage)
     {
-        this.toDoService = toDoService;
         Item = item;
         Icon = item.Icon;
         ChildrenType = item.ChildrenType;
     }
 
     public ToDoItemEntityNotify Item { get; }
+    public override string ViewId => TypeCache<ValueToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {

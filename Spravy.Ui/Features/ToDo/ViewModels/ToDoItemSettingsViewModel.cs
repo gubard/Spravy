@@ -2,11 +2,16 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApplySettings
 {
-    private readonly IViewFactory viewFactory;
     private readonly IToDoService toDoService;
+    private readonly EmptyToDoItemSettings empty;
+    private readonly ValueToDoItemSettingsViewModel valueSettings;
+    private readonly PlannedToDoItemSettingsViewModel plannedSettings;
+    private readonly PeriodicityToDoItemSettingsViewModel periodicitySettings;
+    private readonly PeriodicityOffsetToDoItemSettingsViewModel periodicityOffsetSettings;
+    private readonly ReferenceToDoItemSettingsViewModel referenceSettings;
 
     [ObservableProperty]
-    private IEditToDoItems edit;
+    private IToDoItemSettings edit;
 
     public ToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
@@ -17,11 +22,18 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
     {
         Item = item;
         ToDoItemContent = toDoItemContent;
-        this.viewFactory = viewFactory;
         this.toDoService = toDoService;
         ToDoItemContent.Type = Item.Type;
         ToDoItemContent.Name = Item.Name;
         ToDoItemContent.Link = Item.Link;
+        empty = EmptyToDoItemSettings.Default;
+        valueSettings = viewFactory.CreateValueToDoItemSettingsViewModel(Item);
+        plannedSettings = viewFactory.CreatePlannedToDoItemSettingsViewModel(Item);
+        periodicitySettings = viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item);
+        periodicityOffsetSettings = viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(
+            Item
+        );
+        referenceSettings = viewFactory.CreateReferenceToDoItemSettingsViewModel(Item);
         edit = CreateEdit();
         ToDoItemContent.PropertyChanged += OnPropertyChanged;
     }
@@ -36,28 +48,32 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return empty
+            .LoadStateAsync(ct)
+            .IfSuccessAsync(() => valueSettings.LoadStateAsync(ct), ct)
+            .IfSuccessAsync(() => plannedSettings.LoadStateAsync(ct), ct)
+            .IfSuccessAsync(() => periodicitySettings.LoadStateAsync(ct), ct)
+            .IfSuccessAsync(() => periodicityOffsetSettings.LoadStateAsync(ct), ct)
+            .IfSuccessAsync(() => referenceSettings.LoadStateAsync(ct), ct);
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return empty.SaveStateAsync(ct).IfSuccessAsync(() => Edit.SaveStateAsync(ct), ct);
     }
 
-    private IEditToDoItems CreateEdit()
+    private IToDoItemSettings CreateEdit()
     {
         return ToDoItemContent.Type switch
         {
-            ToDoItemType.Value => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-            ToDoItemType.Group => new EmptyEditToDoItems(),
-            ToDoItemType.Planned => viewFactory.CreatePlannedToDoItemSettingsViewModel(Item),
-            ToDoItemType.Periodicity
-                => viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item),
-            ToDoItemType.PeriodicityOffset
-                => viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(Item),
-            ToDoItemType.Circle => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-            ToDoItemType.Step => viewFactory.CreateValueToDoItemSettingsViewModel(Item),
-            ToDoItemType.Reference => viewFactory.CreateReferenceToDoItemSettingsViewModel(Item),
+            ToDoItemType.Value => valueSettings,
+            ToDoItemType.Group => empty,
+            ToDoItemType.Planned => plannedSettings,
+            ToDoItemType.Periodicity => periodicitySettings,
+            ToDoItemType.PeriodicityOffset => periodicityOffsetSettings,
+            ToDoItemType.Circle => valueSettings,
+            ToDoItemType.Step => valueSettings,
+            ToDoItemType.Reference => referenceSettings,
             _ => throw new ArgumentOutOfRangeException(),
         };
     }

@@ -1,10 +1,7 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
+public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
 {
-    private readonly IToDoService toDoService;
-    private readonly IViewFactory viewFactory;
-
     [ObservableProperty]
     private IEditToDoItems periodicity;
 
@@ -20,28 +17,34 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
     [ObservableProperty]
     private TypeOfPeriodicity typeOfPeriodicity;
 
-    [ObservableProperty]
-    private string icon = string.Empty;
+    private readonly EmptyEditToDoItems empty;
+    private readonly ToDoItemDayOfWeekSelectorViewModel dayOfWeekSelector;
+    private readonly ToDoItemDayOfMonthSelectorViewModel dayOfMonthSelector;
+    private readonly ToDoItemDayOfYearSelectorViewModel dayOfYearSelector;
 
     public PeriodicityToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
-        IToDoService toDoService,
-        IViewFactory viewFactory
+        IViewFactory viewFactory,
+        IObjectStorage objectStorage
     )
+        : base(objectStorage)
     {
         Item = item;
-        this.toDoService = toDoService;
-        this.viewFactory = viewFactory;
         isRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
         childrenType = item.ChildrenType;
         dueDate = item.DueDate;
         typeOfPeriodicity = item.TypeOfPeriodicity;
         Icon = item.Icon;
+        empty = new();
+        dayOfWeekSelector = viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item);
+        dayOfMonthSelector = viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item);
+        dayOfYearSelector = viewFactory.CreateToDoItemDayOfYearSelectorViewModel(Item);
         Periodicity = CreatePeriodicity();
         PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoItemEntityNotify Item { get; }
+    public override string ViewId => TypeCache<PeriodicityToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -59,12 +62,10 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
     {
         return TypeOfPeriodicity switch
         {
-            TypeOfPeriodicity.Daily => new EmptyEditToDoItems(),
-            TypeOfPeriodicity.Weekly => viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item),
-            TypeOfPeriodicity.Monthly
-                => viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item),
-            TypeOfPeriodicity.Annually
-                => viewFactory.CreateToDoItemDayOfYearSelectorViewModel(Item),
+            TypeOfPeriodicity.Daily => empty,
+            TypeOfPeriodicity.Weekly => dayOfWeekSelector,
+            TypeOfPeriodicity.Monthly => dayOfMonthSelector,
+            TypeOfPeriodicity.Annually => dayOfYearSelector,
             _
                 => throw new ArgumentOutOfRangeException(
                     nameof(TypeOfPeriodicity),

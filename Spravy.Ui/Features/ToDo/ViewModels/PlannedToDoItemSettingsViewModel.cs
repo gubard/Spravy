@@ -1,9 +1,7 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
+public partial class PlannedToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
 {
-    private readonly IToDoService toDoService;
-
     [ObservableProperty]
     private bool isRequiredCompleteInDueDate;
 
@@ -13,13 +11,10 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDo
     [ObservableProperty]
     private DateOnly dueDate;
 
-    [ObservableProperty]
-    private string icon = string.Empty;
-
-    public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item, IToDoService toDoService)
+    public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item, IObjectStorage objectStorage)
+        : base(objectStorage)
     {
         Item = item;
-        this.toDoService = toDoService;
         DueDate = item.DueDate;
         IsRequiredCompleteInDueDate = Item.IsRequiredCompleteInDueDate;
         ChildrenType = item.ChildrenType;
@@ -27,6 +22,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDo
     }
 
     private ToDoItemEntityNotify Item { get; }
+    public override string ViewId => TypeCache<PlannedToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {

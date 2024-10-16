@@ -1,25 +1,23 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
+public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IToDoItemSettings
 {
-    private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
 
     public ReferenceToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
         ToDoItemSelectorViewModel toDoItemSelector,
-        IToDoService toDoService,
         IToDoCache toDoCache
     )
     {
         ToDoItemSelector = toDoItemSelector;
-        this.toDoService = toDoService;
         this.toDoCache = toDoCache;
         Item = item;
     }
 
     public ToDoItemEntityNotify Item { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
+    public string ViewId => TypeCache<ReferenceToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -39,5 +37,15 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 
                 return Result.Success;
             });
+    }
+
+    public Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

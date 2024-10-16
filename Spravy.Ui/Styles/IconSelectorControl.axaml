@@ -12,16 +12,11 @@
                 <Grid RowDefinitions="Auto,*">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox x:Name="PART_SearchTextBox" Text="{TemplateBinding SearchText}" />
+
                         <ListBox x:Name="PART_FavoriteSelectingItemsControl"
                                  Grid.Column="1"
                                  ItemsSource="{TemplateBinding FavoriteItemsSource}"
-                                 SelectionMode="Single">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                        </ListBox>
+                                 SelectionMode="Single" />
                     </Grid>
 
                     <ListBox x:Name="PART_SelectingItemsControl"
@@ -36,6 +31,20 @@
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter>
+
+            <Setter Property="ItemTemplate">
+                <DataTemplate x:DataType="s:String">
+                    <i:Icon Classes="h3" Value="{Binding}" />
+                </DataTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="^ /template/ ListBox#PART_FavoriteSelectingItemsControl">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </Setter>
 

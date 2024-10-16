@@ -11,7 +11,9 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource ValueToDoItemSettingsView.Icon}" />
-        <c:IconSelectorControl SelectedIcon="{Binding Icon}" ItemsSource="{x:Static h:UiHelper.Icons}" />
+        <c:IconSelectorControl SelectedIcon="{Binding Icon}" 
+                               ItemsSource="{x:Static h:UiHelper.Icons}"
+                               FavoriteItemsSource="{Binding FavoriteIcons}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
         <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />

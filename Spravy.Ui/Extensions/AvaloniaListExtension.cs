@@ -43,6 +43,14 @@ public static class AvaloniaListExtension
         return Result.Success;
     }
 
+    public static Result UpdateUi<T>(this AvaloniaList<T> list, T[] items)
+    {
+        list.Clear();
+        list.AddRange(items);
+
+        return Result.Success;
+    }
+
     public static bool IsEmpty<T>(this AvaloniaList<T> list)
     {
         return list.Count == 0;
