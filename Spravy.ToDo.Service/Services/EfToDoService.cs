@@ -1,4 +1,7 @@
 using System.Collections.Frozen;
+using System.Data.Common;
+using Microsoft.Data.Sqlite;
+using Spravy.Db.Models;
 using Spravy.EventBus.Domain.Errors;
 using Spravy.EventBus.Domain.Interfaces;
 
@@ -98,7 +101,7 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            GetAllChildrenAsync(context, ct)
+                            GetAllChildrenAsync(context, new[] { id }, ct)
                                 .IfSuccessAsync(
                                     items =>
                                         getterToDoItemParametersService.GetToDoItemParameters(
@@ -598,7 +601,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    GetAllChildrenAsync(context, ct)
+                    GetAllChildrenAsync(context, new[] { id }, ct)
                         .IfSuccessAsync(
                             items =>
                                 items[id]
@@ -677,7 +680,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    GetAllChildrenAsync(context, ct)
+                    GetAllChildrenAsync(context, ids, ct)
                         .IfSuccessAsync(
                             items =>
                                 items
@@ -935,7 +938,7 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            GetAllChildrenAsync(context, ct)
+                            GetAllChildrenAsync(context, ids, ct)
                                 .IfSuccessAsync(
                                     items =>
                                         context
@@ -1244,16 +1247,22 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessAsync(
                 context =>
-                {
-                    var builder = new StringBuilder();
+                    GetAllChildrenAsync(context, options.Select(x => x.Id), ct)
+                        .IfSuccessAsync(
+                            items =>
+                            {
+                                var builder = new StringBuilder();
 
-                    return options
-                        .IfSuccessForEachAsync(
-                            o => ToDoItemToStringAsync(context, o, 0, builder, offset, ct),
+                                return options
+                                    .IfSuccessForEachAsync(
+                                        o =>
+                                            ToDoItemToStringAsync(items, o, 0, builder, offset, ct),
+                                        ct
+                                    )
+                                    .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), ct);
+                            },
                             ct
-                        )
-                        .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), ct);
-                },
+                        ),
                 ct
             );
     }
@@ -1650,7 +1659,7 @@ public class EfToDoService : IToDoService
     }
 
     private Cvtar ToDoItemToStringAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> items,
         ToDoItemToStringOptions options,
         ushort level,
         StringBuilder builder,
@@ -1658,46 +1667,41 @@ public class EfToDoService : IToDoService
         CancellationToken ct
     )
     {
-        return GetAllChildrenAsync(context, ct)
-            .IfSuccessAsync(
-                items =>
-                    items
-                        .Values.Where(x => x.ParentId == options.Id)
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArray()
-                        .ToReadOnlyMemory()
-                        .ToResult()
-                        .IfSuccessForEachAsync(
-                            item =>
-                                getterToDoItemParametersService
-                                    .GetToDoItemParameters(items, item, offset)
-                                    .IfSuccessAsync(
-                                        parameters =>
-                                        {
-                                            if (
-                                                !options
-                                                    .Statuses.Select(x => (byte)x)
-                                                    .Span.Contains((byte)parameters.Status)
-                                            )
-                                            {
-                                                return Result.AwaitableSuccess;
-                                            }
+        return items
+            .Values.Where(x => x.ParentId == options.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArray()
+            .ToReadOnlyMemory()
+            .ToResult()
+            .IfSuccessForEachAsync(
+                item =>
+                    getterToDoItemParametersService
+                        .GetToDoItemParameters(items, item, offset)
+                        .IfSuccessAsync(
+                            parameters =>
+                            {
+                                if (
+                                    !options
+                                        .Statuses.Select(x => (byte)x)
+                                        .Span.Contains((byte)parameters.Status)
+                                )
+                                {
+                                    return Result.AwaitableSuccess;
+                                }
 
-                                            builder.Duplicate(" ", level);
-                                            builder.Append(item.Name);
-                                            builder.AppendLine();
+                                builder.Duplicate(" ", level);
+                                builder.Append(item.Name);
+                                builder.AppendLine();
 
-                                            return ToDoItemToStringAsync(
-                                                context,
-                                                new(options.Statuses, item.Id),
-                                                (ushort)(level + 1),
-                                                builder,
-                                                offset,
-                                                ct
-                                            );
-                                        },
-                                        ct
-                                    ),
+                                return ToDoItemToStringAsync(
+                                    items,
+                                    new(options.Statuses, item.Id),
+                                    (ushort)(level + 1),
+                                    builder,
+                                    offset,
+                                    ct
+                                );
+                            },
                             ct
                         ),
                 ct
@@ -2007,5 +2011,176 @@ public class EfToDoService : IToDoService
         }
 
         return Result.Success;
+    }
+
+    private ConfiguredValueTaskAwaitable<
+        Result<FrozenDictionary<Guid, ToDoItemEntity>>
+    > GetAllChildrenAsync(
+        SpravyDbToDoDbContext context,
+        ReadOnlyMemory<Guid> ids,
+        CancellationToken ct
+    )
+    {
+        var parameters = CreateSqlRawParametersForAllChildren(ids);
+
+        return context
+            .Set<ToDoItemEntity>()
+            .FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray())
+            .ToArrayEntitiesAsync(ct)
+            .IfSuccessAsync(
+                items =>
+                {
+                    var dictionary = new Dictionary<Guid, ToDoItemEntity>();
+
+                    foreach (var item in items.Span)
+                    {
+                        dictionary.TryAdd(item.Id, item);
+                    }
+
+                    return dictionary.ToFrozenDictionary().ToResult();
+                },
+                ct
+            );
+    }
+
+    private SqlRawParameters CreateSqlRawParametersForAllChildren(ReadOnlyMemory<Guid> ids)
+    {
+        var idsString = Enumerable.Range(0, ids.Length).Select(i => $"@Id{i}").JoinString(", ");
+        var parameters = new DbParameter[ids.Length];
+
+        for (var i = 0; i < ids.Length; i++)
+        {
+            parameters[i] = new SqliteParameter($"@Id{i}", ids.Span[i]);
+        }
+
+        return new(
+            $"""
+            WITH RECURSIVE hierarchy(
+                     Id,
+                     Name,
+                     OrderIndex,
+                     Description,
+                     CreatedDateTime,
+                     Type,
+                     IsFavorite,
+                     DueDate,
+                     IsCompleted,
+                     TypeOfPeriodicity,
+                     DaysOfWeek,
+                     DaysOfMonth,
+                     DaysOfYear,
+                     LastCompleted,
+                     DaysOffset,
+                     MonthsOffset,
+                     WeeksOffset,
+                     YearsOffset,
+                     ChildrenType,
+                     CurrentCircleOrderIndex,
+                     Link,
+                     IsRequiredCompleteInDueDate,
+                     DescriptionType,
+                     ReferenceId,
+                     ParentId,
+                     IsBookmark
+                 ) AS (
+                     SELECT
+                     Id,
+                     Name,
+                     OrderIndex,
+                     Description,
+                     CreatedDateTime,
+                     Type,
+                     IsFavorite,
+                     DueDate,
+                     IsCompleted,
+                     TypeOfPeriodicity,
+                     DaysOfWeek,
+                     DaysOfMonth,
+                     DaysOfYear,
+                     LastCompleted,
+                     DaysOffset,
+                     MonthsOffset,
+                     WeeksOffset,
+                     YearsOffset,
+                     ChildrenType,
+                     CurrentCircleOrderIndex,
+                     Link,
+                     IsRequiredCompleteInDueDate,
+                     DescriptionType,
+                     ReferenceId,
+                     ParentId,
+                     IsBookmark
+                     FROM ToDoItem
+                     WHERE Id IN ({idsString})
+
+                     UNION ALL
+
+                     SELECT
+                     t.Id,
+                     t.Name,
+                     t.OrderIndex,
+                     t.Description,
+                     t.CreatedDateTime,
+                     t.Type,
+                     t.IsFavorite,
+                     t.DueDate,
+                     t.IsCompleted,
+                     t.TypeOfPeriodicity,
+                     t.DaysOfWeek,
+                     t.DaysOfMonth,
+                     t.DaysOfYear,
+                     t.LastCompleted,
+                     t.DaysOffset,
+                     t.MonthsOffset,
+                     t.WeeksOffset,
+                     t.YearsOffset,
+                     t.ChildrenType,
+                     t.CurrentCircleOrderIndex,
+                     t.Link,
+                     t.IsRequiredCompleteInDueDate,
+                     t.DescriptionType,
+                     t.ReferenceId,
+                     t.ParentId,
+                     t.IsBookmark
+                     FROM ToDoItem t
+                     INNER JOIN hierarchy h ON t.ParentId = h.Id
+
+                     UNION ALL
+
+                     SELECT
+                     t.Id,
+                     t.Name,
+                     t.OrderIndex,
+                     t.Description,
+                     t.CreatedDateTime,
+                     t.Type,
+                     t.IsFavorite,
+                     t.DueDate,
+                     t.IsCompleted,
+                     t.TypeOfPeriodicity,
+                     t.DaysOfWeek,
+                     t.DaysOfMonth,
+                     t.DaysOfYear,
+                     t.LastCompleted,
+                     t.DaysOffset,
+                     t.MonthsOffset,
+                     t.WeeksOffset,
+                     t.YearsOffset,
+                     t.ChildrenType,
+                     t.CurrentCircleOrderIndex,
+                     t.Link,
+                     t.IsRequiredCompleteInDueDate,
+                     t.DescriptionType,
+                     t.ReferenceId,
+                     t.ParentId,
+                     t.IsBookmark
+                     FROM ToDoItem t
+                     INNER JOIN hierarchy h ON t.Id = h.ReferenceId
+                     WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id
+                 )
+                 SELECT * FROM hierarchy;
+            """,
+            parameters
+        );
     }
 }
