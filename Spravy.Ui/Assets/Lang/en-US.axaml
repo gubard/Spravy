@@ -125,7 +125,7 @@
     <sys:String x:Key="EmailOrLoginInputView.Header">Forgot password</sys:String>
 
     <!--InfoView-->
-    <sys:String x:Key="InfoView.Ok">Ok</sys:String>
+    <sys:String x:Key="InfoView.Accept">Accept</sys:String>
 
     <!--AddRootToDoItemView-->
     <sys:String x:Key="ToDoItemSettingsView.Settings">Settings</sys:String>

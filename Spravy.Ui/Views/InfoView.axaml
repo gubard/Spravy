@@ -16,10 +16,8 @@
         <ContentControl Name="{x:Static v:InfoView.ContentContentControlName}" Content="{Binding Content}" />
         <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
-                Classes="mode-press alignment-right"
+                Classes="mode-press alignment-right label accept-high"
                 Command="{Binding OkCommand.Command}"
-                ToolTip.Tip="{DynamicResource InfoView.Ok}">
-            <i:Icon Value="mdi-check" />
-        </Button>
+                Content="{DynamicResource InfoView.Accept}" />
     </Grid>
 </UserControl>
