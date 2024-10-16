@@ -17,13 +17,13 @@
                         Content="{Binding Content}" />
 
         <StackPanel Grid.Row="1" Classes="horizontal alignment-right">
-            <Button Classes="mode-press label bold accept"
-                    Command="{Binding ConfirmCommand.Command}"
-                    Content="{DynamicResource ConfirmView.Apply}" />
-            <Button Classes="mode-press label bold"
+            <Button Classes="mode-press label bold accept-medium"
                     Command="{Binding CancelCommand.Command}"
                     Content="{DynamicResource ConfirmView.Cancel}"
                     ToolTip.Tip="{DynamicResource ConfirmView.Cancel}" />
+            <Button Classes="mode-press label bold accept-high"
+                    Command="{Binding ConfirmCommand.Command}"
+                    Content="{DynamicResource ConfirmView.Apply}" />
         </StackPanel>
     </Grid>
 </c:DialogableUserControl>

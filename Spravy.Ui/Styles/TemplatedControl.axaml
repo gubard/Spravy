@@ -4,7 +4,15 @@
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
     
-    <Style Selector=":is(TemplatedControl).accept">
+    <Style Selector=":is(TemplatedControl).accept-low">
         <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+    </Style>
+    
+    <Style Selector=":is(TemplatedControl).accept-high">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+    </Style>
+    
+    <Style Selector=":is(TemplatedControl).accept-medium">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
     </Style>
 </Styles>
