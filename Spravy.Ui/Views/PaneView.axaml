@@ -109,11 +109,12 @@
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
                     <Button x:Name="RootToDoItemButton"
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                            CommandParameter="{Binding}">
+                            CommandParameter="{Binding}"
+                            Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <StackPanel Classes="horizontal">
-                            <i:Icon  Value="{Binding Icon}"
-                                     Margin="0,0,4,0"
-                                     IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                            <i:Icon Value="{Binding Icon}"
+                                    Margin="0,0,4,0"
+                                    IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </Button>

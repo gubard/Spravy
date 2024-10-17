@@ -11,8 +11,10 @@
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
                     <StackPanel Classes="alignment-center horizontal" Margin="5">
                         <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
+                                Foreground="{Binding Color, Converter={StaticResource ColorToTextForegroundConverter}}"
                                 IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Name}"
+                                   Foreground="{Binding Color, Converter={StaticResource ColorToTextForegroundConverter}}" />
                     </StackPanel>
                 </DataTemplate>
 
@@ -34,7 +36,8 @@
 
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
                     <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                            CommandParameter="{Binding}">
+                            CommandParameter="{Binding}"
+                            Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <StackPanel Classes="horizontal">
                             <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
                                     IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />

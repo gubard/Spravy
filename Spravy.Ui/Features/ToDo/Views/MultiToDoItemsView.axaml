@@ -68,8 +68,9 @@
                                             CommandParameter="{Binding}">
                                         <Grid ColumnDefinitions="Auto, *">
                                             <i:Icon Value="{Binding Active.Icon}"
+                                                    Margin="0,0,4,0"
                                                     IsVisible="{Binding Active.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                                            <TextBlock Grid.Column="1" Margin="3,0,0,0" Text="{Binding Active.Name}" Classes="text-wrap" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Active.Name}" Classes="text-wrap" />
                                         </Grid>
                                     </Button>
                                 </StackPanel>

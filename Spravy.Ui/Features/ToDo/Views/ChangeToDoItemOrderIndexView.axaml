@@ -34,8 +34,10 @@
                         <DataTemplate DataType="tm:ToDoItemEntityNotify">
                             <StackPanel Classes="horizontal">
                                 <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
-                                        IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                                <TextBlock Text="{Binding Name}" />
+                                        IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}"
+                                        Foreground="{Binding Color, Converter={StaticResource ColorToTextForegroundConverter}}" />
+                                <TextBlock Text="{Binding Name}"
+                                           Foreground="{Binding Color, Converter={StaticResource ColorToTextForegroundConverter}}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.DataTemplates>

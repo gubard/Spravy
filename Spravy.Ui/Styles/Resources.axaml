@@ -17,6 +17,7 @@
     <c:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
     <c:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
     <c:StringIsNullOrWhiteSpaceConverter x:Key="StringIsNullOrWhiteSpaceConverter" />
+    <c:ColorToTextForegroundConverter x:Key="ColorToTextForegroundConverter" />
     <c:NullToBooleanConverter x:Key="NullToBooleanConverter" />
     <c:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
     <c:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
