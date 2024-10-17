@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
-             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.InfoView"
              x:DataType="vm:InfoViewModel">

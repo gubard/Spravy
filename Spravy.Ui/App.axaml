@@ -8,7 +8,6 @@
              xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             xmlns:settings="clr-namespace:Spravy.Ui.Features.ToDo.Settings"
              xmlns:services="clr-namespace:Spravy.Ui.Features.ToDo.Services"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
