@@ -9,7 +9,7 @@
         <Setter Property="Margin" Value="0,2,0,2" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Grid RowDefinitions="Auto,*">
+                <Grid Height="{TemplateBinding Height}" RowDefinitions="Auto,*">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox x:Name="PART_SearchTextBox" Text="{TemplateBinding SearchText}" />
 
@@ -19,18 +19,24 @@
                                  SelectionMode="Single" />
                     </Grid>
 
-                    <ListBox x:Name="PART_SelectingItemsControl"
-                             Grid.Row="1"
-                             ItemsSource="{TemplateBinding Items}"
-                             SelectionMode="Single" />
+                    <ScrollViewer x:Name="SelectingItemsScroll" Grid.Row="1">
+                        <ListBox x:Name="PART_SelectingItemsControl"
+                                 ItemsSource="{TemplateBinding Items}"
+                                 SelectionMode="Single" />
+                    </ScrollViewer>
                 </Grid>
             </ControlTemplate>
         </Setter>
 
+        <Style Selector="^ /template/ ScrollViewer#SelectingItemsScroll">
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        </Style>
+
         <Style Selector="^ /template/ ListBox#PART_SelectingItemsControl">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" />
+                    <WrapPanel Height="180" Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </Setter>
 
