@@ -333,6 +333,11 @@ public class EfToDoService : IToDoService
                                             item.Icon = options.Icon.Value;
                                         }
 
+                                        if (options.Color.IsEdit)
+                                        {
+                                            item.Color = options.Color.Value;
+                                        }
+
                                         return Result.AwaitableSuccess;
                                     },
                                     ct
@@ -495,7 +500,7 @@ public class EfToDoService : IToDoService
                             {
                                 var parents = new List<ToDoShortItem>
                                 {
-                                    new(item.Id, item.Name, item.Icon)
+                                    new(item.Id, item.Name, item.Icon, item.Color)
                                 };
 
                                 return GetParentsAsync(context, id, parents, ct)
@@ -875,6 +880,9 @@ public class EfToDoService : IToDoService
                                                                 toDoItem.DescriptionType =
                                                                     options.DescriptionType;
 
+                                                                toDoItem.Icon = options.Icon;
+                                                                toDoItem.Color = options.Color;
+
                                                                 return context
                                                                     .AddEntityAsync(toDoItem, ct)
                                                                     .IfSuccessAsync(
@@ -1226,7 +1234,8 @@ public class EfToDoService : IToDoService
                                                     x.Name,
                                                     x.OrderIndex,
                                                     children,
-                                                    x.Icon
+                                                    x.Icon,
+                                                    x.Color
                                                 ).ToResult()
                                             )
                                     ),
@@ -1724,7 +1733,8 @@ public class EfToDoService : IToDoService
                             item.Name,
                             item.OrderIndex,
                             children,
-                            item.Icon
+                            item.Icon,
+                            item.Color
                         ).ToResult()
                     )
             );
@@ -2082,7 +2092,8 @@ public class EfToDoService : IToDoService
                      ReferenceId,
                      ParentId,
                      IsBookmark,
-                     Icon
+                     Icon,
+                     Color
                  ) AS (
                      SELECT
                      Id,
@@ -2111,7 +2122,8 @@ public class EfToDoService : IToDoService
                      ReferenceId,
                      ParentId,
                      IsBookmark,
-                     Icon
+                     Icon,
+                     Color
                      FROM ToDoItem
                      WHERE Id IN ({idsString})
 
@@ -2144,7 +2156,8 @@ public class EfToDoService : IToDoService
                      t.ReferenceId,
                      t.ParentId,
                      t.IsBookmark,
-                     t.Icon
+                     t.Icon,
+                     t.Color
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.ParentId = h.Id
 
@@ -2177,7 +2190,8 @@ public class EfToDoService : IToDoService
                      t.ReferenceId,
                      t.ParentId,
                      t.IsBookmark,
-                     t.Icon
+                     t.Icon,
+                     t.Color
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.Id = h.ReferenceId
                      WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id

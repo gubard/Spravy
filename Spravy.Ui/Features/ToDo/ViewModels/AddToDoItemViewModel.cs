@@ -70,7 +70,9 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
             DescriptionContent.Description,
             DescriptionContent.DescriptionType,
             ToDoItemContent.Link.ToOptionUri(),
-            new()
+            new(),
+            ToDoItemContent.Icon,
+            ToDoItemContent.Color.ToString()
         );
     }
 
@@ -83,7 +85,9 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
             DescriptionContent.Description,
             DescriptionContent.DescriptionType,
             ToDoItemContent.Link.ToOptionUri(),
-            new()
+            new(),
+            ToDoItemContent.Icon,
+            ToDoItemContent.Color.ToString()
         );
     }
 

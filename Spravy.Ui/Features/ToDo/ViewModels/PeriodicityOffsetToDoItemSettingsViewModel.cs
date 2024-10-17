@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
+public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     [ObservableProperty]
     private bool isRequiredCompleteInDueDate;
@@ -23,11 +23,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel,
     [ObservableProperty]
     private ushort yearsOffset;
 
-    public PeriodicityOffsetToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item,
-        IObjectStorage objectStorage
-    )
-        : base(objectStorage)
+    public PeriodicityOffsetToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
         Item = item;
         IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
@@ -37,13 +33,9 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel,
         MonthsOffset = item.MonthsOffset;
         WeeksOffset = item.WeeksOffset;
         YearsOffset = item.YearsOffset;
-        Icon = item.Icon;
     }
 
     public ToDoItemEntityNotify Item { get; }
-
-    public override string ViewId =>
-        TypeCache<PeriodicityOffsetToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -55,8 +47,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel,
             .SetMonthsOffset(new(MonthsOffset))
             .SetWeeksOffset(new(WeeksOffset))
             .SetYearsOffset(new(YearsOffset))
-            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate))
-            .SetIcon(new(Icon));
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate));
     }
 
     public Result UpdateItemUi()
@@ -68,7 +59,6 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : IconViewModel,
         Item.MonthsOffset = MonthsOffset;
         Item.WeeksOffset = WeeksOffset;
         Item.YearsOffset = YearsOffset;
-        Item.Icon = Icon;
 
         return Result.Success;
     }

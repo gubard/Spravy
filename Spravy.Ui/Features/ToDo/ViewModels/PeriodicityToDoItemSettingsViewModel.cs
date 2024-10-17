@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
+public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     [ObservableProperty]
     private IEditToDoItems periodicity;
@@ -22,19 +22,13 @@ public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDo
     private readonly ToDoItemDayOfMonthSelectorViewModel dayOfMonthSelector;
     private readonly ToDoItemDayOfYearSelectorViewModel dayOfYearSelector;
 
-    public PeriodicityToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item,
-        IViewFactory viewFactory,
-        IObjectStorage objectStorage
-    )
-        : base(objectStorage)
+    public PeriodicityToDoItemSettingsViewModel(ToDoItemEntityNotify item, IViewFactory viewFactory)
     {
         Item = item;
         isRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
         childrenType = item.ChildrenType;
         dueDate = item.DueDate;
         typeOfPeriodicity = item.TypeOfPeriodicity;
-        Icon = item.Icon;
         empty = new();
         dayOfWeekSelector = viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item);
         dayOfMonthSelector = viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item);
@@ -44,7 +38,6 @@ public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDo
     }
 
     public ToDoItemEntityNotify Item { get; }
-    public override string ViewId => TypeCache<PeriodicityToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -54,7 +47,6 @@ public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDo
             .SetChildrenType(new(ChildrenType))
             .SetDueDate(new(DueDate))
             .SetTypeOfPeriodicity(new(TypeOfPeriodicity))
-            .SetIcon(new(Icon))
             .SetIds(new[] { Item.Id });
     }
 
@@ -89,7 +81,6 @@ public partial class PeriodicityToDoItemSettingsViewModel : IconViewModel, IToDo
         Item.ChildrenType = ChildrenType;
         Item.TypeOfPeriodicity = TypeOfPeriodicity;
         Item.DueDate = DueDate;
-        Item.Icon = Icon;
 
         return Periodicity.UpdateItemUi();
     }

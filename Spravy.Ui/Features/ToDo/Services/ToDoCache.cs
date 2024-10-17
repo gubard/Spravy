@@ -86,6 +86,10 @@ public class ToDoCache : IToDoCache
                 item.Icon = toDoItem.Icon;
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
+                item.Color = toDoItem.Color.IsNullOrWhiteSpace()
+                    ? Colors.Transparent
+                    : Color.Parse(toDoItem.Color);
+
                 if (toDoItem.Active.TryGetValue(out var v))
                 {
                     var result = UpdateUi(v)
@@ -154,6 +158,10 @@ public class ToDoCache : IToDoCache
                 item.Name = activeToDoItem.Name;
                 item.Icon = activeToDoItem.Icon;
 
+                item.Color = activeToDoItem.Color.IsNullOrWhiteSpace()
+                    ? Colors.Transparent
+                    : Color.Parse(activeToDoItem.Color);
+
                 if (activeToDoItem.ParentId.TryGetValue(out var parentId))
                 {
                     return GetToDoItem(parentId)
@@ -187,6 +195,10 @@ public class ToDoCache : IToDoCache
         item.OrderIndex = toDoItem.OrderIndex;
         item.Icon = toDoItem.Icon;
         item.IsIgnore = item.Type == ToDoItemType.Reference;
+
+        item.Color = toDoItem.Color.IsNullOrWhiteSpace()
+            ? Colors.Transparent
+            : Color.Parse(toDoItem.Color);
 
         if (toDoItem.ParentId.TryGetValue(out var value))
         {
@@ -260,6 +272,10 @@ public class ToDoCache : IToDoCache
                 x.Name = item.Name;
                 x.OrderIndex = item.OrderIndex;
                 x.Icon = item.Icon;
+
+                x.Color = item.Color.IsNullOrWhiteSpace()
+                    ? Colors.Transparent
+                    : Color.Parse(item.Color);
 
                 return item
                     .Children.ToResult()
@@ -374,6 +390,10 @@ public class ToDoCache : IToDoCache
             {
                 item.Name = shortItem.Name;
                 item.Icon = shortItem.Icon;
+
+                item.Color = shortItem.Color.IsNullOrWhiteSpace()
+                    ? Colors.Transparent
+                    : Color.Parse(shortItem.Color);
 
                 return item.ToResult();
             });

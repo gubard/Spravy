@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Spravy.Ui.Controls">
+    <ControlTheme x:Key="ColorSelectorControlStyle" TargetType="c:ColorSelectorControl">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,2,0,2" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ListBox x:Name="PART_SelectingItemsControl"
+                         ItemsSource="{TemplateBinding ItemsSource}"
+                         SelectionMode="Single" />
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ ListBox#PART_SelectingItemsControl">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter>
+
+            <Setter Property="ItemTemplate">
+                <DataTemplate x:DataType="Color">
+                    <Ellipse Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Width="20" Height="20" />
+                </DataTemplate>
+            </Setter>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:ColorSelectorControl}"
+                  BasedOn="{StaticResource ColorSelectorControlStyle}"
+                  TargetType="c:ColorSelectorControl" />
+</ResourceDictionary>

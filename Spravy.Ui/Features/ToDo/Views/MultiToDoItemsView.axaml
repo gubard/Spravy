@@ -29,7 +29,8 @@
                     <Button x:Name="RootToDoItemButton"
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                             CommandParameter="{Binding}"
-                            Classes="alignment-stretch content-alignment-stretch to-do-item">
+                            Classes="alignment-stretch content-alignment-stretch to-do-item"
+                            Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <Grid ColumnDefinitions="*,Auto">
                             <Grid ColumnDefinitions="Auto,*" Classes="alignment-top">
                                 <ToggleButton BorderThickness="1"
@@ -61,10 +62,15 @@
                                                Text="{Binding Name}" />
 
                                     <Button Margin="0,0,0,5"
+                                            Background="{Binding Active.Color, Converter={StaticResource ColorToButtonBackgroundConverter}}"
                                             IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                             Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
                                             CommandParameter="{Binding}">
-                                        <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
+                                        <Grid ColumnDefinitions="Auto, *">
+                                            <i:Icon Value="{Binding Active.Icon}"
+                                                    IsVisible="{Binding Active.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                                            <TextBlock Grid.Column="1" Margin="3,0,0,0" Text="{Binding Active.Name}" Classes="text-wrap" />
+                                        </Grid>
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -150,7 +156,8 @@
             <Setter Property="ItemTemplate">
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch to-do-item"
-                                  IsChecked="{Binding IsSelected}">
+                                  IsChecked="{Binding IsSelected}"
+                                  Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <StackPanel Classes="horizontal">
                             <i:Icon Margin="0,0,4,0" Value="{Binding Icon}" Classes="h3"
                                     IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />

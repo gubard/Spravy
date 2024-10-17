@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class PlannedToDoItemSettingsViewModel : IconViewModel, IToDoItemSettings
+public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDoItems
 {
     [ObservableProperty]
     private bool isRequiredCompleteInDueDate;
@@ -11,18 +11,15 @@ public partial class PlannedToDoItemSettingsViewModel : IconViewModel, IToDoItem
     [ObservableProperty]
     private DateOnly dueDate;
 
-    public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item, IObjectStorage objectStorage)
-        : base(objectStorage)
+    public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
         Item = item;
         DueDate = item.DueDate;
         IsRequiredCompleteInDueDate = Item.IsRequiredCompleteInDueDate;
         ChildrenType = item.ChildrenType;
-        Icon = item.Icon;
     }
 
     private ToDoItemEntityNotify Item { get; }
-    public override string ViewId => TypeCache<PlannedToDoItemSettingsViewModel>.Type.Name;
 
     public EditToDoItems GetEditToDoItems()
     {
@@ -30,7 +27,6 @@ public partial class PlannedToDoItemSettingsViewModel : IconViewModel, IToDoItem
             .SetIds(new[] { Item.Id })
             .SetChildrenType(new(ChildrenType))
             .SetDueDate(new(DueDate))
-            .SetIcon(new(Icon))
             .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate));
     }
 
@@ -39,7 +35,6 @@ public partial class PlannedToDoItemSettingsViewModel : IconViewModel, IToDoItem
         Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
         Item.ChildrenType = ChildrenType;
         Item.DueDate = DueDate;
-        Item.Icon = Icon;
 
         return Result.Success;
     }

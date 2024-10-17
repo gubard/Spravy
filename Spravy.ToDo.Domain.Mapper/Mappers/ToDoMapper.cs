@@ -249,7 +249,8 @@ public static partial class ToDoMapper
                 ? new(value.WeeklyDays.Value.Select(x => x.ToDayOfWeek()).ToArray())
                 : new(),
             value.IsBookmark.IsEdit ? new(value.IsBookmark.Value) : new(),
-            value.Icon.IsEdit ? new(value.Icon.Value) : new()
+            value.Icon.IsEdit ? new(value.Icon.Value) : new(),
+            value.Color.IsEdit ? new(value.Color.Value) : new()
         );
     }
 
@@ -279,6 +280,7 @@ public static partial class ToDoMapper
             TypeOfPeriodicity = value.TypeOfPeriodicity.ToEditPropertyTypeOfPeriodicityGrpc(),
             IsRequiredCompleteInDueDate =
                 value.IsRequiredCompleteInDueDate.ToEditPropertyBooleanGrpc(),
+            Color = value.Color.ToEditPropertyStringGrpc(),
         };
 
         edit.Ids.AddRange(value.Ids.ToByteString().ToArray());

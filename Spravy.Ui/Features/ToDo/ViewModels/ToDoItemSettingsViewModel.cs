@@ -11,7 +11,7 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
     private readonly ReferenceToDoItemSettingsViewModel referenceSettings;
 
     [ObservableProperty]
-    private IToDoItemSettings edit;
+    private IEditToDoItems edit;
 
     public ToDoItemSettingsViewModel(
         ToDoItemEntityNotify item,
@@ -26,6 +26,8 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
         ToDoItemContent.Type = Item.Type;
         ToDoItemContent.Name = Item.Name;
         ToDoItemContent.Link = Item.Link;
+        ToDoItemContent.Icon = Item.Icon;
+        ToDoItemContent.Color = Item.Color;
         empty = EmptyToDoItemSettings.Default;
         valueSettings = viewFactory.CreateValueToDoItemSettingsViewModel(Item);
         plannedSettings = viewFactory.CreatePlannedToDoItemSettingsViewModel(Item);
@@ -48,21 +50,15 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return empty
-            .LoadStateAsync(ct)
-            .IfSuccessAsync(() => valueSettings.LoadStateAsync(ct), ct)
-            .IfSuccessAsync(() => plannedSettings.LoadStateAsync(ct), ct)
-            .IfSuccessAsync(() => periodicitySettings.LoadStateAsync(ct), ct)
-            .IfSuccessAsync(() => periodicityOffsetSettings.LoadStateAsync(ct), ct)
-            .IfSuccessAsync(() => referenceSettings.LoadStateAsync(ct), ct);
+        return ToDoItemContent.LoadStateAsync(ct);
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return empty.SaveStateAsync(ct).IfSuccessAsync(() => Edit.SaveStateAsync(ct), ct);
+        return ToDoItemContent.SaveStateAsync(ct);
     }
 
-    private IToDoItemSettings CreateEdit()
+    private IEditToDoItems CreateEdit()
     {
         return ToDoItemContent.Type switch
         {
@@ -92,7 +88,9 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
             Edit.GetEditToDoItems()
                 .SetType(new(ToDoItemContent.Type))
                 .SetName(new(ToDoItemContent.Name))
-                .SetLink(new(ToDoItemContent.Link.ToOptionUri())),
+                .SetLink(new(ToDoItemContent.Link.ToOptionUri()))
+                .SetIcon(new(ToDoItemContent.Icon))
+                .SetColor(new(ToDoItemContent.Color.ToString())),
             ct
         );
     }

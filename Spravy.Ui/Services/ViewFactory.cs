@@ -118,7 +118,7 @@ public class ViewFactory : IViewFactory
         ToDoItemEntityNotify item
     )
     {
-        return new(item, objectStorage);
+        return new(item);
     }
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(SortBy sortBy)
@@ -347,21 +347,21 @@ public class ViewFactory : IViewFactory
         ToDoItemEntityNotify item
     )
     {
-        return new(item, objectStorage);
+        return new(item);
     }
 
     public PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, this, objectStorage);
+        return new(item, this);
     }
 
     public PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
         ToDoItemEntityNotify item
     )
     {
-        return new(item, objectStorage);
+        return new(item);
     }
 
     public InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask)
@@ -556,7 +556,7 @@ public class ViewFactory : IViewFactory
 
     public ToDoItemContentViewModel CreateToDoItemContentViewModel()
     {
-        return new();
+        return new(objectStorage);
     }
 
     public EditDescriptionContentViewModel CreateEditDescriptionContentViewModel()

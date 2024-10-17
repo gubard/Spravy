@@ -92,6 +92,9 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private string icon;
 
+    [ObservableProperty]
+    private Color color;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -109,6 +112,7 @@ public partial class ToDoItemEntityNotify
         DaysOfWeek = new();
         DaysOfMonth = new();
         DaysOfYear = new();
+        color = Colors.Transparent;
         icon = string.Empty;
 
         PropertyChanged += OnPropertyChanged;

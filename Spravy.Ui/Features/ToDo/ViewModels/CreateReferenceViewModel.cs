@@ -43,7 +43,9 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                         x.Description,
                         x.DescriptionType,
                         x.Link.ToOptionUri(),
-                        new(x.Id)
+                        new(x.Id),
+                        x.Icon,
+                        x.Color.ToString()
                     ).ToResult()
                 )
                 .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
@@ -60,7 +62,9 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                     x.Description,
                     x.DescriptionType,
                     x.Link.ToOptionUri(),
-                    new(x.Id)
+                    new(x.Id),
+                    x.Icon,
+                    x.Color.ToString()
                 ).ToResult()
             )
             .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)

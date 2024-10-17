@@ -7,13 +7,15 @@ public readonly struct ToDoSelectorItem
         string name,
         uint orderIndex,
         ReadOnlyMemory<ToDoSelectorItem> children,
-        string icon
+        string icon,
+        string color
     )
     {
         Id = id;
         Name = name;
         Children = children;
         Icon = icon;
+        Color = color;
         OrderIndex = orderIndex;
     }
 
@@ -22,4 +24,5 @@ public readonly struct ToDoSelectorItem
     public uint OrderIndex { get; }
     public string Icon { get; }
     public ReadOnlyMemory<ToDoSelectorItem> Children { get; }
+    public string Color { get; }
 }

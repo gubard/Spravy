@@ -32,7 +32,8 @@ public readonly struct FullToDoItem
         TypeOfPeriodicity typeOfPeriodicity,
         ReadOnlyMemory<DayOfWeek> weeklyDays,
         bool isBookmark,
-        string icon
+        string icon,
+        string color
     )
     {
         Id = id;
@@ -61,6 +62,7 @@ public readonly struct FullToDoItem
         WeeklyDays = weeklyDays;
         IsBookmark = isBookmark;
         Icon = icon;
+        Color = color;
     }
 
     public Guid Id { get; }
@@ -89,4 +91,5 @@ public readonly struct FullToDoItem
     public ReadOnlyMemory<DayOfWeek> WeeklyDays { get; }
     public bool IsBookmark { get; }
     public string Icon { get; }
+    public string Color { get; }
 }

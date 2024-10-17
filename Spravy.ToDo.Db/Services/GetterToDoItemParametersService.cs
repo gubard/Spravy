@@ -446,7 +446,8 @@ public class GetterToDoItemParametersService
                 entity.Id,
                 entity.Name,
                 entity.ParentId.ToOption(),
-                entity.Icon
+                entity.Icon,
+                entity.Color
             ).ToOption();
     }
 }

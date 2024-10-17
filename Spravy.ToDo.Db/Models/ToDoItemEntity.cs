@@ -31,6 +31,7 @@ public record ToDoItemEntity
     public bool IsRequiredCompleteInDueDate { get; set; } = true;
     public DescriptionType DescriptionType { get; set; }
     public string Icon { get; set; } = string.Empty;
+    public string Color { get; set; } = string.Empty;
 
     public Guid? ReferenceId { get; set; }
     public ToDoItemEntity? Reference { get; set; }

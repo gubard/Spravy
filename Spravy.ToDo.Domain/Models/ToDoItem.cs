@@ -21,7 +21,8 @@ public readonly struct ToDoItem
         DescriptionType descriptionType,
         OptionStruct<Guid> referenceId,
         bool isBookmark,
-        string icon
+        string icon,
+        string color
     )
     {
         Id = id;
@@ -39,6 +40,7 @@ public readonly struct ToDoItem
         ReferenceId = referenceId;
         IsBookmark = isBookmark;
         Icon = icon;
+        Color = color;
     }
 
     public Guid Id { get; }
@@ -56,4 +58,5 @@ public readonly struct ToDoItem
     public OptionStruct<Guid> ReferenceId { get; }
     public bool IsBookmark { get; }
     public string Icon { get; }
+    public string Color { get; }
 }

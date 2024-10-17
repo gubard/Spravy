@@ -28,7 +28,8 @@ public readonly struct EditToDoItems
         EditPropertyValue<TypeOfPeriodicity> typeOfPeriodicity,
         EditPropertyValue<ReadOnlyMemory<DayOfWeek>> weeklyDays,
         EditPropertyValue<bool> isBookmark,
-        EditPropertyValue<string> icon
+        EditPropertyValue<string> icon,
+        EditPropertyValue<string> color
     )
     {
         Ids = ids;
@@ -53,6 +54,7 @@ public readonly struct EditToDoItems
         WeeklyDays = weeklyDays;
         IsBookmark = isBookmark;
         Icon = icon;
+        Color = color;
     }
 
     public ReadOnlyMemory<Guid> Ids { get; }
@@ -77,6 +79,7 @@ public readonly struct EditToDoItems
     public EditPropertyValue<ReadOnlyMemory<DayOfWeek>> WeeklyDays { get; }
     public EditPropertyValue<bool> IsBookmark { get; }
     public EditPropertyValue<string> Icon { get; }
+    public EditPropertyValue<string> Color { get; }
 
     public EditToDoItems SetIsRequiredCompleteInDueDate(EditPropertyValue<bool> value)
     {
@@ -102,7 +105,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -130,7 +134,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -158,7 +163,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -186,7 +192,8 @@ public readonly struct EditToDoItems
             value,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -214,6 +221,36 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
+            value,
+            Color
+        );
+    }
+
+    public EditToDoItems SetColor(EditPropertyValue<string> value)
+    {
+        return new(
+            Ids,
+            Name,
+            IsFavorite,
+            Type,
+            Description,
+            Link,
+            ParentId,
+            DescriptionType,
+            ReferenceId,
+            AnnuallyDays,
+            MonthlyDays,
+            ChildrenType,
+            DueDate,
+            DaysOffset,
+            MonthsOffset,
+            WeeksOffset,
+            YearsOffset,
+            IsRequiredCompleteInDueDate,
+            TypeOfPeriodicity,
+            WeeklyDays,
+            IsBookmark,
+            Icon,
             value
         );
     }
@@ -242,7 +279,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -270,7 +308,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -298,7 +337,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -326,7 +366,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -354,7 +395,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -382,7 +424,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -410,7 +453,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -438,7 +482,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             value,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -466,7 +511,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -494,7 +540,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -522,7 +569,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -550,7 +598,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -578,7 +627,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -606,7 +656,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -634,7 +685,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -662,7 +714,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             IsBookmark,
-            Icon
+            Icon,
+            Color
         );
     }
 
@@ -690,7 +743,8 @@ public readonly struct EditToDoItems
             TypeOfPeriodicity,
             WeeklyDays,
             value,
-            Icon
+            Icon,
+            Color
         );
     }
 }

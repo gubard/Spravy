@@ -21,6 +21,7 @@
                 <MergeResourceInclude Source="TimeSpanAddItemControl.axaml" />
                 <MergeResourceInclude Source="DeleteItemControl.axaml" />
                 <MergeResourceInclude Source="IconSelectorControl.axaml" />
+                <MergeResourceInclude Source="ColorSelectorControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
