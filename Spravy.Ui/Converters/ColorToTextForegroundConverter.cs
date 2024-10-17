@@ -16,7 +16,7 @@ public class ColorToTextForegroundConverter : IValueConverter
             if (
                 application.TryFindResource(
                     "TextControlForeground",
-                    application.RequestedThemeVariant,
+                    application.ActualThemeVariant,
                     out var resource
                 )
             )
@@ -32,7 +32,7 @@ public class ColorToTextForegroundConverter : IValueConverter
             if (
                 application.TryFindResource(
                     "TextControlForeground",
-                    application.RequestedThemeVariant,
+                    application.ActualThemeVariant,
                     out var resource
                 )
             )
