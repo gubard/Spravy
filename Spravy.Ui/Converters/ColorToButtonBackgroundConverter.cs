@@ -16,7 +16,7 @@ public class ColorToButtonBackgroundConverter : IValueConverter
             if (
                 application.TryFindResource(
                     "ButtonBackground",
-                    application.RequestedThemeVariant,
+                    application.ActualThemeVariant,
                     out var resource
                 )
             )
@@ -32,7 +32,7 @@ public class ColorToButtonBackgroundConverter : IValueConverter
             if (
                 application.TryFindResource(
                     "ButtonBackground",
-                    application.RequestedThemeVariant,
+                    application.ActualThemeVariant,
                     out var resource
                 )
             )

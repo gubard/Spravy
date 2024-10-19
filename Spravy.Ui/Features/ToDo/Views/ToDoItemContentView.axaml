@@ -18,9 +18,6 @@
         <TextBox Classes="content-type-url"
                  Text="{Binding Link}" />
         <TextBlock Classes="field"
-                   Text="{DynamicResource ToDoItemSettingsView.Type}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
-        <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemContentView.Color}" />
         <c:ColorSelectorControl ItemsSource="{x:Static h:ColorData.ColorsA400}" SelectedColor="{Binding Color}" />
         <TextBlock Classes="field"
@@ -28,5 +25,8 @@
         <c:IconSelectorControl SelectedIcon="{Binding Icon}"
                                ItemsSource="{x:Static h:UiHelper.Icons}"
                                FavoriteItemsSource="{Binding FavoriteIcons}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource ToDoItemSettingsView.Type}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
     </StackPanel>
 </c:MainUserControl>

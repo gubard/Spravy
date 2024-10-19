@@ -8,7 +8,7 @@
              xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             xmlns:services="clr-namespace:Spravy.Ui.Features.ToDo.Services"
+             xmlns:tds="clr-namespace:Spravy.Ui.Features.ToDo.Services"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -105,8 +105,9 @@
             </Button>
         </DataTemplate>
 
-        <DataTemplate x:DataType="s:EmptyApplySettings" /> 
-        <DataTemplate x:DataType="services:EmptyEditToDoItems" />
+        <DataTemplate x:DataType="s:EmptyApplySettings" />
+        <DataTemplate x:DataType="s:EmptyApplySettings" />
+        <DataTemplate x:DataType="tds:EmptyToDoItemSettings" />
 
         <DataTemplate x:DataType="m:DayOfYearSelectItem">
             <ItemsControl ItemsSource="{Binding Days}">
