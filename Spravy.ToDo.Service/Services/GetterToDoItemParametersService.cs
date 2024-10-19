@@ -1,14 +1,6 @@
 using System.Collections.Frozen;
-using Microsoft.Extensions.Logging;
-using Spravy.Core.Mappers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Db.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Errors;
-using Spravy.ToDo.Domain.Models;
 
-namespace Spravy.ToDo.Db.Services;
+namespace Spravy.ToDo.Service.Services;
 
 public class GetterToDoItemParametersService
 {
@@ -35,7 +27,7 @@ public class GetterToDoItemParametersService
 
                 if (active.Id == entity.Id)
                 {
-                    return parameters.With(OptionStruct<ActiveToDoItem>.Default).ToResult();
+                    return parameters.With(OptionStruct<ToDoShortItem>.Default).ToResult();
                 }
 
                 return parameters.ToResult();
@@ -114,7 +106,7 @@ public class GetterToDoItemParametersService
 
             return parameters
                 .With(ToDoItemIsCan.None)
-                .With(new OptionStruct<ActiveToDoItem>())
+                .With(OptionStruct<ToDoShortItem>.Default)
                 .With(ToDoItemStatus.Miss)
                 .ToResult();
         }
@@ -130,7 +122,7 @@ public class GetterToDoItemParametersService
         {
             return parameters
                 .With(ToDoItemIsCan.CanIncomplete)
-                .With(new OptionStruct<ActiveToDoItem>())
+                .With(OptionStruct<ToDoShortItem>.Default)
                 .With(ToDoItemStatus.Completed)
                 .ToResult();
         }
@@ -155,7 +147,7 @@ public class GetterToDoItemParametersService
                 if (entity.DueDate > dueDate)
                 {
                     return parameters
-                        .With(new OptionStruct<ActiveToDoItem>())
+                        .With(OptionStruct<ToDoShortItem>.Default)
                         .With(ToDoItemStatus.Planned)
                         .With(ToDoItemIsCan.None)
                         .ToResult();
@@ -174,7 +166,7 @@ public class GetterToDoItemParametersService
                 if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                 {
                     return parameters
-                        .With(new OptionStruct<ActiveToDoItem>())
+                        .With(OptionStruct<ToDoShortItem>.Default)
                         .With(ToDoItemStatus.Planned)
                         .With(ToDoItemIsCan.None)
                         .ToResult();
@@ -187,8 +179,8 @@ public class GetterToDoItemParametersService
             .OrderBy(x => x.OrderIndex)
             .ToArray();
 
-        var firstReadyForComplete = new OptionStruct<ActiveToDoItem>();
-        var firstMiss = new OptionStruct<ActiveToDoItem>();
+        var firstReadyForComplete = new OptionStruct<ToDoShortItem>();
+        var firstMiss = new OptionStruct<ToDoShortItem>();
         var hasPlanned = false;
 
         foreach (var item in items)
@@ -296,14 +288,14 @@ public class GetterToDoItemParametersService
                 return parameters
                     .With(ToDoItemStatus.Planned)
                     .With(ToDoItemIsCan.None)
-                    .With(new OptionStruct<ActiveToDoItem>())
+                    .With(OptionStruct<ToDoShortItem>.Default)
                     .ToResult();
             }
 
             return parameters
                 .With(ToDoItemStatus.Completed)
                 .With(ToDoItemIsCan.None)
-                .With(new OptionStruct<ActiveToDoItem>())
+                .With(OptionStruct<ToDoShortItem>.Default)
                 .ToResult();
         }
 
@@ -380,7 +372,7 @@ public class GetterToDoItemParametersService
         return parameters
             .With(ToDoItemStatus.ReadyForComplete)
             .With(ToDoItemIsCan.CanComplete)
-            .With(new OptionStruct<ActiveToDoItem>())
+            .With(OptionStruct<ToDoShortItem>.Default)
             .ToResult();
     }
 
@@ -438,16 +430,10 @@ public class GetterToDoItemParametersService
         };
     }
 
-    private OptionStruct<ActiveToDoItem> ToActiveToDoItem(ToDoItemEntity entity)
+    private OptionStruct<ToDoShortItem> ToActiveToDoItem(ToDoItemEntity entity)
     {
         return entity.ParentId is null
-            ? new()
-            : new ActiveToDoItem(
-                entity.Id,
-                entity.Name,
-                entity.ParentId.ToOption(),
-                entity.Icon,
-                entity.Color
-            ).ToOption();
+            ? OptionStruct<ToDoShortItem>.Default
+            : entity.ToToDoShortItem().ToOption();
     }
 }

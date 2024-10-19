@@ -38,7 +38,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 {
                     var reply = new GetCurrentActiveToDoItemReply()
                     {
-                        Item = item.ToActiveToDoItemGrpc(),
+                        Item = item.ToToDoShortItemNullableGrpc(),
                     };
 
                     return reply;
@@ -130,7 +130,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .GetActiveToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
             .HandleAsync(
                 serializer,
-                active => new GetActiveToDoItemReply { Item = active.ToActiveToDoItemGrpc(), },
+                active => new GetActiveToDoItemReply
+                {
+                    Item = active.ToToDoShortItemNullableGrpc(),
+                },
                 context.CancellationToken
             );
     }
@@ -210,7 +213,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         )
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(item.ThrowIfError().ToToDoItemGrpc().ToArray());
+            reply.Items.AddRange(item.ThrowIfNull().ThrowIfError().ToFullToDoItemGrpc().ToArray());
             await responseStream.WriteAsync(reply);
         }
     }
@@ -340,7 +343,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 toDoItem =>
                 {
-                    var reply = toDoItem.ToGetToDoItemReply();
+                    var reply = new GetToDoItemReply { Item = toDoItem.ToFullToDoItemGrpc(), };
 
                     return reply;
                 },

@@ -5,42 +5,12 @@ namespace Spravy.ToDo.Domain.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class ToDoMapper
 {
-    public static partial AnnuallyPeriodicity ToAnnuallyPeriodicity(
-        this AnnuallyPeriodicityGrpc value
-    );
-
-    public static partial AnnuallyPeriodicityGrpc ToAnnuallyPeriodicityGrpc(
-        this AnnuallyPeriodicity value
-    );
-
-    public static partial MonthlyPeriodicity ToMonthlyPeriodicity(
-        this MonthlyPeriodicityGrpc value
-    );
-
-    public static partial MonthlyPeriodicityGrpc ToMonthlyPeriodicityGrpc(
-        this MonthlyPeriodicity value
-    );
-
     public static partial ResetToDoItemOptions ToResetToDoItemOptions(
         this ResetToDoItemOptionsGrpc value
     );
 
     public static partial ResetToDoItemOptionsGrpc ToResetToDoItemOptionsGrpc(
         this ResetToDoItemOptions value
-    );
-
-    public static partial WeeklyPeriodicity ToWeeklyPeriodicity(this WeeklyPeriodicityGrpc value);
-
-    public static partial WeeklyPeriodicityGrpc ToWeeklyPeriodicityGrpc(
-        this WeeklyPeriodicity value
-    );
-
-    public static partial MonthlyPeriodicity ToMonthlyPeriodicity(
-        this GetMonthlyPeriodicityReply value
-    );
-
-    public static partial GetMonthlyPeriodicityReply ToGetMonthlyPeriodicityReply(
-        this MonthlyPeriodicity value
     );
 
     public static partial DayOfWeek ToDayOfWeek(this DayOfWeekGrpc value);
@@ -55,23 +25,17 @@ public static partial class ToDoMapper
 
     public static partial DescriptionTypeGrpc ToDescriptionTypeGrpc(this DescriptionType value);
 
-    public static partial ToDoItem ToToDoItem(this ToDoItemGrpc value);
+    public static partial FullToDoItem ToFullToDoItem(this FullToDoItemGrpc value);
 
-    public static partial ToDoItemGrpc ToToDoItemGrpc(this ToDoItem value);
-
-    public static partial ReadOnlyMemory<ToDoItemGrpc> ToToDoItemGrpc(
-        this ReadOnlyMemory<ToDoItem> value
+    public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(
+        this IEnumerable<FullToDoItemGrpc> value
     );
 
-    public static partial ReadOnlyMemory<ToDoItem> ToToDoItem(this IEnumerable<ToDoItemGrpc> value);
-
-    public static partial FullToDoItem ToFullToDoItem(this GetToDoItemReply value);
-
-    public static partial GetToDoItemReply ToGetToDoItemReply(this FullToDoItem value);
-
-    public static partial ValueToDoItemSettings ToValueToDoItemSettings(
-        this GetValueToDoItemSettingsReply value
+    public static partial ReadOnlyMemory<FullToDoItemGrpc> ToFullToDoItemGrpc(
+        this ReadOnlyMemory<FullToDoItem> value
     );
+
+    public static partial FullToDoItemGrpc ToFullToDoItemGrpc(this FullToDoItem value);
 
     public static partial ToDoShortItemGrpc ToToDoShortItemGrpc(this ToDoShortItem value);
 
@@ -93,10 +57,6 @@ public static partial class ToDoMapper
         this AddToDoItemOptionsGrpc value
     );
 
-    public static partial ActiveToDoItemGrpc ToActiveToDoItemGrpc(this ActiveToDoItem value);
-
-    public static partial ActiveToDoItem ToActiveToDoItem(this ActiveToDoItemGrpc value);
-
     public static partial DayOfYearGrpc ToDayOfYearGrpc(this DayOfYear value);
 
     public static partial DayOfYear ToDayOfYear(this DayOfYearGrpc value);
@@ -108,14 +68,6 @@ public static partial class ToDoMapper
     public static partial ToDoItemIsCanGrpc ToToDoItemIsCanGrpc(this ToDoItemIsCan value);
 
     public static partial ToDoItemIsCan ToToDoItemIsCan(this ToDoItemIsCanGrpc value);
-
-    public static partial GetAnnuallyPeriodicityReply ToGetAnnuallyPeriodicityReply(
-        this AnnuallyPeriodicity value
-    );
-
-    public static partial AnnuallyPeriodicity ToAnnuallyPeriodicity(
-        this GetAnnuallyPeriodicityReply value
-    );
 
     public static partial ToDoItemToStringOptionsGrpc ToToDoItemToStringOptionsGrpc(
         this ToDoItemToStringOptions value
@@ -137,48 +89,26 @@ public static partial class ToDoMapper
         this IEnumerable<ToDoSelectorItemGrpc> value
     );
 
-    public static partial GetWeeklyPeriodicityReply ToGetWeeklyPeriodicityReply(
-        this WeeklyPeriodicity value
-    );
-
-    public static partial WeeklyPeriodicity ToWeeklyPeriodicity(
-        this GetWeeklyPeriodicityReply value
-    );
-
-    public static partial PlannedToDoItemSettings ToPlannedToDoItemSettings(
-        this GetPlannedToDoItemSettingsReply value
-    );
-
-    public static ActiveToDoItemGrpc? ToActiveToDoItemGrpc(this OptionStruct<ActiveToDoItem> value)
+    public static ToDoShortItemGrpc? ToToDoShortItemNullableGrpc(
+        this OptionStruct<ToDoShortItem> value
+    )
     {
         if (value.TryGetValue(out var item))
         {
-            return item.ToActiveToDoItemGrpc();
+            return item.ToToDoShortItemGrpc();
         }
 
         return null;
     }
 
-    public static OptionStruct<ActiveToDoItem> ToOptionActiveToDoItem(
-        this ActiveToDoItemGrpc? value
-    )
+    public static OptionStruct<ToDoShortItem> ToOptionToDoShortItem(this ToDoShortItemGrpc? value)
     {
         if (value is null)
         {
             return new();
         }
 
-        return new(value.ToActiveToDoItem());
-    }
-
-    public static DailyPeriodicity ToDailyPeriodicity(this DailyPeriodicityGrpc value)
-    {
-        return new();
-    }
-
-    public static DailyPeriodicityGrpc ToDailyPeriodicityGrpc(this DailyPeriodicity value)
-    {
-        return new();
+        return new(value.ToToDoShortItem());
     }
 
     public static partial UpdateOrderIndexToDoItemOptionsGrpc ToUpdateOrderIndexToDoItemOptionsGrpc(
@@ -187,30 +117,6 @@ public static partial class ToDoMapper
 
     public static partial UpdateOrderIndexToDoItemOptions ToUpdateOrderIndexToDoItemOptions(
         this UpdateOrderIndexToDoItemOptionsGrpc value
-    );
-
-    public static partial GetPlannedToDoItemSettingsReply ToGetPlannedToDoItemSettingsReply(
-        this PlannedToDoItemSettings value
-    );
-
-    public static partial GetValueToDoItemSettingsReply ToGetValueToDoItemSettingsReply(
-        this ValueToDoItemSettings value
-    );
-
-    public static partial PeriodicityToDoItemSettings ToPeriodicityToDoItemSettings(
-        this GetPeriodicityToDoItemSettingsReply value
-    );
-
-    public static partial GetPeriodicityToDoItemSettingsReply ToGetPeriodicityToDoItemSettingsReply(
-        this PeriodicityToDoItemSettings value
-    );
-
-    public static partial PeriodicityOffsetToDoItemSettings ToPeriodicityOffsetToDoItemSettings(
-        this GetPeriodicityOffsetToDoItemSettingsReply value
-    );
-
-    public static partial GetPeriodicityOffsetToDoItemSettingsReply ToGetPeriodicityOffsetToDoItemSettingsReply(
-        this PeriodicityOffsetToDoItemSettings value
     );
 
     public static EditToDoItems ToEditToDoItems(this EditToDoItemsGrpc value)

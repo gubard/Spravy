@@ -112,7 +112,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         )
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(item.ThrowIfError().ToToDoItemGrpc().ToArray());
+            reply.Items.AddRange(item.ThrowIfError().ToFullToDoItemGrpc().ToArray());
             await responseStream.WriteAsync(reply);
         }
     }
@@ -128,7 +128,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 item =>
                 {
-                    var reply = item.ToGetToDoItemReply();
+                    var reply = new GetToDoItemReply { Item = item.ToFullToDoItemGrpc(), };
 
                     return reply;
                 },

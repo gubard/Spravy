@@ -89,9 +89,10 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<OptionStruct<ActiveToDoItem>>
-    > GetActiveToDoItemAsync(Guid id, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result<OptionStruct<ToDoShortItem>>> GetActiveToDoItemAsync(
+        Guid id,
+        CancellationToken ct
+    )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
 
@@ -498,10 +499,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             item =>
                             {
-                                var parents = new List<ToDoShortItem>
-                                {
-                                    new(item.Id, item.Name, item.Icon, item.Color)
-                                };
+                                var parents = new List<ToDoShortItem> { item.ToToDoShortItem(), };
 
                                 return GetParentsAsync(context, id, parents, ct)
                                     .ConfigureAwait(false)
@@ -676,7 +674,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
+    private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<FullToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,
         CancellationToken ct
     )
@@ -737,13 +735,15 @@ public class EfToDoService : IToDoService
                                                                                 Name = item.Name,
                                                                             }
                                                                         )
-                                                                            .ToToDoItem(parameters)
+                                                                            .ToFullToDoItem(
+                                                                                parameters
+                                                                            )
                                                                             .ToResult(),
                                                                     ct
                                                                 );
                                                         }
 
-                                                        return item.ToToDoItem(parameters)
+                                                        return item.ToFullToDoItem(parameters)
                                                             .ToResult()
                                                             .ToValueTaskResult()
                                                             .ConfigureAwait(false);
@@ -1230,12 +1230,8 @@ public class EfToDoService : IToDoService
                                         GetToDoSelectorItems(items, x.Id)
                                             .IfSuccess(children =>
                                                 new ToDoSelectorItem(
-                                                    x.Id,
-                                                    x.Name,
-                                                    x.OrderIndex,
-                                                    children,
-                                                    x.Icon,
-                                                    x.Color
+                                                    x.ToToDoShortItem(),
+                                                    children
                                                 ).ToResult()
                                             )
                                     ),
@@ -1277,7 +1273,7 @@ public class EfToDoService : IToDoService
     }
 
     public ConfiguredValueTaskAwaitable<
-        Result<OptionStruct<ActiveToDoItem>>
+        Result<OptionStruct<ToDoShortItem>>
     > GetCurrentActiveToDoItemAsync(CancellationToken ct)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -1305,14 +1301,14 @@ public class EfToDoService : IToDoService
                                                     return parameters.ActiveItem.ToResult();
                                                 }
 
-                                                return new(new OptionStruct<ActiveToDoItem>());
+                                                return new(OptionStruct<ToDoShortItem>.Default);
                                             })
                                     )
                                     .IfSuccess(i =>
                                     {
                                         var item = i.Span.FirstOrDefault(x => x.IsHasValue);
 
-                                        return new Result<OptionStruct<ActiveToDoItem>>(item);
+                                        return new Result<OptionStruct<ToDoShortItem>>(item);
                                     }),
                             ct
                         ),
@@ -1320,16 +1316,14 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
-        ReadOnlyMemory<Guid> ids,
-        uint chunkSize,
-        CancellationToken ct
-    )
+    public ConfiguredCancelableAsyncEnumerable<
+        Result<ReadOnlyMemory<FullToDoItem>>
+    > GetToDoItemsAsync(ReadOnlyMemory<Guid> ids, uint chunkSize, CancellationToken ct)
     {
         return GetToDoItemsCore(ids, chunkSize, ct).ConfigureAwait(false);
     }
 
-    private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
+    private async IAsyncEnumerable<Result<ReadOnlyMemory<FullToDoItem>>> GetToDoItemsCore(
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         [EnumeratorCancellation] CancellationToken ct
@@ -1728,14 +1722,7 @@ public class EfToDoService : IToDoService
             .IfSuccessForEach(item =>
                 GetToDoSelectorItems(items, item.Id)
                     .IfSuccess(children =>
-                        new ToDoSelectorItem(
-                            item.Id,
-                            item.Name,
-                            item.OrderIndex,
-                            children,
-                            item.Icon,
-                            item.Color
-                        ).ToResult()
+                        new ToDoSelectorItem(item.ToToDoShortItem(), children).ToResult()
                     )
             );
     }

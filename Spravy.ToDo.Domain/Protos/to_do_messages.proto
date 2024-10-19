@@ -21,19 +21,18 @@ message GetShortToDoItemsReply {
   repeated ToDoShortItemGrpc items = 1;
 }
 
+message UpdateToDoItemOrderIndexRequest {
+  repeated UpdateOrderIndexToDoItemOptionsGrpc items = 1;
+}
+
+message UpdateToDoItemOrderIndexReply {
+}
+
 message EditToDoItemsRequest {
-  EditToDoItemsGrpc value = 1; 
+  EditToDoItemsGrpc value = 1;
 }
 
 message EditToDoItemsReply {
-}
-
-message UpdateIconRequest {
-  bytes id = 1;
-  string icon = 2;
-}
-
-message UpdateIconReply {
 }
 
 message GetBookmarkToDoItemIdsRequest {
@@ -43,14 +42,6 @@ message GetBookmarkToDoItemIdsRequestReply {
   repeated bytes ids = 1;
 }
 
-message UpdateIsBookmarkRequest {
-  bytes id = 1;
-  bool is_bookmark = 2;
-}
-
-message UpdateIsBookmarkReply {
-}
-
 message UpdateEventsRequest {
 }
 
@@ -58,65 +49,8 @@ message UpdateEventsReply {
   bool isUpdated = 1;
 }
 
-message GetActiveToDoItemRequest {
-  bytes id = 1;
-}
-
-message GetActiveToDoItemReply {
-  ActiveToDoItemGrpc item = 1;
-}
-
-message GetReferenceToDoItemSettingsRequest {
-  bytes id = 1;
-}
-
-message GetReferenceToDoItemSettingsReply {
-  bytes reference_id = 1;
-}
-
-message UpdateReferenceToDoItemRequest {
-  bytes id = 1;
-  bytes reference_id = 2;
-}
-
-message UpdateReferenceToDoItemReply {
-}
-
-message CloneToDoItemRequest {
-  repeated bytes clone_ids = 1;
-  bytes parent_id = 2;
-}
-
-message CloneToDoItemReply {
-  repeated bytes new_item_ids = 1;
-}
-
-message GetChildrenToDoItemShortsRequest {
-  bytes id = 1;
-}
-
-message GetChildrenToDoItemShortsReply {
-  repeated ToDoShortItemGrpc items = 1;
-}
-
-message UpdateToDoItemDescriptionTypeRequest {
-  bytes id = 1;
-  DescriptionTypeGrpc type = 2;
-}
-
-message UpdateToDoItemDescriptionTypeReply {
-}
-
 message ResetToDoItemRequest {
   repeated ResetToDoItemOptionsGrpc items = 1;
-}
-
-message ResetToDoItemOptionsGrpc {
-  bytes id = 1;
-  bool is_complete_children_task = 2;
-  bool is_move_circle_order_index = 3;
-  bool is_only_completed_tasks = 4;
-  bool is_complete_current_task = 5;
 }
 
 message ResetToDoItemReply {
@@ -129,114 +63,11 @@ message GetTodayToDoItemsReply {
   repeated bytes ids = 1;
 }
 
-message UpdateToDoItemIsRequiredCompleteInDueDateRequest {
-  bytes id = 1;
-  bool is_required_complete_in_due_date = 2;
-}
-
-message UpdateToDoItemIsRequiredCompleteInDueDateReply {
-}
-
-message GetToDoItemsRequest {
-  repeated bytes ids = 1;
-  uint32 chunk_size = 2;
-}
-
-message ToDoItemGrpc {
-  bytes id = 1;
-  string name = 2;
-  bool is_favorite = 3;
-  ToDoItemTypeGrpc type = 4;
-  string description = 5;
-  string link = 6;
-  uint32 order_index = 7;
-  ToDoItemStatusGrpc status = 8;
-  ActiveToDoItemGrpc active = 9;
-  ToDoItemIsCanGrpc is_can = 10;
-  bytes parent_id = 11;
-  DescriptionTypeGrpc description_type = 12;
-  bytes referenceId = 13;
-  bool is_bookmark = 14; 
-  string icon = 15;
-  string color = 16;
-}
-
-message GetToDoItemsReply {
-  repeated ToDoItemGrpc items = 1;
-}
-
-message RandomizeChildrenOrderIndexReply {
-}
-
 message RandomizeChildrenOrderIndexRequest {
   repeated bytes ids = 1;
 }
 
-message GetPeriodicityOffsetToDoItemSettingsRequest {
-  bytes id = 1;
-}
-
-message GetPeriodicityOffsetToDoItemSettingsReply {
-  uint32 days_offset = 1;
-  uint32 months_offset = 2;
-  uint32 weeks_offset = 3;
-  uint32 years_offset = 4;
-  google.protobuf.Timestamp due_date = 5;
-  ToDoItemChildrenTypeGrpc children_type = 6;
-  bool is_required_complete_in_due_date = 7;
-}
-
-message GetAnnuallyPeriodicityRequest {
-  bytes id = 1;
-}
-
-message GetAnnuallyPeriodicityReply {
-  repeated DayOfYearGrpc days = 1;
-}
-
-message GetMonthlyPeriodicityRequest {
-  bytes id = 1;
-}
-
-message GetMonthlyPeriodicityReply {
-  repeated uint32 days = 1;
-}
-
-message GetWeeklyPeriodicityRequest {
-  bytes id = 1;
-}
-
-message GetWeeklyPeriodicityReply {
-  repeated DayOfWeekGrpc days = 1;
-}
-
-message GetPeriodicityToDoItemSettingsRequest {
-  bytes id = 1;
-}
-
-message GetPeriodicityToDoItemSettingsReply {
-  ToDoItemChildrenTypeGrpc children_type = 1;
-  google.protobuf.Timestamp due_date = 2;
-  TypeOfPeriodicityGrpc type_of_periodicity = 3;
-  bool is_required_complete_in_due_date = 7;
-}
-
-message GetValueToDoItemSettingsRequest {
-  bytes id = 1;
-}
-
-message GetValueToDoItemSettingsReply {
-  ToDoItemChildrenTypeGrpc children_type = 1;
-}
-
-message GetPlannedToDoItemSettingsRequest {
-  bytes id = 1;
-}
-
-message GetPlannedToDoItemSettingsReply {
-  ToDoItemChildrenTypeGrpc children_type = 1;
-  google.protobuf.Timestamp due_date = 2;
-  bool is_required_complete_in_due_date = 7;
+message RandomizeChildrenOrderIndexReply {
 }
 
 message GetParentsRequest {
@@ -263,38 +94,21 @@ message GetLeafToDoItemIdsReply {
   repeated bytes ids = 1;
 }
 
+message GetToDoItemsRequest {
+  repeated bytes ids = 1;
+  uint32 chunk_size = 2;
+}
+
+message GetToDoItemsReply {
+  repeated FullToDoItemGrpc items = 1;
+}
+
 message GetToDoItemRequest {
   bytes id = 1;
 }
 
 message GetToDoItemReply {
-  bytes id = 1;
-  string name = 2;
-  bool is_favorite = 3;
-  ToDoItemTypeGrpc type = 4;
-  string description = 5;
-  string link = 6;
-  uint32 order_index = 7;
-  ToDoItemStatusGrpc status = 8;
-  ActiveToDoItemGrpc active = 9;
-  ToDoItemIsCanGrpc is_can = 10;
-  bytes parent_id = 11;
-  DescriptionTypeGrpc description_type = 12;
-  bytes referenceId = 13;
-  repeated DayOfYearGrpc annually_days = 14;
-  repeated uint32 monthly_days = 15;
-  ToDoItemChildrenTypeGrpc children_type = 16;
-  google.protobuf.Timestamp due_date = 17;
-  uint32 DaysOffset = 18;
-  uint32 MonthsOffset= 19;
-  uint32 WeeksOffset= 20;
-  uint32 YearsOffset = 21;
-  bool IsRequiredCompleteInDueDate= 22;
-  TypeOfPeriodicityGrpc TypeOfPeriodicity= 23;
-  repeated DayOfWeekGrpc WeeklyDays = 24;
-  bool is_bookmark = 25;
-  string icon = 26;
-  string color = 27;
+  FullToDoItemGrpc item = 1;
 }
 
 message GetChildrenToDoItemIdsRequest {
@@ -313,111 +127,27 @@ message GetFavoriteToDoItemIdsRequestReply {
   repeated bytes ids = 1;
 }
 
-message GetRootToDoItemIdsRequest {
-}
-
-message GetRootToDoItemIdsReply {
-  repeated bytes ids = 1;
-}
-
-message UpdateToDoItemLinkRequest {
+message GetActiveToDoItemRequest {
   bytes id = 1;
-  string link = 2;
 }
 
-message UpdateToDoItemLinkReply {
-
+message GetActiveToDoItemReply {
+  ToDoShortItemGrpc item = 1;
 }
 
 message GetCurrentActiveToDoItemRequest {
 }
 
 message GetCurrentActiveToDoItemReply {
-  ActiveToDoItemGrpc item = 1;
-}
-
-message GetSiblingsRequest {
-  bytes id = 1;
-}
-
-message GetSiblingsReply {
-  repeated ToDoShortItemGrpc items = 1;
-}
-
-message ToDoShortItemGrpc {
-  bytes id = 1;
-  string name = 2;
-  string icon = 3;
-  string color = 4;
-}
-
-message UpdateToDoItemChildrenTypeRequest {
-  bytes id = 1;
-  ToDoItemChildrenTypeGrpc type = 2;
-}
-
-message UpdateToDoItemChildrenTypeReply {
-
-}
-
-message UpdateToDoItemYearsOffsetRequest {
-  bytes id = 1;
-  uint32 years = 2;
-}
-
-message UpdateToDoItemYearsOffsetReply {
-}
-
-message UpdateToDoItemWeeksOffsetRequest {
-  bytes id = 1;
-  uint32 weeks = 2;
-}
-
-message UpdateToDoItemWeeksOffsetReply {
-}
-
-message UpdateToDoItemMonthsOffsetRequest {
-  bytes id = 1;
-  uint32 months = 2;
-}
-
-message UpdateToDoItemMonthsOffsetReply {
-}
-
-message UpdateToDoItemDaysOffsetRequest {
-  bytes id = 1;
-  uint32 days = 2;
-}
-
-message UpdateToDoItemDaysOffsetReply {
+  ToDoShortItemGrpc item = 1;
 }
 
 message ToDoItemToStringRequest {
   repeated ToDoItemToStringOptionsGrpc items = 1;
 }
 
-message ToDoItemToStringOptionsGrpc {
-  bytes id = 1;
-  repeated ToDoItemStatusGrpc statuses = 2;
-}
-
 message ToDoItemToStringReply {
   string value = 1;
-}
-
-message ToDoItemToRootRequest {
-  bytes id = 1;
-}
-
-message ToDoItemToRootReply {
-}
-
-message UpdateToDoItemParentRequest {
-  bytes id = 1;
-  bytes parent_id = 2;
-}
-
-message UpdateToDoItemParentReply {
 }
 
 message GetToDoSelectorItemsRequest {
@@ -426,122 +156,6 @@ message GetToDoSelectorItemsRequest {
 
 message GetToDoSelectorItemsReply {
   repeated ToDoSelectorItemGrpc items = 1;
-}
-
-message ToDoSelectorItemGrpc {
-  bytes id = 1;
-  string name = 2;
-  repeated ToDoSelectorItemGrpc children = 3;
-  uint32 order_index = 4;
-  string icon = 5;
-  string color = 6;
-}
-
-message UpdateToDoItemWeeklyPeriodicityRequest {
-  bytes id = 1;
-  WeeklyPeriodicityGrpc periodicity = 2;
-}
-
-message UpdateToDoItemWeeklyPeriodicityReply {
-}
-
-message UpdateToDoItemMonthlyPeriodicityRequest {
-  bytes id = 1;
-  MonthlyPeriodicityGrpc periodicity = 2;
-}
-
-message UpdateToDoItemMonthlyPeriodicityReply {
-}
-
-message UpdateToDoItemAnnuallyPeriodicityRequest {
-  bytes id = 1;
-  AnnuallyPeriodicityGrpc periodicity = 2;
-}
-
-message UpdateToDoItemAnnuallyPeriodicityReply {
-}
-
-message ActiveToDoItemGrpc {
-  bytes id = 1;
-  string name = 2;
-  bytes parent_id = 3;
-  string icon = 4;
-  string color = 5;
-}
-
-message RemoveFavoriteToDoItemRequest {
-  bytes id = 1;
-}
-
-message RemoveFavoriteToDoItemReply {
-}
-
-message AddFavoriteToDoItemRequest {
-  bytes id = 1;
-}
-
-message AddFavoriteToDoItemReply {
-}
-
-message UpdateToDoItemDescriptionRequest {
-  bytes id = 1;
-  string description = 2;
-}
-
-message UpdateToDoItemDescriptionReply {
-}
-
-message UpdateToDoItemOrderIndexRequest {
-  repeated UpdateOrderIndexToDoItemOptionsGrpc items = 1;
-}
-
-message UpdateToDoItemOrderIndexReply {
-}
-
-message UpdateOrderIndexToDoItemOptionsGrpc {
-  bytes id = 1;
-  bytes target_id = 2;
-  bool is_after = 3;
-}
-
-message UpdateToDoItemTypeRequest {
-  bytes id = 1;
-  ToDoItemTypeGrpc type = 2;
-}
-
-message UpdateToDoItemTypeReply {
-}
-
-message UpdateToDoItemNameRequest {
-  bytes id = 1;
-  string name = 2;
-}
-
-message UpdateToDoItemNameReply {
-}
-
-message UpdateToDoItemCompleteStatusRequest {
-  bytes id = 1;
-  bool is_completed = 2;
-}
-
-message UpdateToDoItemCompleteStatusReply {
-}
-
-message UpdateToDoItemDueDateRequest {
-  bytes id = 1;
-  google.protobuf.Timestamp due_date = 2;
-}
-
-message UpdateToDoItemDueDateReply {
-}
-
-message UpdateToDoItemTypeOfPeriodicityRequest {
-  bytes id = 1;
-  TypeOfPeriodicityGrpc type = 2;
-}
-
-message UpdateToDoItemTypeOfPeriodicityReply {
 }
 
 message DeleteToDoItemRequest {
@@ -555,40 +169,27 @@ message AddToDoItemRequest {
   repeated AddToDoItemOptionsGrpc items = 1;
 }
 
-message AddToDoItemOptionsGrpc {
-  bytes parent_id = 1;
-  string name = 2;
-  ToDoItemTypeGrpc type = 3;
-  string link = 4;
-  string description = 5;
-  DescriptionTypeGrpc description_type = 6;
-  bytes reference_id = 7;
-  string Icon = 8;
-  string Color = 9;
-}
-
 message AddToDoItemReply {
   repeated bytes ids = 1;
 }
 
-message DailyPeriodicityGrpc {
+message CloneToDoItemRequest {
+  repeated bytes clone_ids = 1;
+  bytes parent_id = 2;
 }
 
-message MonthlyPeriodicityGrpc {
-  bytes days = 1;
+message CloneToDoItemReply {
+  repeated bytes new_item_ids = 1;
 }
 
-message WeeklyPeriodicityGrpc {
-  repeated DayOfWeekGrpc days = 1;
+message ToDoSelectorItemGrpc {
+  ToDoShortItemGrpc item = 1;
+  repeated ToDoSelectorItemGrpc children = 2;
 }
 
-message AnnuallyPeriodicityGrpc {
-  repeated DayOfYearGrpc days = 1;
-}
-
-message DayOfYearGrpc {
-  uint32 month = 1;
-  uint32 day = 2;
+message ToDoItemToStringOptionsGrpc {
+  bytes id = 1;
+  repeated ToDoItemStatusGrpc statuses = 2;
 }
 
 message EditPropertyStringGrpc {
@@ -651,6 +252,12 @@ message EditPropertyDaysOfWeekGrpc {
   repeated DayOfWeekGrpc value = 2;
 }
 
+message UpdateOrderIndexToDoItemOptionsGrpc {
+  bytes id = 1;
+  bytes target_id = 2;
+  bool is_after = 3;
+}
+
 message EditToDoItemsGrpc {
   repeated bytes ids = 1;
   EditPropertyStringGrpc name = 2;
@@ -677,9 +284,77 @@ message EditToDoItemsGrpc {
   EditPropertyStringGrpc color = 23;
 }
 
-enum DescriptionTypeGrpc {
-  DESCRIPTION_TYPE_GRPC_PLAINTEXT = 0;
-  DESCRIPTION_TYPE_GRPC_MARKDOWN = 1;
+message ResetToDoItemOptionsGrpc {
+  bytes id = 1;
+  bool is_complete_children_task = 2;
+  bool is_move_circle_order_index = 3;
+  bool is_only_completed_tasks = 4;
+  bool is_complete_current_task = 5;
+}
+
+message FullToDoItemGrpc {
+  ToDoShortItemGrpc item = 1;
+  ToDoItemStatusGrpc status = 2;
+  ToDoShortItemGrpc active = 3;
+  ToDoItemIsCanGrpc is_can = 4;
+}
+
+message ToDoShortItemGrpc {
+  string name = 1;
+  bool is_favorite = 2;
+  ToDoItemTypeGrpc type = 3;
+  string description = 4;
+  string link = 5;
+  uint32 order_index = 6;
+  bytes parent_id = 7;
+  DescriptionTypeGrpc description_type = 8;
+  bytes reference_id = 9;
+  repeated DayOfYearGrpc annually_days = 10;
+  repeated uint32 monthly_days = 11;
+  ToDoItemChildrenTypeGrpc children_type = 12;
+  google.protobuf.Timestamp due_date = 13;
+  uint32 DaysOffset = 14;
+  uint32 MonthsOffset= 15;
+  uint32 WeeksOffset= 16;
+  uint32 YearsOffset = 17;
+  bool IsRequiredCompleteInDueDate = 18;
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 19;
+  repeated DayOfWeekGrpc WeeklyDays = 20;
+  bool is_bookmark = 21;
+  string icon = 22;
+  string color = 23;
+  bytes id = 24;
+}
+
+message AddToDoItemOptionsGrpc {
+  string name = 1;
+  bool is_favorite = 2;
+  ToDoItemTypeGrpc type = 3;
+  string description = 4;
+  string link = 5;
+  uint32 order_index = 6;
+  bytes parent_id = 7;
+  DescriptionTypeGrpc description_type = 8;
+  bytes referenceId = 9;
+  repeated DayOfYearGrpc annually_days = 10;
+  repeated uint32 monthly_days = 11;
+  ToDoItemChildrenTypeGrpc children_type = 12;
+  google.protobuf.Timestamp due_date = 13;
+  uint32 DaysOffset = 14;
+  uint32 MonthsOffset= 15;
+  uint32 WeeksOffset= 16;
+  uint32 YearsOffset = 17;
+  bool IsRequiredCompleteInDueDate = 18;
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 19;
+  repeated DayOfWeekGrpc WeeklyDays = 20;
+  bool is_bookmark = 21;
+  string icon = 22;
+  string color = 23;
+}
+
+message DayOfYearGrpc {
+  uint32 month = 1;
+  uint32 day = 2;
 }
 
 enum TypeOfPeriodicityGrpc {
@@ -699,11 +374,14 @@ enum DayOfWeekGrpc {
   DAY_OF_WEEK_GRPC_SATURDAY = 6;
 }
 
-enum ToDoItemStatusGrpc {
-  TO_DO_ITEM_STATUS_GRPC_MISS = 0;
-  TO_DO_ITEM_STATUS_GRPC_READY_FOR_COMPLETE = 1;
-  TO_DO_ITEM_STATUS_GRPC_PLANNED = 2;
-  TO_DO_ITEM_STATUS_GRPC_COMPLETED = 3;
+enum ToDoItemChildrenTypeGrpc {
+  TO_DO_ITEM_CHILDREN_TYPE_GRPC_REQUIRE_COMPLETION = 0;
+  TO_DO_ITEM_CHILDREN_TYPE_GRPC_IGNORE_COMPLETION = 1;
+}
+
+enum DescriptionTypeGrpc {
+  DESCRIPTION_TYPE_GRPC_PLAINTEXT = 0;
+  DESCRIPTION_TYPE_GRPC_MARKDOWN = 1;
 }
 
 enum ToDoItemTypeGrpc {
@@ -717,13 +395,15 @@ enum ToDoItemTypeGrpc {
   TO_DO_ITEM_TYPE_GRPC_REFERENCE = 7;
 }
 
-enum ToDoItemChildrenTypeGrpc {
-  TO_DO_ITEM_CHILDREN_TYPE_GRPC_REQUIRE_COMPLETION = 0;
-  TO_DO_ITEM_CHILDREN_TYPE_GRPC_IGNORE_COMPLETION = 1;
-}
-
 enum ToDoItemIsCanGrpc {
   TO_DO_ITEM_IS_CAN_GRPC_NONE = 0;
   TO_DO_ITEM_IS_CAN_GRPC_CAN_COMPLETE = 1;
   TO_DO_ITEM_IS_CAN_GRPC_CAN_INCOMPLETE = 2;
+}
+
+enum ToDoItemStatusGrpc {
+  TO_DO_ITEM_STATUS_GRPC_MISS = 0;
+  TO_DO_ITEM_STATUS_GRPC_READY_FOR_COMPLETE = 1;
+  TO_DO_ITEM_STATUS_GRPC_PLANNED = 2;
+  TO_DO_ITEM_STATUS_GRPC_COMPLETED = 3;
 }

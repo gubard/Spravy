@@ -34,61 +34,40 @@ public class ToDoCache : IToDoCache
         return cache[id].ToResult();
     }
 
-    public Result<ToDoItemEntityNotify> UpdateUi(ToDoItem toDoItem)
-    {
-        return GetToDoItem(toDoItem.Id)
-            .IfSuccess(item =>
-            {
-                if (toDoItem.Active.TryGetValue(out var value))
-                {
-                    return UpdateUi(value)
-                        .IfSuccess(i =>
-                        {
-                            item.Active = i;
-
-                            return Result.Success;
-                        })
-                        .IfSuccess(() => UpdatePropertiesUi(item, toDoItem));
-                }
-
-                item.Active = null;
-
-                return UpdatePropertiesUi(item, toDoItem);
-            });
-    }
-
     public Result<ToDoItemEntityNotify> UpdateUi(FullToDoItem toDoItem)
     {
-        return GetToDoItem(toDoItem.Id)
+        return GetToDoItem(toDoItem.Item.Id)
             .IfSuccess(item =>
             {
-                item.ChildrenType = toDoItem.ChildrenType;
-                item.DueDate = toDoItem.DueDate;
-                item.MonthsOffset = toDoItem.MonthsOffset;
-                item.YearsOffset = toDoItem.YearsOffset;
-                item.DaysOffset = toDoItem.DaysOffset;
-                item.WeeksOffset = toDoItem.WeeksOffset;
-                item.IsRequiredCompleteInDueDate = toDoItem.IsRequiredCompleteInDueDate;
-                item.TypeOfPeriodicity = toDoItem.TypeOfPeriodicity;
-                item.DaysOfWeek.UpdateUi(toDoItem.WeeklyDays);
-                item.DaysOfYear.UpdateUi(toDoItem.AnnuallyDays);
-                item.DaysOfMonth.UpdateUi(toDoItem.MonthlyDays.Select(x => (int)x));
-                item.Description = toDoItem.Description;
-                item.DescriptionType = toDoItem.DescriptionType;
-                item.Type = toDoItem.Type;
-                item.Name = toDoItem.Name;
-                item.Link = toDoItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
+                item.ChildrenType = toDoItem.Item.ChildrenType;
+                item.DueDate = toDoItem.Item.DueDate;
+                item.MonthsOffset = toDoItem.Item.MonthsOffset;
+                item.YearsOffset = toDoItem.Item.YearsOffset;
+                item.DaysOffset = toDoItem.Item.DaysOffset;
+                item.WeeksOffset = toDoItem.Item.WeeksOffset;
+                item.IsRequiredCompleteInDueDate = toDoItem.Item.IsRequiredCompleteInDueDate;
+                item.TypeOfPeriodicity = toDoItem.Item.TypeOfPeriodicity;
+                item.DaysOfWeek.UpdateUi(toDoItem.Item.WeeklyDays);
+                item.DaysOfYear.UpdateUi(toDoItem.Item.AnnuallyDays);
+                item.DaysOfMonth.UpdateUi(toDoItem.Item.MonthlyDays.Select(x => (int)x));
+                item.Description = toDoItem.Item.Description;
+                item.DescriptionType = toDoItem.Item.DescriptionType;
+                item.Type = toDoItem.Item.Type;
+                item.Name = toDoItem.Item.Name;
+                item.Link = toDoItem.Item.Link.TryGetValue(out var uri)
+                    ? uri.AbsoluteUri
+                    : string.Empty;
                 item.Status = toDoItem.Status;
                 item.IsCan = toDoItem.IsCan;
-                item.IsFavorite = toDoItem.IsFavorite;
-                item.OrderIndex = toDoItem.OrderIndex;
-                item.IsBookmark = toDoItem.IsBookmark;
-                item.Icon = toDoItem.Icon;
+                item.IsFavorite = toDoItem.Item.IsFavorite;
+                item.OrderIndex = toDoItem.Item.OrderIndex;
+                item.IsBookmark = toDoItem.Item.IsBookmark;
+                item.Icon = toDoItem.Item.Icon;
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
-                item.Color = toDoItem.Color.IsNullOrWhiteSpace()
+                item.Color = toDoItem.Item.Color.IsNullOrWhiteSpace()
                     ? Colors.Transparent
-                    : Color.Parse(toDoItem.Color);
+                    : Color.Parse(toDoItem.Item.Color);
 
                 if (toDoItem.Active.TryGetValue(out var v))
                 {
@@ -110,7 +89,7 @@ public class ToDoCache : IToDoCache
                     item.Active = null;
                 }
 
-                if (toDoItem.ReferenceId.TryGetValue(out var referenceId))
+                if (toDoItem.Item.ReferenceId.TryGetValue(out var referenceId))
                 {
                     var reference = GetToDoItem(referenceId);
 
@@ -128,7 +107,7 @@ public class ToDoCache : IToDoCache
                     item.Reference = null;
                 }
 
-                if (toDoItem.ParentId.TryGetValue(out var parentId))
+                if (toDoItem.Item.ParentId.TryGetValue(out var parentId))
                 {
                     var parent = GetToDoItem(parentId);
 
@@ -148,93 +127,6 @@ public class ToDoCache : IToDoCache
 
                 return item.UpdateCommandsUi();
             });
-    }
-
-    public Result<ToDoItemEntityNotify> UpdateUi(ActiveToDoItem activeToDoItem)
-    {
-        return GetToDoItem(activeToDoItem.Id)
-            .IfSuccess(item =>
-            {
-                item.Name = activeToDoItem.Name;
-                item.Icon = activeToDoItem.Icon;
-
-                item.Color = activeToDoItem.Color.IsNullOrWhiteSpace()
-                    ? Colors.Transparent
-                    : Color.Parse(activeToDoItem.Color);
-
-                if (activeToDoItem.ParentId.TryGetValue(out var parentId))
-                {
-                    return GetToDoItem(parentId)
-                        .IfSuccess(i =>
-                        {
-                            item.Parent = i;
-
-                            return Result.Success;
-                        })
-                        .IfSuccess(item.ToResult);
-                }
-
-                return item.ToResult();
-            });
-    }
-
-    private Result<ToDoItemEntityNotify> UpdatePropertiesUi(
-        ToDoItemEntityNotify item,
-        ToDoItem toDoItem
-    )
-    {
-        item.Description = toDoItem.Description;
-        item.DescriptionType = toDoItem.DescriptionType;
-        item.Type = toDoItem.Type;
-        item.Name = toDoItem.Name;
-        item.Link = toDoItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
-        item.Status = toDoItem.Status;
-        item.IsCan = toDoItem.IsCan;
-        item.IsFavorite = toDoItem.IsFavorite;
-        item.IsBookmark = toDoItem.IsBookmark;
-        item.OrderIndex = toDoItem.OrderIndex;
-        item.Icon = toDoItem.Icon;
-        item.IsIgnore = item.Type == ToDoItemType.Reference;
-
-        item.Color = toDoItem.Color.IsNullOrWhiteSpace()
-            ? Colors.Transparent
-            : Color.Parse(toDoItem.Color);
-
-        if (toDoItem.ParentId.TryGetValue(out var value))
-        {
-            var parent = GetToDoItem(value);
-
-            if (!parent.TryGetValue(out var p))
-            {
-                return parent;
-            }
-
-            item.Parent = p;
-        }
-        else
-        {
-            item.Parent = null;
-        }
-
-        if (toDoItem.ReferenceId.TryGetValue(out var referenceId))
-        {
-            var reference = GetToDoItem(referenceId);
-
-            if (reference.TryGetValue(out var r))
-            {
-                item.Reference = r;
-            }
-            else
-            {
-                return reference;
-            }
-        }
-        else
-        {
-            item.Reference = null;
-        }
-
-        return item.UpdateCommandsUi();
     }
 
     public Result UpdateParentsUi(Guid id, ReadOnlyMemory<ToDoShortItem> parents)
@@ -260,25 +152,16 @@ public class ToDoCache : IToDoCache
         ReadOnlyMemory<ToDoSelectorItem> items
     )
     {
-        return UpdateRootItems(items.Select(x => x.Id))
+        return UpdateRootItems(items.Select(x => x.Item.Id))
             .IfSuccess(_ => items.ToResult().IfSuccessForEach(UpdateUi));
     }
 
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoSelectorItem item)
     {
-        return GetToDoItem(item.Id)
+        return GetToDoItem(item.Item.Id)
             .IfSuccess(x =>
-            {
-                x.Name = item.Name;
-                x.OrderIndex = item.OrderIndex;
-                x.Icon = item.Icon;
-
-                x.Color = item.Color.IsNullOrWhiteSpace()
-                    ? Colors.Transparent
-                    : Color.Parse(item.Color);
-
-                return item
-                    .Children.ToResult()
+                UpdateUi(item.Item)
+                    .IfSuccess(_ => item.Children.ToResult())
                     .IfSuccessForEach(UpdateUi)
                     .IfSuccessForEach(y =>
                     {
@@ -288,8 +171,8 @@ public class ToDoCache : IToDoCache
                     })
                     .IfSuccessForEach(y => y.Id.ToResult())
                     .IfSuccess(children => UpdateChildrenItemsUi(x.Id, children))
-                    .IfSuccess(_ => x.ToResult());
-            });
+                    .IfSuccess(_ => x.ToResult())
+            );
     }
 
     public Result ResetItemsUi()
@@ -388,14 +271,72 @@ public class ToDoCache : IToDoCache
         return GetToDoItem(shortItem.Id)
             .IfSuccess(item =>
             {
+                item.ChildrenType = shortItem.ChildrenType;
+                item.DueDate = shortItem.DueDate;
+                item.MonthsOffset = shortItem.MonthsOffset;
+                item.YearsOffset = shortItem.YearsOffset;
+                item.DaysOffset = shortItem.DaysOffset;
+                item.WeeksOffset = shortItem.WeeksOffset;
+                item.IsRequiredCompleteInDueDate = shortItem.IsRequiredCompleteInDueDate;
+                item.TypeOfPeriodicity = shortItem.TypeOfPeriodicity;
+                item.DaysOfWeek.UpdateUi(shortItem.WeeklyDays);
+                item.DaysOfYear.UpdateUi(shortItem.AnnuallyDays);
+                item.DaysOfMonth.UpdateUi(shortItem.MonthlyDays.Select(x => (int)x));
+                item.Description = shortItem.Description;
+                item.DescriptionType = shortItem.DescriptionType;
+                item.Type = shortItem.Type;
                 item.Name = shortItem.Name;
+                item.IsFavorite = shortItem.IsFavorite;
+                item.OrderIndex = shortItem.OrderIndex;
+                item.IsBookmark = shortItem.IsBookmark;
                 item.Icon = shortItem.Icon;
+                item.IsIgnore = item.Type == ToDoItemType.Reference;
+
+                item.Link = shortItem.Link.TryGetValue(out var uri)
+                    ? uri.AbsoluteUri
+                    : string.Empty;
 
                 item.Color = shortItem.Color.IsNullOrWhiteSpace()
                     ? Colors.Transparent
                     : Color.Parse(shortItem.Color);
 
-                return item.ToResult();
+                if (shortItem.ReferenceId.TryGetValue(out var referenceId))
+                {
+                    var reference = GetToDoItem(referenceId);
+
+                    if (reference.TryGetValue(out var r))
+                    {
+                        item.Reference = r;
+                    }
+                    else
+                    {
+                        return reference;
+                    }
+                }
+                else
+                {
+                    item.Reference = null;
+                }
+
+                if (shortItem.ParentId.TryGetValue(out var parentId))
+                {
+                    var parent = GetToDoItem(parentId);
+
+                    if (parent.TryGetValue(out var p))
+                    {
+                        item.Parent = p;
+                    }
+                    else
+                    {
+                        return parent;
+                    }
+                }
+                else
+                {
+                    item.Parent = null;
+                }
+
+                return item.UpdateCommandsUi();
             });
     }
 }

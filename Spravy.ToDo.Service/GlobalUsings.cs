@@ -36,7 +36,6 @@ global using Spravy.ToDo.Db.Contexts;
 global using Spravy.ToDo.Db.Extensions;
 global using Spravy.ToDo.Db.Mapper.Mappers;
 global using Spravy.ToDo.Db.Models;
-global using Spravy.ToDo.Db.Services;
 global using Spravy.ToDo.Db.Sqlite.Migrator;
 global using Spravy.ToDo.Db.Sqlite.Services;
 global using Spravy.ToDo.Domain.Enums;

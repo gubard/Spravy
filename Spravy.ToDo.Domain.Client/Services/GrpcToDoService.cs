@@ -36,9 +36,10 @@ public class GrpcToDoService
         return new(grpcClientFactory, host, metadataFactory, handler, retryService);
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<OptionStruct<ActiveToDoItem>>
-    > GetActiveToDoItemAsync(Guid id, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result<OptionStruct<ToDoShortItem>>> GetActiveToDoItemAsync(
+        Guid id,
+        CancellationToken ct
+    )
     {
         return CallClientAsync(
             client =>
@@ -56,7 +57,7 @@ public class GrpcToDoService
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
-                                    reply => reply.Item.ToOptionActiveToDoItem().ToResult(),
+                                    reply => reply.Item.ToOptionToDoShortItem().ToResult(),
                                     ct
                                 ),
                         ct
@@ -410,7 +411,10 @@ public class GrpcToDoService
                                 )
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
-                                .IfSuccessAsync(reply => reply.ToFullToDoItem().ToResult(), ct),
+                                .IfSuccessAsync(
+                                    reply => reply.Item.ToFullToDoItem().ToResult(),
+                                    ct
+                                ),
                         ct
                     ),
             ct
@@ -685,7 +689,7 @@ public class GrpcToDoService
     }
 
     public ConfiguredValueTaskAwaitable<
-        Result<OptionStruct<ActiveToDoItem>>
+        Result<OptionStruct<ToDoShortItem>>
     > GetCurrentActiveToDoItemAsync(CancellationToken ct)
     {
         return CallClientAsync(
@@ -704,7 +708,7 @@ public class GrpcToDoService
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
-                                    reply => reply.Item.ToOptionActiveToDoItem().ToResult(),
+                                    reply => reply.Item.ToOptionToDoShortItem().ToResult(),
                                     ct
                                 ),
                         ct
@@ -713,11 +717,9 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
-        ReadOnlyMemory<Guid> ids,
-        uint chunkSize,
-        CancellationToken ct
-    )
+    public ConfiguredCancelableAsyncEnumerable<
+        Result<ReadOnlyMemory<FullToDoItem>>
+    > GetToDoItemsAsync(ReadOnlyMemory<Guid> ids, uint chunkSize, CancellationToken ct)
     {
         return CallClientAsync(
             (client, token) =>
@@ -726,7 +728,7 @@ public class GrpcToDoService
         );
     }
 
-    private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
+    private async IAsyncEnumerable<Result<ReadOnlyMemory<FullToDoItem>>> GetToDoItemsCore(
         ToDoService.ToDoServiceClient client,
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,
@@ -735,7 +737,7 @@ public class GrpcToDoService
     {
         if (ids.IsEmpty)
         {
-            yield return ReadOnlyMemory<ToDoItem>.Empty.ToResult();
+            yield return ReadOnlyMemory<FullToDoItem>.Empty.ToResult();
 
             yield break;
         }
@@ -758,7 +760,7 @@ public class GrpcToDoService
         while (await MoveNextAsync(response, ct))
         {
             var reply = response.ResponseStream.Current;
-            var item = reply.Items.ToToDoItem().ToResult();
+            var item = reply.Items.ToFullToDoItem().ToResult();
 
             yield return item;
         }

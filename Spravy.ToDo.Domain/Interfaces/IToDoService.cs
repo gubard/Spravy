@@ -18,9 +18,9 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<
-        Result<OptionStruct<ActiveToDoItem>>
-    > GetCurrentActiveToDoItemAsync(CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result<OptionStruct<ToDoShortItem>>> GetCurrentActiveToDoItemAsync(
+        CancellationToken ct
+    );
 
     Cvtar UpdateToDoItemOrderIndexAsync(
         ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> options,
@@ -36,7 +36,7 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
+    ConfiguredValueTaskAwaitable<Result<OptionStruct<ToDoShortItem>>> GetActiveToDoItemAsync(
         Guid id,
         CancellationToken ct
     );
@@ -90,7 +90,7 @@ public interface IToDoService
         Result<ReadOnlyMemory<ToDoSelectorItem>>
     > GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct);
 
-    ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
+    ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<FullToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         CancellationToken ct
