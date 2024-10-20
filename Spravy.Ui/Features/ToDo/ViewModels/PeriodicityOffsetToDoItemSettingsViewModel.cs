@@ -23,6 +23,9 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     [ObservableProperty]
     private ushort yearsOffset;
 
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
     public PeriodicityOffsetToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
         Item = item;
@@ -33,6 +36,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         MonthsOffset = item.MonthsOffset;
         WeeksOffset = item.WeeksOffset;
         YearsOffset = item.YearsOffset;
+        RemindDaysBefore = item.RemindDaysBefore;
     }
 
     public ToDoItemEntityNotify Item { get; }
@@ -47,7 +51,8 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
             .SetMonthsOffset(new(MonthsOffset))
             .SetWeeksOffset(new(WeeksOffset))
             .SetYearsOffset(new(YearsOffset))
-            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate));
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate))
+            .SetRemindDaysBefore(new(RemindDaysBefore));
     }
 
     public Result UpdateItemUi()
@@ -59,6 +64,7 @@ public partial class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         Item.MonthsOffset = MonthsOffset;
         Item.WeeksOffset = WeeksOffset;
         Item.YearsOffset = YearsOffset;
+        Item.RemindDaysBefore = RemindDaysBefore;
 
         return Result.Success;
     }

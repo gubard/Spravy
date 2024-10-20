@@ -32,6 +32,7 @@
                                Classes.completed="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
                                Classes.ready-for-complete="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
                                Classes.planned="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
+                               Classes.coming-soon="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ComingSoon}}"
                                Text="{Binding Item.Name}" />
                 </ScrollViewer>
 

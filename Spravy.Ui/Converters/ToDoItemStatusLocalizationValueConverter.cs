@@ -26,6 +26,8 @@ public class ToDoItemStatusLocalizationValueConverter : IValueConverter
                 return application.GetResource("ToDoItemStatus.Planned");
             case ToDoItemStatus.Miss:
                 return application.GetResource("ToDoItemStatus.Miss");
+            case ToDoItemStatus.ComingSoon:
+                return application.GetResource("ToDoItemStatus.ComingSoon");
             default:
                 throw new ArgumentOutOfRangeException();
         }

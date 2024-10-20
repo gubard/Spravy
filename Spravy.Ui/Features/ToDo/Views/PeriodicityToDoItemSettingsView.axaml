@@ -24,5 +24,8 @@
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.Periodicity}" />
         <ContentControl Content="{Binding Periodicity}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+        <NumericUpDown Value="{Binding  RemindDaysBefore}" />
     </StackPanel>
 </UserControl>

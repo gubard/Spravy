@@ -22,7 +22,8 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
         ToDoItemsViewModel periodicityOffsets,
         ToDoItemsViewModel circles,
         ToDoItemsViewModel steps,
-        ToDoItemsViewModel references
+        ToDoItemsViewModel references,
+        ToDoItemsViewModel comingSoon
     )
     {
         GroupBy = GroupBy.ByStatus;
@@ -40,6 +41,7 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
         Circles = circles;
         Steps = steps;
         References = references;
+        ComingSoon = comingSoon;
     }
 
     public ToDoItemsViewModel Favorite { get; }
@@ -48,6 +50,7 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
 
     public ToDoItemsViewModel Missed { get; }
     public ToDoItemsViewModel ReadyForCompleted { get; }
+    public ToDoItemsViewModel ComingSoon { get; }
     public ToDoItemsViewModel Planned { get; }
     public ToDoItemsViewModel Completed { get; }
 
@@ -100,6 +103,10 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
                     )
             )
             .IfSuccess(
+                () =>
+                    ComingSoon.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.ComingSoon))
+            )
+            .IfSuccess(
                 () => Planned.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.Planned))
             )
             .IfSuccess(
@@ -137,25 +144,36 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
                                 .AddOrUpdateUi(item)
                                 .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
                                 .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item)),
+                                .IfSuccess(() => Completed.RemoveUi(item))
+                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
                         ToDoItemStatus.ReadyForComplete
                             => Missed
                                 .RemoveUi(item)
                                 .IfSuccess(() => ReadyForCompleted.AddOrUpdateUi(item))
                                 .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item)),
+                                .IfSuccess(() => Completed.RemoveUi(item))
+                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
                         ToDoItemStatus.Planned
                             => Missed
                                 .RemoveUi(item)
                                 .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
                                 .IfSuccess(() => Planned.AddOrUpdateUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item)),
+                                .IfSuccess(() => Completed.RemoveUi(item))
+                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
                         ToDoItemStatus.Completed
                             => Missed
                                 .RemoveUi(item)
                                 .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
                                 .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.AddOrUpdateUi(item)),
+                                .IfSuccess(() => Completed.AddOrUpdateUi(item))
+                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
+                        ToDoItemStatus.ComingSoon
+                            => Missed
+                                .RemoveUi(item)
+                                .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
+                                .IfSuccess(() => Planned.RemoveUi(item))
+                                .IfSuccess(() => Completed.RemoveUi(item))
+                                .IfSuccess(() => ComingSoon.AddOrUpdateUi(item)),
                         _ => new(new ToDoItemStatusOutOfRangeError(item.Status)),
                     }
             )

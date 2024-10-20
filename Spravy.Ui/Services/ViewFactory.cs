@@ -464,7 +464,8 @@ public class ViewFactory : IViewFactory
             CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.PeriodicityOffsets")),
             CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Circles")),
             CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Steps")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.References"))
+            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.References")),
+            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.ComingSoon"))
         );
     }
 

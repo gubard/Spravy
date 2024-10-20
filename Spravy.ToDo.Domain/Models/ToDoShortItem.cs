@@ -30,7 +30,8 @@ public readonly struct ToDoShortItem
         string color,
         OptionStruct<Guid> referenceId,
         OptionStruct<Guid> parentId,
-        Option<Uri> link
+        Option<Uri> link,
+        uint remindDaysBefore
     )
     {
         Id = id;
@@ -57,6 +58,7 @@ public readonly struct ToDoShortItem
         ReferenceId = referenceId;
         ParentId = parentId;
         Link = link;
+        RemindDaysBefore = remindDaysBefore;
     }
 
     public Guid Id { get; }
@@ -83,4 +85,5 @@ public readonly struct ToDoShortItem
     public string Color { get; }
     public OptionStruct<Guid> ReferenceId { get; }
     public OptionStruct<Guid> ParentId { get; }
+    public uint RemindDaysBefore { get; }
 }

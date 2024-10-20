@@ -156,7 +156,8 @@ public static partial class ToDoMapper
                 : new(),
             value.IsBookmark.IsEdit ? new(value.IsBookmark.Value) : new(),
             value.Icon.IsEdit ? new(value.Icon.Value) : new(),
-            value.Color.IsEdit ? new(value.Color.Value) : new()
+            value.Color.IsEdit ? new(value.Color.Value) : new(),
+            value.RemindDaysBefore.IsEdit ? new(value.RemindDaysBefore.Value) : new()
         );
     }
 
@@ -187,6 +188,7 @@ public static partial class ToDoMapper
             IsRequiredCompleteInDueDate =
                 value.IsRequiredCompleteInDueDate.ToEditPropertyBooleanGrpc(),
             Color = value.Color.ToEditPropertyStringGrpc(),
+            RemindDaysBefore = value.RemindDaysBefore.ToEditPropertyUInt32Grpc(),
         };
 
         edit.Ids.AddRange(value.Ids.ToByteString().ToArray());

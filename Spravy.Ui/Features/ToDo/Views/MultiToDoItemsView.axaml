@@ -59,6 +59,7 @@
                                                Classes.completed="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
                                                Classes.ready-for-complete="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
                                                Classes.planned="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
+                                               Classes.coming-soon="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ComingSoon}}"
                                                Text="{Binding Name}" />
 
                                     <Button Margin="0,0,0,5"
@@ -220,6 +221,8 @@
                                 IsVisible="{Binding ReadyForCompleted.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Planned}"
                                 IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                <ContentControl Content="{Binding ComingSoon}"
+                                IsVisible="{Binding ComingSoon.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Completed}"
                                 IsVisible="{Binding Completed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
             </ItemsControl>

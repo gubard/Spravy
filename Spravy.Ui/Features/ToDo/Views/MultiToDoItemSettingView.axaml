@@ -34,5 +34,12 @@
         </StackPanel>
 
         <CalendarDatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+        
+        <StackPanel Classes="horizontal">
+            <TextBlock Classes="field" Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+            <ToggleSwitch Classes="field" IsChecked="{Binding IsRemindDaysBefore}" />
+        </StackPanel>
+
+        <NumericUpDown Value="{Binding RemindDaysBefore}" />
     </StackPanel>
 </UserControl>

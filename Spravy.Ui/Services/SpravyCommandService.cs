@@ -214,7 +214,7 @@ public class SpravyCommandService
                                                             {
                                                                 item.IsCan = ToDoItemIsCan.None;
                                                                 item.Status =
-                                                                    ToDoItemStatus.Completed;
+                                                                    ToDoItemStatus.ComingSoon;
 
                                                                 return remove.RemoveUi(item);
                                                             }
@@ -222,7 +222,7 @@ public class SpravyCommandService
                                                             {
                                                                 item.IsCan = ToDoItemIsCan.None;
                                                                 item.Status =
-                                                                    ToDoItemStatus.ReadyForComplete;
+                                                                    ToDoItemStatus.ComingSoon;
 
                                                                 return remove.RemoveUi(item);
                                                             }
@@ -405,25 +405,37 @@ public class SpravyCommandService
                         {
                             if (editId.ResultItems.Length == 1)
                             {
-                                return dialogViewer.ShowConfirmDialogAsync(
-                                    viewFactory,
-                                    DialogViewLayer.Content,
-                                    viewFactory.CreateToDoItemSettingsViewModel(
-                                        editId.ResultItems.Span[0]
-                                    ),
-                                    vm =>
-                                        dialogViewer
-                                            .CloseDialogAsync(DialogViewLayer.Content, ct)
-                                            .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
-                                            .IfSuccessAsync(
-                                                () =>
-                                                    uiApplicationService.RefreshCurrentViewAsync(
-                                                        ct
-                                                    ),
+                                return toDoUiService
+                                    .UpdateItemAsync(editId.ResultItems.Span[0], ct)
+                                    .IfSuccessAsync(
+                                        () =>
+                                            dialogViewer.ShowConfirmDialogAsync(
+                                                viewFactory,
+                                                DialogViewLayer.Content,
+                                                viewFactory.CreateToDoItemSettingsViewModel(
+                                                    editId.ResultItems.Span[0]
+                                                ),
+                                                vm =>
+                                                    dialogViewer
+                                                        .CloseDialogAsync(
+                                                            DialogViewLayer.Content,
+                                                            ct
+                                                        )
+                                                        .IfSuccessAsync(
+                                                            () => vm.ApplySettingsAsync(ct),
+                                                            ct
+                                                        )
+                                                        .IfSuccessAsync(
+                                                            () =>
+                                                                uiApplicationService.RefreshCurrentViewAsync(
+                                                                    ct
+                                                                ),
+                                                            ct
+                                                        ),
                                                 ct
                                             ),
-                                    ct
-                                );
+                                        ct
+                                    );
                             }
 
                             return dialogViewer.ShowConfirmDialogAsync(

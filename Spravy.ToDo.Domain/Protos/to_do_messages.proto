@@ -282,6 +282,7 @@ message EditToDoItemsGrpc {
   EditPropertyBooleanGrpc is_bookmark = 21;
   EditPropertyStringGrpc icon = 22;
   EditPropertyStringGrpc color = 23;
+  EditPropertyUInt32Grpc remind_days_before = 24;
 }
 
 message ResetToDoItemOptionsGrpc {
@@ -324,6 +325,7 @@ message ToDoShortItemGrpc {
   string icon = 22;
   string color = 23;
   bytes id = 24;
+  uint32 remind_days_before = 25;
 }
 
 message AddToDoItemOptionsGrpc {
@@ -406,4 +408,5 @@ enum ToDoItemStatusGrpc {
   TO_DO_ITEM_STATUS_GRPC_READY_FOR_COMPLETE = 1;
   TO_DO_ITEM_STATUS_GRPC_PLANNED = 2;
   TO_DO_ITEM_STATUS_GRPC_COMPLETED = 3;
+  TO_DO_ITEM_STATUS_GRPC_COMING_SOON = 4;
 }

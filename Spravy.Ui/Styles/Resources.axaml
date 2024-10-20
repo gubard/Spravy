@@ -14,7 +14,6 @@
     <c:ToDoItemStatusLocalizationValueConverter x:Key="ToDoItemStatusLocalizationValueConverter" />
     <c:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
     <c:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
-    <c:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
     <c:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
     <c:StringIsNullOrWhiteSpaceConverter x:Key="StringIsNullOrWhiteSpaceConverter" />
     <c:ColorToTextForegroundConverter x:Key="ColorToTextForegroundConverter" />

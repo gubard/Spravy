@@ -9,25 +9,31 @@ public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IA
     private bool isName;
 
     [ObservableProperty]
-    private bool isLink;
-
-    [ObservableProperty]
-    private bool isType;
-
-    [ObservableProperty]
     private string name = string.Empty;
+
+    [ObservableProperty]
+    private bool isLink;
 
     [ObservableProperty]
     private string link = string.Empty;
 
     [ObservableProperty]
+    private bool isType;
+
+    [ObservableProperty]
     private ToDoItemType type;
+
+    [ObservableProperty]
+    private bool isDueDate;
 
     [ObservableProperty]
     private DateOnly dueDate = DateTime.Now.ToDateOnly();
 
     [ObservableProperty]
-    private bool isDueDate;
+    private bool isRemindDaysBefore;
+
+    [ObservableProperty]
+    private uint remindDaysBefore;
 
     public MultiToDoItemSettingViewModel(
         ReadOnlyMemory<ToDoItemEntityNotify> items,
@@ -67,22 +73,27 @@ public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IA
 
         if (IsName)
         {
-            result.SetName(new(Name));
+            result = result.SetName(new(Name));
         }
 
         if (IsType)
         {
-            result.SetType(new(Type));
+            result = result.SetType(new(Type));
         }
 
         if (IsLink)
         {
-            result.SetLink(new(Link.ToOptionUri()));
+            result = result.SetLink(new(Link.ToOptionUri()));
         }
 
         if (IsDueDate)
         {
-            result.SetDueDate(new(DueDate));
+            result = result.SetDueDate(new(DueDate));
+        }
+
+        if (IsRemindDaysBefore)
+        {
+            result = result.SetRemindDaysBefore(new(RemindDaysBefore));
         }
 
         return result;

@@ -339,6 +339,11 @@ public class EfToDoService : IToDoService
                                             item.Color = options.Color.Value;
                                         }
 
+                                        if (options.RemindDaysBefore.IsEdit)
+                                        {
+                                            item.RemindDaysBefore = options.RemindDaysBefore.Value;
+                                        }
+
                                         return Result.AwaitableSuccess;
                                     },
                                     ct
@@ -1169,6 +1174,7 @@ public class EfToDoService : IToDoService
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
+        var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
 
         return dbContextFactory
             .Create()
@@ -1185,15 +1191,23 @@ public class EfToDoService : IToDoService
                                 || x.Type == ToDoItemType.Planned
                             )
                         )
-                        .Select(x => new { x.Id, x.DueDate })
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.DueDate,
+                            x.RemindDaysBefore
+                        })
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessAsync(
                             items =>
                                 items
                                     .ToArray()
                                     .Where(x =>
-                                        x.DueDate
-                                        <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                                        x.DueDate <= today
+                                        || (
+                                            x.RemindDaysBefore != 0
+                                            && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)
+                                        )
                                     )
                                     .Select(x => x.Id)
                                     .ToArray()
@@ -2080,7 +2094,8 @@ public class EfToDoService : IToDoService
                      ParentId,
                      IsBookmark,
                      Icon,
-                     Color
+                     Color,
+                     RemindDaysBefore
                  ) AS (
                      SELECT
                      Id,
@@ -2110,7 +2125,8 @@ public class EfToDoService : IToDoService
                      ParentId,
                      IsBookmark,
                      Icon,
-                     Color
+                     Color,
+                     RemindDaysBefore
                      FROM ToDoItem
                      WHERE Id IN ({idsString})
 
@@ -2144,7 +2160,8 @@ public class EfToDoService : IToDoService
                      t.ParentId,
                      t.IsBookmark,
                      t.Icon,
-                     t.Color
+                     t.Color,
+                     t.RemindDaysBefore
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.ParentId = h.Id
 
@@ -2178,7 +2195,8 @@ public class EfToDoService : IToDoService
                      t.ParentId,
                      t.IsBookmark,
                      t.Icon,
-                     t.Color
+                     t.Color,
+                     t.RemindDaysBefore
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.Id = h.ReferenceId
                      WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id

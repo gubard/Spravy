@@ -17,6 +17,9 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
     [ObservableProperty]
     private TypeOfPeriodicity typeOfPeriodicity;
 
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
     private readonly EmptyEditToDoItems empty;
     private readonly ToDoItemDayOfWeekSelectorViewModel dayOfWeekSelector;
     private readonly ToDoItemDayOfMonthSelectorViewModel dayOfMonthSelector;
@@ -29,6 +32,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
         childrenType = item.ChildrenType;
         dueDate = item.DueDate;
         typeOfPeriodicity = item.TypeOfPeriodicity;
+        RemindDaysBefore = item.RemindDaysBefore;
         empty = new();
         dayOfWeekSelector = viewFactory.CreateToDoItemDayOfWeekSelectorViewModel(Item);
         dayOfMonthSelector = viewFactory.CreateToDoItemDayOfMonthSelectorViewModel(Item);
@@ -47,7 +51,8 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
             .SetChildrenType(new(ChildrenType))
             .SetDueDate(new(DueDate))
             .SetTypeOfPeriodicity(new(TypeOfPeriodicity))
-            .SetIds(new[] { Item.Id });
+            .SetIds(new[] { Item.Id })
+            .SetRemindDaysBefore(new(RemindDaysBefore));
     }
 
     private IEditToDoItems CreatePeriodicity()
@@ -81,6 +86,7 @@ public partial class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IEdit
         Item.ChildrenType = ChildrenType;
         Item.TypeOfPeriodicity = TypeOfPeriodicity;
         Item.DueDate = DueDate;
+        Item.RemindDaysBefore = RemindDaysBefore;
 
         return Periodicity.UpdateItemUi();
     }

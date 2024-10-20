@@ -32,7 +32,7 @@ public record ToDoItemEntity
     public DescriptionType DescriptionType { get; set; }
     public string Icon { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
-
+    public uint RemindDaysBefore { get; set; }
     public Guid? ReferenceId { get; set; }
     public ToDoItemEntity? Reference { get; set; }
 

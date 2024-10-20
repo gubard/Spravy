@@ -31,6 +31,21 @@ public class GetterToDoItemParametersService
                 }
 
                 return parameters.ToResult();
+            })
+            .IfSuccess(parameters =>
+            {
+                var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+
+                if (
+                    parameters.Status == ToDoItemStatus.Planned
+                    && entity.RemindDaysBefore != 0
+                    && today >= entity.DueDate.AddDays((int)-entity.RemindDaysBefore)
+                )
+                {
+                    return parameters.With(ToDoItemStatus.ComingSoon).ToResult();
+                }
+
+                return parameters.ToResult();
             });
     }
 
@@ -240,6 +255,8 @@ public class GetterToDoItemParametersService
 
                     break;
                 case ToDoItemStatus.Completed:
+                    break;
+                case ToDoItemStatus.ComingSoon:
                     break;
                 default:
                     return new(new ToDoItemStatusOutOfRangeError(parameters.Status));

@@ -38,7 +38,8 @@ public static partial class ToDoDbMapper
             entity.Color,
             GetReferenceId(entity),
             entity.ParentId.ToOptionGuid(),
-            entity.Link.ToOptionUri()
+            entity.Link.ToOptionUri(),
+            entity.RemindDaysBefore
         );
     }
 

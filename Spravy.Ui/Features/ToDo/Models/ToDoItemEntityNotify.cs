@@ -95,6 +95,9 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private Color color;
 
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -103,7 +106,7 @@ public partial class ToDoItemEntityNotify
         description = "Loading...";
         name = "Loading...";
         link = string.Empty;
-        status = ToDoItemStatus.Completed;
+        status = ToDoItemStatus.ComingSoon;
         orderIndex = uint.MaxValue;
         isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;

@@ -18,4 +18,6 @@ public enum ToDoItemStatus : byte
     ///     To do item is complete.
     /// </summary>
     Completed,
+
+    ComingSoon,
 }

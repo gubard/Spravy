@@ -2,6 +2,11 @@ namespace Spravy.Domain.Extensions;
 
 public static class DateTimeOffsetExtension
 {
+    public static DateTimeOffset GetCurrentDate(this DateTimeOffset date)
+    {
+        return new(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset);
+    }
+
     public static DateTime ToDateTimeWithOffset(this DateTimeOffset date)
     {
         return date.DateTime.Add(date.Offset);

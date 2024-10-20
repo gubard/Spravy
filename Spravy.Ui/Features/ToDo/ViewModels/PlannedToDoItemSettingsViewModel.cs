@@ -11,12 +11,16 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDo
     [ObservableProperty]
     private DateOnly dueDate;
 
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
     public PlannedToDoItemSettingsViewModel(ToDoItemEntityNotify item)
     {
         Item = item;
         DueDate = item.DueDate;
         IsRequiredCompleteInDueDate = Item.IsRequiredCompleteInDueDate;
         ChildrenType = item.ChildrenType;
+        RemindDaysBefore = item.RemindDaysBefore;
     }
 
     private ToDoItemEntityNotify Item { get; }
@@ -27,7 +31,8 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDo
             .SetIds(new[] { Item.Id })
             .SetChildrenType(new(ChildrenType))
             .SetDueDate(new(DueDate))
-            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate));
+            .SetIsRequiredCompleteInDueDate(new(IsRequiredCompleteInDueDate))
+            .SetRemindDaysBefore(new(RemindDaysBefore));
     }
 
     public Result UpdateItemUi()
@@ -35,6 +40,7 @@ public partial class PlannedToDoItemSettingsViewModel : ViewModelBase, IEditToDo
         Item.IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate;
         Item.ChildrenType = ChildrenType;
         Item.DueDate = DueDate;
+        Item.RemindDaysBefore = RemindDaysBefore;
 
         return Result.Success;
     }

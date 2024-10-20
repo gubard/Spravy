@@ -182,6 +182,7 @@ public static class UiHelper
                 ToDoItemStatus.Miss,
                 ToDoItemStatus.ReadyForComplete,
                 ToDoItemStatus.Planned,
+                ToDoItemStatus.ComingSoon,
                 ToDoItemStatus.Completed,
             ]
         );

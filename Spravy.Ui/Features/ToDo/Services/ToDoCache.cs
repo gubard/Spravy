@@ -290,6 +290,7 @@ public class ToDoCache : IToDoCache
                 item.OrderIndex = shortItem.OrderIndex;
                 item.IsBookmark = shortItem.IsBookmark;
                 item.Icon = shortItem.Icon;
+                item.RemindDaysBefore = shortItem.RemindDaysBefore;
                 item.IsIgnore = item.Type == ToDoItemType.Reference;
 
                 item.Link = shortItem.Link.TryGetValue(out var uri)

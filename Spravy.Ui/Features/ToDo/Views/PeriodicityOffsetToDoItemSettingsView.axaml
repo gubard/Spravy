@@ -39,5 +39,8 @@
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate}" />
         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+        <NumericUpDown Value="{Binding  RemindDaysBefore}" />
     </StackPanel>
 </UserControl>

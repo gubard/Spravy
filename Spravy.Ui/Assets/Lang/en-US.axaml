@@ -72,6 +72,7 @@
     <!--ToDoItemsGroupByTypeView-->
     <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Values</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Groups">Groups</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.ComingSoon">Coming soon</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Planneds">Planneds</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Periodicitys">Periodicitys</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">Periodicity offsets</sys:String>
@@ -171,6 +172,7 @@
 
     <!--ToDoItemStatus-->
     <sys:String x:Key="ToDoItemStatus.Miss">Miss</sys:String>
+    <sys:String x:Key="ToDoItemStatus.ComingSoon">Coming soon</sys:String>
     <sys:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</sys:String>
     <sys:String x:Key="ToDoItemStatus.Planned">Planned</sys:String>
     <sys:String x:Key="ToDoItemStatus.Completed">Completed</sys:String>
@@ -277,6 +279,7 @@
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</sys:String>
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</sys:String>
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore">Remind days before</sys:String>
 
     <!--PeriodicityToDoItemSettingsView-->
     <sys:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</sys:String>

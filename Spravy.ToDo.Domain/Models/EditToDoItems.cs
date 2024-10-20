@@ -29,7 +29,8 @@ public readonly struct EditToDoItems
         EditPropertyValue<ReadOnlyMemory<DayOfWeek>> weeklyDays,
         EditPropertyValue<bool> isBookmark,
         EditPropertyValue<string> icon,
-        EditPropertyValue<string> color
+        EditPropertyValue<string> color,
+        EditPropertyValue<uint> remindDaysBefore
     )
     {
         Ids = ids;
@@ -55,6 +56,7 @@ public readonly struct EditToDoItems
         IsBookmark = isBookmark;
         Icon = icon;
         Color = color;
+        RemindDaysBefore = remindDaysBefore;
     }
 
     public ReadOnlyMemory<Guid> Ids { get; }
@@ -80,6 +82,7 @@ public readonly struct EditToDoItems
     public EditPropertyValue<bool> IsBookmark { get; }
     public EditPropertyValue<string> Icon { get; }
     public EditPropertyValue<string> Color { get; }
+    public EditPropertyValue<uint> RemindDaysBefore { get; }
 
     public EditToDoItems SetIsRequiredCompleteInDueDate(EditPropertyValue<bool> value)
     {
@@ -106,7 +109,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -135,7 +139,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -164,7 +169,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -193,7 +199,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -222,7 +229,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             value,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -251,7 +259,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            value
+            value,
+            RemindDaysBefore
         );
     }
 
@@ -280,7 +289,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -309,7 +319,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -338,7 +349,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -367,7 +379,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -396,7 +409,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -425,7 +439,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -454,7 +469,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -483,7 +499,8 @@ public readonly struct EditToDoItems
             value,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -512,7 +529,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -541,7 +559,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -570,7 +589,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -599,7 +619,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -628,7 +649,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -657,7 +679,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -686,7 +709,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -715,7 +739,8 @@ public readonly struct EditToDoItems
             WeeklyDays,
             IsBookmark,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
         );
     }
 
@@ -744,7 +769,38 @@ public readonly struct EditToDoItems
             WeeklyDays,
             value,
             Icon,
-            Color
+            Color,
+            RemindDaysBefore
+        );
+    }
+
+    public EditToDoItems SetRemindDaysBefore(EditPropertyValue<uint> value)
+    {
+        return new(
+            Ids,
+            Name,
+            IsFavorite,
+            Type,
+            Description,
+            Link,
+            ParentId,
+            DescriptionType,
+            ReferenceId,
+            AnnuallyDays,
+            MonthlyDays,
+            ChildrenType,
+            DueDate,
+            DaysOffset,
+            MonthsOffset,
+            WeeksOffset,
+            YearsOffset,
+            IsRequiredCompleteInDueDate,
+            TypeOfPeriodicity,
+            WeeklyDays,
+            IsBookmark,
+            Icon,
+            Color,
+            value
         );
     }
 }
