@@ -1,7 +1,10 @@
+using Spravy.Ui.Setting;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IApplySettings
 {
+    private readonly IObjectStorage objectStorage;
     private readonly ReadOnlyMemory<ToDoItemEntityNotify> items;
     private readonly IToDoService toDoService;
 
@@ -35,16 +38,33 @@ public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IA
     [ObservableProperty]
     private uint remindDaysBefore;
 
+    [ObservableProperty]
+    private bool isIcon;
+
+    [ObservableProperty]
+    private string icon = string.Empty;
+
+    [ObservableProperty]
+    private bool isColor;
+
+    [ObservableProperty]
+    private string color = string.Empty;
+
+    private bool firstIconChanged = true;
+
     public MultiToDoItemSettingViewModel(
         ReadOnlyMemory<ToDoItemEntityNotify> items,
-        IToDoService toDoService
+        IToDoService toDoService,
+        IObjectStorage objectStorage
     )
     {
         this.items = items;
         this.toDoService = toDoService;
+        this.objectStorage = objectStorage;
         ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
     }
 
+    public AvaloniaList<string> FavoriteIcons { get; } = new();
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
 
     public override string ViewId
@@ -54,12 +74,30 @@ public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IA
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return objectStorage
+            .GetObjectOrDefaultAsync<AppSetting>(App.ViewId, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.PostUiBackground(
+                        () =>
+                        {
+                            FavoriteIcons.UpdateUi(setting.FavoriteIcons);
+
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+                ct
+            );
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return objectStorage.SaveObjectAsync(
+            App.ViewId,
+            new AppSetting { FavoriteIcons = FavoriteIcons.ToArray(), },
+            ct
+        );
     }
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
@@ -96,11 +134,51 @@ public partial class MultiToDoItemSettingViewModel : DialogableViewModelBase, IA
             result = result.SetRemindDaysBefore(new(RemindDaysBefore));
         }
 
+        if (IsColor)
+        {
+            result = result.SetColor(new(Color));
+        }
+
+        if (IsIcon)
+        {
+            result = result.SetIcon(new(Icon));
+        }
+
         return result;
     }
 
     public Result UpdateItemUi()
     {
         return Result.Success;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Icon))
+        {
+            if (firstIconChanged)
+            {
+                firstIconChanged = false;
+
+                return;
+            }
+
+            if (Icon.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            if (FavoriteIcons.Contains(Icon))
+            {
+                return;
+            }
+
+            FavoriteIcons.Insert(0, Icon);
+
+            if (FavoriteIcons.Count > 5)
+            {
+                FavoriteIcons.RemoveAt(5);
+            }
+        }
     }
 }

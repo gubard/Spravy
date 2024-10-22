@@ -68,7 +68,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(items, toDoService);
+        return new(items, toDoService, objectStorage);
     }
 
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(

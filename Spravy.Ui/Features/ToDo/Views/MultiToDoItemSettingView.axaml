@@ -3,43 +3,67 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemSettingView"
              x:DataType="vm:MultiToDoItemSettingViewModel">
-    <StackPanel>
-        <StackPanel Classes="horizontal">
-            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
-            <ToggleSwitch Classes="field" IsChecked="{Binding IsName}" />
+    <ScrollViewer Classes="vertical">
+        <StackPanel>
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsName}" />
+            </StackPanel>
+
+            <TextBox Text="{Binding Name}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsLink}" />
+            </StackPanel>
+
+            <TextBox Classes="content-type-url" Text="{Binding Link}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Type}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsType}" />
+            </StackPanel>
+
+            <ListBox Classes="wrap-panel" SelectedItem="{Binding Type}" ItemsSource="{Binding ToDoItemTypes}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsDueDate}" />
+            </StackPanel>
+
+            <CalendarDatePicker
+                SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsRemindDaysBefore}" />
+            </StackPanel>
+
+            <NumericUpDown Value="{Binding RemindDaysBefore}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource ToDoItemContentView.Color}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsColor}" />
+            </StackPanel>
+
+            <c:ColorSelectorControl ItemsSource="{x:Static h:ColorData.ColorsA400}" SelectedColor="{Binding Color}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource ValueToDoItemSettingsView.Icon}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsIcon}" />
+            </StackPanel>
+
+            <c:IconSelectorControl SelectedIcon="{Binding Icon}"
+                                   ItemsSource="{x:Static h:UiHelper.Icons}"
+                                   FavoriteItemsSource="{Binding FavoriteIcons}" />
         </StackPanel>
-
-        <TextBox Text="{Binding Name}" />
-
-        <StackPanel Classes="horizontal">
-            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
-            <ToggleSwitch Classes="field" IsChecked="{Binding IsLink}" />
-        </StackPanel>
-
-        <TextBox Classes="content-type-url" Text="{Binding Link}" />
-
-        <StackPanel Classes="horizontal">
-            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Type}" />
-            <ToggleSwitch Classes="field" IsChecked="{Binding IsType}" />
-        </StackPanel>
-
-        <ListBox Classes="wrap-panel" SelectedItem="{Binding Type}" ItemsSource="{Binding ToDoItemTypes}" />
-        
-        <StackPanel Classes="horizontal">
-            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
-            <ToggleSwitch Classes="field" IsChecked="{Binding IsDueDate}" />
-        </StackPanel>
-
-        <CalendarDatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
-        
-        <StackPanel Classes="horizontal">
-            <TextBlock Classes="field" Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
-            <ToggleSwitch Classes="field" IsChecked="{Binding IsRemindDaysBefore}" />
-        </StackPanel>
-
-        <NumericUpDown Value="{Binding RemindDaysBefore}" />
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>
