@@ -1,6 +1,3 @@
-using Avalonia.Platform;
-using ISoundPlayer = Spravy.Ui.Interfaces.ISoundPlayer;
-
 namespace Spravy.Ui.Services;
 
 public class AudioService : IAudioService
@@ -9,11 +6,15 @@ public class AudioService : IAudioService
     private static readonly Uri audioFileCompleteUri = new(AudioFileCompletePath);
     private static readonly ReadOnlyMemory<byte> completeSoundData;
 
+    private const string AudioFileNotificationPath =
+        "avares://Spravy.Ui/Assets/Sounds/Notification.wav";
+    private static readonly Uri audioFileNotificationUri = new(AudioFileNotificationPath);
+    private static readonly ReadOnlyMemory<byte> notificationSoundData;
+
     static AudioService()
     {
-        using var stream = AssetLoader.Open(audioFileCompleteUri);
-        var span = stream.ToByteArray();
-        completeSoundData = span.ToArray();
+        completeSoundData = audioFileCompleteUri.GetAssetBytes();
+        notificationSoundData = audioFileNotificationUri.GetAssetBytes();
     }
 
     private readonly ISoundPlayer soundPlayer;
@@ -25,12 +26,17 @@ public class AudioService : IAudioService
 
     public Cvtar PlayCompleteAsync(CancellationToken ct)
     {
-        return PlayCompleteCore(ct).ConfigureAwait(false);
+        return PlayCore(completeSoundData, ct).ConfigureAwait(false);
     }
 
-    private async ValueTask<Result> PlayCompleteCore(CancellationToken ct)
+    public Cvtar PlayNotificationAsync(CancellationToken ct)
     {
-        await soundPlayer.PlayAsync(completeSoundData, ct);
+        return PlayCore(notificationSoundData, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> PlayCore(ReadOnlyMemory<byte> data, CancellationToken ct)
+    {
+        await soundPlayer.PlayAsync(data, ct);
 
         return Result.Success;
     }

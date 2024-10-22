@@ -4,6 +4,7 @@ public class EventUpdater : IEventUpdater
 {
     private readonly IScheduleService scheduleService;
     private readonly IUiApplicationService uiApplicationService;
+    private readonly IAudioService audioService;
     private readonly IToDoService toDoService;
     private readonly ISpravyNotificationManager spravyNotificationManager;
     private CancellationTokenSource cancellationTokenSource = new();
@@ -12,13 +13,15 @@ public class EventUpdater : IEventUpdater
         IScheduleService scheduleService,
         ISpravyNotificationManager spravyNotificationManager,
         IToDoService toDoService,
-        IUiApplicationService uiApplicationService
+        IUiApplicationService uiApplicationService,
+        IAudioService audioService
     )
     {
         this.scheduleService = scheduleService;
         this.spravyNotificationManager = spravyNotificationManager;
         this.toDoService = toDoService;
         this.uiApplicationService = uiApplicationService;
+        this.audioService = audioService;
     }
 
     public void Start()
@@ -53,6 +56,7 @@ public class EventUpdater : IEventUpdater
 
                             return spravyNotificationManager
                                 .ShowAsync(new TextLocalization("Notification.UpdateSchedule"), ct)
+                                .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
                                 .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
                                 .IfSuccessAsync(
                                     x =>
@@ -67,6 +71,10 @@ public class EventUpdater : IEventUpdater
                                                 new TextLocalization(
                                                     "Notification.UpdateToDoEvents"
                                                 ),
+                                                ct
+                                            )
+                                            .IfSuccessAsync(
+                                                () => audioService.PlayNotificationAsync(ct),
                                                 ct
                                             )
                                             .IfSuccessAsync(
