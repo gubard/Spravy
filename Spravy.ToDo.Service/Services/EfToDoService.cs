@@ -152,7 +152,7 @@ public class EfToDoService : IToDoService
                                                                 {
                                                                     item.IsCompleted = true;
 
-                                                                    return UpdateDueDateAsync(
+                                                                    return MoveNextDueDateAsync(
                                                                         context,
                                                                         item,
                                                                         offset,
@@ -1026,7 +1026,7 @@ public class EfToDoService : IToDoService
                                                                                 );
                                                                     }
 
-                                                                    return UpdateDueDateAsync(
+                                                                    return MoveNextDueDateAsync(
                                                                             context,
                                                                             item,
                                                                             offset,
@@ -1855,7 +1855,7 @@ public class EfToDoService : IToDoService
         return await GetParentsAsync(context, parent.Parent.Id, parents, ct);
     }
 
-    private Cvtar UpdateDueDateAsync(
+    private Cvtar MoveNextDueDateAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         TimeSpan offset,
@@ -1888,7 +1888,7 @@ public class EfToDoService : IToDoService
 
                 return context
                     .GetEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)
-                    .IfSuccessAsync(i => UpdateDueDateAsync(context, i, offset, ct), ct);
+                    .IfSuccessAsync(i => MoveNextDueDateAsync(context, i, offset, ct), ct);
             default:
                 return new Result(new ToDoItemTypeOutOfRangeError(item.Type))
                     .ToValueTaskResult()
