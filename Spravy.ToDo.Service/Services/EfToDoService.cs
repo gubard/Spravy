@@ -1871,7 +1871,7 @@ public class EfToDoService : IToDoService
             case ToDoItemType.Planned:
                 return Result.AwaitableSuccess;
             case ToDoItemType.Periodicity:
-                return AddPeriodicity(item, ct).ToValueTaskResult().ConfigureAwait(false);
+                return AddPeriodicity(item, offset, ct).ToValueTaskResult().ConfigureAwait(false);
             case ToDoItemType.PeriodicityOffset:
                 return AddPeriodicityOffset(item, offset, ct)
                     .ToValueTaskResult()
@@ -1923,31 +1923,37 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    private Result AddPeriodicity(ToDoItemEntity item, CancellationToken ct)
+    private Result AddPeriodicity(ToDoItemEntity item, TimeSpan offset, CancellationToken ct)
     {
         if (ct.IsCancellationRequested)
         {
             return Result.CanceledByUserError;
         }
 
+        var currentDueDate = item.IsRequiredCompleteInDueDate
+            ? item.DueDate
+            : DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+
         switch (item.TypeOfPeriodicity)
         {
             case TypeOfPeriodicity.Daily:
-                item.DueDate = item.DueDate.AddDays(1);
+                item.DueDate = currentDueDate.AddDays(1);
 
                 break;
             case TypeOfPeriodicity.Weekly:
             {
-                var dayOfWeek = item.DueDate.DayOfWeek;
+                var dayOfWeek = currentDueDate.DayOfWeek;
+
                 var daysOfWeek = item.GetDaysOfWeek()
                     .OrderByDefault(x => x)
                     .Select(x => (DayOfWeek?)x)
                     .ToArray();
+
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
 
                 item.DueDate = nextDay is not null
-                    ? item.DueDate.AddDays((int)nextDay - (int)dayOfWeek)
-                    : item.DueDate.AddDays(
+                    ? currentDueDate.AddDays((int)nextDay - (int)dayOfWeek)
+                    : currentDueDate.AddDays(
                         7 - (int)dayOfWeek + (int)daysOfWeek.First().ThrowIfNullStruct()
                     );
 
@@ -1955,8 +1961,7 @@ public class EfToDoService : IToDoService
             }
             case TypeOfPeriodicity.Monthly:
             {
-                var now = item.DueDate;
-                var dayOfMonth = now.Day;
+                var dayOfMonth = currentDueDate.Day;
 
                 var daysOfMonth = item.GetDaysOfMonth()
                     .ToArray()
@@ -1966,10 +1971,13 @@ public class EfToDoService : IToDoService
                     .ToArray();
 
                 var nextDay = daysOfMonth.FirstOrDefault(x => x > dayOfMonth);
-                var daysInCurrentMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                var daysInCurrentMonth = DateTime.DaysInMonth(
+                    currentDueDate.Year,
+                    currentDueDate.Month
+                );
                 var daysInNextMonth = DateTime.DaysInMonth(
-                    now.AddMonths(1).Year,
-                    now.AddMonths(1).Month
+                    currentDueDate.AddMonths(1).Year,
+                    currentDueDate.AddMonths(1).Month
                 );
 
                 item.DueDate = nextDay is not null
@@ -1984,18 +1992,18 @@ public class EfToDoService : IToDoService
             }
             case TypeOfPeriodicity.Annually:
             {
-                var now = item.DueDate;
                 var daysOfYear = item.GetDaysOfYear()
                     .OrderBy(x => x)
                     .Select(x => (DayOfYear?)x)
                     .ToArray();
 
                 var nextDay = daysOfYear.FirstOrDefault(x =>
-                    x.ThrowIfNullStruct().Month >= now.Month && x.ThrowIfNullStruct().Day > now.Day
+                    x.ThrowIfNullStruct().Month >= currentDueDate.Month
+                    && x.ThrowIfNullStruct().Day > currentDueDate.Day
                 );
 
                 var daysInNextMonth = DateTime.DaysInMonth(
-                    now.Year + 1,
+                    currentDueDate.Year + 1,
                     daysOfYear.First().ThrowIfNullStruct().Month
                 );
 
@@ -2004,7 +2012,7 @@ public class EfToDoService : IToDoService
                         .DueDate.WithMonth(nextDay.Value.Month)
                         .WithDay(
                             Math.Min(
-                                DateTime.DaysInMonth(now.Year, nextDay.Value.Month),
+                                DateTime.DaysInMonth(currentDueDate.Year, nextDay.Value.Month),
                                 nextDay.Value.Day
                             )
                         )
