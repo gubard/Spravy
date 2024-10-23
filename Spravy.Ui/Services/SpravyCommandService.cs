@@ -262,7 +262,17 @@ public class SpravyCommandService
                         },
                         CancellationToken.None
                     )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
+                    .IfErrorsAsync(
+                        errors =>
+                            dialogViewer.ShowInfoDialogAsync(
+                                viewFactory,
+                                DialogViewLayer.Error,
+                                viewFactory.CreateErrorViewModel(errors),
+                                ct
+                            ),
+                        ct
+                    );
 
                 return Result.AwaitableSuccess;
             },

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
+public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId, IRemove
 {
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
@@ -88,5 +88,10 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
         return ToDoSubItemsViewModel
             .GetSelectedItems()
             .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
+    }
+
+    public Result RemoveUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.RemoveUi(item);
     }
 }
