@@ -13,7 +13,8 @@
              xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
-             x:DataType="vm:ToDoItemViewModel">
+             x:DataType="vm:ToDoItemViewModel"
+             Background="{Binding Item.Color, Converter={StaticResource ColorToUserControlBackgroundConverter}}">
     <Grid RowDefinitions="Auto, Auto,*">
         <Panel>
             <Grid ColumnDefinitions="Auto,*,Auto">

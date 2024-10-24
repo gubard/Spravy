@@ -23,6 +23,7 @@
     <c:Int32PositiveToBooleanConverter x:Key="Int32PositiveToBooleanConverterReverse" IsReverse="True" />
     <c:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
     <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    <c:ColorToUserControlBackgroundConverter x:Key="ColorToUserControlBackgroundConverter" />
     <c:ColorToButtonBackgroundConverter x:Key="ColorToButtonBackgroundConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
