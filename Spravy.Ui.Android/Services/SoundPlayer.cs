@@ -1,5 +1,4 @@
 ﻿using Android.Media;
-using K4os.Hash.xxHash;
 using Spravy.Authentication.Domain.Interfaces;
 
 namespace Spravy.Ui.Android.Services;
@@ -11,10 +10,7 @@ public class SoundPlayer : ISoundPlayer, IDisposable
 
     static SoundPlayer()
     {
-        audioDirectoryPath = Path.Combine(
-            MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath,
-            "sounds"
-        );
+        audioDirectoryPath = MainActivity.Instance.CacheDir.ThrowIfNull().AbsolutePath;
     }
 
     public SoundPlayer(IHashService hashService)
@@ -34,7 +30,7 @@ public class SoundPlayer : ISoundPlayer, IDisposable
 
         if (!File.Exists(path))
         {
-            await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            await using var fileStream = File.Create(path);
             await fileStream.WriteAsync(soundData, ct);
         }
 
