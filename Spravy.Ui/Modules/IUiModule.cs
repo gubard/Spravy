@@ -4,7 +4,6 @@ using Spravy.Client.Modules;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
 using Spravy.Schedule.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
-using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
 
 namespace Spravy.Ui.Modules;
@@ -45,7 +44,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(PaneView))]
 [Transient(typeof(MainSplitView))]
 [Transient(typeof(EditDescriptionView))]
-[Transient(typeof(EditDescriptionContentView))]
 [Transient(typeof(ConfirmView))]
 [Transient(typeof(DeleteAccountView))]
 [Transient(typeof(EmailOrLoginInputView))]
@@ -54,6 +52,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(TextView))]
 [Transient(typeof(MainProgressBarView))]
 [Transient(typeof(ToDoItemsView))]
+[Transient(typeof(ToDoItemSettingsView))]
 [Transient(typeof(AddTimerView))]
 [Transient(typeof(AddToDoItemView))]
 [Transient(typeof(DeleteToDoItemView))]
@@ -62,25 +61,15 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(ToDoItemView))]
 [Transient(typeof(ResetToDoItemView))]
 [Transient(typeof(RootToDoItemsView))]
-[Transient(typeof(ToDoItemContentView))]
-[Transient(typeof(PeriodicityToDoItemSettingsView))]
-[Transient(typeof(PlannedToDoItemSettingsView))]
-[Transient(typeof(PeriodicityOffsetToDoItemSettingsView))]
-[Transient(typeof(ValueToDoItemSettingsView))]
 [Transient(typeof(ToDoItemToStringSettingsView))]
-[Transient(typeof(ToDoItemDayOfWeekSelectorView))]
-[Transient(typeof(ToDoItemDayOfYearSelectorView))]
 [Transient(typeof(ToDoItemSelectorView))]
-[Transient(typeof(ToDoItemSettingsView))]
 [Transient(typeof(ToDoSubItemsView))]
-[Transient(typeof(ReferenceToDoItemSettingsView))]
 [Transient(typeof(ChangeToDoItemOrderIndexView))]
-[Transient(typeof(MultiToDoItemSettingView))]
+[Transient(typeof(EditToDoItemView))]
 [Transient(typeof(RandomizeChildrenOrderView))]
 [Transient(typeof(SearchToDoItemsView))]
 [Transient(typeof(LeafToDoItemsView))]
 [Transient(typeof(TodayToDoItemsView))]
-[Transient(typeof(ToDoItemDayOfMonthSelectorView))]
 [Transient(typeof(AddPasswordItemView))]
 [Transient(typeof(DeletePasswordItemView))]
 [Transient(typeof(PasswordGeneratorView))]

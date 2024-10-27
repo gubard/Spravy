@@ -97,7 +97,6 @@ public static class RootToDoItemsViewExtension
                                 .GetControl<ContentControl>(
                                     ElementNames.ToDoItemContentContentControl
                                 )
-                                .GetContentView<ToDoItemContentView>()
                                 .GetControl<TextBox>(ElementNames.NameTextBox)
                                 .ClearText(window)
                                 .SetText(window, name)

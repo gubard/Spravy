@@ -37,15 +37,29 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                 .ToResult()
                 .IfSuccessForEach(x =>
                     new AddToDoItemOptions(
-                        new(),
                         x.Name,
-                        ToDoItemType.Reference,
                         x.Description,
+                        ToDoItemType.Reference,
+                        false,
+                        false,
+                        DateTime.Now.ToDateOnly(),
+                        TypeOfPeriodicity.Annually,
+                        Array.Empty<DayOfYear>(),
+                        Array.Empty<byte>(),
+                        Array.Empty<DayOfWeek>(),
+                        1,
+                        0,
+                        0,
+                        0,
+                        ToDoItemChildrenType.RequireCompletion,
+                        true,
                         x.DescriptionType,
-                        x.Link.ToOptionUri(),
-                        new(x.Id),
                         x.Icon,
-                        x.Color.ToString()
+                        x.Color.ToString(),
+                        new(x.Id),
+                        new(),
+                        x.Link.ToOptionUri(),
+                        0
                     ).ToResult()
                 )
                 .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
@@ -56,15 +70,29 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
             .ToResult()
             .IfSuccessForEach(x =>
                 new AddToDoItemOptions(
-                    new(ToDoItemSelectorViewModel.SelectedItem.Id),
                     x.Name,
-                    ToDoItemType.Reference,
                     x.Description,
+                    ToDoItemType.Reference,
+                    false,
+                    false,
+                    DateTime.Now.ToDateOnly(),
+                    TypeOfPeriodicity.Annually,
+                    Array.Empty<DayOfYear>(),
+                    Array.Empty<byte>(),
+                    Array.Empty<DayOfWeek>(),
+                    1,
+                    0,
+                    0,
+                    0,
+                    ToDoItemChildrenType.RequireCompletion,
+                    true,
                     x.DescriptionType,
-                    x.Link.ToOptionUri(),
-                    new(x.Id),
                     x.Icon,
-                    x.Color.ToString()
+                    x.Color.ToString(),
+                    new(x.Id),
+                    new(ToDoItemSelectorViewModel.SelectedItem.Id),
+                    x.Link.ToOptionUri(),
+                    0
                 ).ToResult()
             )
             .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)

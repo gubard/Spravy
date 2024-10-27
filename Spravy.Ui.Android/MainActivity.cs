@@ -43,12 +43,6 @@ public class MainActivity : AvaloniaMainActivity<App>
         base.OnCreate(savedInstanceState);
     }
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        SoundPlayer.Instance.Dispose();
-    }
-
     public override void OnBackPressed()
     {
         HandleBackPressedAsync();

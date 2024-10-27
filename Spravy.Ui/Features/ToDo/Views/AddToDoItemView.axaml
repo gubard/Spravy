@@ -18,9 +18,8 @@
                 <ScrollViewer Classes="horizontal">
                     <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
                 </ScrollViewer>
-
-                <ContentControl Content="{Binding ToDoItemContent}" />
-                <ContentControl Content="{Binding DescriptionContent}" />
+                
+                <ContentControl Content="{Binding EditToDoItemViewModel}" />
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>

@@ -47,9 +47,9 @@ public class ToDoCache : IToDoCache
                 item.WeeksOffset = toDoItem.Item.WeeksOffset;
                 item.IsRequiredCompleteInDueDate = toDoItem.Item.IsRequiredCompleteInDueDate;
                 item.TypeOfPeriodicity = toDoItem.Item.TypeOfPeriodicity;
-                item.DaysOfWeek.UpdateUi(toDoItem.Item.WeeklyDays);
-                item.DaysOfYear.UpdateUi(toDoItem.Item.AnnuallyDays);
-                item.DaysOfMonth.UpdateUi(toDoItem.Item.MonthlyDays.Select(x => (int)x));
+                item.WeeklyDays.UpdateUi(toDoItem.Item.WeeklyDays);
+                item.AnnuallyDays.UpdateUi(toDoItem.Item.AnnuallyDays);
+                item.MonthlyDays.UpdateUi(toDoItem.Item.MonthlyDays.Select(x => (int)x));
                 item.Description = toDoItem.Item.Description;
                 item.DescriptionType = toDoItem.Item.DescriptionType;
                 item.Type = toDoItem.Item.Type;
@@ -279,9 +279,9 @@ public class ToDoCache : IToDoCache
                 item.WeeksOffset = shortItem.WeeksOffset;
                 item.IsRequiredCompleteInDueDate = shortItem.IsRequiredCompleteInDueDate;
                 item.TypeOfPeriodicity = shortItem.TypeOfPeriodicity;
-                item.DaysOfWeek.UpdateUi(shortItem.WeeklyDays);
-                item.DaysOfYear.UpdateUi(shortItem.AnnuallyDays);
-                item.DaysOfMonth.UpdateUi(shortItem.MonthlyDays.Select(x => (int)x));
+                item.WeeklyDays.UpdateUi(shortItem.WeeklyDays);
+                item.AnnuallyDays.UpdateUi(shortItem.AnnuallyDays);
+                item.MonthlyDays.UpdateUi(shortItem.MonthlyDays.Select(x => (int)x));
                 item.Description = shortItem.Description;
                 item.DescriptionType = shortItem.DescriptionType;
                 item.Type = shortItem.Type;

@@ -1,5 +1,3 @@
-using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
-
 namespace Spravy.Ui.Services;
 
 public class ViewFactory : IViewFactory
@@ -64,11 +62,41 @@ public class ViewFactory : IViewFactory
         this.clipboardService = clipboardService;
     }
 
-    public MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
+    public EditToDoItemViewModel CreateEditToDoItemViewModel(
+        bool isEditShow,
+        bool isEditDescriptionShow
+    )
+    {
+        return new(
+            objectStorage,
+            CreateToDoItemSelectorViewModel(),
+            toDoCache,
+            isEditShow,
+            isEditDescriptionShow
+        );
+    }
+
+    public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(
+        Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(items, toDoService, objectStorage);
+        if (item.TryGetValue(out var value) && items.IsEmpty)
+        {
+            var result = new ToDoItemSettingsViewModel(
+                item,
+                items,
+                toDoService,
+                CreateEditToDoItemViewModel(false, false)
+            );
+
+            result.EditToDoItemViewModel.SetItem(value);
+            result.EditToDoItemViewModel.UndoAllUi();
+
+            return result;
+        }
+
+        return new(item, items, toDoService, CreateEditToDoItemViewModel(true, false));
     }
 
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
@@ -87,16 +115,6 @@ public class ViewFactory : IViewFactory
         );
     }
 
-    public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item)
-    {
-        return new(item, CreateToDoItemContentViewModel(), this, toDoService);
-    }
-
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(ToDoItemEntityNotify item)
-    {
-        return CreateToDoItemSelectorViewModel(item, ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
-    }
-
     public ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item)
     {
         return new(
@@ -112,13 +130,6 @@ public class ViewFactory : IViewFactory
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
     {
         return new();
-    }
-
-    public ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
     }
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(SortBy sortBy)
@@ -242,7 +253,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, CreateEditDescriptionContentViewModel(), toDoService);
+        return new(item, items, toDoService);
     }
 
     public CloneViewModel CreateCloneViewModel(
@@ -322,48 +333,6 @@ public class ViewFactory : IViewFactory
         return new(emailOrLogin, identifierType);
     }
 
-    public ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
-    public ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
-    public ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
-    public PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
-    public PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item, this);
-    }
-
-    public PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(item);
-    }
-
     public InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask)
     {
         return new(content, okTask, errorHandler, taskProgressService);
@@ -374,20 +343,6 @@ public class ViewFactory : IViewFactory
     )
     {
         return new(item);
-    }
-
-    public ReferenceToDoItemSettingsViewModel CreateReferenceToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    )
-    {
-        return new(
-            item,
-            CreateToDoItemSelectorViewModel(
-                item.Reference.ToOption(),
-                ReadOnlyMemory<ToDoItemEntityNotify>.Empty
-            ),
-            toDoCache
-        );
     }
 
     public ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header)
@@ -549,20 +504,9 @@ public class ViewFactory : IViewFactory
             item,
             items,
             objectStorage,
-            CreateToDoItemContentViewModel(),
-            CreateEditDescriptionContentViewModel(),
-            toDoService
+            toDoService,
+            CreateEditToDoItemViewModel(false, true)
         );
-    }
-
-    public ToDoItemContentViewModel CreateToDoItemContentViewModel()
-    {
-        return new(objectStorage);
-    }
-
-    public EditDescriptionContentViewModel CreateEditDescriptionContentViewModel()
-    {
-        return new();
     }
 
     public DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(

@@ -1,5 +1,3 @@
-using EditDescriptionContentView = Spravy.Ui.Features.ToDo.Views.EditDescriptionContentView;
-using EditDescriptionContentViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionContentViewModel;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
 using EditDescriptionViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionViewModel;
 
@@ -44,11 +42,6 @@ public class ViewSelector : IViewSelector
         if (typeof(EditDescriptionViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<EditDescriptionView>());
-        }
-
-        if (typeof(EditDescriptionContentViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<EditDescriptionContentView>());
         }
 
         if (typeof(ConfirmViewModel) == viewModelType)
@@ -121,44 +114,9 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<RootToDoItemsView>());
         }
 
-        if (typeof(ToDoItemContentViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemContentView>());
-        }
-
-        if (typeof(PeriodicityToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<PeriodicityToDoItemSettingsView>());
-        }
-
-        if (typeof(PlannedToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<PlannedToDoItemSettingsView>());
-        }
-
-        if (typeof(PeriodicityOffsetToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<PeriodicityOffsetToDoItemSettingsView>());
-        }
-
-        if (typeof(ValueToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ValueToDoItemSettingsView>());
-        }
-
         if (typeof(ToDoItemToStringSettingsViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<ToDoItemToStringSettingsView>());
-        }
-
-        if (typeof(ToDoItemDayOfWeekSelectorViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemDayOfWeekSelectorView>());
-        }
-
-        if (typeof(ToDoItemDayOfYearSelectorViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemDayOfYearSelectorView>());
         }
 
         if (typeof(ToDoItemSelectorViewModel) == viewModelType)
@@ -166,19 +124,9 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ToDoItemSelectorView>());
         }
 
-        if (typeof(ToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemSettingsView>());
-        }
-
         if (typeof(ToDoSubItemsViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<ToDoSubItemsView>());
-        }
-
-        if (typeof(ReferenceToDoItemSettingsViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ReferenceToDoItemSettingsView>());
         }
 
         if (typeof(ChangeToDoItemOrderIndexViewModel) == viewModelType)
@@ -186,14 +134,19 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<ChangeToDoItemOrderIndexView>());
         }
 
-        if (typeof(MultiToDoItemSettingViewModel) == viewModelType)
+        if (typeof(EditToDoItemViewModel) == viewModelType)
         {
-            return new(serviceFactory.CreateService<MultiToDoItemSettingView>());
+            return new(serviceFactory.CreateService<EditToDoItemView>());
         }
 
         if (typeof(RandomizeChildrenOrderViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<RandomizeChildrenOrderView>());
+        }
+
+        if (typeof(ToDoItemSettingsViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<ToDoItemSettingsView>());
         }
 
         if (typeof(SearchToDoItemsViewModel) == viewModelType)
@@ -209,11 +162,6 @@ public class ViewSelector : IViewSelector
         if (typeof(TodayToDoItemsViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<TodayToDoItemsView>());
-        }
-
-        if (typeof(ToDoItemDayOfMonthSelectorViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ToDoItemDayOfMonthSelectorView>());
         }
 
         if (typeof(AddPasswordItemViewModel) == viewModelType)

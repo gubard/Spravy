@@ -1,0 +1,356 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spravy.Ui.Features.ToDo.Views.EditToDoItemView"
+             x:DataType="vm:EditToDoItemViewModel">
+    <ScrollViewer Classes="vertical">
+        <StackPanel>
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditName}" IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <TextBox Text="{Binding Name}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditLink}" IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <TextBox Classes="content-type-url" Text="{Binding Link}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
+                              IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <NumericUpDown Value="{Binding RemindDaysBefore}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource ToDoItemContentView.Color}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditColor}" IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <c:ColorSelectorControl ItemsSource="{x:Static h:ColorData.ColorsA400}" SelectedColor="{Binding Color}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource ValueToDoItemSettingsView.Icon}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIcon}" IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <c:IconSelectorControl SelectedIcon="{Binding Icon}"
+                                   ItemsSource="{x:Static h:UiHelper.Icons}"
+                                   FavoriteItemsSource="{Binding FavoriteIcons}" />
+
+            <StackPanel IsVisible="{Binding IsEditDescriptionShow}">
+                <StackPanel Classes="horizontal">
+                    <TextBlock Classes="field"
+                               Text="{DynamicResource EditDescriptionView.DescriptionType}" />
+                    <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescriptionType}"
+                                  IsVisible="{Binding IsEditShow}" />
+                </StackPanel>
+
+                <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
+
+                <StackPanel Classes="horizontal">
+                    <TextBlock Classes="field"
+                               Text="{DynamicResource EditDescriptionView.Description}" />
+                    <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescription}"
+                                  IsVisible="{Binding IsEditShow}" />
+                </StackPanel>
+
+                <TextBox x:Name="DescriptionTextBox"
+                         Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
+                         Text="{Binding Description}" />
+            </StackPanel>
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Type}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditType}" IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <ListBox Classes="wrap-panel" SelectedItem="{Binding Type}" ItemsSource="{Binding ToDoItemTypes}" />
+
+            <c:ViewSelectorControl State="{Binding Type}">
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Group}" />
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Value}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Circle}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Step}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Planned}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <CalendarDatePicker
+                            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <NumericUpDown Value="{Binding RemindDaysBefore}" />
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.PeriodicityOffset}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <CalendarDatePicker
+                            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel>
+                                <TextBlock Classes="field"
+                                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DaysOffset}" />
+
+                                <NumericUpDown Value="{Binding  DaysOffset}" />
+
+                                <TextBlock Classes="field"
+                                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}" />
+                                <NumericUpDown Value="{Binding  MonthsOffset}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Classes="field"
+                                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.WeeksOffset}" />
+
+                                <NumericUpDown Value="{Binding  WeeksOffset}" />
+
+                                <TextBlock Classes="field"
+
+                                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}" />
+                                <NumericUpDown Value="{Binding  YearsOffset}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <NumericUpDown Value="{Binding RemindDaysBefore}" />
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Reference}">
+                    <ContentControl Content="{Binding ToDoItemSelector}" />
+                </c:ViewSelectorItemControl>
+
+                <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Periodicity}">
+                    <StackPanel>
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.DueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <CalendarDatePicker
+                            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <NumericUpDown Value="{Binding RemindDaysBefore}" />
+
+                        <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditTypeOfPeriodicity}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <c:EnumSelectorControl SelectedEnum="{Binding TypeOfPeriodicity}" />
+
+                        <c:ViewSelectorControl State="{Binding TypeOfPeriodicity}">
+                            <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Daily}" />
+
+                            <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Weekly}">
+                                <ItemsControl ItemsSource="{Binding WeeklyDays}">
+                                    <ItemsControl.DataTemplates>
+                                        <DataTemplate>
+                                            <DataTemplate.DataType>
+                                                <x:Type TypeName="m:Selected" x:TypeArguments="system:DayOfWeek" />
+                                            </DataTemplate.DataType>
+
+                                            <ToggleButton IsChecked="{Binding IsSelect}" Content="{Binding Value}" />
+                                        </DataTemplate>
+                                    </ItemsControl.DataTemplates>
+
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </c:ViewSelectorItemControl>
+
+                            <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Monthly}">
+                                <c:IntegersSelectorControl Min="1"
+                                                           Max="31"
+                                                           SelectedIntegers="{Binding MonthlyDays, Mode=TwoWay}" />
+                            </c:ViewSelectorItemControl>
+
+                            <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Annually}">
+                                <TabControl ItemsSource="{Binding AnnuallyDays}">
+                                    <TabControl.ItemTemplate>
+                                        <DataTemplate x:DataType="m:DayOfYearSelectItem">
+                                            <TextBlock Text="{Binding Month}" />
+                                        </DataTemplate>
+                                    </TabControl.ItemTemplate>
+                                </TabControl>
+                            </c:ViewSelectorItemControl>
+                        </c:ViewSelectorControl>
+                    </StackPanel>
+                </c:ViewSelectorItemControl>
+            </c:ViewSelectorControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

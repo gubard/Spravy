@@ -9,20 +9,17 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IObjectStorage objectStorage,
-        ToDoItemContentViewModel toDoItemContent,
-        EditDescriptionContentViewModel descriptionContent,
-        IToDoService toDoService
+        IToDoService toDoService,
+        EditToDoItemViewModel editToDoItemViewModel
     )
         : base(editItem, editItems)
     {
         this.objectStorage = objectStorage;
-        ToDoItemContent = toDoItemContent;
-        DescriptionContent = descriptionContent;
         this.toDoService = toDoService;
+        EditToDoItemViewModel = editToDoItemViewModel;
     }
 
-    public ToDoItemContentViewModel ToDoItemContent { get; }
-    public EditDescriptionContentViewModel DescriptionContent { get; }
+    public EditToDoItemViewModel EditToDoItemViewModel { get; }
 
     public override string ViewId
     {
@@ -35,60 +32,28 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return objectStorage
-            .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, ct)
+            .GetObjectOrDefaultAsync<AddToDoItemViewModelSettings>(ViewId, ct)
             .IfSuccessAsync(
                 setting =>
                     this.PostUiBackground(
                         () =>
                         {
-                            DescriptionContent.DescriptionType = setting.DescriptionType;
-                            DescriptionContent.Description = setting.Description;
-                            ToDoItemContent.Type = setting.Type;
-                            ToDoItemContent.Link = setting.Link;
-                            ToDoItemContent.Name = setting.Name;
-                            ToDoItemContent.Names.AddRange(setting.Names);
+                            EditToDoItemViewModel.SetItem(setting.EditToDoItemViewModelSettings);
 
                             return Result.Success;
                         },
                         ct
                     ),
                 ct
-            );
+            )
+            .IfSuccessAsync(() => EditToDoItemViewModel.LoadStateAsync(ct), ct);
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
-    }
-
-    private AddToDoItemOptions ConverterToAddToDoItemOptions()
-    {
-        return new(
-            new(),
-            ToDoItemContent.Name,
-            ToDoItemContent.Type,
-            DescriptionContent.Description,
-            DescriptionContent.DescriptionType,
-            ToDoItemContent.Link.ToOptionUri(),
-            new(),
-            ToDoItemContent.Icon,
-            ToDoItemContent.Color.ToString()
-        );
-    }
-
-    private AddToDoItemOptions ConverterToAddToDoItemOptions(Guid parentId)
-    {
-        return new(
-            parentId.ToOption(),
-            ToDoItemContent.Name,
-            ToDoItemContent.Type,
-            DescriptionContent.Description,
-            DescriptionContent.DescriptionType,
-            ToDoItemContent.Link.ToOptionUri(),
-            new(),
-            ToDoItemContent.Icon,
-            ToDoItemContent.Color.ToString()
-        );
+        return objectStorage
+            .SaveObjectAsync(ViewId, new AddToDoItemViewModelSettings(this), ct)
+            .IfSuccessAsync(() => EditToDoItemViewModel.SaveStateAsync(ct), ct);
     }
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
@@ -100,14 +65,21 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
                     if (ResultIds.IsEmpty)
                     {
                         return toDoService.AddToDoItemAsync(
-                            new[] { ConverterToAddToDoItemOptions() },
+                            new[]
+                            {
+                                EditToDoItemViewModel.GetAddToDoItemOptions(
+                                    OptionStruct<Guid>.Default
+                                )
+                            },
                             ct
                         );
                     }
 
                     return ResultIds
                         .ToResult()
-                        .IfSuccessForEach(x => ConverterToAddToDoItemOptions(x).ToResult())
+                        .IfSuccessForEach(x =>
+                            EditToDoItemViewModel.GetAddToDoItemOptions(x.ToOption()).ToResult()
+                        )
                         .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct);
                 },
                 ct

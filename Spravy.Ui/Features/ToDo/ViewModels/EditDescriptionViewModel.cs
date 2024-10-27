@@ -1,18 +1,22 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplySettings
+public partial class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
+
+    [ObservableProperty]
+    private DescriptionType descriptionType;
+
+    [ObservableProperty]
+    private string description = string.Empty;
 
     public EditDescriptionViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
-        EditDescriptionContentViewModel content,
         IToDoService toDoService
     )
         : base(editItem, editItems)
     {
-        Content = content;
         this.toDoService = toDoService;
 
         if (!editItem.TryGetValue(out var item))
@@ -20,11 +24,9 @@ public class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplySettings
             return;
         }
 
-        Content.DescriptionType = item.DescriptionType;
-        Content.Description = item.Description;
+        descriptionType = item.DescriptionType;
+        description = item.Description;
     }
-
-    public EditDescriptionContentViewModel Content { get; }
 
     public override string ViewId
     {
@@ -46,8 +48,8 @@ public class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplySettings
         return toDoService.EditToDoItemsAsync(
             new EditToDoItems()
                 .SetIds(ResultIds)
-                .SetDescriptionType(new(Content.DescriptionType))
-                .SetDescription(new(Content.Description)),
+                .SetDescriptionType(new(DescriptionType))
+                .SetDescription(new(Description)),
             ct
         );
     }

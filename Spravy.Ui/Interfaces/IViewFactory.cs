@@ -8,10 +8,8 @@ public interface IViewFactory
     ErrorViewModel CreateErrorViewModel(ReadOnlyMemory<Error> errors);
     ExceptionViewModel CreateExceptionViewModel(Exception exception);
     DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item);
-    ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item);
     AddPasswordItemViewModel CreateAddPasswordItemViewModel();
-    ValueToDoItemSettingsViewModel CreateValueToDoItemSettingsViewModel(ToDoItemEntityNotify item);
     LoginViewModel CreateLoginViewModel();
     RootToDoItemsViewModel CreateRootToDoItemsViewModel();
     TodayToDoItemsViewModel CreateTodayToDoItemsViewModel();
@@ -24,6 +22,12 @@ public interface IViewFactory
     CreateUserViewModel CreateCreateUserViewModel();
     InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask);
     AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel();
+    EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow);
+
+    ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(
+        Option<ToDoItemEntityNotify> item,
+        ReadOnlyMemory<ToDoItemEntityNotify> items
+    );
 
     ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
         Option<ToDoItemEntityNotify> item,
@@ -65,10 +69,6 @@ public interface IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
-    MultiToDoItemSettingViewModel CreateMultiToDoItemSettingViewModel(
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    );
-
     LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
         Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items
@@ -94,36 +94,8 @@ public interface IViewFactory
         UserIdentifierType identifierType
     );
 
-    ToDoItemDayOfWeekSelectorViewModel CreateToDoItemDayOfWeekSelectorViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    ToDoItemDayOfMonthSelectorViewModel CreateToDoItemDayOfMonthSelectorViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    ToDoItemDayOfYearSelectorViewModel CreateToDoItemDayOfYearSelectorViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    PeriodicityOffsetToDoItemSettingsViewModel CreatePeriodicityOffsetToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    PeriodicityToDoItemSettingsViewModel CreatePeriodicityToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    );
-
-    PlannedToDoItemSettingsViewModel CreatePlannedToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
-    );
-
     PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(
         PasswordItemEntityNotify item
-    );
-
-    ReferenceToDoItemSettingsViewModel CreateReferenceToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item
     );
 
     ConfirmViewModel CreateConfirmViewModel(

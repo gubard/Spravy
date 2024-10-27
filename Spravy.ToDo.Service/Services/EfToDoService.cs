@@ -825,82 +825,6 @@ public class EfToDoService : IToDoService
                                     var parentId = options.ParentId.GetValueOrNull();
                                     var id = Guid.NewGuid();
 
-                                    if (parentId is not null)
-                                    {
-                                        return context
-                                            .GetEntityAsync<ToDoItemEntity>(parentId)
-                                            .IfSuccessAsync(
-                                                parent =>
-                                                    context
-                                                        .Set<ToDoItemEntity>()
-                                                        .AsNoTracking()
-                                                        .Where(x => x.ParentId == parentId)
-                                                        .Select(x => x.OrderIndex)
-                                                        .ToArrayEntitiesAsync(ct)
-                                                        .IfSuccessAsync(
-                                                            items =>
-                                                            {
-                                                                var toDoItem =
-                                                                    options.ToToDoItemEntity();
-                                                                toDoItem.Description =
-                                                                    options.Description;
-                                                                toDoItem.Id = id;
-                                                                toDoItem.OrderIndex =
-                                                                    items.Length == 0
-                                                                        ? 0
-                                                                        : items.Max() + 1;
-
-                                                                toDoItem.DueDate =
-                                                                    parent.DueDate
-                                                                    < DateTimeOffset
-                                                                        .UtcNow.Add(offset)
-                                                                        .Date.ToDateOnly()
-                                                                        ? DateTimeOffset
-                                                                            .UtcNow.Add(offset)
-                                                                            .Date.ToDateOnly()
-                                                                        : parent.DueDate;
-
-                                                                toDoItem.TypeOfPeriodicity =
-                                                                    parent.TypeOfPeriodicity;
-                                                                toDoItem.DaysOfMonth =
-                                                                    parent.DaysOfMonth;
-                                                                toDoItem.DaysOfWeek =
-                                                                    parent.DaysOfWeek;
-                                                                toDoItem.DaysOfYear =
-                                                                    parent.DaysOfYear;
-                                                                toDoItem.WeeksOffset =
-                                                                    parent.WeeksOffset;
-                                                                toDoItem.DaysOffset =
-                                                                    parent.DaysOffset;
-                                                                toDoItem.MonthsOffset =
-                                                                    parent.MonthsOffset;
-                                                                toDoItem.YearsOffset =
-                                                                    parent.YearsOffset;
-                                                                toDoItem.Link =
-                                                                    options.Link.TryGetValue(
-                                                                        out var uri
-                                                                    )
-                                                                        ? uri.AbsoluteUri
-                                                                        : string.Empty;
-                                                                toDoItem.DescriptionType =
-                                                                    options.DescriptionType;
-
-                                                                toDoItem.Icon = options.Icon;
-                                                                toDoItem.Color = options.Color;
-
-                                                                return context
-                                                                    .AddEntityAsync(toDoItem, ct)
-                                                                    .IfSuccessAsync(
-                                                                        _ => id.ToResult(),
-                                                                        ct
-                                                                    );
-                                                            },
-                                                            ct
-                                                        ),
-                                                ct
-                                            );
-                                    }
-
                                     return context
                                         .Set<ToDoItemEntity>()
                                         .AsNoTracking()
@@ -911,19 +835,9 @@ public class EfToDoService : IToDoService
                                             items =>
                                             {
                                                 var toDoItem = options.ToToDoItemEntity();
-                                                toDoItem.Description = options.Description;
                                                 toDoItem.Id = id;
                                                 toDoItem.OrderIndex =
                                                     items.Length == 0 ? 0 : items.Max() + 1;
-                                                toDoItem.DueDate = DateTimeOffset
-                                                    .UtcNow.Add(offset)
-                                                    .Date.ToDateOnly();
-                                                toDoItem.Link = options.Link.TryGetValue(
-                                                    out var uri
-                                                )
-                                                    ? uri.AbsoluteUri
-                                                    : string.Empty;
-                                                toDoItem.DescriptionType = options.DescriptionType;
 
                                                 return context
                                                     .AddEntityAsync(toDoItem, ct)

@@ -15,7 +15,14 @@
 
             <StackPanel>
                 <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
-                <ContentControl Content="{Binding Content}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource EditDescriptionView.DescriptionType}" />
+                <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource EditDescriptionView.Description}" />
+                <TextBox x:Name="DescriptionTextBox"
+                         Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
+                         Text="{Binding Description}" />
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>

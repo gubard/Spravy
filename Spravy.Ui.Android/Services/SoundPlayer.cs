@@ -1,11 +1,13 @@
 ﻿using Android.Media;
+using K4os.Hash.xxHash;
+using Spravy.Authentication.Domain.Interfaces;
 
 namespace Spravy.Ui.Android.Services;
 
 public class SoundPlayer : ISoundPlayer, IDisposable
 {
+    private readonly IHashService hashService;
     private static readonly string audioDirectoryPath;
-    public static readonly SoundPlayer Instance = new();
 
     static SoundPlayer()
     {
@@ -15,23 +17,25 @@ public class SoundPlayer : ISoundPlayer, IDisposable
         );
     }
 
-    private SoundPlayer() { }
+    public SoundPlayer(IHashService hashService)
+    {
+        this.hashService = hashService;
+    }
 
     private MediaPlayer? mediaPlayer;
 
     public async Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
         DisposeMediaPlayer();
-
         var path = Path.Combine(
             audioDirectoryPath,
-            $"{BitConverter.ToString(soundData.ToArray()[..255]).Replace("-", "")}.wav"
+            $"{hashService.ComputeHash(soundData.ToArray()).ToHex()}.wav"
         );
 
         if (!File.Exists(path))
         {
             await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            fileStream.Write(soundData.Span);
+            await fileStream.WriteAsync(soundData, ct);
         }
 
         mediaPlayer = new();

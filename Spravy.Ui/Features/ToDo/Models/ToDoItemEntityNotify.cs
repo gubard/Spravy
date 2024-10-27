@@ -112,9 +112,9 @@ public partial class ToDoItemEntityNotify
         isRequiredCompleteInDueDate = true;
         Commands = new();
         Children = new();
-        DaysOfWeek = new();
-        DaysOfMonth = new();
-        DaysOfYear = new();
+        WeeklyDays = new();
+        MonthlyDays = new();
+        AnnuallyDays = new();
         color = Colors.Transparent;
         icon = string.Empty;
 
@@ -124,9 +124,9 @@ public partial class ToDoItemEntityNotify
     public Guid Id { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
-    public AvaloniaList<DayOfWeek> DaysOfWeek { get; }
-    public AvaloniaList<int> DaysOfMonth { get; }
-    public AvaloniaList<DayOfYear> DaysOfYear { get; }
+    public AvaloniaList<DayOfWeek> WeeklyDays { get; }
+    public AvaloniaList<int> MonthlyDays { get; }
+    public AvaloniaList<DayOfYear> AnnuallyDays { get; }
 
     public bool IsDescriptionPlainText
     {

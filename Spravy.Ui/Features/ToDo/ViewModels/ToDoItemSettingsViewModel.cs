@@ -1,47 +1,22 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApplySettings
+public partial class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly EmptyToDoItemSettings empty;
-    private readonly ValueToDoItemSettingsViewModel valueSettings;
-    private readonly PlannedToDoItemSettingsViewModel plannedSettings;
-    private readonly PeriodicityToDoItemSettingsViewModel periodicitySettings;
-    private readonly PeriodicityOffsetToDoItemSettingsViewModel periodicityOffsetSettings;
-    private readonly ReferenceToDoItemSettingsViewModel referenceSettings;
-
-    [ObservableProperty]
-    private IEditToDoItems edit;
 
     public ToDoItemSettingsViewModel(
-        ToDoItemEntityNotify item,
-        ToDoItemContentViewModel toDoItemContent,
-        IViewFactory viewFactory,
-        IToDoService toDoService
+        Option<ToDoItemEntityNotify> editItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> editItems,
+        IToDoService toDoService,
+        EditToDoItemViewModel editToDoItemViewModel
     )
+        : base(editItem, editItems)
     {
-        Item = item;
-        ToDoItemContent = toDoItemContent;
         this.toDoService = toDoService;
-        ToDoItemContent.Type = Item.Type;
-        ToDoItemContent.Name = Item.Name;
-        ToDoItemContent.Link = Item.Link;
-        ToDoItemContent.Icon = Item.Icon;
-        ToDoItemContent.Color = Item.Color;
-        empty = EmptyToDoItemSettings.Default;
-        valueSettings = viewFactory.CreateValueToDoItemSettingsViewModel(Item);
-        plannedSettings = viewFactory.CreatePlannedToDoItemSettingsViewModel(Item);
-        periodicitySettings = viewFactory.CreatePeriodicityToDoItemSettingsViewModel(Item);
-        periodicityOffsetSettings = viewFactory.CreatePeriodicityOffsetToDoItemSettingsViewModel(
-            Item
-        );
-        referenceSettings = viewFactory.CreateReferenceToDoItemSettingsViewModel(Item);
-        edit = CreateEdit();
-        ToDoItemContent.PropertyChanged += OnPropertyChanged;
+        EditToDoItemViewModel = editToDoItemViewModel;
     }
 
-    public ToDoItemEntityNotify Item { get; }
-    public ToDoItemContentViewModel ToDoItemContent { get; }
+    public EditToDoItemViewModel EditToDoItemViewModel { get; }
 
     public override string ViewId
     {
@@ -50,47 +25,18 @@ public partial class ToDoItemSettingsViewModel : DialogableViewModelBase, IApply
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return ToDoItemContent.LoadStateAsync(ct);
+        return EditToDoItemViewModel.LoadStateAsync(ct);
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return ToDoItemContent.SaveStateAsync(ct);
-    }
-
-    private IEditToDoItems CreateEdit()
-    {
-        return ToDoItemContent.Type switch
-        {
-            ToDoItemType.Value => valueSettings,
-            ToDoItemType.Group => empty,
-            ToDoItemType.Planned => plannedSettings,
-            ToDoItemType.Periodicity => periodicitySettings,
-            ToDoItemType.PeriodicityOffset => periodicityOffsetSettings,
-            ToDoItemType.Circle => valueSettings,
-            ToDoItemType.Step => valueSettings,
-            ToDoItemType.Reference => referenceSettings,
-            _ => throw new ArgumentOutOfRangeException(),
-        };
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ToDoItemContent.Type))
-        {
-            Edit = CreateEdit();
-        }
+        return EditToDoItemViewModel.SaveStateAsync(ct);
     }
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.EditToDoItemsAsync(
-            Edit.GetEditToDoItems()
-                .SetType(new(ToDoItemContent.Type))
-                .SetName(new(ToDoItemContent.Name))
-                .SetLink(new(ToDoItemContent.Link.ToOptionUri()))
-                .SetIcon(new(ToDoItemContent.Icon))
-                .SetColor(new(ToDoItemContent.Color.ToString())),
+            EditToDoItemViewModel.GetEditToDoItems().SetIds(ResultIds),
             ct
         );
     }

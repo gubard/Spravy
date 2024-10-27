@@ -1,4 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.VisualBasic;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.ToDo.Domain.Mapper.Mappers;
 
@@ -49,13 +51,67 @@ public static partial class ToDoMapper
         this IEnumerable<ToDoShortItemGrpc> value
     );
 
-    public static partial AddToDoItemOptionsGrpc ToAddToDoItemOptionsGrpc(
-        this AddToDoItemOptions value
-    );
+    public static AddToDoItemOptionsGrpc ToAddToDoItemOptionsGrpc(this AddToDoItemOptions value)
+    {
+        var add = new AddToDoItemOptionsGrpc
+        {
+            Description = value.Description,
+            Icon = value.Icon,
+            Link = value.Link.TryGetValue(out var link) ? link.AbsoluteUri : string.Empty,
+            Name = value.Name,
+            Type = value.Type.ToToDoItemTypeGrpc(),
+            ParentId = value.ParentId.ToByteString(),
+            IsBookmark = value.IsBookmark,
+            IsFavorite = value.IsFavorite,
+            ChildrenType = (ToDoItemChildrenTypeGrpc)value.ChildrenType,
+            DaysOffset = value.DaysOffset,
+            DescriptionType = value.DescriptionType.ToDescriptionTypeGrpc(),
+            DueDate = value.DueDate.ToTimestamp(),
+            MonthsOffset = value.MonthsOffset,
+            YearsOffset = value.YearsOffset,
+            ReferenceId = value.ReferenceId.ToByteString(),
+            WeeksOffset = value.WeeksOffset,
+            TypeOfPeriodicity = (TypeOfPeriodicityGrpc)value.TypeOfPeriodicity,
+            IsRequiredCompleteInDueDate = value.IsRequiredCompleteInDueDate,
+            Color = value.Color,
+            RemindDaysBefore = value.RemindDaysBefore,
+        };
 
-    public static partial AddToDoItemOptions ToAddToDoItemOptions(
-        this AddToDoItemOptionsGrpc value
-    );
+        add.AnnuallyDays.AddRange(value.AnnuallyDays.Select(x => x.ToDayOfYearGrpc()).ToArray());
+        add.MonthlyDays.AddRange(value.MonthlyDays.Select(x => (uint)x).ToArray());
+        add.WeeklyDays.AddRange(value.WeeklyDays.Select(x => (DayOfWeekGrpc)x).ToArray());
+
+        return add;
+    }
+
+    public static AddToDoItemOptions ToAddToDoItemOptions(this AddToDoItemOptionsGrpc value)
+    {
+        return new(
+            value.Name,
+            value.Description,
+            value.Type.ToToDoItemType(),
+            value.IsBookmark,
+            value.IsFavorite,
+            value.DueDate.ToDateOnly(),
+            value.TypeOfPeriodicity.ToTypeOfPeriodicity(),
+            value.AnnuallyDays.Select(x => x.ToDayOfYear()).ToArray(),
+            value.MonthlyDays.Select(x => (byte)x).ToArray(),
+            value.WeeklyDays.Select(x => (DayOfWeek)x).ToArray(),
+            (ushort)value.DaysOffset,
+            (ushort)value.MonthsOffset,
+            (ushort)value.WeeksOffset,
+            (ushort)value.YearsOffset,
+            value.ChildrenType.ToChildrenType(),
+            value.IsRequiredCompleteInDueDate,
+            value.DescriptionType.ToDescriptionType(),
+            value.Icon,
+            value.Color,
+            value.ReferenceId.ToOptionGuid(),
+            value.ParentId.ToOptionGuid(),
+            value.Link.ToOptionUri(),
+            value.RemindDaysBefore
+        );
+    }
 
     public static partial DayOfYearGrpc ToDayOfYearGrpc(this DayOfYear value);
 

@@ -42,7 +42,7 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
 [JsonSerializable(typeof(LoginViewModelSetting))]
-[JsonSerializable(typeof(AddToDoItemViewModelSetting))]
+[JsonSerializable(typeof(AddToDoItemViewModelSettings))]
 [JsonSerializable(typeof(ToDoItemViewModelSetting))]
 [JsonSerializable(typeof(LeafToDoItemsViewModelSetting))]
 [JsonSerializable(typeof(ResetToDoItemViewModelSetting))]
@@ -63,4 +63,6 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(AddToDoItemToFavoriteEventViewModelSettings))]
 [JsonSerializable(typeof(ToDoItemCreateTimerViewModelSettings))]
 [JsonSerializable(typeof(AppSetting))]
+[JsonSerializable(typeof(DayOfYearSettings))]
+[JsonSerializable(typeof(EditToDoItemViewModelSettings))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;
