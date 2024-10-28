@@ -59,17 +59,20 @@ public static class ToDoItemEntityExtension
             .ToArray();
     }
 
-    public static void SetDaysOfYear(this ToDoItemEntity item, ReadOnlyMemory<DayOfYear> daysOfYear)
+    public static void SetAnnuallyDays(
+        this ToDoItemEntity item,
+        ReadOnlyMemory<DayOfYear> daysOfYear
+    )
     {
         item.DaysOfYear = daysOfYear.Select(x => $"{x.Month}.{x.Day}").JoinString(";");
     }
 
-    public static void SetDaysOfMonth(this ToDoItemEntity item, ReadOnlyMemory<byte> daysOfMonth)
+    public static void SetMonthlyDays(this ToDoItemEntity item, ReadOnlyMemory<byte> daysOfMonth)
     {
         item.DaysOfMonth = daysOfMonth.JoinString(";");
     }
 
-    public static void SetDaysOfWeek(this ToDoItemEntity item, ReadOnlyMemory<DayOfWeek> daysOfWeek)
+    public static void SetWeeklyDays(this ToDoItemEntity item, ReadOnlyMemory<DayOfWeek> daysOfWeek)
     {
         item.DaysOfWeek = daysOfWeek.JoinString(";");
     }

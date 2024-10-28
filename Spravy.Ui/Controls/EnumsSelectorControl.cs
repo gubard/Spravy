@@ -2,23 +2,25 @@ namespace Spravy.Ui.Controls;
 
 public class EnumsSelectorControl : TemplatedControl
 {
-    public static readonly StyledProperty<IEnumerable<ValueType>?> SelectedEnumsProperty =
-        AvaloniaProperty.Register<EnumsSelectorControl, IEnumerable<ValueType>?>(
-            nameof(SelectedEnums)
-        );
+    public static readonly StyledProperty<IEnumerable?> SelectedEnumsProperty =
+        AvaloniaProperty.Register<EnumsSelectorControl, IEnumerable?>(nameof(SelectedEnums));
 
     private readonly List<EnumSelectorItemControl> enumControls = new();
     private ItemsControl? itemsControl;
-    private IEnumerable<ValueType>? selectedIntegers;
+    private IEnumerable? selectedEnums;
 
     static EnumsSelectorControl()
     {
         SelectedEnumsProperty.Changed.AddClassHandler<EnumsSelectorControl>(
-            (control, _) => control.UpdateSelectedIntegers()
+            (control, _) =>
+            {
+                control.UpdateEnums();
+                control.UpdateSelectedEnums();
+            }
         );
     }
 
-    public IEnumerable<ValueType>? SelectedEnums
+    public IEnumerable? SelectedEnums
     {
         get => GetValue(SelectedEnumsProperty);
         set => SetValue(SelectedEnumsProperty, value);
@@ -28,19 +30,20 @@ public class EnumsSelectorControl : TemplatedControl
     {
         base.OnApplyTemplate(e);
         itemsControl = e.NameScope.Find<ItemsControl>("PART_ItemsControl");
-        UpdateIntegers();
+        UpdateEnums();
+        UpdateSelectedEnums();
     }
 
-    private void UpdateSelectedIntegers()
+    private void UpdateSelectedEnums()
     {
         if (SelectedEnums is null)
         {
-            if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
+            if (selectedEnums is INotifyCollectionChanged notifyCollectionChanged)
             {
                 notifyCollectionChanged.CollectionChanged -= SelectedIntegersChangedEventHandler;
             }
 
-            selectedIntegers = null;
+            selectedEnums = null;
 
             foreach (var integerControl in enumControls)
             {
@@ -52,17 +55,17 @@ public class EnumsSelectorControl : TemplatedControl
         }
         else
         {
-            if (selectedIntegers != SelectedEnums)
+            if (!Equals(selectedEnums, SelectedEnums))
             {
-                if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
+                if (selectedEnums is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged -=
                         SelectedIntegersChangedEventHandler;
                 }
 
-                selectedIntegers = SelectedEnums;
+                selectedEnums = SelectedEnums;
 
-                if (selectedIntegers is INotifyCollectionChanged changed)
+                if (selectedEnums is INotifyCollectionChanged changed)
                 {
                     changed.CollectionChanged += SelectedIntegersChangedEventHandler;
                 }
@@ -70,7 +73,7 @@ public class EnumsSelectorControl : TemplatedControl
 
             foreach (var integerControl in enumControls)
             {
-                var value = SelectedEnums.Contains(integerControl.Value);
+                var value = SelectedEnums.OfType<object>().Contains(integerControl.Value);
 
                 if (value != integerControl.IsSelected)
                 {
@@ -85,7 +88,7 @@ public class EnumsSelectorControl : TemplatedControl
         NotifyCollectionChangedEventArgs e
     )
     {
-        if (sender is not IEnumerable<ValueType> enumerable)
+        if (sender is not IEnumerable enumerable)
         {
             return;
         }
@@ -106,9 +109,11 @@ public class EnumsSelectorControl : TemplatedControl
                 throw new ArgumentOutOfRangeException();
         }
 
+        var array = enumerable.OfType<object>().ToArray();
+
         foreach (var integerControl in enumControls)
         {
-            var value = enumerable.Contains(integerControl.Value);
+            var value = array.Contains(integerControl.Value);
 
             if (value != integerControl.IsSelected)
             {
@@ -128,7 +133,7 @@ public class EnumsSelectorControl : TemplatedControl
         itemsControl?.Items.Clear();
     }
 
-    private void UpdateIntegers()
+    private void UpdateEnums()
     {
         if (SelectedEnums is null)
         {
@@ -144,7 +149,7 @@ public class EnumsSelectorControl : TemplatedControl
         enumControls.AddRange(
             UiHelper
                 .GetEnumValues(SelectedEnums.GetType().GetGenericArguments()[0])
-                .Select(x => new EnumSelectorItemControl { Value = (ValueType)x })
+                .Select(x => new EnumSelectorItemControl { Value = x })
                 .ToArray()
         );
 
@@ -153,12 +158,12 @@ public class EnumsSelectorControl : TemplatedControl
             integerControl.PropertyChanged += OnPropertyChanged;
         }
 
-        foreach (var integer in enumControls)
+        foreach (var enumControl in enumControls)
         {
-            itemsControl.Items.Add(integer);
+            itemsControl.Items.Add(enumControl);
         }
 
-        UpdateSelectedIntegers();
+        UpdateSelectedEnums();
     }
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -170,31 +175,31 @@ public class EnumsSelectorControl : TemplatedControl
 
         if (e.Property.Name == nameof(EnumSelectorItemControl.IsSelected))
         {
-            if (selectedIntegers is null)
+            if (selectedEnums is null)
             {
                 return;
             }
 
             if (integerControl.IsSelected)
             {
-                if (selectedIntegers.Contains(integerControl.Value))
+                if (selectedEnums.OfType<object>().Contains(integerControl.Value))
                 {
                     return;
                 }
 
-                if (selectedIntegers is ICollection<ValueType> collection)
+                if (selectedEnums is IList collection)
                 {
                     collection.Add(integerControl.Value);
                 }
             }
             else
             {
-                if (!selectedIntegers.Contains(integerControl.Value))
+                if (!selectedEnums.OfType<object>().Contains(integerControl.Value))
                 {
                     return;
                 }
 
-                if (selectedIntegers is ICollection<ValueType> collection)
+                if (selectedEnums is IList collection)
                 {
                     collection.Remove(integerControl.Value);
                 }

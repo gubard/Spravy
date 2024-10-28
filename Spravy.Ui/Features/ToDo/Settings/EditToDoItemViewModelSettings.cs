@@ -24,7 +24,7 @@ public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewM
         Color = viewModel.Color.ToString();
         RemindDaysBefore = viewModel.RemindDaysBefore;
         MonthlyDays = viewModel.MonthlyDays.Select(x => (byte)x).ToArray();
-        WeeklyDays = viewModel.WeeklyDays.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
+        WeeklyDays = viewModel.WeeklyDays.ToArray();
 
         AnnuallyDays = viewModel
             .AnnuallyDays.SelectMany(x =>

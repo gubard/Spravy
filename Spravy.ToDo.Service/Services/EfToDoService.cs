@@ -267,12 +267,12 @@ public class EfToDoService : IToDoService
 
                                         if (options.AnnuallyDays.IsEdit)
                                         {
-                                            item.SetDaysOfYear(options.AnnuallyDays.Value);
+                                            item.SetAnnuallyDays(options.AnnuallyDays.Value);
                                         }
 
                                         if (options.MonthlyDays.IsEdit)
                                         {
-                                            item.SetDaysOfMonth(options.MonthlyDays.Value);
+                                            item.SetMonthlyDays(options.MonthlyDays.Value);
                                         }
 
                                         if (options.ChildrenType.IsEdit)
@@ -321,7 +321,7 @@ public class EfToDoService : IToDoService
 
                                         if (options.WeeklyDays.IsEdit)
                                         {
-                                            item.SetDaysOfWeek(options.WeeklyDays.Value);
+                                            item.SetWeeklyDays(options.WeeklyDays.Value);
                                         }
 
                                         if (options.IsBookmark.IsEdit)

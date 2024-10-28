@@ -47,7 +47,38 @@ public static partial class ToDoDbMapper
         this ReadOnlyMemory<ToDoItemEntity> entity
     );
 
-    public static partial ToDoItemEntity ToToDoItemEntity(this AddToDoItemOptions entity);
+    public static ToDoItemEntity ToToDoItemEntity(this AddToDoItemOptions value)
+    {
+        var result = new ToDoItemEntity
+        {
+            Color = value.Color,
+            Description = value.Description,
+            Icon = value.Icon,
+            DescriptionType = value.DescriptionType,
+            ChildrenType = value.ChildrenType,
+            Type = value.Type,
+            Link = value.Link.TryGetValue(out var link) ? link.AbsoluteUri : string.Empty,
+            Name = value.Name,
+            IsBookmark = value.IsBookmark,
+            ReferenceId = value.ReferenceId.ToNullableGuid(),
+            IsFavorite = value.IsFavorite,
+            DaysOffset = value.DaysOffset,
+            DueDate = value.DueDate,
+            MonthsOffset = value.MonthsOffset,
+            ParentId = value.ParentId.ToNullableGuid(),
+            WeeksOffset = value.WeeksOffset,
+            YearsOffset = value.YearsOffset,
+            RemindDaysBefore = value.RemindDaysBefore,
+            TypeOfPeriodicity = value.TypeOfPeriodicity,
+            IsRequiredCompleteInDueDate = value.IsRequiredCompleteInDueDate,
+        };
+
+        result.SetMonthlyDays(value.MonthlyDays);
+        result.SetWeeklyDays(value.WeeklyDays);
+        result.SetAnnuallyDays(value.AnnuallyDays);
+
+        return result;
+    }
 
     private static OptionStruct<Guid> GetReferenceId(ToDoItemEntity item)
     {

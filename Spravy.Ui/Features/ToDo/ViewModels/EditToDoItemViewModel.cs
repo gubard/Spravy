@@ -71,7 +71,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     private bool isEditIsRequiredCompleteInDueDate;
 
     [ObservableProperty]
-    private bool isRequiredCompleteInDueDate;
+    private bool isRequiredCompleteInDueDate = true;
 
     [ObservableProperty]
     private bool isEditTypeOfPeriodicity;
@@ -129,7 +129,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         IsEditShow = isEditShow;
         IsEditDescriptionShow = isEditDescriptionShow;
         ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
-        WeeklyDays = new(UiHelper.DayOfWeeks.Select(x => new Selected<DayOfWeek>(x)).ToArray());
+        WeeklyDays = new();
         MonthlyDays = new();
         FavoriteIcons = new();
 
@@ -147,7 +147,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     public bool IsEditDescriptionShow { get; }
     public AvaloniaList<string> FavoriteIcons { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
-    public AvaloniaList<Selected<DayOfWeek>> WeeklyDays { get; }
+    public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYearSelectItem> AnnuallyDays { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
@@ -201,7 +201,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
                 )
                 .ToArray(),
             MonthlyDays.Select(x => (byte)x).ToArray(),
-            WeeklyDays.Where(x => x.IsSelect).Select(x => x.Value).ToArray(),
+            WeeklyDays.ToArray(),
             DaysOffset,
             MonthsOffset,
             WeeksOffset,
@@ -333,9 +333,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
 
         if (IsEditWeeklyDays)
         {
-            result = result.SetWeeklyDays(
-                new(WeeklyDays.Where(x => x.IsSelect).Select(x => x.Value).ToArray())
-            );
+            result = result.SetWeeklyDays(new(WeeklyDays.ToArray()));
         }
 
         return result;
@@ -479,11 +477,8 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         RemindDaysBefore = settings.RemindDaysBefore;
         MonthlyDays.Clear();
         MonthlyDays.AddRange(settings.MonthlyDays.Select(x => (int)x));
-
-        foreach (var dayOfWeek in WeeklyDays)
-        {
-            dayOfWeek.IsSelect = settings.WeeklyDays.Contains(dayOfWeek.Value);
-        }
+        WeeklyDays.Clear();
+        WeeklyDays.AddRange(settings.WeeklyDays);
 
         foreach (var daysOfYear in AnnuallyDays)
         {
@@ -545,11 +540,8 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         RemindDaysBefore = notify.RemindDaysBefore;
         MonthlyDays.Clear();
         MonthlyDays.AddRange(notify.MonthlyDays);
-
-        foreach (var dayOfWeek in WeeklyDays)
-        {
-            dayOfWeek.IsSelect = notify.WeeklyDays.Contains(dayOfWeek.Value);
-        }
+        WeeklyDays.Clear();
+        WeeklyDays.AddRange(notify.WeeklyDays);
 
         foreach (var daysOfYear in AnnuallyDays)
         {

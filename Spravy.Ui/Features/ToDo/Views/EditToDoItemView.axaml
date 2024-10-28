@@ -239,13 +239,6 @@
                                           IsVisible="{Binding IsEditShow}" />
                         </StackPanel>
 
-                        <StackPanel Classes="horizontal">
-                            <TextBlock Classes="field"
-                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
-                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
-                                          IsVisible="{Binding IsEditShow}" />
-                        </StackPanel>
-
                         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
 
                         <StackPanel Classes="horizontal">
@@ -313,23 +306,7 @@
                             <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Daily}" />
 
                             <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Weekly}">
-                                <ItemsControl ItemsSource="{Binding WeeklyDays}">
-                                    <ItemsControl.DataTemplates>
-                                        <DataTemplate>
-                                            <DataTemplate.DataType>
-                                                <x:Type TypeName="m:Selected" x:TypeArguments="system:DayOfWeek" />
-                                            </DataTemplate.DataType>
-
-                                            <ToggleButton IsChecked="{Binding IsSelect}" Content="{Binding Value}" />
-                                        </DataTemplate>
-                                    </ItemsControl.DataTemplates>
-
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
+                                <c:EnumsSelectorControl SelectedEnums="{Binding WeeklyDays, Mode=TwoWay}" />
                             </c:ViewSelectorItemControl>
 
                             <c:ViewSelectorItemControl State="{x:Static e:TypeOfPeriodicity.Monthly}">
