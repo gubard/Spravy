@@ -42,21 +42,21 @@ public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewM
     public string Name { get; set; } = string.Empty;
     public string Link { get; set; } = string.Empty;
     public ToDoItemType Type { get; set; }
-    public DateOnly DueDate { get; set; }
+    public DateOnly DueDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     public uint RemindDaysBefore { get; set; }
     public string Icon { get; set; } = string.Empty;
     public string Color { get; set; } = Colors.Transparent.ToString();
     public DescriptionType DescriptionType { get; set; }
     public string Description { get; set; } = string.Empty;
     public ToDoItemChildrenType ChildrenType { get; set; }
-    public bool IsRequiredCompleteInDueDate { get; set; }
+    public bool IsRequiredCompleteInDueDate { get; set; } = true;
     public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
     public ushort DaysOffset { get; set; }
     public ushort MonthsOffset { get; set; }
     public ushort WeeksOffset { get; set; }
     public ushort YearsOffset { get; set; }
-    public DayOfWeek[] WeeklyDays { get; } = [];
-    public byte[] MonthlyDays { get; } = [];
-    public DayOfYearSettings[] AnnuallyDays { get; } = [];
+    public DayOfWeek[] WeeklyDays { get; } = [DayOfWeek.Monday];
+    public byte[] MonthlyDays { get; } = [1];
+    public DayOfYearSettings[] AnnuallyDays { get; } = [new() { Day = 1, Month = 1, }];
     public Guid? ReferenceId { get; set; }
 }
