@@ -140,7 +140,20 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         PropertyChanged += OnPropertyChanged;
         WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
-        AnnuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
+
+        foreach (var annuallyDay in AnnuallyDays)
+        {
+            foreach (var day in annuallyDay.Days)
+            {
+                day.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName == nameof(DayOfMonthSelectItem.IsSelected))
+                    {
+                        IsEditAnnuallyDays = true;
+                    }
+                };
+            }
+        }
     }
 
     public bool IsEditShow { get; }
