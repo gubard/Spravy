@@ -6,7 +6,6 @@
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.EditToDoItemView"
@@ -26,15 +25,6 @@
             </StackPanel>
 
             <TextBox Classes="content-type-url" Text="{Binding Link}" />
-
-            <StackPanel Classes="horizontal">
-                <TextBlock Classes="field"
-                           Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
-                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
-                              IsVisible="{Binding IsEditShow}" />
-            </StackPanel>
-
-            <NumericUpDown Value="{Binding RemindDaysBefore}" />
 
             <StackPanel Classes="horizontal">
                 <TextBlock Classes="field"
