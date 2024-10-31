@@ -28,7 +28,7 @@
 
     <Application.DataTemplates>
         <DataTemplate DataType="sm:TimerItemNotify">
-            <Border Classes="card">
+            <Border Classes="card alignment-stretch">
                 <c:GroupBoxControl Classes="header-alignment-stretch">
                     <c:GroupBoxControl.Header>
                         <DockPanel>
@@ -44,7 +44,7 @@
                     </c:GroupBoxControl.Header>
 
                     <TextBlock DockPanel.Dock="Right" Classes="alignment-center"
-                               Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" />
+                               Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}, Converter={StaticResource DateTimeToLocalConverter}}" />
                 </c:GroupBoxControl>
             </Border>
         </DataTemplate>

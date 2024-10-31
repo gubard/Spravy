@@ -26,6 +26,7 @@
         </ResourceDictionary>
     </Styles.Resources>
 
+    <StyleInclude Source="Boarder.axaml" />
     <StyleInclude Source="Layoutable.axaml" />
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />
@@ -43,7 +44,6 @@
     <StyleInclude Source="CalendarDatePicker.axaml" />
     <StyleInclude Source="VirtualizingStackPanel.axaml" />
     <StyleInclude Source="ItemsControl.axaml" />
-    <StyleInclude Source="Boarder.axaml" />
     <StyleInclude Source="ListBoxItem.axaml" />
     <StyleInclude Source="MenuItem.axaml" />
     <StyleInclude Source="TreeViewItem.axaml" />

@@ -19,7 +19,7 @@
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" Classes="vertical">
-            <ItemsControl Classes="wrap-panel" ItemsSource="{Binding Timers}" />
+            <ItemsControl ItemsSource="{Binding Timers}" />
         </ScrollViewer>
         
         <Button Grid.Row="2"

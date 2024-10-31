@@ -5,6 +5,7 @@
                     xmlns:m="clr-namespace:Spravy.Ui.Models">
     <lc:ObjectToLocalizationConverter x:Key="ObjectToLocalizationConverter" />
     <c:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
+    <c:DateTimeToLocalConverter x:Key="DateTimeToLocalConverter" />
     <c:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
     <c:DateTimeToDateOnlyValueConverter x:Key="DateTimeToDateOnlyValueConverter" />
     <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />

@@ -85,15 +85,6 @@
                         </StackPanel>
 
                         <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
-
-                        <StackPanel Classes="horizontal">
-                            <TextBlock Classes="field"
-                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
-                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
-                                          IsVisible="{Binding IsEditShow}" />
-                        </StackPanel>
-
-                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
                     </StackPanel>
                 </c:ViewSelectorItemControl>
 
@@ -106,15 +97,6 @@
                         </StackPanel>
 
                         <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
-
-                        <StackPanel Classes="horizontal">
-                            <TextBlock Classes="field"
-                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
-                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
-                                          IsVisible="{Binding IsEditShow}" />
-                        </StackPanel>
-
-                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
                     </StackPanel>
                 </c:ViewSelectorItemControl>
 
@@ -127,15 +109,6 @@
                         </StackPanel>
 
                         <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
-
-                        <StackPanel Classes="horizontal">
-                            <TextBlock Classes="field"
-                                       Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
-                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIsRequiredCompleteInDueDate}"
-                                          IsVisible="{Binding IsEditShow}" />
-                        </StackPanel>
-
-                        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
                     </StackPanel>
                 </c:ViewSelectorItemControl>
 
@@ -273,15 +246,6 @@
                         </StackPanel>
 
                         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
-
-                        <StackPanel Classes="horizontal">
-                            <TextBlock Classes="field"
-                                       Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
-                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
-                                          IsVisible="{Binding IsEditShow}" />
-                        </StackPanel>
-
-                        <NumericUpDown Value="{Binding RemindDaysBefore}" />
 
                         <StackPanel Classes="horizontal">
                             <TextBlock Classes="field"
