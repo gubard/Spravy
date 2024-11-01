@@ -20,7 +20,10 @@ public static partial class UiMapper
         return new(value.Login, value.Password);
     }
 
-    public static partial TimerItemNotify ToTimerItemNotify(this TimerItem value);
+    public static TimerItemNotify ToTimerItemNotify(this TimerItem value)
+    {
+        return new(value.Id, value.DueDateTime, value.Name);
+    }
 
     public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemViewModel value)
     {

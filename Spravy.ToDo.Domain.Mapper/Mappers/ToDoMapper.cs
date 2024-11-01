@@ -15,19 +15,67 @@ public static partial class ToDoMapper
         this ResetToDoItemOptions value
     );
 
-    public static partial DayOfWeek ToDayOfWeek(this DayOfWeekGrpc value);
+    public static DayOfWeek ToDayOfWeek(this DayOfWeekGrpc value)
+    {
+        return (DayOfWeek)value;
+    }
 
-    public static partial DayOfWeekGrpc ToDayOfWeek(this DayOfWeek value);
+    public static DayOfWeekGrpc ToDayOfWeek(this DayOfWeek value)
+    {
+        return (DayOfWeekGrpc)value;
+    }
 
-    public static partial TypeOfPeriodicity ToTypeOfPeriodicity(this TypeOfPeriodicityGrpc value);
+    public static TypeOfPeriodicity ToTypeOfPeriodicity(this TypeOfPeriodicityGrpc value)
+    {
+        return (TypeOfPeriodicity)value;
+    }
 
-    public static partial DescriptionType ToDescriptionType(this DescriptionTypeGrpc value);
+    public static TypeOfPeriodicityGrpc ToTypeOfPeriodicityGrpc(this TypeOfPeriodicity value)
+    {
+        return (TypeOfPeriodicityGrpc)value;
+    }
 
-    public static partial ToDoItemChildrenType ToChildrenType(this ToDoItemChildrenTypeGrpc value);
+    public static DescriptionType ToDescriptionType(this DescriptionTypeGrpc value)
+    {
+        return (DescriptionType)value;
+    }
 
-    public static partial DescriptionTypeGrpc ToDescriptionTypeGrpc(this DescriptionType value);
+    public static DescriptionTypeGrpc ToDescriptionTypeGrpc(this DescriptionType value)
+    {
+        return (DescriptionTypeGrpc)value;
+    }
 
-    public static partial FullToDoItem ToFullToDoItem(this FullToDoItemGrpc value);
+    public static ToDoItemStatus ToToDoItemStatus(this ToDoItemStatusGrpc value)
+    {
+        return (ToDoItemStatus)value;
+    }
+
+    public static ToDoItemStatusGrpc ToToDoItemStatusGrpc(this ToDoItemStatus value)
+    {
+        return (ToDoItemStatusGrpc)value;
+    }
+
+    public static ToDoItemChildrenType ToToDoItemChildrenType(this ToDoItemChildrenTypeGrpc value)
+    {
+        return (ToDoItemChildrenType)value;
+    }
+
+    public static ToDoItemChildrenTypeGrpc ToToDoItemChildrenTypeGrpc(
+        this ToDoItemChildrenType value
+    )
+    {
+        return (ToDoItemChildrenTypeGrpc)value;
+    }
+
+    public static FullToDoItem ToFullToDoItem(this FullToDoItemGrpc value)
+    {
+        return new(
+            value.Item.ToToDoShortItem(),
+            value.Status.ToToDoItemStatus(),
+            value.Active.ToOptionToDoShortItem(),
+            value.IsCan.ToToDoItemIsCan()
+        );
+    }
 
     public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(
         this IEnumerable<FullToDoItemGrpc> value
@@ -37,9 +85,51 @@ public static partial class ToDoMapper
         this ReadOnlyMemory<FullToDoItem> value
     );
 
-    public static partial FullToDoItemGrpc ToFullToDoItemGrpc(this FullToDoItem value);
+    public static FullToDoItemGrpc ToFullToDoItemGrpc(this FullToDoItem value)
+    {
+        return new()
+        {
+            Active = value.Active.ToToDoShortItemNullableGrpc(),
+            Item = value.Item.ToToDoShortItemGrpc(),
+            Status = value.Status.ToToDoItemStatusGrpc(),
+            IsCan = value.IsCan.ToToDoItemIsCanGrpc()
+        };
+    }
 
-    public static partial ToDoShortItemGrpc ToToDoShortItemGrpc(this ToDoShortItem value);
+    public static ToDoShortItemGrpc ToToDoShortItemGrpc(this ToDoShortItem value)
+    {
+        var item = new ToDoShortItemGrpc
+        {
+            Description = value.Description,
+            Icon = value.Icon,
+            Link = value.Link.TryGetValue(out var link) ? link.AbsoluteUri : string.Empty,
+            Name = value.Name,
+            Type = value.Type.ToToDoItemTypeGrpc(),
+            DescriptionType = value.DescriptionType.ToDescriptionTypeGrpc(),
+            IsBookmark = value.IsBookmark,
+            IsFavorite = value.IsFavorite,
+            ChildrenType = value.ChildrenType.ToToDoItemChildrenTypeGrpc(),
+            MonthsOffset = value.MonthsOffset,
+            YearsOffset = value.YearsOffset,
+            ReferenceId = value.ReferenceId.ToByteString(),
+            DaysOffset = value.DaysOffset,
+            Color = value.Color,
+            RemindDaysBefore = value.RemindDaysBefore,
+            WeeksOffset = value.WeeksOffset,
+            TypeOfPeriodicity = value.TypeOfPeriodicity.ToTypeOfPeriodicityGrpc(),
+            ParentId = value.ParentId.ToByteString(),
+            IsRequiredCompleteInDueDate = value.IsRequiredCompleteInDueDate,
+            DueDate = value.DueDate.ToTimestamp(),
+            Id = value.Id.ToByteString(),
+            OrderIndex = value.OrderIndex,
+        };
+
+        item.AnnuallyDays.AddRange(value.AnnuallyDays.Select(x => x.ToDayOfYearGrpc()).ToArray());
+        item.MonthlyDays.AddRange(value.MonthlyDays.Select(x => (uint)x).ToArray());
+        item.WeeklyDays.AddRange(value.WeeklyDays.Select(x => (DayOfWeekGrpc)x).ToArray());
+
+        return item;
+    }
 
     public static partial ToDoShortItem ToToDoShortItem(this ToDoShortItemGrpc value);
 
@@ -63,7 +153,7 @@ public static partial class ToDoMapper
             ParentId = value.ParentId.ToByteString(),
             IsBookmark = value.IsBookmark,
             IsFavorite = value.IsFavorite,
-            ChildrenType = (ToDoItemChildrenTypeGrpc)value.ChildrenType,
+            ChildrenType = value.ChildrenType.ToToDoItemChildrenTypeGrpc(),
             DaysOffset = value.DaysOffset,
             DescriptionType = value.DescriptionType.ToDescriptionTypeGrpc(),
             DueDate = value.DueDate.ToTimestamp(),
@@ -101,7 +191,7 @@ public static partial class ToDoMapper
             (ushort)value.MonthsOffset,
             (ushort)value.WeeksOffset,
             (ushort)value.YearsOffset,
-            value.ChildrenType.ToChildrenType(),
+            value.ChildrenType.ToToDoItemChildrenType(),
             value.IsRequiredCompleteInDueDate,
             value.DescriptionType.ToDescriptionType(),
             value.Icon,
@@ -195,7 +285,9 @@ public static partial class ToDoMapper
             value.MonthlyDays.IsEdit
                 ? new(value.MonthlyDays.Value.Select(x => (byte)x).ToArray())
                 : new(),
-            value.ChildrenType.IsEdit ? new(value.ChildrenType.Value.ToChildrenType()) : new(),
+            value.ChildrenType.IsEdit
+                ? new(value.ChildrenType.Value.ToToDoItemChildrenType())
+                : new(),
             value.DueDate.IsEdit ? new(value.DueDate.Value.ToDateOnly()) : new(),
             value.DaysOffset.IsEdit ? new((ushort)value.DaysOffset.Value) : new(),
             value.MonthsOffset.IsEdit ? new((ushort)value.MonthsOffset.Value) : new(),

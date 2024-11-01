@@ -10,9 +10,15 @@ namespace Spravy.Authentication.Domain.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class AuthenticationMapper
 {
-    public static partial UserGrpc ToUserGrpc(this User user);
+    public static UserGrpc ToUserGrpc(this User user)
+    {
+        return new() { Login = user.Login, Password = user.Password, };
+    }
 
-    public static partial User ToUser(this UserGrpc user);
+    public static User ToUser(this UserGrpc user)
+    {
+        return new(user.Login, user.Password);
+    }
 
     public static partial CreateUserRequest ToCreateUserRequest(this CreateUserOptions user);
 

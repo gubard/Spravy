@@ -7,5 +7,8 @@ namespace Spravy.EventBus.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class EventBusDbMapper
 {
-    public static partial EventValue ToEventValue(this EventEntity entity);
+    public static EventValue ToEventValue(this EventEntity entity)
+    {
+        return new(entity.EventId, entity.Content);
+    }
 }

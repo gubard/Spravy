@@ -9,7 +9,22 @@ namespace Spravy.PasswordGenerator.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class SpravyPasswordGeneratorDbMapper
 {
-    public static partial PasswordItemEntity ToPasswordItemEntity(this AddPasswordOptions options);
+    public static PasswordItemEntity ToPasswordItemEntity(this AddPasswordOptions options)
+    {
+        return new()
+        {
+            Login = options.Login,
+            CustomAvailableCharacters = options.CustomAvailableCharacters,
+            IsAvailableNumber = options.IsAvailableNumber,
+            IsAvailableLowerLatin = options.IsAvailableLowerLatin,
+            IsAvailableSpecialSymbols = options.IsAvailableSpecialSymbols,
+            IsAvailableUpperLatin = options.IsAvailableUpperLatin,
+            Length = options.Length,
+            Regex = options.Regex,
+            Key = options.Key,
+            Name = options.Name,
+        };
+    }
 
     public static partial PasswordItem ToPasswordItem(this PasswordItemEntity options);
 

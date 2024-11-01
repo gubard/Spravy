@@ -7,5 +7,13 @@ namespace Spravy.Authentication.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class AuthenticationDbMapper
 {
-    public static partial UserTokenClaims ToUserTokenClaims(this UserEntity entity);
+    public static UserTokenClaims ToUserTokenClaims(this UserEntity entity)
+    {
+        return new(
+            entity.Login ?? string.Empty,
+            entity.Id,
+            entity.Role,
+            entity.Email ?? string.Empty
+        );
+    }
 }
