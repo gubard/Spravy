@@ -50,4 +50,5 @@
     <StyleInclude Source="ToggleSwitch.axaml" />
     <StyleInclude Source="StackPanel.axaml" />
     <StyleInclude Source="Icon.axaml" />
+    <StyleInclude Source="Rectangle.axaml" />
 </Styles>

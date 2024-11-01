@@ -31,7 +31,7 @@
                             CommandParameter="{Binding}"
                             Classes="alignment-stretch content-alignment-stretch to-do-item"
                             Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
-                        <Grid ColumnDefinitions="*,Auto">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="*, Auto, Auto">
                             <Grid ColumnDefinitions="Auto,*" Classes="alignment-top">
                                 <ToggleButton BorderThickness="1"
                                               BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
@@ -61,19 +61,6 @@
                                                Classes.planned="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
                                                Classes.coming-soon="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ComingSoon}}"
                                                Text="{Binding Name}" />
-
-                                    <Button Margin="0,0,0,5"
-                                            Background="{Binding Active.Color, Converter={StaticResource ColorToButtonBackgroundConverter}}"
-                                            IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                            Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
-                                            CommandParameter="{Binding}">
-                                        <Grid ColumnDefinitions="Auto, *">
-                                            <i:Icon Value="{Binding Active.Icon}"
-                                                    Margin="0,0,4,0"
-                                                    IsVisible="{Binding Active.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Active.Name}" Classes="text-wrap" />
-                                        </Grid>
-                                    </Button>
                                 </StackPanel>
                             </Grid>
 
@@ -120,6 +107,28 @@
                                     </Button>
                                 </Panel>
                             </Grid>
+
+                            <Rectangle Grid.Row="1" Grid.ColumnSpan="2" Classes="horizontal-separator" />
+
+                            <DockPanel Grid.Row="2" Grid.ColumnSpan="2">
+                                <Button DockPanel.Dock="Left"
+                                        Background="{Binding Active.Color, Converter={StaticResource ColorToButtonBackgroundConverter}}"
+                                        IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                        Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
+                                        CommandParameter="{Binding}">
+                                    <Grid ColumnDefinitions="Auto, *">
+                                        <i:Icon Classes="h6"
+                                                Value="{Binding Active.Icon}"
+                                                Margin="0,0,4,0"
+                                                IsVisible="{Binding Active.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Active.Name}"
+                                                   Classes="text-wrap small" />
+                                    </Grid>
+                                </Button>
+
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Type}" Classes="small" />
+                                <Control />
+                            </DockPanel>
                         </Grid>
                     </Button>
                 </DataTemplate>
