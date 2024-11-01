@@ -222,6 +222,15 @@
                 <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Periodicity}">
                     <StackPanel>
                         <StackPanel Classes="horizontal">
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore}" />
+                            <ToggleSwitch Classes="field" IsChecked="{Binding IsEditRemindDaysBefore}"
+                                          IsVisible="{Binding IsEditShow}" />
+                        </StackPanel>
+
+                        <NumericUpDown Value="{Binding RemindDaysBefore}" />
+
+                        <StackPanel Classes="horizontal">
                             <TextBlock Classes="field" Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
                             <ToggleSwitch Classes="field" IsChecked="{Binding IsEditChildrenType}"
                                           IsVisible="{Binding IsEditShow}" />
