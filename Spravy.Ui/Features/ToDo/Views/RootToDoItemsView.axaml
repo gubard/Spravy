@@ -95,9 +95,7 @@
                 Height="64">
             <StackPanel Classes="horizontal alignment-center">
                 <i:Icon Value="mdi-plus" Classes="h1" />
-                <TextBlock Classes="h3"
-                           Text="{DynamicResource RootToDoItemsView.CreateTask}"
-                           VerticalAlignment="Center" />
+                <TextBlock Classes="alignment-center h3" Text="{DynamicResource RootToDoItemsView.CreateTask}" />
             </StackPanel>
         </Button>
     </Grid>
