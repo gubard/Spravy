@@ -54,7 +54,7 @@
                                 <StackPanel Grid.Column="1"
                                             Classes="vertical-alignment-center alignment-left">
                                     <TextBlock Margin="5"
-                                               Classes="text-wrap alignment-left h4"
+                                               Classes="text-wrap alignment-left h5"
                                                Classes.miss="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
                                                Classes.completed="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
                                                Classes.ready-for-complete="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
