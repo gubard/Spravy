@@ -6,7 +6,6 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:sm="clr-namespace:Spravy.Ui.Features.Schedule.Models"
-             xmlns:c="clr-namespace:Spravy.Ui.Controls"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:tds="clr-namespace:Spravy.Ui.Features.ToDo.Services"
              x:Class="Spravy.Ui.App"
@@ -29,23 +28,20 @@
     <Application.DataTemplates>
         <DataTemplate DataType="sm:TimerItemNotify">
             <Border Classes="card alignment-stretch">
-                <c:GroupBoxControl Classes="header-alignment-stretch">
-                    <c:GroupBoxControl.Header>
-                        <DockPanel>
-                            <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Classes="alignment-top alignment-left">
+                        <TextBlock Classes="alignment-left h5" Text="{Binding Name}" />
 
-                            <Button DockPanel.Dock="Right"
-                                    Command="{x:Static h:UiHelper.DeleteTimer}"
-                                    CommandParameter="{Binding}">
-                                <i:Icon Value="mdi-delete" />
-                            </Button>
-                            <Control />
-                        </DockPanel>
-                    </c:GroupBoxControl.Header>
+                        <TextBlock Classes="small"
+                                   Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}, Converter={StaticResource DateTimeToLocalConverter}}" />
+                    </StackPanel>
 
-                    <TextBlock DockPanel.Dock="Right" Classes="alignment-center"
-                               Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}, Converter={StaticResource DateTimeToLocalConverter}}" />
-                </c:GroupBoxControl>
+                    <Button Grid.Column="1"
+                            Command="{x:Static h:UiHelper.DeleteTimer}"
+                            CommandParameter="{Binding}">
+                        <i:Icon Value="mdi-delete" />
+                    </Button>
+                </Grid>
             </Border>
         </DataTemplate>
 

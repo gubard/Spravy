@@ -1,19 +1,21 @@
 namespace Spravy.Ui.Features.Schedule.Models;
 
-public class TimerItemNotify : NotifyBase, IObjectParameters
+public partial class TimerItemNotify : NotifyBase, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
 
-    public TimerItemNotify(Guid id, DateTime dueDateTime, string name)
+    [ObservableProperty]
+    private DateTime dueDateTime;
+
+    [ObservableProperty]
+    private string name = string.Empty;
+
+    public TimerItemNotify(Guid id)
     {
         Id = id;
-        DueDateTime = dueDateTime;
-        Name = name;
     }
 
     public Guid Id { get; }
-    public DateTime DueDateTime { get; }
-    public string Name { get; }
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
