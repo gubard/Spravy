@@ -128,14 +128,21 @@ public partial class ToDoItemEntityNotify
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYear> AnnuallyDays { get; }
 
-    public bool IsDescriptionPlainText
+    public DateOnly? ActualDueDate
     {
-        get => DescriptionType == DescriptionType.PlainText;
-    }
-
-    public bool IsDescriptionMarkdownText
-    {
-        get => DescriptionType == DescriptionType.Markdown;
+        get =>
+            Type switch
+            {
+                ToDoItemType.Value => null,
+                ToDoItemType.Group => null,
+                ToDoItemType.Planned => DueDate,
+                ToDoItemType.Periodicity => DueDate,
+                ToDoItemType.PeriodicityOffset => DueDate,
+                ToDoItemType.Circle => null,
+                ToDoItemType.Step => null,
+                ToDoItemType.Reference => null,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 
     public Guid CurrentId
@@ -265,9 +272,8 @@ public partial class ToDoItemEntityNotify
                 OnPropertyChanged(nameof(CurrentId));
 
                 break;
-            case nameof(DescriptionType):
-                OnPropertyChanged(nameof(IsDescriptionPlainText));
-                OnPropertyChanged(nameof(IsDescriptionMarkdownText));
+            case nameof(DueDate):
+                OnPropertyChanged(nameof(ActualDueDate));
 
                 break;
         }
