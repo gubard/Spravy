@@ -80,7 +80,10 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto" Classes="alignment-top">
+                            <Grid Grid.Column="1"
+                                  ColumnDefinitions="Auto,Auto"
+                                  RowDefinitions="Auto,Auto"
+                                  Classes="alignment-top">
                                 <Button>
                                     <Button.DataTemplates>
                                         <DataTemplate x:DataType="m:SpravyCommandNotify">
