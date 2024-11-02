@@ -32,7 +32,7 @@
                             Classes="alignment-stretch content-alignment-stretch to-do-item"
                             Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <Grid ColumnDefinitions="*,Auto">
-                            <Grid ColumnDefinitions="Auto,*" Classes="alignment-top">
+                            <Grid ColumnDefinitions="Auto,*">
                                 <ToggleButton BorderThickness="1"
                                               BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                                               Width="50"
@@ -51,8 +51,7 @@
                                     </Panel>
                                 </ToggleButton>
 
-                                <StackPanel Grid.Column="1"
-                                            Classes="vertical-alignment-center alignment-left">
+                                <StackPanel Grid.Column="1" Classes="alignment-left vertical-alignment-center">
                                     <TextBlock Margin="5"
                                                Classes="text-wrap alignment-left h5"
                                                Classes.miss="{Binding Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
@@ -128,7 +127,9 @@
 
                                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
                                     <TextBlock Text="{Binding Type}" Classes="small" />
-                                    <TextBlock Text="{Binding ActualDueDate}" Classes="small" />
+                                    <TextBlock Text="{Binding ActualDueDate}"
+                                               Classes="small"
+                                               IsVisible="{Binding ActualDueDate, Converter={StaticResource NullToBooleanConverter}}" />
                                 </StackPanel>
                             </Grid>
                         </Grid>
