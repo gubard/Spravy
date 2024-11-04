@@ -32,7 +32,7 @@
                     <StackPanel Classes="alignment-top alignment-left">
                         <TextBlock Classes="alignment-left h5" Text="{Binding Name}" />
 
-                        <TextBlock Classes="small"
+                        <TextBlock Classes="small alignment-left"
                                    Text="{Binding DueDateTime, StringFormat=\{0:dd.MM.yyyy HH:mm\}, Converter={StaticResource DateTimeToLocalConverter}}" />
                     </StackPanel>
 
