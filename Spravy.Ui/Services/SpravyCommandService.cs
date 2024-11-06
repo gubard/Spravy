@@ -686,7 +686,7 @@ public class SpravyCommandService
                             toDoService
                                 .EditToDoItemsAsync(
                                     new EditToDoItems()
-                                        .SetIds(editId.ResultIds)
+                                        .SetIds(editId.ResultCurrentIds)
                                         .SetIsFavorite(new(true)),
                                     ct
                                 )
@@ -709,7 +709,7 @@ public class SpravyCommandService
                             toDoService
                                 .EditToDoItemsAsync(
                                     new EditToDoItems()
-                                        .SetIds(editId.ResultIds)
+                                        .SetIds(editId.ResultCurrentIds)
                                         .SetIsFavorite(new(false)),
                                     ct
                                 )
