@@ -214,14 +214,13 @@ public class EfToDoService : IToDoService
                                 .IfSuccessForEachAsync(
                                     item =>
                                     {
+                                        var type = options.Type.IsEdit
+                                            ? options.Type.Value
+                                            : item.Type;
+
                                         if (options.Name.IsEdit)
                                         {
                                             item.Name = options.Name.Value;
-                                        }
-
-                                        if (options.IsFavorite.IsEdit)
-                                        {
-                                            item.IsFavorite = options.IsFavorite.Value;
                                         }
 
                                         if (options.Type.IsEdit)
@@ -229,122 +228,25 @@ public class EfToDoService : IToDoService
                                             item.Type = options.Type.Value;
                                         }
 
-                                        if (options.Description.IsEdit)
+                                        if (
+                                            type == ToDoItemType.Reference
+                                            && item.ReferenceId is not null
+                                            && item.ReferenceId != item.Id
+                                        )
                                         {
-                                            item.Description = options.Description.Value;
-                                        }
-
-                                        if (options.Link.IsEdit)
-                                        {
-                                            item.Link = options.Link.Value.TryGetValue(out var link)
-                                                ? link.AbsoluteUri
-                                                : string.Empty;
-                                        }
-
-                                        if (options.ParentId.IsEdit)
-                                        {
-                                            item.ParentId = options.ParentId.Value.TryGetValue(
-                                                out var parentId
-                                            )
-                                                ? parentId
-                                                : null;
-                                        }
-
-                                        if (options.DescriptionType.IsEdit)
-                                        {
-                                            item.DescriptionType = options.DescriptionType.Value;
-                                        }
-
-                                        if (options.ReferenceId.IsEdit)
-                                        {
-                                            item.ReferenceId =
-                                                options.ReferenceId.Value.TryGetValue(
-                                                    out var referenceId
+                                            return context
+                                                .FindEntityAsync<ToDoItemEntity>(
+                                                    item.ReferenceId.Value
                                                 )
-                                                    ? referenceId
-                                                    : null;
+                                                .IfSuccessAsync(
+                                                    reference => SetRefValues(options, item),
+                                                    ct
+                                                );
                                         }
 
-                                        if (options.AnnuallyDays.IsEdit)
-                                        {
-                                            item.SetAnnuallyDays(options.AnnuallyDays.Value);
-                                        }
-
-                                        if (options.MonthlyDays.IsEdit)
-                                        {
-                                            item.SetMonthlyDays(options.MonthlyDays.Value);
-                                        }
-
-                                        if (options.ChildrenType.IsEdit)
-                                        {
-                                            item.ChildrenType = options.ChildrenType.Value;
-                                        }
-
-                                        if (options.DueDate.IsEdit)
-                                        {
-                                            item.DueDate = options.DueDate.Value;
-                                        }
-
-                                        if (options.DaysOffset.IsEdit)
-                                        {
-                                            item.DaysOffset = options.DaysOffset.Value;
-                                        }
-
-                                        if (options.MonthsOffset.IsEdit)
-                                        {
-                                            item.MonthsOffset = options.MonthsOffset.Value;
-                                        }
-
-                                        if (options.WeeksOffset.IsEdit)
-                                        {
-                                            item.WeeksOffset = options.WeeksOffset.Value;
-                                        }
-
-                                        if (options.YearsOffset.IsEdit)
-                                        {
-                                            item.YearsOffset = options.YearsOffset.Value;
-                                        }
-
-                                        if (options.IsRequiredCompleteInDueDate.IsEdit)
-                                        {
-                                            item.IsRequiredCompleteInDueDate = options
-                                                .IsRequiredCompleteInDueDate
-                                                .Value;
-                                        }
-
-                                        if (options.TypeOfPeriodicity.IsEdit)
-                                        {
-                                            item.TypeOfPeriodicity = options
-                                                .TypeOfPeriodicity
-                                                .Value;
-                                        }
-
-                                        if (options.WeeklyDays.IsEdit)
-                                        {
-                                            item.SetWeeklyDays(options.WeeklyDays.Value);
-                                        }
-
-                                        if (options.IsBookmark.IsEdit)
-                                        {
-                                            item.IsBookmark = options.IsBookmark.Value;
-                                        }
-
-                                        if (options.Icon.IsEdit)
-                                        {
-                                            item.Icon = options.Icon.Value;
-                                        }
-
-                                        if (options.Color.IsEdit)
-                                        {
-                                            item.Color = options.Color.Value;
-                                        }
-
-                                        if (options.RemindDaysBefore.IsEdit)
-                                        {
-                                            item.RemindDaysBefore = options.RemindDaysBefore.Value;
-                                        }
-
-                                        return Result.AwaitableSuccess;
+                                        return SetRefValues(options, item)
+                                            .ToValueTaskResult()
+                                            .ConfigureAwait(false);
                                     },
                                     ct
                                 );
@@ -353,6 +255,120 @@ public class EfToDoService : IToDoService
                     ),
                 ct
             );
+    }
+
+    private Result SetRefValues(EditToDoItems options, ToDoItemEntity item)
+    {
+        if (options.Description.IsEdit)
+        {
+            item.Description = options.Description.Value;
+        }
+
+        if (options.Link.IsEdit)
+        {
+            item.Link = options.Link.Value.TryGetValue(out var link)
+                ? link.AbsoluteUri
+                : string.Empty;
+        }
+
+        if (options.ParentId.IsEdit)
+        {
+            item.ParentId = options.ParentId.Value.TryGetValue(out var parentId) ? parentId : null;
+        }
+
+        if (options.DescriptionType.IsEdit)
+        {
+            item.DescriptionType = options.DescriptionType.Value;
+        }
+
+        if (options.ReferenceId.IsEdit)
+        {
+            item.ReferenceId = options.ReferenceId.Value.TryGetValue(out var referenceId)
+                ? referenceId
+                : null;
+        }
+
+        if (options.AnnuallyDays.IsEdit)
+        {
+            item.SetAnnuallyDays(options.AnnuallyDays.Value);
+        }
+
+        if (options.MonthlyDays.IsEdit)
+        {
+            item.SetMonthlyDays(options.MonthlyDays.Value);
+        }
+
+        if (options.ChildrenType.IsEdit)
+        {
+            item.ChildrenType = options.ChildrenType.Value;
+        }
+
+        if (options.DueDate.IsEdit)
+        {
+            item.DueDate = options.DueDate.Value;
+        }
+
+        if (options.DaysOffset.IsEdit)
+        {
+            item.DaysOffset = options.DaysOffset.Value;
+        }
+
+        if (options.MonthsOffset.IsEdit)
+        {
+            item.MonthsOffset = options.MonthsOffset.Value;
+        }
+
+        if (options.WeeksOffset.IsEdit)
+        {
+            item.WeeksOffset = options.WeeksOffset.Value;
+        }
+
+        if (options.YearsOffset.IsEdit)
+        {
+            item.YearsOffset = options.YearsOffset.Value;
+        }
+
+        if (options.IsRequiredCompleteInDueDate.IsEdit)
+        {
+            item.IsRequiredCompleteInDueDate = options.IsRequiredCompleteInDueDate.Value;
+        }
+
+        if (options.TypeOfPeriodicity.IsEdit)
+        {
+            item.TypeOfPeriodicity = options.TypeOfPeriodicity.Value;
+        }
+
+        if (options.WeeklyDays.IsEdit)
+        {
+            item.SetWeeklyDays(options.WeeklyDays.Value);
+        }
+
+        if (options.IsBookmark.IsEdit)
+        {
+            item.IsBookmark = options.IsBookmark.Value;
+        }
+
+        if (options.IsFavorite.IsEdit)
+        {
+            item.IsFavorite = options.IsFavorite.Value;
+        }
+
+        if (options.Icon.IsEdit)
+        {
+            item.Icon = options.Icon.Value;
+        }
+
+        if (options.Color.IsEdit)
+        {
+            item.Color = options.Color.Value;
+        }
+
+        if (options.RemindDaysBefore.IsEdit)
+        {
+            item.RemindDaysBefore = options.RemindDaysBefore.Value;
+        }
+
+        return Result.Success;
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
