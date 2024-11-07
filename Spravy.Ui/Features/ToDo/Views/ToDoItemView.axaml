@@ -28,13 +28,18 @@
 
                 <ScrollViewer Grid.Column="1"
                               Classes="alignment-stretch horizontal">
-                    <TextBlock Classes="alignment-left h3"
-                               Classes.miss="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
-                               Classes.completed="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
-                               Classes.ready-for-complete="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
-                               Classes.planned="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
-                               Classes.coming-soon="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ComingSoon}}"
-                               Text="{Binding Item.Name}" />
+                    <StackPanel Classes="horizontal">
+                        <i:Icon Value="{Binding Item.Icon}" 
+                                Classes="h2"
+                                IsVisible="{Binding Item.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                        <TextBlock Classes="alignment-left h3"
+                                   Classes.miss="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Miss}}"
+                                   Classes.completed="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Completed}}"
+                                   Classes.ready-for-complete="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ReadyForComplete}}"
+                                   Classes.planned="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.Planned}}"
+                                   Classes.coming-soon="{Binding Item.Status, Converter={StaticResource ObjectEqualsParameterConverter}, ConverterParameter={x:Static tde:ToDoItemStatus.ComingSoon}}"
+                                   Text="{Binding Item.Name}" />
+                    </StackPanel>
                 </ScrollViewer>
 
                 <Panel Grid.Column="2"
