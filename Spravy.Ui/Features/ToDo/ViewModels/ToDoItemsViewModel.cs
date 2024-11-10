@@ -58,21 +58,15 @@ public partial class ToDoItemsViewModel : ViewModelBase
     {
         var removeItems = Items.Where(x => !items.Span.Contains(x)).ToArray();
         Items.RemoveAll(removeItems);
-
-        foreach (var item in items.Span)
-        {
-            AddOrUpdateUi(item);
-        }
+        AddOrUpdateUi(items);
 
         return Result.Success;
     }
 
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        if (!Items.Contains(item))
-        {
-            Items.Add(item);
-        }
+        var notContains = items.Where(x => !Items.Contains(x));
+        Items.AddRange(notContains.ToArray());
 
         switch (sortBy)
         {
@@ -89,15 +83,10 @@ public partial class ToDoItemsViewModel : ViewModelBase
         return Result.Success;
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Items.Remove(item);
+        Items.RemoveAll(items.ToArray());
 
         return Result.Success;
-    }
-
-    public Cvtar RefreshAsync(CancellationToken ct)
-    {
-        return Result.AwaitableSuccess;
     }
 }

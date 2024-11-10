@@ -90,8 +90,8 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
             .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return ToDoSubItemsViewModel.RemoveUi(item);
+        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 }

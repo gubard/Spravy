@@ -106,9 +106,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
             );
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return ToDoSubItemsViewModel.RemoveUi(item);
+        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 
     public Result<ToDoItemEditId> GetToDoItemEditId()

@@ -63,206 +63,213 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
     public ToDoItemsViewModel Steps { get; }
     public ToDoItemsViewModel References { get; }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Items
-            .RemoveUi(item)
-            .IfSuccess(() => Missed.RemoveUi(item))
-            .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
-            .IfSuccess(() => Planned.RemoveUi(item))
-            .IfSuccess(() => Completed.RemoveUi(item))
-            .IfSuccess(() => Values.RemoveUi(item))
-            .IfSuccess(() => Groups.RemoveUi(item))
-            .IfSuccess(() => Planneds.RemoveUi(item))
-            .IfSuccess(() => Periodicitys.RemoveUi(item))
-            .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-            .IfSuccess(() => Circles.RemoveUi(item))
-            .IfSuccess(() => Steps.RemoveUi(item))
-            .IfSuccess(() => References.RemoveUi(item));
+            .RemoveUi(items)
+            .IfSuccess(() => Missed.RemoveUi(items))
+            .IfSuccess(() => ReadyForCompleted.RemoveUi(items))
+            .IfSuccess(() => Planned.RemoveUi(items))
+            .IfSuccess(() => Completed.RemoveUi(items))
+            .IfSuccess(() => Values.RemoveUi(items))
+            .IfSuccess(() => Groups.RemoveUi(items))
+            .IfSuccess(() => Planneds.RemoveUi(items))
+            .IfSuccess(() => Periodicitys.RemoveUi(items))
+            .IfSuccess(() => PeriodicityOffsets.RemoveUi(items))
+            .IfSuccess(() => Circles.RemoveUi(items))
+            .IfSuccess(() => Steps.RemoveUi(items))
+            .IfSuccess(() => References.RemoveUi(items));
     }
 
-    public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Favorite.ClearExceptUi(ids);
+        return Favorite.ClearExceptUi(items);
     }
 
-    public Result UpdateFavoriteItemUi(ToDoItemEntityNotify item)
+    public Result UpdateFavoriteItemUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Favorite.AddOrUpdateUi(item);
+        return Favorite.AddOrUpdateUi(items);
     }
 
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Items
-            .ClearExceptUi(ids)
-            .IfSuccess(() => Missed.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.Miss)))
+            .ClearExceptUi(items)
+            .IfSuccess(
+                () => Missed.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Miss))
+            )
             .IfSuccess(
                 () =>
                     ReadyForCompleted.ClearExceptUi(
-                        ids.Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
+                        items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
                     )
             )
             .IfSuccess(
                 () =>
-                    ComingSoon.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.ComingSoon))
+                    ComingSoon.ClearExceptUi(
+                        items.Where(x => x.Status == ToDoItemStatus.ComingSoon)
+                    )
             )
             .IfSuccess(
-                () => Planned.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.Planned))
+                () => Planned.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Planned))
             )
             .IfSuccess(
-                () => Completed.ClearExceptUi(ids.Where(x => x.Status == ToDoItemStatus.Completed))
+                () =>
+                    Completed.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Completed))
             )
-            .IfSuccess(() => Values.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Value)))
-            .IfSuccess(() => Groups.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Group)))
-            .IfSuccess(() => Planneds.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Planned)))
+            .IfSuccess(() => Values.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Value)))
+            .IfSuccess(() => Groups.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Group)))
             .IfSuccess(
-                () => Periodicitys.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Periodicity))
+                () => Planneds.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Planned))
+            )
+            .IfSuccess(
+                () =>
+                    Periodicitys.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Periodicity))
             )
             .IfSuccess(
                 () =>
                     PeriodicityOffsets.ClearExceptUi(
-                        ids.Where(x => x.Type == ToDoItemType.PeriodicityOffset)
+                        items.Where(x => x.Type == ToDoItemType.PeriodicityOffset)
                     )
             )
-            .IfSuccess(() => Circles.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Circle)))
-            .IfSuccess(() => Steps.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Step)))
+            .IfSuccess(() => Circles.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Circle)))
+            .IfSuccess(() => Steps.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Step)))
             .IfSuccess(
-                () => References.ClearExceptUi(ids.Where(x => x.Type == ToDoItemType.Reference))
+                () => References.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Reference))
             );
     }
 
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Items
-            .AddOrUpdateUi(item)
+            .AddOrUpdateUi(items)
             .IfSuccess(
                 () =>
-                    item.Status switch
-                    {
-                        ToDoItemStatus.Miss
-                            => Missed
-                                .AddOrUpdateUi(item)
-                                .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
-                                .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item))
-                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
-                        ToDoItemStatus.ReadyForComplete
-                            => Missed
-                                .RemoveUi(item)
-                                .IfSuccess(() => ReadyForCompleted.AddOrUpdateUi(item))
-                                .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item))
-                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
-                        ToDoItemStatus.Planned
-                            => Missed
-                                .RemoveUi(item)
-                                .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
-                                .IfSuccess(() => Planned.AddOrUpdateUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item))
-                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
-                        ToDoItemStatus.Completed
-                            => Missed
-                                .RemoveUi(item)
-                                .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
-                                .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.AddOrUpdateUi(item))
-                                .IfSuccess(() => ComingSoon.RemoveUi(item)),
-                        ToDoItemStatus.ComingSoon
-                            => Missed
-                                .RemoveUi(item)
-                                .IfSuccess(() => ReadyForCompleted.RemoveUi(item))
-                                .IfSuccess(() => Planned.RemoveUi(item))
-                                .IfSuccess(() => Completed.RemoveUi(item))
-                                .IfSuccess(() => ComingSoon.AddOrUpdateUi(item)),
-                        _ => new(new ToDoItemStatusOutOfRangeError(item.Status)),
-                    }
+                    Missed
+                        .AddOrUpdateUi(items.Where(x => x.Status == ToDoItemStatus.Miss))
+                        .IfSuccess(
+                            () => Missed.RemoveUi(items.Where(x => x.Status != ToDoItemStatus.Miss))
+                        )
             )
             .IfSuccess(
                 () =>
-                    item.Type switch
-                    {
-                        ToDoItemType.Value
-                            => Values
-                                .AddOrUpdateUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Group
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.AddOrUpdateUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Planned
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.AddOrUpdateUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Periodicity
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.AddOrUpdateUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.PeriodicityOffset
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.AddOrUpdateUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Circle
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.AddOrUpdateUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Step
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.AddOrUpdateUi(item))
-                                .IfSuccess(() => References.RemoveUi(item)),
-                        ToDoItemType.Reference
-                            => Values
-                                .RemoveUi(item)
-                                .IfSuccess(() => Groups.RemoveUi(item))
-                                .IfSuccess(() => Planneds.RemoveUi(item))
-                                .IfSuccess(() => Periodicitys.RemoveUi(item))
-                                .IfSuccess(() => PeriodicityOffsets.RemoveUi(item))
-                                .IfSuccess(() => Circles.RemoveUi(item))
-                                .IfSuccess(() => Steps.RemoveUi(item))
-                                .IfSuccess(() => References.AddOrUpdateUi(item)),
-                        _ => new(new ToDoItemTypeOutOfRangeError(item.Type)),
-                    }
+                    ReadyForCompleted
+                        .AddOrUpdateUi(
+                            items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
+                        )
+                        .IfSuccess(
+                            () =>
+                                ReadyForCompleted.RemoveUi(
+                                    items.Where(x => x.Status != ToDoItemStatus.ReadyForComplete)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    ComingSoon
+                        .AddOrUpdateUi(items.Where(x => x.Status == ToDoItemStatus.ComingSoon))
+                        .IfSuccess(
+                            () =>
+                                ComingSoon.RemoveUi(
+                                    items.Where(x => x.Status != ToDoItemStatus.ComingSoon)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Planned
+                        .AddOrUpdateUi(items.Where(x => x.Status == ToDoItemStatus.Planned))
+                        .IfSuccess(
+                            () =>
+                                Planned.RemoveUi(
+                                    items.Where(x => x.Status != ToDoItemStatus.Planned)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Completed
+                        .AddOrUpdateUi(items.Where(x => x.Status == ToDoItemStatus.Completed))
+                        .IfSuccess(
+                            () =>
+                                Completed.RemoveUi(
+                                    items.Where(x => x.Status != ToDoItemStatus.Completed)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Values
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Value))
+                        .IfSuccess(
+                            () => Values.RemoveUi(items.Where(x => x.Type != ToDoItemType.Value))
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Groups
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Group))
+                        .IfSuccess(
+                            () => Groups.RemoveUi(items.Where(x => x.Type != ToDoItemType.Group))
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Planneds
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Planned))
+                        .IfSuccess(
+                            () =>
+                                Planneds.RemoveUi(items.Where(x => x.Type != ToDoItemType.Planned))
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Periodicitys
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Periodicity))
+                        .IfSuccess(
+                            () =>
+                                Periodicitys.RemoveUi(
+                                    items.Where(x => x.Type != ToDoItemType.Periodicity)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    PeriodicityOffsets
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.PeriodicityOffset))
+                        .IfSuccess(
+                            () =>
+                                PeriodicityOffsets.RemoveUi(
+                                    items.Where(x => x.Type != ToDoItemType.PeriodicityOffset)
+                                )
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Circles
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Circle))
+                        .IfSuccess(
+                            () => Circles.RemoveUi(items.Where(x => x.Type != ToDoItemType.Circle))
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    Steps
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Step))
+                        .IfSuccess(
+                            () => Steps.RemoveUi(items.Where(x => x.Type != ToDoItemType.Step))
+                        )
+            )
+            .IfSuccess(
+                () =>
+                    References
+                        .AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Reference))
+                        .IfSuccess(
+                            () =>
+                                References.RemoveUi(
+                                    items.Where(x => x.Type != ToDoItemType.Reference)
+                                )
+                        )
             );
     }
 }

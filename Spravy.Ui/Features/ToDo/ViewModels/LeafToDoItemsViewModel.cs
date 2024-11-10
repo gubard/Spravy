@@ -170,9 +170,9 @@ public class LeafToDoItemsViewModel
         return new(new NotImplementedError(nameof(SetParameter)));
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return ToDoSubItemsViewModel.RemoveUi(item);
+        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 
     public Result<ToDoItemEditId> GetToDoItemEditId()

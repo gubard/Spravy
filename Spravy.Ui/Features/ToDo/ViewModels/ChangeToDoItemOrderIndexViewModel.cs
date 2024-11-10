@@ -5,7 +5,6 @@ public partial class ChangeToDoItemOrderIndexViewModel
         IToDoItemsView,
         IApplySettings
 {
-    private readonly AvaloniaList<ToDoItemEntityNotify> items;
     private readonly IToDoService toDoService;
 
     [ObservableProperty]
@@ -21,30 +20,29 @@ public partial class ChangeToDoItemOrderIndexViewModel
     )
         : base(editItem, editItems)
     {
-        items = new();
         this.toDoService = toDoService;
     }
 
-    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> Items => items;
+    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
+    public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
     {
-        return items.UpdateUi(newItems).ToResultOnly();
+        return Items.UpdateUi(newItems).ToResultOnly();
     }
 
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> _)
     {
         return new(new NotImplementedError(nameof(AddOrUpdateUi)));
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        items.Remove(item);
+        Items.RemoveAll(items.ToArray());
 
         return Result.Success;
     }

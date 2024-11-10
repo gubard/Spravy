@@ -2,5 +2,5 @@
 
 public interface IRemove
 {
-    Result RemoveUi(ToDoItemEntityNotify item);
+    Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items);
 }
