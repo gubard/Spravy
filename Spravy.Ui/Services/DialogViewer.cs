@@ -40,17 +40,20 @@ public class DialogViewer : IDialogViewer
 
         if (mainViewModel.ErrorDialogIsOpen)
         {
-            CloseDialogAsync(DialogViewLayer.Error).IfSuccessAsync(() => true.ToResult(), ct);
+            return CloseDialogAsync(DialogViewLayer.Error)
+                .IfSuccessAsync(() => true.ToResult(), ct);
         }
 
         if (mainViewModel.InputDialogIsOpen)
         {
-            CloseDialogAsync(DialogViewLayer.Input).IfSuccessAsync(() => true.ToResult(), ct);
+            return CloseDialogAsync(DialogViewLayer.Input)
+                .IfSuccessAsync(() => true.ToResult(), ct);
         }
 
         if (mainViewModel.ContentDialogIsOpen)
         {
-            CloseDialogAsync(DialogViewLayer.Content).IfSuccessAsync(() => true.ToResult(), ct);
+            return CloseDialogAsync(DialogViewLayer.Content)
+                .IfSuccessAsync(() => true.ToResult(), ct);
         }
 
         return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
