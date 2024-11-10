@@ -11,22 +11,17 @@
     <Expander Margin="3"
               IsExpanded="{Binding IsExpanded}">
         <Expander.Header>
-            <DockPanel>
-                <Grid ColumnDefinitions="Auto,Auto" DockPanel.Dock="Left">
-                    <ContentControl Content="{Binding Header}" Margin="0,0,5,0" />
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Button Classes="mode-press alignment-center select-all"
+                        Command="{Binding SwitchAllSelectionCommand.Command}">
+                    <i:Icon Value="mdi-check-all" />
+                </Button>
 
-                    <Button Grid.Column="1"
-                            Classes="mode-press select-all"
-                            Command="{Binding SwitchAllSelectionCommand.Command}">
-                        <i:Icon Value="mdi-check-all" />
-                    </Button>
-                </Grid>
-
-                <TextBlock DockPanel.Dock="Right"
+                <ContentControl Grid.Column="1" Classes="alignment-center" Content="{Binding Header}" />
+                <TextBlock Grid.Column="2"
                            Classes="alignment-center"
                            Text="{Binding ToDoItems.Count}" />
-                <Control />
-            </DockPanel>
+            </Grid>
         </Expander.Header>
 
         <ItemsControl DragDrop.AllowDrop="True"
