@@ -68,8 +68,8 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IApplySettings
     {
         return Type switch
         {
-            EventType.AddToDoItemToFavorite
-                => viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
+            EventType.AddToDoItemToFavorite =>
+                viewFactory.CreateAddToDoItemToFavoriteEventViewModel(),
             _ => throw new ArgumentOutOfRangeException(),
         };
     }
@@ -88,7 +88,7 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IApplySettings
                                 EventViewModel.Id,
                                 content,
                                 Name
-                            )
+                            ),
                         },
                         ct
                     ),
@@ -125,5 +125,10 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IApplySettings
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new AddTimerViewModelSettings(this), ct);
+    }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

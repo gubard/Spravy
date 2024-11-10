@@ -32,12 +32,6 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
         this.authenticationService = authenticationService;
         this.viewFactory = viewFactory;
 
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         DeleteAccountCommand = SpravyCommand.Create(
             DeleteAccountAsync,
             errorHandler,
@@ -46,7 +40,6 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
     }
 
     public SpravyCommand DeleteAccountCommand { get; }
-    public SpravyCommand InitializedCommand { get; }
 
     public override string ViewId
     {
@@ -70,7 +63,20 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        return IdentifierType switch
+        {
+            UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(
+                EmailOrLogin,
+                ct
+            ),
+            UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(
+                EmailOrLogin,
+                ct
+            ),
+            _ => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
+        };
     }
 
     private Cvtar DeleteAccountAsync(CancellationToken ct)
@@ -100,23 +106,5 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
                 () => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct),
                 ct
             );
-    }
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return IdentifierType switch
-        {
-            UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(
-                EmailOrLogin,
-                ct
-            ),
-            UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(
-                EmailOrLogin,
-                ct
-            ),
-            _ => new Result(new UserIdentifierTypeOutOfRangeError(IdentifierType))
-                .ToValueTaskResult()
-                .ConfigureAwait(false),
-        };
     }
 }

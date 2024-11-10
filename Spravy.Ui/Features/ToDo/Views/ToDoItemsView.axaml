@@ -24,7 +24,7 @@
 
                 <TextBlock DockPanel.Dock="Right"
                            Classes="alignment-center"
-                           Text="{Binding Items.Count}" />
+                           Text="{Binding ToDoItems.Count}" />
                 <Control />
             </DockPanel>
         </Expander.Header>
@@ -32,6 +32,6 @@
         <ItemsControl DragDrop.AllowDrop="True"
                       Classes="to-do-items-control"
                       Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}"
-                      ItemsSource="{Binding Items}" />
+                      ItemsSource="{Binding ToDoItems}" />
     </Expander>
 </UserControl>

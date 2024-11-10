@@ -18,7 +18,6 @@ public class LeafToDoItemsViewModel
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService
     )
         : base(true)
@@ -30,17 +29,8 @@ public class LeafToDoItemsViewModel
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.objectStorage = objectStorage;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
-
-    public SpravyCommand InitializedCommand { get; }
 
     public Option<ToDoItemEntityNotify> Item { get; }
     public ReadOnlyMemory<ToDoItemEntityNotify> Items { get; }
@@ -101,11 +91,6 @@ public class LeafToDoItemsViewModel
                 i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
                 ct
             );
-    }
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
     }
 
     public override Result Stop()

@@ -8,6 +8,7 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool isExpanded = true;
+    private readonly AvaloniaList<ToDoItemEntityNotify> toDoItems = new();
 
     public ToDoItemsViewModel(
         SortBy sortBy,
@@ -24,16 +25,16 @@ public partial class ToDoItemsViewModel : ViewModelBase
                 this.PostUiBackground(
                         () =>
                         {
-                            if (Items.All(x => x.IsSelected))
+                            if (ToDoItems.All(x => x.IsSelected))
                             {
-                                foreach (var item in Items)
+                                foreach (var item in ToDoItems)
                                 {
                                     item.IsSelected = false;
                                 }
                             }
                             else
                             {
-                                foreach (var item in Items)
+                                foreach (var item in ToDoItems)
                                 {
                                     item.IsSelected = true;
                                 }
@@ -52,12 +53,16 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     public TextLocalization Header { get; }
     public SpravyCommand SwitchAllSelectionCommand { get; }
-    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
 
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> ToDoItems
     {
-        var removeItems = Items.Where(x => !items.Span.Contains(x)).ToArray();
-        Items.RemoveAll(removeItems);
+        get => toDoItems;
+    }
+
+    public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    {
+        var removeItems = ToDoItems.Where(x => !items.Span.Contains(x)).ToArray();
+        toDoItems.RemoveAll(removeItems);
         AddOrUpdateUi(items);
 
         return Result.Success;
@@ -65,16 +70,16 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        var notContains = items.Where(x => !Items.Contains(x));
-        Items.AddRange(notContains.ToArray());
+        var notContains = items.Where(x => !ToDoItems.Contains(x));
+        toDoItems.AddRange(notContains.ToArray());
 
         switch (sortBy)
         {
             case SortBy.OrderIndex:
-                Items.BinarySortByOrderIndex();
+                toDoItems.BinarySortByOrderIndex();
                 break;
             case SortBy.LoadedIndex:
-                Items.BinarySortByLoadedIndex();
+                toDoItems.BinarySortByLoadedIndex();
                 break;
             default:
                 return new(new SortByOutOfRangeError(sortBy));
@@ -85,7 +90,7 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Items.RemoveAll(items.ToArray());
+        toDoItems.RemoveAll(items.ToArray());
 
         return Result.Success;
     }

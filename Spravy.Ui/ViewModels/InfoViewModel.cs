@@ -38,4 +38,9 @@ public class InfoViewModel : DialogableViewModelBase
     {
         return Content.SaveStateAsync(ct);
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Content.RefreshAsync(ct);
+    }
 }

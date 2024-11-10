@@ -1101,28 +1101,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        ForgotPasswordViewInitialized = SpravyCommand.Create<ForgotPasswordViewModel>(
-            (vm, ct) =>
-                vm.IdentifierType switch
-                {
-                    UserIdentifierType.Email =>
-                        authenticationService.UpdateVerificationCodeByEmailAsync(
-                            vm.EmailOrLogin,
-                            ct
-                        ),
-                    UserIdentifierType.Login =>
-                        authenticationService.UpdateVerificationCodeByLoginAsync(
-                            vm.EmailOrLogin,
-                            ct
-                        ),
-                    _ => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
-                },
-            errorHandler,
-            taskProgressService
-        );
-
         ForgotPassword = SpravyCommand.Create<ForgotPasswordViewModel>(
             (vm, ct) =>
                 Result
@@ -1370,12 +1348,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        PasswordGeneratorViewInitialized = SpravyCommand.Create<PasswordGeneratorViewModel>(
-            (vm, ct) => vm.RefreshAsync(ct),
-            errorHandler,
-            taskProgressService
-        );
-
         CopyToClipboard = SpravyCommand.Create<string>(
             (str, ct) =>
                 clipboardService
@@ -1430,28 +1402,6 @@ public class SpravyCommandService
 
         NavigateToEmailOrLoginInput = SpravyCommand.Create(
             ct => navigator.NavigateToAsync(viewFactory.CreateEmailOrLoginInputViewModel(), ct),
-            errorHandler,
-            taskProgressService
-        );
-
-        VerificationCodeViewModelInitialized = SpravyCommand.Create<VerificationCodeViewModel>(
-            (vm, ct) =>
-                vm.IdentifierType switch
-                {
-                    UserIdentifierType.Email =>
-                        authenticationService.UpdateVerificationCodeByEmailAsync(
-                            vm.EmailOrLogin,
-                            ct
-                        ),
-                    UserIdentifierType.Login =>
-                        authenticationService.UpdateVerificationCodeByLoginAsync(
-                            vm.EmailOrLogin,
-                            ct
-                        ),
-                    _ => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false),
-                },
             errorHandler,
             taskProgressService
         );
@@ -1759,9 +1709,7 @@ public class SpravyCommandService
     public SpravyCommand RefreshCurrentView { get; }
     public SpravyCommand SetToDoItemDescription { get; }
 
-    public SpravyCommand ForgotPasswordViewInitialized { get; }
     public SpravyCommand LoginViewInitialized { get; }
-    public SpravyCommand PasswordGeneratorViewInitialized { get; }
 
     public SpravyCommand ForgotPassword { get; }
 
@@ -1783,7 +1731,6 @@ public class SpravyCommandService
     public SpravyCommand NavigateToCreateUser { get; }
     public SpravyCommand NavigateToEmailOrLoginInput { get; }
 
-    public SpravyCommand VerificationCodeViewModelInitialized { get; }
     public SpravyCommand MainSplitViewModelInitialized { get; }
     public SpravyCommand MainViewInitialized { get; }
     public SpravyCommand UpdateEmail { get; }

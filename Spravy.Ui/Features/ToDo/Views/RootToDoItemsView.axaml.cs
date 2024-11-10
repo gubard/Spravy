@@ -8,20 +8,5 @@ public partial class RootToDoItemsView : UserControl
     public RootToDoItemsView()
     {
         InitializeComponent();
-
-        Initialized += (s, e) =>
-        {
-            if (s is not RootToDoItemsView view)
-            {
-                return;
-            }
-
-            if (view.DataContext is not RootToDoItemsViewModel viewModel)
-            {
-                return;
-            }
-
-            viewModel.InitializedCommand.Command.Execute(null);
-        };
     }
 }

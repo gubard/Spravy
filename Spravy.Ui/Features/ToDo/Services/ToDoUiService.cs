@@ -236,6 +236,15 @@ public class ToDoUiService : IToDoUiService
             .RefreshAsync(ct)
             .IfSuccessAsync(
                 () =>
+                    toDoCache
+                        .GetRootItems()
+                        .IfSuccess(items =>
+                            this.PostUiBackground(() => toDoItemsView.SetItemsUi(items), ct)
+                        ),
+                ct
+            )
+            .IfSuccessAsync(
+                () =>
                     toDoService.GetChildrenToDoItemIdsAsync(
                         OptionStruct<Guid>.Default,
                         ReadOnlyMemory<Guid>.Empty,

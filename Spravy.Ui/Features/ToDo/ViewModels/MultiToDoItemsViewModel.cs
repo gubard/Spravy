@@ -81,61 +81,52 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
             .IfSuccess(() => References.RemoveUi(items));
     }
 
-    public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public Result SetFavoriteItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Favorite.ClearExceptUi(items);
+        return Favorite.SetItemsUi(items);
     }
 
-    public Result UpdateFavoriteItemUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public Result AddOrUpdateFavoriteUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Favorite.AddOrUpdateUi(items);
     }
 
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Items
-            .ClearExceptUi(items)
-            .IfSuccess(
-                () => Missed.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Miss))
-            )
+            .SetItemsUi(items)
+            .IfSuccess(() => Missed.SetItemsUi(items.Where(x => x.Status == ToDoItemStatus.Miss)))
             .IfSuccess(
                 () =>
-                    ReadyForCompleted.ClearExceptUi(
+                    ReadyForCompleted.SetItemsUi(
                         items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
                     )
             )
             .IfSuccess(
-                () =>
-                    ComingSoon.ClearExceptUi(
-                        items.Where(x => x.Status == ToDoItemStatus.ComingSoon)
-                    )
+                () => ComingSoon.SetItemsUi(items.Where(x => x.Status == ToDoItemStatus.ComingSoon))
             )
             .IfSuccess(
-                () => Planned.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Planned))
+                () => Planned.SetItemsUi(items.Where(x => x.Status == ToDoItemStatus.Planned))
             )
             .IfSuccess(
-                () =>
-                    Completed.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Completed))
+                () => Completed.SetItemsUi(items.Where(x => x.Status == ToDoItemStatus.Completed))
             )
-            .IfSuccess(() => Values.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Value)))
-            .IfSuccess(() => Groups.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Group)))
+            .IfSuccess(() => Values.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Value)))
+            .IfSuccess(() => Groups.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Group)))
+            .IfSuccess(() => Planneds.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Planned)))
             .IfSuccess(
-                () => Planneds.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Planned))
+                () => Periodicitys.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Periodicity))
             )
             .IfSuccess(
                 () =>
-                    Periodicitys.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Periodicity))
-            )
-            .IfSuccess(
-                () =>
-                    PeriodicityOffsets.ClearExceptUi(
+                    PeriodicityOffsets.SetItemsUi(
                         items.Where(x => x.Type == ToDoItemType.PeriodicityOffset)
                     )
             )
-            .IfSuccess(() => Circles.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Circle)))
-            .IfSuccess(() => Steps.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Step)))
+            .IfSuccess(() => Circles.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Circle)))
+            .IfSuccess(() => Steps.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Step)))
             .IfSuccess(
-                () => References.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Reference))
+                () => References.SetItemsUi(items.Where(x => x.Type == ToDoItemType.Reference))
             );
     }
 

@@ -12,7 +12,7 @@ public class ToDoSubItemsViewModel(
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return List.ClearExceptUi(items);
+        return List.SetItemsUi(items);
     }
 
     public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
@@ -39,7 +39,7 @@ public class ToDoSubItemsViewModel(
                                 .IfSuccessForEach(toDoCache.GetToDoItem)
                                 .IfSuccessAsync(
                                     itemsNotify =>
-                                        List.ClearFavoriteExceptUi(itemsNotify)
+                                        List.SetFavoriteItemsUi(itemsNotify)
                                             .IfSuccessAsync(
                                                 () =>
                                                     toDoService
@@ -60,7 +60,7 @@ public class ToDoSubItemsViewModel(
                                                                                     )
                                                                             )
                                                                             .IfSuccess(i =>
-                                                                                List.UpdateFavoriteItemUi(
+                                                                                List.AddOrUpdateFavoriteUi(
                                                                                     i
                                                                                 )
                                                                             )
@@ -79,7 +79,7 @@ public class ToDoSubItemsViewModel(
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
     {
-        var selected = List.Items.Items.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
+        var selected = List.Items.ToDoItems.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {

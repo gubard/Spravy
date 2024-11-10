@@ -17,6 +17,7 @@ public class DialogViewer : IDialogViewer
     {
         return dialogable
             .LoadStateAsync(ct)
+            .IfSuccessAsync(() => dialogable.RefreshAsync(ct), ct)
             .IfSuccessAsync(() => ShowViewAsync(layer, dialogable), ct);
     }
 
@@ -59,42 +60,37 @@ public class DialogViewer : IDialogViewer
     {
         return layer switch
         {
-            DialogViewLayer.Error
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ErrorDialogIsOpen = true;
-                    mainViewModel.ErrorDialogContent = dialogable;
+            DialogViewLayer.Error => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ErrorDialogIsOpen = true;
+                mainViewModel.ErrorDialogContent = dialogable;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Progress
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ProgressDialogIsOpen = true;
-                    mainViewModel.ProgressDialogContent = dialogable;
+                return Result.Success;
+            }),
+            DialogViewLayer.Progress => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ProgressDialogIsOpen = true;
+                mainViewModel.ProgressDialogContent = dialogable;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Input
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.InputDialogIsOpen = true;
-                    mainViewModel.InputDialogContent = dialogable;
+                return Result.Success;
+            }),
+            DialogViewLayer.Input => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.InputDialogIsOpen = true;
+                mainViewModel.InputDialogContent = dialogable;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Content
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ContentDialogIsOpen = true;
-                    mainViewModel.ContentDialogContent = dialogable;
+                return Result.Success;
+            }),
+            DialogViewLayer.Content => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ContentDialogIsOpen = true;
+                mainViewModel.ContentDialogContent = dialogable;
 
-                    return Result.Success;
-                }),
-            _
-                => new Result(new DialogViewLayerOutOfRangeError(layer))
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false)
+                return Result.Success;
+            }),
+            _ => new Result(new DialogViewLayerOutOfRangeError(layer))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
         };
     }
 
@@ -102,38 +98,33 @@ public class DialogViewer : IDialogViewer
     {
         return layer switch
         {
-            DialogViewLayer.Error
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ErrorDialogIsOpen = false;
+            DialogViewLayer.Error => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ErrorDialogIsOpen = false;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Progress
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ProgressDialogIsOpen = false;
+                return Result.Success;
+            }),
+            DialogViewLayer.Progress => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ProgressDialogIsOpen = false;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Input
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.InputDialogIsOpen = false;
+                return Result.Success;
+            }),
+            DialogViewLayer.Input => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.InputDialogIsOpen = false;
 
-                    return Result.Success;
-                }),
-            DialogViewLayer.Content
-                => this.InvokeUiBackgroundAsync(() =>
-                {
-                    mainViewModel.ContentDialogIsOpen = false;
+                return Result.Success;
+            }),
+            DialogViewLayer.Content => this.InvokeUiBackgroundAsync(() =>
+            {
+                mainViewModel.ContentDialogIsOpen = false;
 
-                    return Result.Success;
-                }),
-            _
-                => new Result(new DialogViewLayerOutOfRangeError(layer))
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false)
+                return Result.Success;
+            }),
+            _ => new Result(new DialogViewLayerOutOfRangeError(layer))
+                .ToValueTaskResult()
+                .ConfigureAwait(false),
         };
     }
 
@@ -145,7 +136,7 @@ public class DialogViewer : IDialogViewer
             DialogViewLayer.Progress => mainViewModel.ProgressDialogContent.ToResult(),
             DialogViewLayer.Input => mainViewModel.InputDialogContent.ToResult(),
             DialogViewLayer.Content => mainViewModel.ContentDialogContent.ToResult(),
-            _ => new(new DialogViewLayerOutOfRangeError(layer))
+            _ => new(new DialogViewLayerOutOfRangeError(layer)),
         };
     }
 }

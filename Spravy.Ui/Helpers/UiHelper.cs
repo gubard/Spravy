@@ -89,9 +89,6 @@ public static class UiHelper
         AddToFavorite = commands.AddToFavorite.Command;
         AddChild = commands.AddChild.Command;
         SendNewVerificationCode = commands.SendNewVerificationCode.Command;
-        VerificationCodeViewModelInitialized = commands
-            .VerificationCodeViewModelInitialized
-            .Command;
         NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
         Back = commands.Back.Command;
         SwitchPane = commands.SwitchPane.Command;
@@ -101,14 +98,12 @@ public static class UiHelper
         AddPasswordItem = commands.AddPasswordItem.Command;
         ShowPasswordItemSetting = commands.ShowPasswordItemSetting.Command;
         NavigateToActiveToDoItem = commands.NavigateToActiveToDoItem.Command;
-        ForgotPasswordViewInitialized = commands.ForgotPasswordViewInitialized.Command;
         ForgotPassword = commands.ForgotPassword.Command;
         CreateUserViewEnter = commands.CreateUserViewEnter.Command;
         CreateUser = commands.CreateUser.Command;
         LoginViewInitialized = commands.LoginViewInitialized.Command;
         LoginViewEnter = commands.LoginViewEnter.Command;
         Login = commands.Login.Command;
-        PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
         GeneratePassword = commands.GeneratePassword.Command;
         DeletePasswordItem = commands.DeletePasswordItem.Command;
         NavigateToRootToDoItems = commands.NavigateToRootToDoItems.Command;
@@ -139,7 +134,6 @@ public static class UiHelper
     public static readonly ICommand UpdateEmail;
     public static readonly ICommand NavigateToPolicy;
     public static readonly ICommand VerificationEmail;
-    public static readonly ICommand VerificationCodeViewModelInitialized;
     public static readonly ICommand Back;
     public static readonly ICommand CopyToClipboard;
     public static readonly ICommand NavigateToToDoItem;
@@ -163,7 +157,6 @@ public static class UiHelper
     public static readonly ICommand SetToDoItemDescription;
     public static readonly ICommand AddPasswordItem;
     public static readonly ICommand ShowPasswordItemSetting;
-    public static readonly ICommand ForgotPasswordViewInitialized;
     public static readonly ICommand ForgotPassword;
     public static readonly ICommand NavigateToActiveToDoItem;
     public static readonly ICommand CreateUserViewEnter;
@@ -172,7 +165,6 @@ public static class UiHelper
     public static readonly ICommand MainViewInitialized;
     public static readonly ICommand LoginViewEnter;
     public static readonly ICommand Login;
-    public static readonly ICommand PasswordGeneratorViewInitialized;
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;

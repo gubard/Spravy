@@ -7,9 +7,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 
     public TodayToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        IErrorHandler errorHandler,
         SpravyCommandNotifyService spravyCommandNotifyService,
-        ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService
     )
         : base(true)
@@ -19,19 +17,12 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
 
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
-    public SpravyCommand InitializedCommand { get; }
 
     public override string ViewId
     {
@@ -41,11 +32,6 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateTodayItemsAsync(ToDoSubItemsViewModel, ct);
-    }
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
     }
 
     public override Result Stop()

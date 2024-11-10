@@ -110,7 +110,6 @@ public class ViewFactory : IViewFactory
             CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
             errorHandler,
             objectStorage,
-            taskProgressService,
             toDoUiService
         );
     }
@@ -122,8 +121,7 @@ public class ViewFactory : IViewFactory
             objectStorage,
             CreateToDoSubItemsViewModel(SortBy.OrderIndex),
             errorHandler,
-            toDoUiService,
-            taskProgressService
+            toDoUiService
         );
     }
 
@@ -155,7 +153,6 @@ public class ViewFactory : IViewFactory
             CreateToDoSubItemsViewModel(SortBy.OrderIndex),
             objectStorage,
             errorHandler,
-            taskProgressService,
             toDoUiService
         );
     }
@@ -164,9 +161,7 @@ public class ViewFactory : IViewFactory
     {
         return new(
             CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
-            errorHandler,
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            taskProgressService,
             toDoUiService
         );
     }
@@ -202,7 +197,7 @@ public class ViewFactory : IViewFactory
 
     public TimersViewModel CreateTimersViewModel()
     {
-        return new(scheduleService, errorHandler, taskProgressService);
+        return new(scheduleService);
     }
 
     public PolicyViewModel CreatePolicyViewModel()
@@ -492,7 +487,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService, errorHandler, taskProgressService);
+        return new(item, items, toDoService);
     }
 
     public AddToDoItemViewModel CreateAddToDoItemViewModel(

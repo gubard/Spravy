@@ -25,7 +25,7 @@ public partial class ChangeToDoItemOrderIndexViewModel
 
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
