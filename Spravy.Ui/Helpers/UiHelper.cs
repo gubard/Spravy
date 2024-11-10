@@ -129,6 +129,8 @@ public static class UiHelper
         MainViewInitialized = commands.MainViewInitialized.Command;
         CopyLogin = commands.CopyLogin.Command;
         ToDoItemCommands = commandsNotify.ToDoItemCommands;
+        ShowSetting = commandsNotify.ShowSetting;
+        RemoveFromBookmark = commandsNotify.RemoveFromBookmark;
     }
 
     public static readonly ICommand CopyLogin;
@@ -174,6 +176,8 @@ public static class UiHelper
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
+    public static readonly SpravyCommandNotify ShowSetting;
+    public static readonly SpravyCommandNotify RemoveFromBookmark;
     public static readonly ReadOnlyMemory<SpravyCommandNotify> ToDoItemCommands;
 
     public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses =

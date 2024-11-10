@@ -5,12 +5,18 @@ public class Navigator : INavigator
     private readonly QueryList<NavigatorItem> list = new(5);
     private readonly IDialogViewer dialogViewer;
     private readonly MainSplitViewModel mainSplitViewModel;
+    private readonly IUiApplicationService uiApplicationService;
 
     private Action<object> lastSetup = ActionHelper<object>.Empty;
 
-    public Navigator(IDialogViewer dialogViewer, IRootViewFactory rootViewFactory)
+    public Navigator(
+        IDialogViewer dialogViewer,
+        IRootViewFactory rootViewFactory,
+        IUiApplicationService uiApplicationService
+    )
     {
         this.dialogViewer = dialogViewer;
+        this.uiApplicationService = uiApplicationService;
         mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
@@ -57,15 +63,7 @@ public class Navigator : INavigator
                                         return Result.Success;
                                     })
                                     .IfSuccessAsync(
-                                        () =>
-                                        {
-                                            if (item.Navigatable is IRefresh refresh)
-                                            {
-                                                return refresh.RefreshAsync(ct);
-                                            }
-
-                                            return Result.AwaitableSuccess;
-                                        },
+                                        () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                         ct
                                     )
                                     .IfSuccessAsync(
@@ -96,7 +94,7 @@ public class Navigator : INavigator
                 {
                     if (mainSplitViewModel.Content.ViewId == parameter.ViewId)
                     {
-                        return mainSplitViewModel.Content.RefreshAsync(ct);
+                        return uiApplicationService.RefreshCurrentViewAsync(ct);
                     }
 
                     return Result
