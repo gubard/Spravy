@@ -141,6 +141,20 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
 
+        ToDoItemSelector.PropertyChanged += (_, e) =>
+        {
+            if (ToDoItemSelector.IsBusy)
+            {
+                return;
+            }
+
+            IsEditReference = e.PropertyName switch
+            {
+                nameof(ToDoItemSelector.SelectedItem) => true,
+                _ => IsEditReference
+            };
+        };
+
         foreach (var annuallyDay in AnnuallyDays)
         {
             foreach (var day in annuallyDay.Days)
