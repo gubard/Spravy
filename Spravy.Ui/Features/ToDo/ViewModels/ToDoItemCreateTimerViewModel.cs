@@ -94,6 +94,11 @@ public partial class ToDoItemCreateTimerViewModel : ToDoItemEditIdViewModel, IAp
         );
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public ConfiguredValueTaskAwaitable<
         Result<ReadOnlyMemory<AddTimerParameters>>
     > CreateAddTimerParametersAsync(CancellationToken ct)
@@ -104,7 +109,7 @@ public partial class ToDoItemCreateTimerViewModel : ToDoItemEditIdViewModel, IAp
                 id =>
                     serializer
                         .SerializeAsync(
-                            new AddToDoItemToFavoriteEventOptions { ToDoItemId = id, },
+                            new AddToDoItemToFavoriteEventOptions { ToDoItemId = id },
                             ct
                         )
                         .IfSuccessAsync(

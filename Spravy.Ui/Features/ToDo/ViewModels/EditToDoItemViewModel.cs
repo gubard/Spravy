@@ -207,9 +207,14 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     {
         return objectStorage.SaveObjectAsync(
             App.ViewId,
-            new AppSetting { FavoriteIcons = FavoriteIcons.ToArray(), },
+            new AppSetting { FavoriteIcons = FavoriteIcons.ToArray() },
             ct
         );
+    }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 
     public AddToDoItemOptions GetAddToDoItemOptions(OptionStruct<Guid> parentId)

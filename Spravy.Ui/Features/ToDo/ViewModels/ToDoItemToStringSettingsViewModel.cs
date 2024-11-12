@@ -41,6 +41,11 @@ public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApply
         return Result.AwaitableSuccess;
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         var status = Statuses.Where(x => x.IsChecked).Select(x => x.Item).ToArray();

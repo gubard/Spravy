@@ -64,6 +64,11 @@ public partial class ResetToDoItemViewModel : ToDoItemEditIdViewModel, IApplySet
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return ResultCurrentIds

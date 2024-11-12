@@ -4,29 +4,13 @@ public class TimersViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly IScheduleService scheduleService;
 
-    public TimersViewModel(
-        IScheduleService scheduleService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
+    public TimersViewModel(IScheduleService scheduleService)
         : base(true)
     {
         this.scheduleService = scheduleService;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
     }
 
-    public SpravyCommand InitializedCommand { get; }
     public AvaloniaList<TimerItemNotify> Timers { get; } = new();
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
-    }
 
     public override string ViewId
     {

@@ -29,6 +29,11 @@ public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySe
         return Result.AwaitableSuccess;
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.RandomizeChildrenOrderIndexAsync(ResultCurrentIds, ct);

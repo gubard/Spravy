@@ -10,61 +10,19 @@ public class ToDoSubItemsViewModel(
 {
     public MultiToDoItemsViewModel List { get; } = list;
 
-    private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
-        ReadOnlyMemory<ToDoItemEntityNotify> ids,
-        TaskProgressItem progressItem,
-        CancellationToken ct
-    )
+    public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        await foreach (
-            var items in toDoService
-                .GetToDoItemsAsync(ids.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
-                .ConfigureAwait(false)
-        )
-        {
-            if (!items.TryGetValue(out var value))
-            {
-                return new(items.Errors);
-            }
-
-            for (var index = 0; index < value.Length; index++)
-            {
-                var item = value.Span[index];
-                var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
-
-                if (!i.TryGetValue(out var t))
-                {
-                    return new(i.Errors);
-                }
-
-                var result = this.PostUiBackground(
-                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi),
-                    ct
-                );
-
-                if (result.IsHasError)
-                {
-                    return result;
-                }
-            }
-        }
-
-        return Result.Success;
+        return List.SetItemsUi(items);
     }
 
-    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return List.ClearExceptUi(items);
+        return List.AddOrUpdateUi(items);
     }
 
-    public Result AddOrUpdateUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return List.AddOrUpdateUi(item);
-    }
-
-    public Result RemoveUi(ToDoItemEntityNotify item)
-    {
-        return List.RemoveUi(item);
+        return List.RemoveUi(items);
     }
 
     public Cvtar RefreshAsync(CancellationToken ct)
@@ -81,15 +39,34 @@ public class ToDoSubItemsViewModel(
                                 .IfSuccessForEach(toDoCache.GetToDoItem)
                                 .IfSuccessAsync(
                                     itemsNotify =>
-                                        List.ClearFavoriteExceptUi(itemsNotify)
+                                        List.SetFavoriteItemsUi(itemsNotify)
                                             .IfSuccessAsync(
                                                 () =>
-                                                    RefreshFavoriteToDoItemsCore(
-                                                            itemsNotify,
-                                                            item,
+                                                    toDoService
+                                                        .GetToDoItemsAsync(
+                                                            itemsNotify.Select(x => x.Id),
+                                                            appOptions.ToDoItemsChunkSize,
                                                             ct
                                                         )
-                                                        .ConfigureAwait(false),
+                                                        .IfSuccessForEachAsync(
+                                                            fullItems =>
+                                                                this.InvokeUiBackgroundAsync(
+                                                                    () =>
+                                                                        fullItems
+                                                                            .IfSuccessForEach(
+                                                                                updatedItem =>
+                                                                                    toDoCache.UpdateUi(
+                                                                                        updatedItem
+                                                                                    )
+                                                                            )
+                                                                            .IfSuccess(i =>
+                                                                                List.AddOrUpdateFavoriteUi(
+                                                                                    i
+                                                                                )
+                                                                            )
+                                                                ),
+                                                            ct
+                                                        ),
                                                 ct
                                             ),
                                     ct
@@ -102,7 +79,7 @@ public class ToDoSubItemsViewModel(
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
     {
-        var selected = List.Items.Items.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
+        var selected = List.Items.ToDoItems.Where(x => x.IsSelected).ToArray().ToReadOnlyMemory();
 
         if (selected.IsEmpty)
         {

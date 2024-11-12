@@ -2,15 +2,19 @@ namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator
 {
-    private readonly QueryList<NavigatorItem> list = new(5);
+    private readonly QueryList<INavigatable> list = new(5);
     private readonly IDialogViewer dialogViewer;
     private readonly MainSplitViewModel mainSplitViewModel;
+    private readonly IUiApplicationService uiApplicationService;
 
-    private Action<object> lastSetup = ActionHelper<object>.Empty;
-
-    public Navigator(IDialogViewer dialogViewer, IRootViewFactory rootViewFactory)
+    public Navigator(
+        IDialogViewer dialogViewer,
+        IRootViewFactory rootViewFactory,
+        IUiApplicationService uiApplicationService
+    )
     {
         this.dialogViewer = dialogViewer;
+        this.uiApplicationService = uiApplicationService;
         mainSplitViewModel = rootViewFactory.CreateMainSplitViewModel();
     }
 
@@ -51,27 +55,17 @@ public class Navigator : INavigator
 
                                 return this.InvokeUiBackgroundAsync(() =>
                                     {
-                                        item.Setup.Invoke(item.Navigatable);
-                                        mainSplitViewModel.Content = item.Navigatable;
+                                        mainSplitViewModel.Content = item;
 
                                         return Result.Success;
                                     })
                                     .IfSuccessAsync(
-                                        () =>
-                                        {
-                                            if (item.Navigatable is IRefresh refresh)
-                                            {
-                                                return refresh.RefreshAsync(ct);
-                                            }
-
-                                            return Result.AwaitableSuccess;
-                                        },
+                                        () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                         ct
                                     )
                                     .IfSuccessAsync(
                                         () =>
-                                            item
-                                                .Navigatable.ToResult()
+                                            item.ToResult()
                                                 .ToValueTaskResult()
                                                 .ConfigureAwait(false),
                                         ct
@@ -93,20 +87,16 @@ public class Navigator : INavigator
             })
             .IfSuccessAsync(
                 () =>
-                {
-                    if (mainSplitViewModel.Content.ViewId == parameter.ViewId)
-                    {
-                        return mainSplitViewModel.Content.RefreshAsync(ct);
-                    }
-
-                    return Result
+                    Result
                         .AwaitableSuccess.IfSuccessAsync(
                             () =>
                             {
-                                if (mainSplitViewModel.Content.IsPooled)
+                                if (
+                                    mainSplitViewModel.Content.IsPooled
+                                    && mainSplitViewModel.Content.ViewId != parameter.ViewId
+                                )
                                 {
-                                    return list.Add(new(mainSplitViewModel.Content, lastSetup))
-                                        .GetAwaitable();
+                                    return list.Add(mainSplitViewModel.Content).GetAwaitable();
                                 }
 
                                 return Result.AwaitableSuccess;
@@ -133,8 +123,8 @@ public class Navigator : INavigator
                                         ct
                                     ),
                             ct
-                        );
-                },
+                        )
+                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
                 ct
             );
     }

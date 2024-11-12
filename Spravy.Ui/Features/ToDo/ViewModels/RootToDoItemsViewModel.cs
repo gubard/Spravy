@@ -12,7 +12,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService,
         IToDoUiService toDoUiService
     )
         : base(true)
@@ -24,18 +23,10 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
         this.toDoUiService = toDoUiService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
-    public SpravyCommand InitializedCommand { get; }
-    public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public override string ViewId
@@ -46,11 +37,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
-    }
-
-    private Cvtar InitializedAsync(CancellationToken ct)
-    {
-        return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
     public async ValueTask<Result> RefreshCore()
@@ -112,9 +98,9 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
         }
     }
 
-    public Result RemoveUi(ToDoItemEntityNotify item)
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return ToDoSubItemsViewModel.RemoveUi(item);
+        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 
     public Result<ToDoItemEditId> GetToDoItemEditId()

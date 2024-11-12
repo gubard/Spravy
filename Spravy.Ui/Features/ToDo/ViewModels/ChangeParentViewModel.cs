@@ -29,6 +29,11 @@ public class ChangeParentViewModel : ToDoItemEditIdViewModel, IApplySettings
         return Result.AwaitableSuccess;
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         if (ToDoItemSelectorViewModel.SelectedItem is null)

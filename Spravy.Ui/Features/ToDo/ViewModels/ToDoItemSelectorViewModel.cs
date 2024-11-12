@@ -186,4 +186,9 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

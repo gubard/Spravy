@@ -10,6 +10,6 @@
                Content="{Binding Content}"
                Pane="{Binding Pane}"
                IsPaneOpen="{Binding IsPaneOpen}"
-               OpenPaneLength="200"
+               OpenPaneLength="320"
                PanePlacement="Left" />
 </UserControl>

@@ -199,44 +199,44 @@
         </Grid>
 
         <ContentControl Content="{Binding Favorite}"
-                        IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        IsVisible="{Binding Favorite.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
         <Panel>
             <ItemsControl Classes="to-do-items-group none">
                 <ContentControl Content="{Binding Items}"
-                                IsVisible="{Binding Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Items.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
             </ItemsControl>
 
             <ItemsControl Classes="to-do-items-group by-type">
                 <ContentControl Content="{Binding Groups}"
-                                IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Groups.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Values}"
-                                IsVisible="{Binding Values.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Values.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Steps}"
-                                IsVisible="{Binding Steps.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Steps.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Circles}"
-                                IsVisible="{Binding Circles.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Circles.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Planneds}"
-                                IsVisible="{Binding Planneds.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Planneds.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding PeriodicityOffsets}"
-                                IsVisible="{Binding PeriodicityOffsets.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding PeriodicityOffsets.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Periodicitys}"
-                                IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Periodicitys.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding References}"
-                                IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding References.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
             </ItemsControl>
 
             <ItemsControl Classes="to-do-items-group by-status">
                 <ContentControl Content="{Binding Missed}"
-                                IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Missed.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding ReadyForCompleted}"
-                                IsVisible="{Binding ReadyForCompleted.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding ReadyForCompleted.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Planned}"
-                                IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Planned.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding ComingSoon}"
-                                IsVisible="{Binding ComingSoon.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding ComingSoon.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 <ContentControl Content="{Binding Completed}"
-                                IsVisible="{Binding Completed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                IsVisible="{Binding Completed.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
             </ItemsControl>
         </Panel>
     </StackPanel>

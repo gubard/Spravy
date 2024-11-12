@@ -6,6 +6,7 @@
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:tdm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.PaneView"
              x:DataType="vm:PaneViewModel">
@@ -107,17 +108,29 @@
         <ItemsControl ItemsSource="{Binding Bookmarks}">
             <ItemsControl.DataTemplates>
                 <DataTemplate DataType="tdm:ToDoItemEntityNotify">
-                    <Button x:Name="RootToDoItemButton"
-                            Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                            CommandParameter="{Binding}"
-                            Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
-                        <StackPanel Classes="horizontal">
-                            <i:Icon Value="{Binding Icon}"
-                                    Margin="0,0,4,0"
-                                    IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                            <TextBlock Text="{Binding Name}" />
-                        </StackPanel>
-                    </Button>
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <Grid.Styles>
+                            <Style Selector="Button" x:DataType="m:SpravyCommandNotify">
+                                <Setter Property="CommandParameter"
+                                        Value="{Binding $parent[Grid].DataContext}" />
+                            </Style>
+                        </Grid.Styles>
+
+                        <Button x:Name="RootToDoItemButton"
+                                Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                                CommandParameter="{Binding}"
+                                Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
+                            <StackPanel Classes="horizontal">
+                                <i:Icon Value="{Binding Icon}"
+                                        Margin="0,0,4,0"
+                                        IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
+                        </Button>
+
+                        <ContentControl Grid.Column="1" Content="{x:Static h:UiHelper.ShowSetting}" />
+                        <ContentControl Grid.Column="2" Content="{x:Static h:UiHelper.RemoveFromBookmark}" />
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.DataTemplates>
         </ItemsControl>

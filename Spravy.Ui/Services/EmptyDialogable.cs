@@ -16,4 +16,9 @@ public class EmptyDialogable : IDialogable
     {
         return Result.AwaitableSuccess;
     }
+
+    public Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

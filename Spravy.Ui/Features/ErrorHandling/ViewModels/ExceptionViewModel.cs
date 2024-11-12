@@ -30,4 +30,9 @@ public class ExceptionViewModel : DialogableViewModelBase
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }

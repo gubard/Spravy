@@ -56,6 +56,11 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
             .IfSuccessAsync(() => EditToDoItemViewModel.SaveStateAsync(ct), ct);
     }
 
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         return Result
@@ -69,7 +74,7 @@ public class AddToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
                             {
                                 EditToDoItemViewModel.GetAddToDoItemOptions(
                                     OptionStruct<Guid>.Default
-                                )
+                                ),
                             },
                             ct
                         );

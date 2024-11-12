@@ -1,3 +1,3 @@
 ﻿namespace Spravy.Ui.Interfaces;
 
-public interface IDialogable : IStateHolder;
+public interface IDialogable : IStateHolder, IRefresh;

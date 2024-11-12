@@ -10,22 +10,12 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
     public DeleteToDoItemViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
-        IToDoService toDoService,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        IToDoService toDoService
     )
         : base(editItem, editItems)
     {
         this.toDoService = toDoService;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
     }
-
-    public SpravyCommand InitializedCommand { get; }
 
     public override string ViewId
     {
@@ -45,7 +35,7 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
         return Result.AwaitableSuccess;
     }
 
-    private Cvtar InitializedAsync(CancellationToken ct)
+    public override Cvtar RefreshAsync(CancellationToken ct)
     {
         var statuses = UiHelper.ToDoItemStatuses;
 

@@ -46,4 +46,9 @@ public partial class AddPasswordItemViewModel : DialogableViewModelBase
     {
         return Result.AwaitableSuccess;
     }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
 }
