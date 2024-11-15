@@ -17,7 +17,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
     public void Publish()
     {
-        var appBundlePath = "bin/Release/net8.0-browser/browser-wasm/AppBundle";
+        var appBundlePath = "bin/Release/net9.0-browser/browser-wasm/AppBundle";
 
         if (Options.CsprojFile.Directory is null)
         {

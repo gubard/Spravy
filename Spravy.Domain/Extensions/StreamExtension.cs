@@ -13,7 +13,7 @@ public static class StreamExtension
     public static async Task<byte[]> ToByteArrayAsync(this Stream stream)
     {
         var buffer = new byte[stream.Length];
-        await stream.ReadAsync(buffer);
+        await stream.ReadExactlyAsync(buffer);
 
         return buffer;
     }
