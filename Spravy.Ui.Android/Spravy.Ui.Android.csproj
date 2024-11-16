@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
         <AndroidPackageFormat>aab</AndroidPackageFormat>
         <Optimize>true</Optimize>
