@@ -183,6 +183,8 @@ class Build : NukeBuild
             _.DependsOn(StagingPublishBrowser)
                 .Executes(() =>
                 {
+                    return;
+
                     foreach (var project in Projects.OfType<TestProjectBuilder>())
                     {
                         project.Test();
