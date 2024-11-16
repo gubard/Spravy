@@ -1,9 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["Spravy.ToDo.Service/Spravy.ToDo.Service.csproj", "Spravy.ToDo.Service/"]
 COPY ["Directory.Build.props", "Spravy.ToDo.Service/Directory.Build.props"]
