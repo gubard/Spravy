@@ -10,7 +10,7 @@ namespace Spravy.Ui.Android;
     Theme = "@style/AppTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
-    ConfigurationChanges = ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode
+    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {
