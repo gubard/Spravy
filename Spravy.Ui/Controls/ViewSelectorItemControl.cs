@@ -6,9 +6,11 @@ public class ViewSelectorItemControl : TemplatedControl
         AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(Content));
 
     public static readonly StyledProperty<object?> StateProperty =
-        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(State), defaultBindingMode: BindingMode.TwoWay);
+        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(State),
+            defaultBindingMode: BindingMode.TwoWay);
 
     private ContentControl? contentControl;
+    private object? lastState;
 
     public object? State
     {
@@ -27,11 +29,13 @@ public class ViewSelectorItemControl : TemplatedControl
     {
         contentControl = e.NameScope.Find<ContentControl>("PART_ContentControl");
         base.OnApplyTemplate(e);
-        Update(State);
+        Update(lastState);
     }
 
     public void Update(object? currentState)
     {
+        lastState = currentState;
+
         if (contentControl is null)
         {
             return;
@@ -39,32 +43,37 @@ public class ViewSelectorItemControl : TemplatedControl
 
         if (currentState is null && State is null)
         {
+            if (!contentControl.IsVisible)
+            {
+                contentControl.IsVisible = true;
+            }
+
+            return;
+        }
+
+        if (currentState is null || State is null || !currentState.Equals(State))
+        {
+            if (contentControl.IsVisible)
+            {
+                contentControl.IsVisible = false;
+            }
+
+            return;
+        }
+
+        if (!contentControl.IsVisible)
+        {
             contentControl.IsVisible = true;
-
-            return;
         }
+    }
 
-        if (currentState is null)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == StateProperty)
         {
-            contentControl.IsVisible = false;
-
-            return;
+            Update(lastState);
         }
-
-        if (State is null)
-        {
-            contentControl.IsVisible = false;
-
-            return;
-        }
-
-        if (currentState.Equals(State))
-        {
-            contentControl.IsVisible = true;
-
-            return;
-        }
-
-        contentControl.IsVisible = false;
     }
 }
