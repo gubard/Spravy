@@ -17,7 +17,7 @@
         <Grid RowDefinitions="Auto,*,Auto">
             <c:ViewSelectorControl State="{x:Static h:UiHelper.Os}">
                 <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
-                    <Rectangle Height="34" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                    <Rectangle Height="40" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
 
@@ -25,7 +25,7 @@
 
             <c:ViewSelectorControl Grid.Row="2" State="{x:Static h:UiHelper.Os}">
                 <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
-                    <Rectangle Height="10" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                    <Rectangle Height="15" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
         </Grid>
