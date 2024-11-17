@@ -3,6 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:c="clr-namespace:Spravy.Ui.Controls"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:e="clr-namespace:Spravy.Ui.Enums"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.MainSplitView"
              x:DataType="vm:MainSplitViewModel">
@@ -12,9 +15,19 @@
                OpenPaneLength="320"
                PanePlacement="Left">
         <Grid RowDefinitions="Auto,*,Auto">
-            <Rectangle Height="34" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+            <c:ViewSelectorControl State="{x:Static h:UiHelper.Os}">
+                <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
+                    <Rectangle Height="34" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                </c:ViewSelectorItemControl>
+            </c:ViewSelectorControl>
+
             <ContentControl Grid.Row="1" Content="{Binding Content}" />
-            <Rectangle Grid.Row="2" Height="10" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+
+            <c:ViewSelectorControl Grid.Row="2" State="{x:Static h:UiHelper.Os}">
+                <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
+                    <Rectangle Height="10" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                </c:ViewSelectorItemControl>
+            </c:ViewSelectorControl>
         </Grid>
     </SplitView>
 </UserControl>

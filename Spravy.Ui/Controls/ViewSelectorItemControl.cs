@@ -2,18 +2,13 @@ namespace Spravy.Ui.Controls;
 
 public class ViewSelectorItemControl : TemplatedControl
 {
-    public static readonly StyledProperty<object?> ContentProperty = AvaloniaProperty.Register<
-        ViewSelectorItemControl,
-        object?
-    >(nameof(Content));
+    public static readonly StyledProperty<object?> ContentProperty =
+        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(Content));
 
-    public static readonly StyledProperty<object?> StateProperty = AvaloniaProperty.Register<
-        ViewSelectorItemControl,
-        object?
-    >(nameof(State));
+    public static readonly StyledProperty<object?> StateProperty =
+        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(State));
 
     private ContentControl? contentControl;
-    private object? lastState;
 
     public object? State
     {
@@ -32,13 +27,11 @@ public class ViewSelectorItemControl : TemplatedControl
     {
         contentControl = e.NameScope.Find<ContentControl>("PART_ContentControl");
         base.OnApplyTemplate(e);
-        Update(lastState);
+        Update(State);
     }
 
     public void Update(object? currentState)
     {
-        lastState = currentState;
-
         if (contentControl is null)
         {
             return;
