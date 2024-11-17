@@ -14,19 +14,6 @@ public class ViewSelectorControl : TemplatedControl
 
     private Panel? panel;
 
-    static ViewSelectorControl()
-    {
-        StateProperty.Changed.AddClassHandler<ViewSelectorControl>(
-            (c, a) =>
-            {
-                foreach (var item in c.Items)
-                {
-                    item.Update(c.State);
-                }
-            }
-        );
-    }
-
     public ViewSelectorControl()
     {
         Items = new AvaloniaList<ViewSelectorItemControl>();
@@ -56,5 +43,18 @@ public class ViewSelectorControl : TemplatedControl
         }
 
         panel.Children.AddRange(Items);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == StateProperty)
+        {
+            foreach (var item in Items)
+            {
+                item.Update(State);
+            }
+        }
     }
 }
