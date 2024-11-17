@@ -172,65 +172,114 @@ public static class UiHelper
     public static readonly SpravyCommandNotify RemoveFromBookmark;
     public static readonly ReadOnlyMemory<SpravyCommandNotify> ToDoItemCommands;
 
-    public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses =
-        new(
-            [
-                ToDoItemStatus.Miss,
-                ToDoItemStatus.ReadyForComplete,
-                ToDoItemStatus.Planned,
-                ToDoItemStatus.ComingSoon,
-                ToDoItemStatus.Completed,
-            ]
-        );
+    public static Os Os
+    {
+        get
+        {
+            if (OperatingSystem.IsAndroid())
+            {
+                return Os.Android;
+            }
 
-    public static ReadOnlyMemory<ToDoItemType> ToDoItemTypes =
-        new(
-            [
-                ToDoItemType.Value,
-                ToDoItemType.Circle,
-                ToDoItemType.Group,
-                ToDoItemType.Periodicity,
-                ToDoItemType.Reference,
-                ToDoItemType.Planned,
-                ToDoItemType.Step,
-                ToDoItemType.PeriodicityOffset,
-            ]
-        );
+            if (OperatingSystem.IsBrowser())
+            {
+                return Os.Browser;
+            }
 
-    public static ReadOnlyMemory<DayOfWeek> DayOfWeeks =
-        new(
-            [
-                DayOfWeek.Monday,
-                DayOfWeek.Thursday,
-                DayOfWeek.Wednesday,
-                DayOfWeek.Tuesday,
-                DayOfWeek.Friday,
-                DayOfWeek.Saturday,
-                DayOfWeek.Sunday,
-            ]
-        );
+            if (OperatingSystem.IsLinux())
+            {
+                return Os.Linux;
+            }
 
-    public static ReadOnlyMemory<GroupBy> GroupBys =
-        new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType]);
+            if (OperatingSystem.IsWasi())
+            {
+                return Os.Wasi;
+            }
+
+            if (OperatingSystem.IsWindows())
+            {
+                return Os.Windows;
+            }
+
+            if (OperatingSystem.IsMacCatalyst())
+            {
+                return Os.MacCatalyst;
+            }
+
+            if (OperatingSystem.IsIOS())
+            {
+                return Os.Ios;
+            }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                return Os.MacOs;
+            }
+
+            if (OperatingSystem.IsTvOS())
+            {
+                return Os.TvOs;
+            }
+
+            if (OperatingSystem.IsWatchOS())
+            {
+                return Os.WatchOs;
+            }
+
+            if (OperatingSystem.IsFreeBSD())
+            {
+                return Os.FreeBsd;
+            }
+
+            throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses = new([
+        ToDoItemStatus.Miss,
+        ToDoItemStatus.ReadyForComplete,
+        ToDoItemStatus.Planned,
+        ToDoItemStatus.ComingSoon,
+        ToDoItemStatus.Completed,
+    ]);
+
+    public static ReadOnlyMemory<ToDoItemType> ToDoItemTypes = new([
+        ToDoItemType.Value,
+        ToDoItemType.Circle,
+        ToDoItemType.Group,
+        ToDoItemType.Periodicity,
+        ToDoItemType.Reference,
+        ToDoItemType.Planned,
+        ToDoItemType.Step,
+        ToDoItemType.PeriodicityOffset,
+    ]);
+
+    public static ReadOnlyMemory<DayOfWeek> DayOfWeeks = new([
+        DayOfWeek.Monday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday,
+        DayOfWeek.Sunday,
+    ]);
+
+    public static ReadOnlyMemory<GroupBy> GroupBys = new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
 
     public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
-        new([DescriptionType.PlainText, DescriptionType.Markdown]);
+        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
 
     public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
-        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion]);
+        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);
 
-    public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys =
-        new(
-            [
-                TypeOfPeriodicity.Daily,
-                TypeOfPeriodicity.Weekly,
-                TypeOfPeriodicity.Monthly,
-                TypeOfPeriodicity.Annually,
-            ]
-        );
+    public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys = new([
+        TypeOfPeriodicity.Daily,
+        TypeOfPeriodicity.Weekly,
+        TypeOfPeriodicity.Monthly,
+        TypeOfPeriodicity.Annually,
+    ]);
 
-    public static ReadOnlyMemory<ThemeType> ThemeTypes =
-        new([ThemeType.Default, ThemeType.Light, ThemeType.Dark]);
+    public static ReadOnlyMemory<ThemeType> ThemeTypes = new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
 
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
