@@ -7,12 +7,12 @@ namespace Spravy.Ui.Android;
 
 [Activity(
     Label = "Spravy",
-    Theme = "@style/MyTheme.NoActionBar",
+    Theme = "@style/AppTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
     ConfigurationChanges = ConfigChanges.Orientation
-        | ConfigChanges.ScreenSize
         | ConfigChanges.UiMode
+        | ConfigChanges.SmallestScreenSize
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {

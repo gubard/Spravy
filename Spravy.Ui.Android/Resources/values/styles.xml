@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-
-    <style name="MyTheme">
+    <style name="AppTheme">
     </style>
 
-    <style name="MyTheme.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="MyTheme.Splash" parent="MyTheme.NoActionBar">
+    <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
-
 </resources>
