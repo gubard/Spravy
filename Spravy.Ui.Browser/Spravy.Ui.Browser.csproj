@@ -4,7 +4,6 @@
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <OutputType>Exe</OutputType>
         <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <PublishTrimmed>true</PublishTrimmed>

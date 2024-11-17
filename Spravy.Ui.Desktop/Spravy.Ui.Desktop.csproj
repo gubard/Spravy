@@ -4,7 +4,6 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <RuntimeIdentifiers>linux-x64;win-x64</RuntimeIdentifiers>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <PublishAot>true</PublishAot>
         <PublishReadyToRun>true</PublishReadyToRun>
