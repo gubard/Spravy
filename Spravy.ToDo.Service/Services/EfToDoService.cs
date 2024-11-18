@@ -126,7 +126,7 @@ public class EfToDoService : IToDoService
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         var dir = options.ToArray().ToDictionary(x => x.Id, x => x).ToFrozenDictionary();
-        var keys = dir.Keys;
+        var keys = dir.Keys.ToArray();
 
         return dbContextFactory
             .Create()

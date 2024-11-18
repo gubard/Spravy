@@ -487,6 +487,12 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
 
                 break;
             }
+            case nameof(ChildrenType):
+            {
+                IsEditChildrenType = true;
+
+                break;
+            }
         }
     }
 
@@ -507,6 +513,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         Icon = settings.Icon;
         Color = Color.Parse(settings.Color);
         RemindDaysBefore = settings.RemindDaysBefore;
+        ChildrenType = settings.ChildrenType;
         MonthlyDays.Clear();
         MonthlyDays.AddRange(settings.MonthlyDays.Select(x => (int)x));
         WeeklyDays.Clear();
@@ -569,6 +576,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         TypeOfPeriodicity = notify.TypeOfPeriodicity;
         Icon = notify.Icon;
         Color = notify.Color;
+        ChildrenType = notify.ChildrenType;
         RemindDaysBefore = notify.RemindDaysBefore;
         MonthlyDays.Clear();
         MonthlyDays.AddRange(notify.MonthlyDays);
