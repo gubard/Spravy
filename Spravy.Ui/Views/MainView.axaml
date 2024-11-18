@@ -292,7 +292,7 @@
             
             <c:ViewSelectorControl Grid.Row="2" State="{x:Static h:UiHelper.Os}">
                 <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
-                    <Rectangle Height="20" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                    <Rectangle Height="40" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
         </Grid>
