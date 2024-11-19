@@ -102,7 +102,7 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            GetAllChildrenAsync(context, new[] { id }, ct)
+                            GetAllChildrenAsync(context, new[] { id }, false, ct)
                                 .IfSuccessAsync(
                                     items =>
                                         getterToDoItemParametersService.GetToDoItemParameters(
@@ -126,7 +126,7 @@ public class EfToDoService : IToDoService
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         var dir = options.ToArray().ToDictionary(x => x.Id, x => x).ToFrozenDictionary();
-        var keys = dir.Keys.ToArray();
+        var keys = dir.Keys.ToArray().ToReadOnlyMemory();
 
         return dbContextFactory
             .Create()
@@ -134,60 +134,65 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            context
-                                .Set<ToDoItemEntity>()
-                                .Where(x => keys.Contains(x.Id))
-                                .ToArrayEntitiesAsync(ct)
-                                .IfSuccessForEachAsync(
-                                    item =>
-                                        dir[item.Id]
-                                            .ToResult()
-                                            .IfSuccessAsync(
-                                                o =>
-                                                    Result
-                                                        .AwaitableSuccess.IfSuccessAsync(
-                                                            () =>
-                                                            {
-                                                                if (o.IsCompleteCurrentTask)
-                                                                {
-                                                                    item.IsCompleted = true;
+                            GetAllChildrenAsync(context, keys, true, ct)
+                                .IfSuccessAsync(
+                                    items =>
+                                        keys.IfSuccessForEachAsync(
+                                            id =>
+                                            {
+                                                var item = items[id];
 
-                                                                    return MoveNextDueDateAsync(
-                                                                        context,
-                                                                        item,
-                                                                        offset,
-                                                                        ct
-                                                                    );
-                                                                }
+                                                return dir[item.Id]
+                                                    .ToResult()
+                                                    .IfSuccessAsync(
+                                                        o =>
+                                                            Result
+                                                                .AwaitableSuccess.IfSuccessAsync(
+                                                                    () =>
+                                                                    {
+                                                                        if (o.IsCompleteCurrentTask)
+                                                                        {
+                                                                            item.IsCompleted = true;
 
-                                                                return Result.AwaitableSuccess;
-                                                            },
-                                                            ct
-                                                        )
-                                                        .IfSuccessAsync(
-                                                            () =>
-                                                                CircleCompletionAsync(
-                                                                        context,
-                                                                        item,
-                                                                        o.IsMoveCircleOrderIndex,
-                                                                        o.IsCompleteChildrenTask,
-                                                                        o.IsOnlyCompletedTasks,
-                                                                        ct
-                                                                    )
-                                                                    .IfSuccessAsync(
-                                                                        () =>
-                                                                            StepCompletionAsync(
+                                                                            return MoveNextDueDateAsync(
                                                                                 context,
                                                                                 item,
+                                                                                offset,
+                                                                                ct
+                                                                            );
+                                                                        }
+
+                                                                        return Result.AwaitableSuccess;
+                                                                    },
+                                                                    ct
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    () =>
+                                                                        CircleCompletionAsync(
+                                                                                items,
+                                                                                item,
+                                                                                o.IsMoveCircleOrderIndex,
                                                                                 o.IsCompleteChildrenTask,
+                                                                                o.IsOnlyCompletedTasks,
+                                                                                ct
+                                                                            )
+                                                                            .IfSuccessAsync(
+                                                                                () =>
+                                                                                    StepCompletionAsync(
+                                                                                        items,
+                                                                                        item,
+                                                                                        o.IsCompleteChildrenTask,
+                                                                                        ct
+                                                                                    ),
                                                                                 ct
                                                                             ),
-                                                                        ct
-                                                                    ),
-                                                            ct
-                                                        ),
-                                                ct
-                                            ),
+                                                                    ct
+                                                                ),
+                                                        ct
+                                                    );
+                                            },
+                                            ct
+                                        ),
                                     ct
                                 ),
                         ct
@@ -504,7 +509,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             item =>
                             {
-                                var parents = new List<ToDoShortItem> { item.ToToDoShortItem(), };
+                                var parents = new List<ToDoShortItem> { item.ToToDoShortItem() };
 
                                 return GetParentsAsync(context, id, parents, ct)
                                     .ConfigureAwait(false)
@@ -609,7 +614,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    GetAllChildrenAsync(context, new[] { id }, ct)
+                    GetAllChildrenAsync(context, new[] { id }, false, ct)
                         .IfSuccessAsync(
                             items =>
                                 items[id]
@@ -688,7 +693,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessDisposeAsync(
                 context =>
-                    GetAllChildrenAsync(context, ids, ct)
+                    GetAllChildrenAsync(context, ids, false, ct)
                         .IfSuccessAsync(
                             items =>
                                 items
@@ -857,7 +862,7 @@ public class EfToDoService : IToDoService
     public Cvtar SwitchCompleteAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        var idsArray = ids.ToArray();
+        var idsArray = ids.ToArray().ToReadOnlyMemory();
 
         return dbContextFactory
             .Create()
@@ -865,125 +870,117 @@ public class EfToDoService : IToDoService
                 context =>
                     context.AtomicExecuteAsync(
                         () =>
-                            GetAllChildrenAsync(context, ids, ct)
+                            GetAllChildrenAsync(context, ids, true, ct)
                                 .IfSuccessAsync(
                                     items =>
-                                        context
-                                            .Set<ToDoItemEntity>()
-                                            .Where(x => idsArray.Contains(x.Id))
-                                            .ToArrayEntitiesAsync(ct)
-                                            .IfSuccessForEachAsync(
-                                                item =>
+                                        idsArray.IfSuccessForEachAsync(
+                                            id =>
+                                            {
+                                                var item = items[id];
+
+                                                if (!item.IsCompleted)
                                                 {
-                                                    if (!item.IsCompleted)
-                                                    {
-                                                        return getterToDoItemParametersService
-                                                            .GetToDoItemParameters(
-                                                                items,
-                                                                item,
-                                                                offset
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                parameters =>
+                                                    return getterToDoItemParametersService
+                                                        .GetToDoItemParameters(items, item, offset)
+                                                        .IfSuccessAsync(
+                                                            parameters =>
+                                                            {
+                                                                if (
+                                                                    !parameters.IsCan.HasFlag(
+                                                                        ToDoItemIsCan.CanComplete
+                                                                    )
+                                                                )
                                                                 {
-                                                                    if (
-                                                                        !parameters.IsCan.HasFlag(
-                                                                            ToDoItemIsCan.CanComplete
+                                                                    return new Result(
+                                                                        new ToDoItemAlreadyCompleteError(
+                                                                            item.Id,
+                                                                            item.Name
                                                                         )
                                                                     )
-                                                                    {
+                                                                        .ToValueTaskResult()
+                                                                        .ConfigureAwait(false);
+                                                                }
+
+                                                                switch (item.Type)
+                                                                {
+                                                                    case ToDoItemType.Value:
+                                                                        item.IsCompleted = true;
+
+                                                                        break;
+                                                                    case ToDoItemType.Group:
+                                                                        break;
+                                                                    case ToDoItemType.Planned:
+                                                                        item.IsCompleted = true;
+
+                                                                        break;
+                                                                    case ToDoItemType.Periodicity:
+                                                                        break;
+                                                                    case ToDoItemType.PeriodicityOffset:
+                                                                        break;
+                                                                    case ToDoItemType.Circle:
+                                                                        item.IsCompleted = true;
+
+                                                                        break;
+                                                                    case ToDoItemType.Step:
+                                                                        item.IsCompleted = true;
+
+                                                                        break;
+                                                                    case ToDoItemType.Reference:
+                                                                        break;
+                                                                    default:
                                                                         return new Result(
-                                                                            new ToDoItemAlreadyCompleteError(
-                                                                                item.Id,
-                                                                                item.Name
+                                                                            new ToDoItemTypeOutOfRangeError(
+                                                                                item.Type
                                                                             )
                                                                         )
                                                                             .ToValueTaskResult()
                                                                             .ConfigureAwait(false);
-                                                                    }
+                                                                }
 
-                                                                    switch (item.Type)
-                                                                    {
-                                                                        case ToDoItemType.Value:
-                                                                            item.IsCompleted = true;
+                                                                return MoveNextDueDateAsync(
+                                                                        context,
+                                                                        item,
+                                                                        offset,
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        () =>
+                                                                        {
+                                                                            item.LastCompleted =
+                                                                                DateTimeOffset.Now;
 
-                                                                            break;
-                                                                        case ToDoItemType.Group:
-                                                                            break;
-                                                                        case ToDoItemType.Planned:
-                                                                            item.IsCompleted = true;
-
-                                                                            break;
-                                                                        case ToDoItemType.Periodicity:
-                                                                            break;
-                                                                        case ToDoItemType.PeriodicityOffset:
-                                                                            break;
-                                                                        case ToDoItemType.Circle:
-                                                                            item.IsCompleted = true;
-
-                                                                            break;
-                                                                        case ToDoItemType.Step:
-                                                                            item.IsCompleted = true;
-
-                                                                            break;
-                                                                        case ToDoItemType.Reference:
-                                                                            break;
-                                                                        default:
-                                                                            return new Result(
-                                                                                new ToDoItemTypeOutOfRangeError(
-                                                                                    item.Type
+                                                                            return CircleCompletionAsync(
+                                                                                    items,
+                                                                                    item,
+                                                                                    true,
+                                                                                    false,
+                                                                                    false,
+                                                                                    ct
                                                                                 )
-                                                                            )
-                                                                                .ToValueTaskResult()
-                                                                                .ConfigureAwait(
-                                                                                    false
+                                                                                .IfSuccessAsync(
+                                                                                    () =>
+                                                                                        StepCompletionAsync(
+                                                                                            items,
+                                                                                            item,
+                                                                                            false,
+                                                                                            ct
+                                                                                        ),
+                                                                                    ct
                                                                                 );
-                                                                    }
+                                                                        },
+                                                                        ct
+                                                                    );
+                                                            },
+                                                            ct
+                                                        );
+                                                }
 
-                                                                    return MoveNextDueDateAsync(
-                                                                            context,
-                                                                            item,
-                                                                            offset,
-                                                                            ct
-                                                                        )
-                                                                        .IfSuccessAsync(
-                                                                            () =>
-                                                                            {
-                                                                                item.LastCompleted =
-                                                                                    DateTimeOffset.Now;
+                                                item.IsCompleted = false;
 
-                                                                                return CircleCompletionAsync(
-                                                                                        context,
-                                                                                        item,
-                                                                                        true,
-                                                                                        false,
-                                                                                        false,
-                                                                                        ct
-                                                                                    )
-                                                                                    .IfSuccessAsync(
-                                                                                        () =>
-                                                                                            StepCompletionAsync(
-                                                                                                context,
-                                                                                                item,
-                                                                                                false,
-                                                                                                ct
-                                                                                            ),
-                                                                                        ct
-                                                                                    );
-                                                                            },
-                                                                            ct
-                                                                        );
-                                                                },
-                                                                ct
-                                                            );
-                                                    }
-
-                                                    item.IsCompleted = false;
-
-                                                    return Result.AwaitableSuccess;
-                                                },
-                                                ct
-                                            ),
+                                                return Result.AwaitableSuccess;
+                                            },
+                                            ct
+                                        ),
                                     ct
                                 ),
                         ct
@@ -1109,7 +1106,7 @@ public class EfToDoService : IToDoService
                         {
                             x.Id,
                             x.DueDate,
-                            x.RemindDaysBefore
+                            x.RemindDaysBefore,
                         })
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessAsync(
@@ -1180,7 +1177,7 @@ public class EfToDoService : IToDoService
             .Create()
             .IfSuccessAsync(
                 context =>
-                    GetAllChildrenAsync(context, options.Select(x => x.Id), ct)
+                    GetAllChildrenAsync(context, options.Select(x => x.Id), false, ct)
                         .IfSuccessAsync(
                             items =>
                             {
@@ -1382,17 +1379,18 @@ public class EfToDoService : IToDoService
     }
 
     private Cvtar StepCompletionAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> items,
         ToDoItemEntity item,
         bool completeTask,
         CancellationToken ct
     )
     {
-        return context
-            .Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayEntitiesAsync(ct)
+        return items
+            .Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Step)
+            .Select(x => x.Value)
+            .ToArray()
+            .ToReadOnlyMemory()
+            .ToResult()
             .IfSuccessAsync(
                 steps =>
                 {
@@ -1401,13 +1399,15 @@ public class EfToDoService : IToDoService
                         step.IsCompleted = completeTask;
                     }
 
-                    return context
-                        .Set<ToDoItemEntity>()
-                        .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
+                    return items
+                        .Where(x =>
+                            x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Group
+                        )
+                        .Select(x => x.Value)
+                        .ToArray()
+                        .ToReadOnlyMemory()
                         .IfSuccessForEachAsync(
-                            group => StepCompletionAsync(context, group, completeTask, ct),
+                            group => StepCompletionAsync(items, group, completeTask, ct),
                             ct
                         );
                 },
@@ -1415,53 +1415,43 @@ public class EfToDoService : IToDoService
             )
             .IfSuccessAsync(
                 () =>
-                    context
-                        .Set<ToDoItemEntity>()
+                    items
                         .Where(x =>
-                            x.ParentId == item.Id
-                            && x.Type == ToDoItemType.Reference
-                            && x.ReferenceId.HasValue
+                            x.Value.ParentId == item.Id
+                            && x.Value.Type == ToDoItemType.Reference
+                            && x.Value.ReferenceId.HasValue
                         )
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
+                        .Select(x => x.Value.ReferenceId.ThrowIfNullStruct())
+                        .ToArray()
+                        .ToReadOnlyMemory()
                         .IfSuccessForEachAsync(
-                            reference =>
-                                context
-                                    .GetEntityAsync<ToDoItemEntity>(
-                                        reference.ReferenceId.ThrowIfNullStruct()
-                                    )
-                                    .IfSuccessAsync(
-                                        i =>
-                                            i.Type switch
-                                            {
-                                                ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group
-                                                    => StepCompletionAsync(
-                                                        context,
-                                                        i,
-                                                        completeTask,
-                                                        ct
-                                                    ),
-                                                ToDoItemType.Planned => Result.AwaitableSuccess,
-                                                ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset
-                                                    => Result.AwaitableSuccess,
-                                                ToDoItemType.Circle => Result.AwaitableSuccess,
-                                                ToDoItemType.Step
-                                                    => Result
-                                                        .Execute(() => i.IsCompleted = completeTask)
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                                ToDoItemType.Reference => Result.AwaitableSuccess,
-                                                _
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                            },
+                            referenceId =>
+                            {
+                                var reference = items[referenceId];
+
+                                return reference.Type switch
+                                {
+                                    ToDoItemType.Value => Result.AwaitableSuccess,
+                                    ToDoItemType.Group => StepCompletionAsync(
+                                        items,
+                                        reference,
+                                        completeTask,
                                         ct
                                     ),
+                                    ToDoItemType.Planned => Result.AwaitableSuccess,
+                                    ToDoItemType.Periodicity => Result.AwaitableSuccess,
+                                    ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
+                                    ToDoItemType.Circle => Result.AwaitableSuccess,
+                                    ToDoItemType.Step => Result
+                                        .Execute(() => reference.IsCompleted = completeTask)
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false),
+                                    ToDoItemType.Reference => Result.AwaitableSuccess,
+                                    _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type))
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false),
+                                };
+                            },
                             ct
                         ),
                 ct
@@ -1469,7 +1459,7 @@ public class EfToDoService : IToDoService
     }
 
     private Cvtar CircleCompletionAsync(
-        SpravyDbToDoDbContext context,
+        FrozenDictionary<Guid, ToDoItemEntity> items,
         ToDoItemEntity item,
         bool moveCircleOrderIndex,
         bool completeTask,
@@ -1477,11 +1467,12 @@ public class EfToDoService : IToDoService
         CancellationToken ct
     )
     {
-        return context
-            .Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayEntitiesAsync(ct)
+        return items
+            .Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Circle)
+            .Select(x => x.Value)
+            .ToArray()
+            .ToReadOnlyMemory()
+            .ToResult()
             .IfSuccessAsync(
                 circleChildren =>
                 {
@@ -1516,15 +1507,17 @@ public class EfToDoService : IToDoService
                         }
                     }
 
-                    return context
-                        .Set<ToDoItemEntity>()
-                        .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
+                    return items
+                        .Where(x =>
+                            x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Group
+                        )
+                        .Select(x => x.Value)
+                        .ToArray()
+                        .ToReadOnlyMemory()
                         .IfSuccessForEachAsync(
                             group =>
                                 CircleCompletionAsync(
-                                    context,
+                                    items,
                                     group,
                                     moveCircleOrderIndex,
                                     completeTask,
@@ -1538,51 +1531,42 @@ public class EfToDoService : IToDoService
             )
             .IfSuccessAsync(
                 () =>
-                    context
-                        .Set<ToDoItemEntity>()
+                    items
                         .Where(x =>
-                            x.ParentId == item.Id
-                            && x.Type == ToDoItemType.Reference
-                            && x.ReferenceId.HasValue
+                            x.Value.ParentId == item.Id
+                            && x.Value.Type == ToDoItemType.Reference
+                            && x.Value.ReferenceId.HasValue
                         )
-                        .OrderBy(x => x.OrderIndex)
-                        .ToArrayEntitiesAsync(ct)
+                        .Select(x => x.Value.ReferenceId.ThrowIfNullStruct())
+                        .ToArray()
+                        .ToReadOnlyMemory()
                         .IfSuccessForEachAsync(
-                            reference =>
-                                context
-                                    .GetEntityAsync<ToDoItemEntity>(
-                                        reference.ReferenceId.ThrowIfNullStruct()
-                                    )
-                                    .IfSuccessAsync(
-                                        i =>
-                                            i.Type switch
-                                            {
-                                                ToDoItemType.Value => Result.AwaitableSuccess,
-                                                ToDoItemType.Group
-                                                    => CircleCompletionAsync(
-                                                        context,
-                                                        i,
-                                                        moveCircleOrderIndex,
-                                                        completeTask,
-                                                        onlyCompletedTasks,
-                                                        ct
-                                                    ),
-                                                ToDoItemType.Planned => Result.AwaitableSuccess,
-                                                ToDoItemType.Periodicity => Result.AwaitableSuccess,
-                                                ToDoItemType.PeriodicityOffset
-                                                    => Result.AwaitableSuccess,
-                                                ToDoItemType.Circle => Result.AwaitableSuccess,
-                                                ToDoItemType.Step => Result.AwaitableSuccess,
-                                                ToDoItemType.Reference => Result.AwaitableSuccess,
-                                                _
-                                                    => new Result(
-                                                        new ToDoItemTypeOutOfRangeError(i.Type)
-                                                    )
-                                                        .ToValueTaskResult()
-                                                        .ConfigureAwait(false),
-                                            },
+                            referenceId =>
+                            {
+                                var reference = items[referenceId];
+
+                                return reference.Type switch
+                                {
+                                    ToDoItemType.Value => Result.AwaitableSuccess,
+                                    ToDoItemType.Group => CircleCompletionAsync(
+                                        items,
+                                        reference,
+                                        moveCircleOrderIndex,
+                                        completeTask,
+                                        onlyCompletedTasks,
                                         ct
                                     ),
+                                    ToDoItemType.Planned => Result.AwaitableSuccess,
+                                    ToDoItemType.Periodicity => Result.AwaitableSuccess,
+                                    ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
+                                    ToDoItemType.Circle => Result.AwaitableSuccess,
+                                    ToDoItemType.Step => Result.AwaitableSuccess,
+                                    ToDoItemType.Reference => Result.AwaitableSuccess,
+                                    _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type))
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false),
+                                };
+                            },
                             ct
                         ),
                 ct
@@ -1951,14 +1935,22 @@ public class EfToDoService : IToDoService
     > GetAllChildrenAsync(
         SpravyDbToDoDbContext context,
         ReadOnlyMemory<Guid> ids,
+        bool tracking,
         CancellationToken ct
     )
     {
         var parameters = CreateSqlRawParametersForAllChildren(ids);
 
-        return context
+        var query = context
             .Set<ToDoItemEntity>()
-            .FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray())
+            .FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray());
+
+        if (tracking)
+        {
+            query.AsNoTracking();
+        }
+
+        return query
             .ToArrayEntitiesAsync(ct)
             .IfSuccessAsync(
                 items =>
