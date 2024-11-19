@@ -607,8 +607,12 @@ public class SpravyCommandService
                                 editId.Items
                             );
 
+                            var parent = editId.Items.IsEmpty
+                                ? editId.Item
+                                : editId.Items.Span[0].ToOption();
+
                             return toDoUiService
-                                .UpdateSiblingsAsync(editId.Item, editId.Items, viewModel, ct)
+                                .UpdateSiblingsAsync(parent, editId.Items, viewModel, ct)
                                 .IfSuccessAsync(
                                     () =>
                                         dialogViewer.ShowConfirmDialogAsync(
