@@ -15,7 +15,7 @@
                 <c:GroupBoxControl>
                     <c:GroupBoxControl.Header>
                         <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Classes="horizontal">
                                 <Button Command="{x:Static h:UiHelper.SwitchPane}">
                                     <i:Icon Value="mdi-menu" />
                                 </Button>
@@ -23,9 +23,7 @@
                                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
                             </StackPanel>
 
-                            <ScrollViewer Grid.Column="1"
-                                          Classes="horizontal"
-                                          HorizontalAlignment="Left">
+                            <ScrollViewer Grid.Column="1" Classes="horizontal alignment-left">
                                 <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
                             </ScrollViewer>
                         </Grid>
