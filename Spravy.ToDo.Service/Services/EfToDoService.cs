@@ -1945,7 +1945,11 @@ public class EfToDoService : IToDoService
             .Set<ToDoItemEntity>()
             .FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray());
 
-        if (!tracking)
+        if (tracking)
+        {
+            query.AsTracking();
+        }
+        else
         {
             query.AsNoTracking();
         }
