@@ -288,7 +288,7 @@ public class ToDoUiService : IToDoUiService
     {
         return toDoItemsView
             .RefreshAsync(ct)
-            .IfSuccessAsync(() => toDoService.SearchToDoItemIdsAsync(searchText, ct), ct)
+            .IfSuccessAsync(() => searchText.IsNullOrWhiteSpace() ? ReadOnlyMemory<Guid>.Empty.ToResult().ToValueTaskResult().ConfigureAwait(false) : toDoService.SearchToDoItemIdsAsync(searchText, ct), ct)
             .IfSuccessAsync(
                 ids =>
                     ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
