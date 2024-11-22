@@ -534,6 +534,8 @@ public class EfToDoService : IToDoService
         CancellationToken ct
     )
     {
+        var normalizeSearchText = searchText.ToUpperInvariant();
+        
         return dbContextFactory
             .Create()
             .IfSuccessDisposeAsync(
@@ -541,7 +543,7 @@ public class EfToDoService : IToDoService
                     context
                         .Set<ToDoItemEntity>()
                         .AsNoTracking()
-                        .Where(x => x.Name.Contains(searchText))
+                        .Where(x => x.Name.Contains(searchText) || x.NormalizeName.Contains(normalizeSearchText))
                         .OrderBy(x => x.OrderIndex)
                         .Select(x => x.Id)
                         .ToArrayEntitiesAsync(ct),
@@ -816,8 +818,6 @@ public class EfToDoService : IToDoService
         CancellationToken ct
     )
     {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-
         return dbContextFactory
             .Create()
             .IfSuccessDisposeAsync(
@@ -2013,7 +2013,8 @@ public class EfToDoService : IToDoService
                      IsBookmark,
                      Icon,
                      Color,
-                     RemindDaysBefore
+                     RemindDaysBefore,
+                     NormalizeName
                  ) AS (
                      SELECT
                      Id,
@@ -2044,7 +2045,8 @@ public class EfToDoService : IToDoService
                      IsBookmark,
                      Icon,
                      Color,
-                     RemindDaysBefore
+                     RemindDaysBefore,
+                     NormalizeName
                      FROM ToDoItem
                      WHERE Id IN ({idsString})
 
@@ -2079,7 +2081,8 @@ public class EfToDoService : IToDoService
                      t.IsBookmark,
                      t.Icon,
                      t.Color,
-                     t.RemindDaysBefore
+                     t.RemindDaysBefore,
+                     t.NormalizeName
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.ParentId = h.Id
 
@@ -2114,7 +2117,8 @@ public class EfToDoService : IToDoService
                      t.IsBookmark,
                      t.Icon,
                      t.Color,
-                     t.RemindDaysBefore
+                     t.RemindDaysBefore,
+                     t.NormalizeName
                      FROM ToDoItem t
                      INNER JOIN hierarchy h ON t.Id = h.ReferenceId
                      WHERE h.Type = 7 AND h.ReferenceId IS NOT NULL AND h.ReferenceId <> h.Id

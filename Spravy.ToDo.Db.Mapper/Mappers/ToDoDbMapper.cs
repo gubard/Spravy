@@ -71,6 +71,7 @@ public static partial class ToDoDbMapper
             RemindDaysBefore = value.RemindDaysBefore,
             TypeOfPeriodicity = value.TypeOfPeriodicity,
             IsRequiredCompleteInDueDate = value.IsRequiredCompleteInDueDate,
+            NormalizeName = value.Name.ToUpperInvariant(),
         };
 
         result.SetMonthlyDays(value.MonthlyDays);

@@ -8,6 +8,7 @@ public record ToDoItemEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string NormalizeName { get; set; } = string.Empty;
     public uint OrderIndex { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
