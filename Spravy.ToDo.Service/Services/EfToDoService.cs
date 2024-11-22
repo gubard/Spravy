@@ -1470,6 +1470,7 @@ public class EfToDoService : IToDoService
         return items
             .Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Circle)
             .Select(x => x.Value)
+            .OrderBy(x => x.OrderIndex)
             .ToArray()
             .ToReadOnlyMemory()
             .ToResult()
