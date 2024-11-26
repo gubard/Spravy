@@ -26,9 +26,9 @@
         </PackageReference>
         <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-        <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.1" />
-        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.4.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.5.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.5.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     </ItemGroup>
 
     <ItemGroup>

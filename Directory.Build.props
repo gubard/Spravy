@@ -3,8 +3,8 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AvaloniaVersion>11.2.1</AvaloniaVersion>
-        <GrpcVersion>2.66.0</GrpcVersion>
+        <AvaloniaVersion>11.2.2</AvaloniaVersion>
+        <GrpcVersion>2.67.0</GrpcVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
