@@ -1,4 +1,5 @@
 using Avalonia.Layout;
+using Spravy.Ui.Setting;
 
 namespace Spravy.Ui;
 
@@ -76,11 +77,36 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = serviceFactory
-                .CreateService<IDesktopTopLevelControl>()
-                .As<Window>()
-                .ThrowIfNull();
-            desktop.MainWindow = window;
+            var objectStorage = serviceFactory.CreateService<IObjectStorage>();
+            var settings = objectStorage
+               .GetObjectOrDefaultAsync<WindowSetting>(TypeCache<WindowSetting>.Type.Name, CancellationToken.None)
+               .GetAwaiter()
+               .GetResult();
+
+           if (!settings.TryGetValue(out var result))
+           {
+               result = WindowSetting.Default;
+           }
+           
+           var window = serviceFactory.CreateService<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
+           window.Width = result.Width;
+           window.Height = result.Height;
+           window.Position = new (result.X,result.Y);
+
+           window.Closing += (_, _) =>
+           {
+               var windowSetting = new WindowSetting
+               {
+                   Width = window.Width,
+                   Height = window.Height,
+                   X = window.Position.X,
+                   Y = window.Position.Y,
+               };
+
+               objectStorage.SaveObjectAsync(TypeCache<WindowSetting>.Type.Name, windowSetting, CancellationToken.None).GetAwaiter().GetResult();
+           };
+
+           desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

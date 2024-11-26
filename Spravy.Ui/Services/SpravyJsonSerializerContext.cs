@@ -65,4 +65,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(AppSetting))]
 [JsonSerializable(typeof(DayOfYearSettings))]
 [JsonSerializable(typeof(EditToDoItemViewModelSettings))]
+[JsonSerializable(typeof(WindowSetting))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

@@ -8,8 +8,6 @@
         x:DataType="vm:MainWindowModel"
         Title="Spravy"
         Icon="/Assets/Images/Logo.png"
-        Width="600"
-        Height="600"
         MinWidth="320"
         MinHeight="400"
         TransparencyLevelHint="AcrylicBlur"
