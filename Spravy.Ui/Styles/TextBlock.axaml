@@ -15,7 +15,7 @@
     </Design.PreviewWith>
     
     <Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+        <Setter Property="FontFamily" Value="fonts:ShantellSans#Shantell Sans" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
