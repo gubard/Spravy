@@ -3,6 +3,7 @@
                     xmlns:c="clr-namespace:Spravy.Ui.Converters"
                     xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters"
                     xmlns:m="clr-namespace:Spravy.Ui.Models">
+    <FontFamily x:Key="ContentControlThemeFontFamily">fonts:JetBrainsMono#JetBrains Mono, $Default</FontFamily>
     <lc:ObjectToLocalizationConverter x:Key="ObjectToLocalizationConverter" />
     <c:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
     <c:DateTimeToLocalConverter x:Key="DateTimeToLocalConverter" />

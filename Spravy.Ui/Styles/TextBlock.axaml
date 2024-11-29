@@ -15,7 +15,6 @@
     </Design.PreviewWith>
     
     <Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="fonts:JetBrainsMono#JetBrains Mono" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>

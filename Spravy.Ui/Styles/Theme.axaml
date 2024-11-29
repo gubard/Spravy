@@ -36,7 +36,6 @@
     <StyleInclude Source="TextBlock.axaml" />
     <StyleInclude Source="ListBox.axaml" />
     <StyleInclude Source="ToggleButton.axaml" />
-    <StyleInclude Source="AccessText.axaml" />
     <StyleInclude Source="Button.axaml" />
     <StyleInclude Source="Expander.axaml" />
     <StyleInclude Source="ContentControl.axaml" />
@@ -51,4 +50,5 @@
     <StyleInclude Source="StackPanel.axaml" />
     <StyleInclude Source="Icon.axaml" />
     <StyleInclude Source="Rectangle.axaml" />
+    <StyleInclude Source="Markdown.axaml" />
 </Styles>
