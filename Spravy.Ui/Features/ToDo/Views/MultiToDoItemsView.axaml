@@ -186,7 +186,7 @@
     </UserControl.Styles>
 
     <StackPanel x:Name="MainPanel">
-        <Grid ColumnDefinitions="Auto,*"
+        <Grid ColumnDefinitions="Auto,Auto,*"
               Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
@@ -196,7 +196,13 @@
             <StackPanel Grid.Column="1" Margin="2,0,2,0">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
-                <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
+                <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding GroupBy}" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="2" Margin="2,0,2,0">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource MultiToDoItemsView.SortBy}" />
+                <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding SortBy}" />
             </StackPanel>
         </Grid>
 

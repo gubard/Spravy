@@ -4,51 +4,55 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemsViewModel : ViewModelBase
 {
-    private readonly SortBy sortBy;
+    private readonly ViewModelSortBy viewModelSortBy;
 
     [ObservableProperty]
     private bool isExpanded = true;
+
+    [ObservableProperty]
+    private SortByToDoItem sortBy;
+
     private readonly AvaloniaList<ToDoItemEntityNotify> toDoItems = new();
 
     public ToDoItemsViewModel(
-        SortBy sortBy,
+        ViewModelSortBy viewModelSortBy,
         TextLocalization header,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     )
     {
         Header = header;
-        this.sortBy = sortBy;
+        this.viewModelSortBy = viewModelSortBy;
 
-        SwitchAllSelectionCommand = SpravyCommand.Create(
-            ct =>
-                this.PostUiBackground(
-                        () =>
-                        {
-                            if (ToDoItems.All(x => x.IsSelected))
-                            {
-                                foreach (var item in ToDoItems)
-                                {
-                                    item.IsSelected = false;
-                                }
-                            }
-                            else
-                            {
-                                foreach (var item in ToDoItems)
-                                {
-                                    item.IsSelected = true;
-                                }
-                            }
+        SwitchAllSelectionCommand = SpravyCommand.Create(ct => this.PostUiBackground(() =>
+            {
+                if (ToDoItems.All(x => x.IsSelected))
+                {
+                    foreach (var item in ToDoItems)
+                    {
+                        item.IsSelected = false;
+                    }
+                }
+                else
+                {
+                    foreach (var item in ToDoItems)
+                    {
+                        item.IsSelected = true;
+                    }
+                }
 
-                            return Result.Success;
-                        },
-                        ct
-                    )
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false),
-            errorHandler,
-            taskProgressService
-        );
+                return Result.Success;
+            }, ct)
+           .ToValueTaskResult()
+           .ConfigureAwait(false), errorHandler, taskProgressService);
+
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(SortBy))
+            {
+                Sort();
+            }
+        };
     }
 
     public TextLocalization Header { get; }
@@ -73,19 +77,23 @@ public partial class ToDoItemsViewModel : ViewModelBase
         var notContains = items.Where(x => !ToDoItems.Contains(x));
         toDoItems.AddRange(notContains.ToArray());
 
-        switch (sortBy)
-        {
-            case SortBy.OrderIndex:
-                toDoItems.BinarySortByOrderIndex();
-                break;
-            case SortBy.LoadedIndex:
-                toDoItems.BinarySortByLoadedIndex();
-                break;
-            default:
-                return new(new SortByOutOfRangeError(sortBy));
-        }
+        return Sort();
+    }
 
-        return Result.Success;
+    private Result Sort()
+    {
+        return SortBy switch
+        {
+            SortByToDoItem.Index => viewModelSortBy switch
+            {
+                ViewModelSortBy.OrderIndex => toDoItems.BinarySortByOrderIndex(),
+                ViewModelSortBy.LoadedIndex => toDoItems.BinarySortByLoadedIndex(),
+                _ => new(new ViewModelSortByOutOfRangeError(viewModelSortBy)),
+            },
+            SortByToDoItem.Name => toDoItems.BinarySortByName(),
+            SortByToDoItem.DueDate => toDoItems.BinarySortByName(),
+            _ => new(new SortByToDoItemOutOfRangeError(SortBy)),
+        };
     }
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)

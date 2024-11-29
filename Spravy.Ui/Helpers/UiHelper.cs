@@ -234,6 +234,12 @@ public static class UiHelper
             throw new ArgumentOutOfRangeException();
         }
     }
+    
+    public static ReadOnlyMemory<SortByToDoItem> SortByToDoItems = new([
+        SortByToDoItem.Index,
+        SortByToDoItem.Name,
+        SortByToDoItem.DueDate,
+    ]);
 
     public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses = new([
         ToDoItemStatus.Miss,
@@ -321,6 +327,11 @@ public static class UiHelper
         if (typeof(TypeOfPeriodicity) == type)
         {
             return new(TypeOfPeriodicitys.ToArray().OfType<object>().ToArray());
+        }
+        
+        if (typeof(SortByToDoItem) == type)
+        {
+            return new(SortByToDoItems.ToArray().OfType<object>().ToArray());
         }
 
         throw new ArgumentOutOfRangeException(type.ToString());

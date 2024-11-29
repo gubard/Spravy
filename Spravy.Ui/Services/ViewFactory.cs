@@ -107,7 +107,7 @@ public class ViewFactory : IViewFactory
         return new(
             item,
             items,
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
             errorHandler,
             objectStorage,
             toDoUiService
@@ -119,7 +119,7 @@ public class ViewFactory : IViewFactory
         return new(
             item,
             objectStorage,
-            CreateToDoSubItemsViewModel(SortBy.OrderIndex),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
             errorHandler,
             toDoUiService
         );
@@ -130,12 +130,12 @@ public class ViewFactory : IViewFactory
         return new();
     }
 
-    public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(SortBy sortBy)
+    public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
         return new(
             toDoService,
             toDoCache,
-            CreateMultiToDoItemsViewModel(sortBy),
+            CreateMultiToDoItemsViewModel(viewModelSortBy),
             taskProgressService,
             appOptions
         );
@@ -150,7 +150,7 @@ public class ViewFactory : IViewFactory
     {
         return new(
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            CreateToDoSubItemsViewModel(SortBy.OrderIndex),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
             objectStorage,
             errorHandler,
             toDoUiService
@@ -160,7 +160,7 @@ public class ViewFactory : IViewFactory
     public TodayToDoItemsViewModel CreateTodayToDoItemsViewModel()
     {
         return new(
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
             toDoUiService
         );
@@ -169,7 +169,7 @@ public class ViewFactory : IViewFactory
     public SearchToDoItemsViewModel CreateSearchToDoItemsViewModel()
     {
         return new(
-            CreateToDoSubItemsViewModel(SortBy.LoadedIndex),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
             errorHandler,
             objectStorage,
@@ -340,9 +340,9 @@ public class ViewFactory : IViewFactory
         return new(item);
     }
 
-    public ToDoItemsViewModel CreateToDoItemsViewModel(SortBy sortBy, TextLocalization header)
+    public ToDoItemsViewModel CreateToDoItemsViewModel(ViewModelSortBy viewModelSortBy, TextLocalization header)
     {
-        return new(sortBy, header, errorHandler, taskProgressService);
+        return new(viewModelSortBy, header, errorHandler, taskProgressService);
     }
 
     public DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item)
@@ -398,24 +398,24 @@ public class ViewFactory : IViewFactory
         return new(item, items, toDoService, CreateToDoItemSelectorViewModel(item, items));
     }
 
-    public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(SortBy sortBy)
+    public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
         return new(
-            CreateToDoItemsViewModel(SortBy.LoadedIndex, new("MultiToDoItemsView.Favorite")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByNoneView.Header")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByStatusView.Missed")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByStatusView.ReadyForCompleted")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByStatusView.Planned")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByStatusView.Completed")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Values")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Groups")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Planneds")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Periodicitys")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.PeriodicityOffsets")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Circles")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.Steps")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.References")),
-            CreateToDoItemsViewModel(sortBy, new("ToDoItemsGroupByTypeView.ComingSoon"))
+            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("MultiToDoItemsView.Favorite")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByNoneView.Header")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Missed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.ReadyForCompleted")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Planned")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Completed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Values")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Groups")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Planneds")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Periodicitys")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.PeriodicityOffsets")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Circles")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Steps")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.References")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.ComingSoon"))
         );
     }
 
