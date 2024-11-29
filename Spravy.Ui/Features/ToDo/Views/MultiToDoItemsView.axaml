@@ -11,6 +11,8 @@
                    xmlns:m="clr-namespace:Spravy.Ui.Models"
                    xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
                    xmlns:i="https://github.com/projektanker/icons.avalonia"
+                   xmlns:e="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
+                   xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia.Tight"
                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                    x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                    x:DataType="vm:MultiToDoItemsViewModel"
@@ -31,6 +33,19 @@
                             CommandParameter="{Binding}"
                             Classes="alignment-stretch content-alignment-stretch to-do-item"
                             Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
+                        <ToolTip.Tip>
+                            <c:ViewSelectorControl State="{Binding DescriptionType}">
+                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
+                                    <TextBlock Classes="alignment-left text-wrap"
+                                               Text="{Binding Description}" />
+                                </c:ViewSelectorItemControl>
+
+                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
+                                    <mdxaml:MarkdownScrollViewer MinWidth="320" Markdown="{Binding Description}" />
+                                </c:ViewSelectorItemControl>
+                            </c:ViewSelectorControl>
+                        </ToolTip.Tip>
+
                         <Grid ColumnDefinitions="*,Auto">
                             <Grid ColumnDefinitions="Auto,*">
                                 <ToggleButton BorderThickness="1"
