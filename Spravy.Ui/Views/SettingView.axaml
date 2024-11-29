@@ -10,80 +10,71 @@
              x:Class="Spravy.Ui.Views.SettingView"
              x:DataType="vm:SettingViewModel">
     <c:BusyAreaControl IsBusy="{Binding IsBusy}" Margin="2">
-        <Grid RowDefinitions="*,Auto">
-            <ScrollViewer Classes="vertical">
-                <c:GroupBoxControl>
-                    <c:GroupBoxControl.Header>
-                        <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Classes="horizontal">
-                                <Button Command="{x:Static h:UiHelper.SwitchPane}">
-                                    <i:Icon Value="mdi-menu" />
-                                </Button>
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="Auto,*">
+                <StackPanel Classes="horizontal">
+                    <Button Command="{x:Static h:UiHelper.SwitchPane}">
+                        <i:Icon Value="mdi-menu" />
+                    </Button>
 
-                                <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+                    <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+                </StackPanel>
+
+                <ScrollViewer Grid.Column="1" Classes="horizontal alignment-left">
+                    <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
+                </ScrollViewer>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" Classes="vertical">
+                <StackPanel>
+                    <c:GroupBoxControl Header="{StaticResource SettingView.AccountSetting}" Margin="5">
+                        <StackPanel>
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource SettingView.Login}" />
+
+                            <StackPanel Classes="horizontal">
+                                <TextBlock Text="{Binding AccountNotify.Login}" />
+
+                                <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
+                                        CommandParameter="{Binding AccountNotify.Login}">
+                                    <i:Icon Value="mdi-content-copy" />
+                                </Button>
                             </StackPanel>
 
-                            <ScrollViewer Grid.Column="1" Classes="horizontal alignment-left">
-                                <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
-                            </ScrollViewer>
-                        </Grid>
-                    </c:GroupBoxControl.Header>
+                            <StackPanel Classes="horizontal">
+                                <Button Classes="mode-press"
+                                        Content="{DynamicResource SettingView.ChangePassword}"
+                                        Command="{Binding ChangePasswordCommand.Command}" />
+                                <Button Classes="mode-press"
+                                        Content="{DynamicResource SettingView.DeleteAccount}"
+                                        Command="{Binding DeleteAccountCommand.Command}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </c:GroupBoxControl>
 
-                    <ItemsControl Classes="adaptive-items-control">
-                        <Border Classes="adaptive">
-                            <c:GroupBoxControl Header="{StaticResource SettingView.AccountSetting}">
-                                <StackPanel>
-                                    <TextBlock Classes="field"
-                                               Text="{DynamicResource SettingView.Login}" />
+                    <c:GroupBoxControl Header="{StaticResource SettingView.ApplicationInfo}" Margin="5">
+                        <StackPanel>
+                            <TextBlock Classes="field"
+                                       Text="{StaticResource SettingView.BaseTheme}" />
+                            <c:EnumSelectorControl Classes="alignment-left"
+                                                   SelectedEnum="{Binding SelectedTheme}" />
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource SettingView.Version}" />
 
-                                    <StackPanel Classes="horizontal">
-                                        <TextBlock Text="{Binding AccountNotify.Login}" />
+                            <StackPanel Classes="horizontal">
+                                <TextBlock Text="{Binding Version}" />
 
-                                        <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
-                                                CommandParameter="{Binding AccountNotify.Login}">
-                                            <i:Icon Value="mdi-content-copy" />
-                                        </Button>
-                                    </StackPanel>
-
-                                    <Grid ColumnDefinitions="*,*">
-                                        <Button Classes="mode-press"
-                                                Content="{DynamicResource SettingView.ChangePassword}"
-                                                Command="{Binding ChangePasswordCommand.Command}" />
-                                        <Button Grid.Column="1"
-                                                Classes="mode-press"
-                                                Content="{DynamicResource SettingView.DeleteAccount}"
-                                                Command="{Binding DeleteAccountCommand.Command}" />
-                                    </Grid>
-                                </StackPanel>
-                            </c:GroupBoxControl>
-                        </Border>
-
-                        <Border Classes="adaptive">
-                            <c:GroupBoxControl Header="{StaticResource SettingView.ApplicationInfo}">
-                                <StackPanel>
-                                    <TextBlock Classes="field"
-                                               Text="{StaticResource SettingView.BaseTheme}" />
-                                    <c:EnumSelectorControl Classes="alignment-center"
-                                                           SelectedEnum="{Binding SelectedTheme}" />
-                                    <TextBlock Classes="field"
-                                               Text="{DynamicResource SettingView.Version}" />
-
-                                    <StackPanel Classes="horizontal">
-                                        <TextBlock Text="{Binding Version}" />
-
-                                        <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
-                                                CommandParameter="{Binding Version}">
-                                            <i:Icon Value="mdi-content-copy" />
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </c:GroupBoxControl>
-                        </Border>
-                    </ItemsControl>
-                </c:GroupBoxControl>
+                                <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
+                                        CommandParameter="{Binding Version}">
+                                    <i:Icon Value="mdi-content-copy" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </c:GroupBoxControl>
+                </StackPanel>
             </ScrollViewer>
 
-            <Button Grid.Row="1" Command="{Binding SaveCommand.Command}" Content="{DynamicResource SettingView.Save}" />
+            <Button Grid.Row="2" Command="{Binding SaveCommand.Command}" Content="{DynamicResource SettingView.Save}" />
         </Grid>
     </c:BusyAreaControl>
 </UserControl>
