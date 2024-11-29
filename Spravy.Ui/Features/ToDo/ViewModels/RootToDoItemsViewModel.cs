@@ -1,11 +1,14 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
+public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+    
+    [ObservableProperty]
+    private bool isMulti;
 
     public RootToDoItemsViewModel(
         SpravyCommandNotifyService spravyCommandNotifyService,
@@ -23,7 +26,14 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
         this.toDoUiService = toDoUiService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
-        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IsMulti))
+            {
+                UpdateCommands();
+                ToDoSubItemsViewModel.List.IsMulti = IsMulti;
+            }
+        };
     }
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
@@ -82,19 +92,16 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoIt
                 ct
             );
     }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    
+    private void UpdateCommands()
     {
-        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        if (IsMulti)
         {
-            if (ToDoSubItemsViewModel.List.IsMulti)
-            {
-                Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
-            }
-            else
-            {
-                Commands.Clear();
-            }
+            Commands.UpdateUi(spravyCommandNotifyService.ToDoItemCommands);
+        }
+        else
+        {
+            Commands.Clear();
         }
     }
 

@@ -23,13 +23,18 @@
                         <i:Icon Value="mdi-menu" />
                     </Button>
 
+                    <ToggleButton Classes="alignment-center"
+                                  IsChecked="{Binding IsMulti}">
+                        <i:Icon Value="mdi-check-all" />
+                    </ToggleButton>
+
                     <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
                 </StackPanel>
 
                 <ScrollViewer Grid.Column="1"
                               Classes="alignment-stretch horizontal">
                     <StackPanel Classes="horizontal">
-                        <i:Icon Value="{Binding Item.Icon}" 
+                        <i:Icon Value="{Binding Item.Icon}"
                                 Classes="h2"
                                 IsVisible="{Binding Item.Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
                         <TextBlock Classes="alignment-left h3"

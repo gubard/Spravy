@@ -1,10 +1,13 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
+public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
 {
     private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
     private readonly IToDoUiService toDoUiService;
+
+    [ObservableProperty]
+    private bool isMulti;
 
     public ToDoItemViewModel(
         ToDoItemEntityNotify item,
@@ -12,8 +15,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
         IToDoUiService toDoUiService
-    )
-        : base(true)
+    ) : base(true)
     {
         this.objectStorage = objectStorage;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
@@ -21,7 +23,15 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
         Item = item;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
-        ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
+
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IsMulti))
+            {
+                UpdateCommands();
+                ToDoSubItemsViewModel.List.IsMulti = IsMulti;
+            }
+        };
     }
 
     public ToDoItemEntityNotify Item { get; }
@@ -38,11 +48,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
         return RefreshCore().ConfigureAwait(false);
     }
 
-    private Cvtar InitializedAsync(ToDoItemViewModel viewModel, CancellationToken ct)
-    {
-        return viewModel.RefreshAsync(ct);
-    }
-
     private async ValueTask<Result> RefreshCore()
     {
         await refreshWork.RunAsync();
@@ -52,17 +57,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService
-            .UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
-            .IfSuccessAsync(
-                () =>
-                {
-                    UpdateCommands();
+        return toDoUiService.UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
+           .IfSuccessAsync(() =>
+            {
+                UpdateCommands();
 
-                    return Result.Success;
-                },
-                ct
-            );
+                return Result.Success;
+            }, ct);
     }
 
     public override Result Stop()
@@ -79,22 +80,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(
-                s =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+        return objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(s => this.PostUiBackground(() =>
+            {
+                ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
+                return Result.Success;
+            }, ct), ct);
     }
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
@@ -106,28 +99,16 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEdi
     {
         if (!ToDoSubItemsViewModel.List.IsMulti)
         {
-            return new ToDoItemEditId(
-                Item.ToOption(),
-                ReadOnlyMemory<ToDoItemEntityNotify>.Empty
-            ).ToResult();
+            return new ToDoItemEditId(Item.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty).ToResult();
         }
 
-        return ToDoSubItemsViewModel
-            .GetSelectedItems()
-            .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
-        {
-            UpdateCommands();
-        }
+        return ToDoSubItemsViewModel.GetSelectedItems()
+           .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
     }
 
     private void UpdateCommands()
     {
-        if (ToDoSubItemsViewModel.List.IsMulti)
+        if (IsMulti)
         {
             Commands.UpdateUi(UiHelper.ToDoItemCommands);
         }

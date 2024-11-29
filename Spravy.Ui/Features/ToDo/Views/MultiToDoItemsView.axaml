@@ -186,25 +186,19 @@
     </UserControl.Styles>
 
     <StackPanel x:Name="MainPanel">
-        <Grid ColumnDefinitions="Auto,Auto,*"
-              Margin="2">
-            <ToggleButton Classes="alignment-center"
-                          IsChecked="{Binding IsMulti}">
-                <i:Icon Value="mdi-check-all" />
-            </ToggleButton>
-
-            <StackPanel Grid.Column="1" Margin="2,0,2,0">
+        <StackPanel Classes="horizontal" Margin="2">
+            <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
                 <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
-            
-            <StackPanel Grid.Column="2" Margin="2,0,2,0">
+
+            <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.SortBy}" />
                 <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding SortBy}" />
             </StackPanel>
-        </Grid>
+        </StackPanel>
 
         <ContentControl Content="{Binding Favorite}"
                         IsVisible="{Binding Favorite.ToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />

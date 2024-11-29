@@ -18,6 +18,11 @@
                     <i:Icon Value="mdi-menu" />
                 </Button>
 
+                <ToggleButton Classes="alignment-center"
+                              IsChecked="{Binding IsMulti}">
+                    <i:Icon Value="mdi-check-all" />
+                </ToggleButton>
+
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
             </StackPanel>
 
