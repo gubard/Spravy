@@ -84,7 +84,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
            .IfSuccessAsync(s => this.PostUiBackground(() =>
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                IsMulti = s.IsMulti;
 
                 return Result.Success;
             }, ct), ct);

@@ -83,7 +83,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                         () =>
                         {
                             ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                            IsMulti = s.IsMulti;
 
                             return Result.Success;
                         },
