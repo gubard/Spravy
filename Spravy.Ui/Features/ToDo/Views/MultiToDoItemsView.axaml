@@ -83,47 +83,49 @@
                                   ColumnDefinitions="Auto,Auto"
                                   RowDefinitions="Auto,Auto"
                                   Classes="alignment-top">
-                                <Button>
-                                    <Button.DataTemplates>
-                                        <DataTemplate x:DataType="m:SpravyCommandNotify">
-                                            <ContentControl Content="{Binding Text}" />
-                                        </DataTemplate>
-                                    </Button.DataTemplates>
+                                <StackPanel Grid.ColumnSpan="2" Classes="horizontal alignment-right">
+                                    <Button>
+                                        <Button.DataTemplates>
+                                            <DataTemplate x:DataType="m:SpravyCommandNotify">
+                                                <ContentControl Content="{Binding Text}" />
+                                            </DataTemplate>
+                                        </Button.DataTemplates>
 
-                                    <Button.Styles>
-                                        <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
-                                            <Setter Property="Command" Value="{Binding Item.Command}" />
-                                            <Setter Property="CommandParameter"
-                                                    Value="{Binding $parent[Button].DataContext}" />
+                                        <Button.Styles>
+                                            <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                                                <Setter Property="Command" Value="{Binding Item.Command}" />
+                                                <Setter Property="CommandParameter"
+                                                        Value="{Binding $parent[Button].DataContext}" />
 
-                                            <Setter Property="Icon">
-                                                <Template>
-                                                    <i:Icon Value="{Binding Kind}" />
-                                                </Template>
-                                            </Setter>
-                                        </Style>
-                                    </Button.Styles>
+                                                <Setter Property="Icon">
+                                                    <Template>
+                                                        <i:Icon Value="{Binding Kind}" />
+                                                    </Template>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Styles>
 
-                                    <Button.Flyout>
-                                        <MenuFlyout ItemsSource="{Binding Commands}" />
-                                    </Button.Flyout>
+                                        <Button.Flyout>
+                                            <MenuFlyout ItemsSource="{Binding Commands}" />
+                                        </Button.Flyout>
 
-                                    <i:Icon Value="mdi-dots-horizontal" />
-                                </Button>
-
-                                <Panel Grid.Column="1">
-                                    <Button Command="{x:Static h:UiHelper.RemoveFromFavorite}"
-                                            CommandParameter="{Binding}"
-                                            IsVisible="{Binding IsFavorite}">
-                                        <i:Icon Value="mdi-star" />
+                                        <i:Icon Value="mdi-dots-horizontal" />
                                     </Button>
 
-                                    <Button Command="{x:Static h:UiHelper.AddToFavorite}"
-                                            CommandParameter="{Binding}"
-                                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                        <i:Icon Value="mdi-star-outline" />
-                                    </Button>
-                                </Panel>
+                                    <Panel>
+                                        <Button Command="{x:Static h:UiHelper.RemoveFromFavorite}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding IsFavorite}">
+                                            <i:Icon Value="mdi-star" />
+                                        </Button>
+
+                                        <Button Command="{x:Static h:UiHelper.AddToFavorite}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                            <i:Icon Value="mdi-star-outline" />
+                                        </Button>
+                                    </Panel>
+                                </StackPanel>
 
                                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
                                     <TextBlock Text="{Binding Type}" Classes="small" />
