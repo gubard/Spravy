@@ -26,7 +26,7 @@ public class TestAppBuilder
             .Configure<App>()
             .UseSkia()
             .UseHeadless(new() { UseHeadlessDrawing = false, })
-            .WithShantellSansFont()
+            .WithJetBrainsMonoFont()
             .WithInterFont();
     }
 }

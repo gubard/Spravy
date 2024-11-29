@@ -25,6 +25,6 @@ public class Program
             .Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
             .UsePlatformDetect()
             .WithInterFont()
-            .WithShantellSansFont();
+            .WithJetBrainsMonoFont();
     }
 }

@@ -31,7 +31,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        return base.CustomizeAppBuilder(builder).WithInterFont().WithShantellSansFont();
+        return base.CustomizeAppBuilder(builder).WithInterFont().WithJetBrainsMonoFont();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)

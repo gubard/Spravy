@@ -2,10 +2,10 @@ namespace Spravy.Ui.Extensions;
 
 public static class AppBuilderExtension
 {
-    public static AppBuilder WithShantellSansFont(this AppBuilder appBuilder)
+    public static AppBuilder WithJetBrainsMonoFont(this AppBuilder appBuilder)
     {
         return appBuilder.ConfigureFonts(fontManager =>
-            fontManager.AddFontCollection(new ShantellSansFontCollection())
+            fontManager.AddFontCollection(new JetBrainsMonoFontCollection())
         );
     }
 }

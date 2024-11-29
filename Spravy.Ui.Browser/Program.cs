@@ -26,6 +26,6 @@ internal class Program
         return AppBuilder
             .Configure(() => DiHelper.ServiceFactory.CreateService<App>())
             .WithInterFont()
-            .WithShantellSansFont();
+            .WithJetBrainsMonoFont();
     }
 }
