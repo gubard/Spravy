@@ -190,13 +190,13 @@
             <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
-                <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding GroupBy}" />
+                <c:EnumSelectorControl MinWidth="150" Classes="combo-box" SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
 
             <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.SortBy}" />
-                <c:EnumSelectorControl Classes="combo-box" SelectedEnum="{Binding SortBy}" />
+                <c:EnumSelectorControl MinWidth="150" Classes="combo-box" SelectedEnum="{Binding SortBy}" />
             </StackPanel>
         </StackPanel>
 

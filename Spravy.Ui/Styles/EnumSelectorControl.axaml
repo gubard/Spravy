@@ -7,7 +7,7 @@
         <Setter Property="Margin" Value="0,2,0,2" />
         <Setter Property="Template">
             <ControlTemplate>
-                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single" />
+                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single" MinWidth="{TemplateBinding MinWidth}" />
             </ControlTemplate>
         </Setter>
 
@@ -22,7 +22,7 @@
         <Style Selector="^.combo-box">
             <Setter Property="Template">
                 <ControlTemplate>
-                    <ComboBox x:Name="PART_SelectingItemsControl" />
+                    <ComboBox x:Name="PART_SelectingItemsControl" MinWidth="{TemplateBinding MinWidth}" />
                 </ControlTemplate>
             </Setter>
         </Style>
