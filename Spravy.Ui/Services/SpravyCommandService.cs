@@ -1,4 +1,5 @@
 using Avalonia.Markup.Xaml.Styling;
+using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;
 
@@ -1233,22 +1234,15 @@ public class SpravyCommandService
                         {
                             if (isExists)
                             {
-                                return objectStorage.GetObjectAsync<Setting.Setting>(key, ct)
+                                return objectStorage.GetObjectAsync<AppSetting>(key, ct)
                                    .IfSuccessAsync(
                                         setting => setting.PostUiBackground(
                                             () =>
                                             {
                                                 application.RequestedThemeVariant = setting.Theme.ToThemeVariant();
-
-                                                application.Resources.MergedDictionaries.Insert(
-                                                    0,
-                                                    new ResourceInclude((Uri?)null)
-                                                    {
-                                                        Source =
-                                                            new(
-                                                                $"avares://Spravy.Ui/Assets/Lang/{setting.Language}.axaml"
-                                                            ), }
-                                                );
+                                                var lang = application.GetLang(setting.Language);
+                                                application.Resources.MergedDictionaries.Remove(lang);
+                                                application.Resources.MergedDictionaries.Add(lang);
 
                                                 return Result.Success;
                                             },

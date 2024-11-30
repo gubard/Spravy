@@ -25,4 +25,22 @@ public static class ApplicationExtension
 
         return value;
     }
+
+    public static IResourceProvider GetLang(this Application app, string cultureName)
+    {
+        foreach (var resourceProvider in app.Resources.MergedDictionaries)
+        {
+            if (!resourceProvider.TryGetResource("Lang.CultureName", null, out var value))
+            {
+                continue;
+            }
+
+            if (value?.ToString() == cultureName)
+            {
+                return resourceProvider;
+            }
+        }
+
+        throw new($"Lang.CultureName not found for culture {cultureName}");
+    }
 }

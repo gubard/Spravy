@@ -1,4 +1,5 @@
 using Avalonia.Markup.Xaml.Styling;
+using Spravy.Ui.Setting;
 using AppConst = Spravy.Domain.Helpers.AppConst;
 
 namespace Spravy.Ui.ViewModels;
@@ -55,6 +56,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
     public AvaloniaList<string> Languages { get; }
     public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
     public string Version => AppConst.VersionString;
+    public string[] FavoriteIcons = [];
 
     private Cvtar DeleteAccountAsync(CancellationToken ct)
     {
@@ -79,12 +81,14 @@ public partial class SettingViewModel : NavigatableViewModelBase
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<Setting.Setting>(ViewId, ct)
+        return objectStorage.GetObjectOrDefaultAsync<AppSetting>(ViewId, ct)
            .IfSuccessAsync(
                 setting => this.PostUiBackground(
                     () =>
                     {
                         SelectedTheme = setting.Theme;
+                        Language = setting.Language;
+                        FavoriteIcons = setting.FavoriteIcons;
 
                         return Result.Success;
                     },
@@ -96,7 +100,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new Setting.Setting(this), ct);
+        return objectStorage.SaveObjectAsync(ViewId, new AppSetting(this), ct);
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -112,15 +116,9 @@ public partial class SettingViewModel : NavigatableViewModelBase
         }
         else if (e.PropertyName == nameof(Language))
         {
-            application.Resources.MergedDictionaries.Insert(
-                0,
-                new ResourceInclude((Uri?)null)
-                {
-                    Source = new($"avares://Spravy.Ui/Assets/Lang/{Language}.axaml"),
-                }
-            );
-
-            application.Resources.MergedDictionaries.RemoveAt(1);
+            var lang = application.GetLang(Language);
+            application.Resources.MergedDictionaries.Remove(lang);
+            application.Resources.MergedDictionaries.Add(lang);
         }
     }
 }

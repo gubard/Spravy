@@ -52,7 +52,6 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(SettingModel))]
 [JsonSerializable(typeof(EmailOrLoginInputViewModelSetting))]
 [JsonSerializable(typeof(VerificationCodePasswordError))]
-[JsonSerializable(typeof(Setting.Setting))]
 [JsonSerializable(typeof(GrpcScheduleServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcToDoServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcAuthenticationServiceOptionsConfiguration))]
