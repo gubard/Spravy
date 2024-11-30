@@ -1359,7 +1359,7 @@ public class SpravyCommandService
                     .IfSuccessAsync(
                         () =>
                             spravyNotificationManager.ShowAsync(
-                                new TextLocalization("Notification.CopyToClipboard"),
+                                new TextLocalization("Lang.CopyToClipboard"),
                                 ct
                             ),
                         ct

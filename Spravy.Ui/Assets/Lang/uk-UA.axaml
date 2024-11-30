@@ -2,34 +2,34 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
     <!--ToDoItemContentView-->
-    <sys:String x:Key="Lang.Color">Color</sys:String>
-    
+    <sys:String x:Key="Lang.Color">Колір</sys:String>
+
     <!--ToDoItemCreateTimerView-->
-    <sys:String x:Key="Lang.CreateTimer">Create timer</sys:String>
+    <sys:String x:Key="Lang.CreateTimer">Створити таймер</sys:String>
 
     <!--Notification-->
-    <sys:String x:Key="Lang.CopyToClipboard">Copy to clipboard</sys:String>
-    <sys:String x:Key="Notification.UpdateSchedule">Update schedule</sys:String>
-    <sys:String x:Key="Notification.UpdateToDoEvents">Update to do</sys:String>
+    <sys:String x:Key="Lang.CopyToClipboard">Скопіювати в буфер обміну</sys:String>
+    <sys:String x:Key="Notification.UpdateSchedule">Обновився графік</sys:String>
+    <sys:String x:Key="Notification.UpdateToDoEvents">Обновилася справа</sys:String>
 
     <!--Command-->
-    <sys:String x:Key="Command.Complete">Complete</sys:String>
-    <sys:String x:Key="Command.AddChildToDoItem">Add child to-do item</sys:String>
-    <sys:String x:Key="Command.Delete">Delete</sys:String>
-    <sys:String x:Key="Command.OpenLeaf">Open leaf</sys:String>
-    <sys:String x:Key="Command.ChangeParent">Change parent</sys:String>
-    <sys:String x:Key="Command.MakeAsRootToDoItem">Make as root</sys:String>
-    <sys:String x:Key="Command.RandomizeChildrenOrder">Randomize children order</sys:String>
-    <sys:String x:Key="Command.Reset">Reset</sys:String>
-    <sys:String x:Key="Command.Reorder">Reorder</sys:String>
-    <sys:String x:Key="Command.Setting">Setting</sys:String>
-    <sys:String x:Key="Command.AddToFavorite">Add to favorite</sys:String>
-    <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
-    <sys:String x:Key="Command.AddToBookmark">Add to bookmark</sys:String>
-    <sys:String x:Key="Command.RemoveFromBookmark">Remove from bookmark</sys:String>
-    <sys:String x:Key="Command.OpenLink">Open link</sys:String>
-    <sys:String x:Key="Command.Clone">Clone</sys:String>
-    <sys:String x:Key="Command.CreateReference">Create reference</sys:String>
+    <sys:String x:Key="Command.Complete">Виконати</sys:String>
+    <sys:String x:Key="Command.AddChildToDoItem">Додати підсправу</sys:String>
+    <sys:String x:Key="Command.Delete">Видалити</sys:String>
+    <sys:String x:Key="Command.OpenLeaf">Відкрити пелюстки</sys:String>
+    <sys:String x:Key="Command.ChangeParent">Змінити корінь</sys:String>
+    <sys:String x:Key="Command.MakeAsRootToDoItem">Зробити кріневую</sys:String>
+    <sys:String x:Key="Command.RandomizeChildrenOrder">Випадковий порядок підсправ</sys:String>
+    <sys:String x:Key="Command.Reset">Cкинути</sys:String>
+    <sys:String x:Key="Command.Reorder">Змінити чергу</sys:String>
+    <sys:String x:Key="Command.Setting">Налаштування</sys:String>
+    <sys:String x:Key="Command.AddToFavorite">Додати до обраних</sys:String>
+    <sys:String x:Key="Command.RemoveFromFavorite">Видалити з обраних</sys:String>
+    <sys:String x:Key="Command.AddToBookmark">Додати до закладок</sys:String>
+    <sys:String x:Key="Command.RemoveFromBookmark">Видалити з закладок</sys:String>
+    <sys:String x:Key="Command.OpenLink">Відкрити посилання</sys:String>
+    <sys:String x:Key="Command.Clone">Дублювати</sys:String>
+    <sys:String x:Key="Command.CreateReference">Створити посилання</sys:String>
 
     <!--AddToDoItemToFavoriteEventView-->
     <sys:String x:Key="AddToDoItemToFavoriteEventView.ToDoItem">To do item</sys:String>
@@ -305,61 +305,61 @@
     <!--PolicyView-->
     <sys:String x:Key="PolicyView.Header">Policy</sys:String>
     <sys:String x:Key="PolicyView.Policy">
-        Terms of Use
-        Introduction
-        These Terms of Use ("Terms") govern your use of Spravy ("the App") provided by IE Serhii Maksymov. By accessing or using the App, you agree to comply with these Terms.
-        Use of the App
-        You must be at least 13 years old to use the App.
-        You agree not to use the App for any illegal or unauthorized purpose.
-        You are solely responsible for any data, content, or activity that occurs under your account.
-        Intellectual Property
-        All content and materials available in the App are the property of IE Serhii Maksymov and are protected by copyright and other intellectual property laws.
-        You may not modify, reproduce, or distribute any content from the App without prior written permission.
-        Privacy
-        Please refer to our Privacy Policy for information on how we collect, use, and disclose your personal information.
-        Disclaimer of Warranties
-        The App is provided on an "as is" and "as available" basis without any warranties of any kind.
-        IE Serhii Maksymov does not guarantee the accuracy, reliability, or availability of the App.
-        Limitation of Liability
-        IE Serhii Maksymov will not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of the App.
-        Indemnification
-        You agree to indemnify and hold harmless IE Serhii Maksymov from any claims, damages, or losses arising out of your use of the App or violation of these Terms.
-        Changes to Terms
-        IE Serhii Maksymov reserves the right to modify or revise these Terms at any time. Continued use of the App after any changes indicates your acceptance of the modified Terms.
-        Governing Law
-        These Terms are governed by and construed in accordance with the laws of Ukraine.
-        Contact Us
-        If you have any questions or concerns about these Terms, please contact us at feedback@spravy.com.ua
-        Privacy Policy
-        Information We Collect
-        We collect personal information you provide to us, such as your name, email address, and profile information, when you register for an account or use certain features of the App.
-        How do we use it?
-        Login
-        Creation of the Client's Personal Account;
-        To verify a Customer during the authorization process.
-        Email
-        To identify you and your activities during the provision of the Service;
-        To prevent unauthorized access to your Personal Account;
-        To verify the Customer during the authorization process;
-        To provide you with necessary information and updates;
-        To provide general Customer support. For these purposes, we may contact you by email.
-        We also collect non-personal technical information such as device information, time zone, and usage data automatically when you access or use the App.
+        Умови використання
+        вступ
+        Ці Умови користування («Умови») регулюють використання вами Spravy («Додаток»), наданого IE Serhii Maksimov. Отримуючи доступ або використовуючи Додаток, ви погоджуєтеся дотримуватися цих Умов.
+        Використання програми
+        Щоб користуватися додатком, вам має бути не менше 13 років.
+        Ви погоджуєтеся не використовувати Додаток для будь-яких незаконних або неавторизованих цілей.
+        Ви несете повну відповідальність за будь-які дані, вміст або дії, які відбуваються у вашому обліковому записі.
+        Інтелектуальна власність
+        Весь вміст і матеріали, доступні в Додатку, є власністю IE Serhii Maksimov і захищені авторським правом та іншими законами про інтелектуальну власність.
+        Ви не маєте права змінювати, відтворювати чи поширювати будь-який вміст Програми без попереднього письмового дозволу.
+        Конфіденційність
+        Зверніться до нашої Політики конфіденційності, щоб дізнатися, як ми збираємо, використовуємо та розкриваємо вашу особисту інформацію.
+        Відмова від гарантій
+        Додаток надається на умовах «як є» та «як доступно» без будь-яких гарантій.
+        ІП Сергій Максимов не гарантує точність, надійність або доступність Додатку.
+        Обмеження відповідальності
+        IE Serhii Maksimov не несе відповідальності за будь-які непрямі, випадкові, спеціальні чи непрямі збитки, що виникають внаслідок або у зв’язку з використанням вами Програми.
+        Відшкодування
+        Ви погоджуєтеся звільнити IE Сергія Максимова від будь-яких претензій, збитків або збитків, що виникли внаслідок використання вами Програми або порушення цих Умов.
+        Зміни Умов
+        ПП Сергій Максимов залишає за собою право змінювати або переглядати ці Умови в будь-який час. Продовження використання Додатка після будь-яких змін означає вашу згоду зі зміненими Умовами.
+        Регулююче право
+        Ці Умови регулюються та тлумачаться відповідно до законодавства України.
+        Зв'яжіться з нами
+        Якщо у вас виникли запитання чи сумніви щодо цих Умов, зв’яжіться з нами за адресою feedback@spravy.com.ua
+        Політика конфіденційності
+        Інформація, яку ми збираємо
+        Ми збираємо особисту інформацію, яку ви надаєте нам, наприклад ваше ім’я, адресу електронної пошти та інформацію профілю, коли ви реєструєте обліковий запис або використовуєте певні функції Програми.
+        Як ми це використовуємо?
+        Логін
+        Створення Особистого кабінету Клієнта;
+        Щоб перевірити Клієнта під час процесу авторизації.
+        Електронна пошта
+        Для ідентифікації вас і вашої діяльності під час надання Сервісу;
+        Для запобігання несанкціонованому доступу до Вашого Особистого кабінету;
+        Верифікувати Клієнта під час процесу авторизації;
+        Щоб надати вам необхідну інформацію та оновлення;
+        Для забезпечення загальної підтримки клієнтів. Для цих цілей ми можемо зв’язатися з вами електронною поштою.
+        Ми також автоматично збираємо неособисту технічну інформацію, таку як інформація про пристрій, часовий пояс і дані про використання, коли ви отримуєте доступ або використовуєте Додаток.
 
 
-        Sharing of Your Information
-        We may also share your information in response to legal requests or to protect our rights or property.
+        Обмін вашою інформацією
+        Ми також можемо надавати вашу інформацію у відповідь на юридичні запити або для захисту наших прав чи власності.
 
-        Data Retention
-        We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy.
-        Security
-        We take reasonable measures to protect your information from unauthorized access, disclosure, or alteration.
-        Your Choices
-        You can access, update, or delete your account information at any time by logging into your account settings.
-        Children's Privacy
-        The App is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13.
-        Changes to Privacy Policy
-        We reserve the right to modify or revise this Privacy Policy at any time. We will notify you of any changes by posting the new Privacy Policy on this page.
-        Contact Us
-        If you have any questions or concerns about this Privacy Policy, please contact us at feedback@spravy.com.ua
+        Зберігання даних
+        Ми зберігаємо вашу особисту інформацію стільки, скільки необхідно для досягнення цілей, викладених у цій Політиці конфіденційності.
+        Безпека
+        Ми вживаємо розумних заходів для захисту вашої інформації від несанкціонованого доступу, розголошення або зміни.
+        Ваш вибір
+        Ви можете отримати доступ, оновити або видалити інформацію свого облікового запису в будь-який час, увійшовши в налаштування свого облікового запису.
+        Конфіденційність дітей
+        Програма не призначена для дітей віком до 13 років. Ми свідомо не збираємо особисту інформацію дітей віком до 13 років.
+        Зміни в Політиці конфіденційності
+        Ми залишаємо за собою право змінювати або переглядати цю Політику конфіденційності в будь-який час. Ми повідомимо вас про будь-які зміни, опублікувавши нову Політику конфіденційності на цій сторінці.
+        Зв'яжіться з нами
+        Якщо у вас виникли запитання чи сумніви щодо цієї Політики конфіденційності, зв’яжіться з нами за адресою feedback@spravy.com.ua
     </sys:String>
 </ResourceDictionary>

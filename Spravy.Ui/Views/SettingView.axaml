@@ -71,6 +71,10 @@
                             </StackPanel>
                         </StackPanel>
                     </c:GroupBoxControl>
+
+                    <c:GroupBoxControl Header="{StaticResource SettingView.Language}" Margin="5">
+                        <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" />
+                    </c:GroupBoxControl>
                 </StackPanel>
             </ScrollViewer>
 

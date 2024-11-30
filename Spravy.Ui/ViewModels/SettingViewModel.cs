@@ -1,3 +1,4 @@
+using Avalonia.Markup.Xaml.Styling;
 using AppConst = Spravy.Domain.Helpers.AppConst;
 
 namespace Spravy.Ui.ViewModels;
@@ -15,6 +16,9 @@ public partial class SettingViewModel : NavigatableViewModelBase
     [ObservableProperty]
     private bool isBusy;
 
+    [ObservableProperty]
+    private string language;
+
     public SettingViewModel(
         IErrorHandler errorHandler,
         INavigator navigator,
@@ -23,8 +27,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
         Application application,
         IObjectStorage objectStorage,
         IViewFactory viewFactory
-    )
-        : base(true)
+    ) : base(true)
     {
         this.application = application;
         this.navigator = navigator;
@@ -32,36 +35,28 @@ public partial class SettingViewModel : NavigatableViewModelBase
         this.objectStorage = objectStorage;
         this.viewFactory = viewFactory;
         SaveCommand = SpravyCommand.Create(SaveStateAsync, errorHandler, taskProgressService);
-
-        ChangePasswordCommand = SpravyCommand.Create(
-            ChangePasswordAsync,
-            errorHandler,
-            taskProgressService
-        );
-
-        DeleteAccountCommand = SpravyCommand.Create(
-            DeleteAccountAsync,
-            errorHandler,
-            taskProgressService
-        );
-
+        ChangePasswordCommand = SpravyCommand.Create(ChangePasswordAsync, errorHandler, taskProgressService);
+        DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
         PropertyChanged += OnPropertyChanged;
+
+        Languages =
+        [
+            "en-US",
+            "uk-UA",
+        ];
+
+        language = Languages[0];
     }
 
     public AccountNotify AccountNotify { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SaveCommand { get; }
+    public AvaloniaList<string> Languages { get; }
 
-    public override string ViewId
-    {
-        get => TypeCache<SettingViewModel>.Type.Name;
-    }
+    public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
 
-    public string Version
-    {
-        get => $"{AppConst.Version}({AppConst.Version.Code})";
-    }
+    public string Version => $"{AppConst.Version}({AppConst.Version.Code})";
 
     private Cvtar DeleteAccountAsync(CancellationToken ct)
     {
@@ -74,10 +69,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
     private Cvtar ChangePasswordAsync(CancellationToken ct)
     {
         return navigator.NavigateToAsync(
-            viewFactory.CreateForgotPasswordViewModel(
-                AccountNotify.Login,
-                UserIdentifierType.Login
-            ),
+            viewFactory.CreateForgotPasswordViewModel(AccountNotify.Login, UserIdentifierType.Login),
             ct
         );
     }
@@ -89,19 +81,17 @@ public partial class SettingViewModel : NavigatableViewModelBase
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<Setting.Setting>(ViewId, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            SelectedTheme = setting.Theme;
+        return objectStorage.GetObjectOrDefaultAsync<Setting.Setting>(ViewId, ct)
+           .IfSuccessAsync(
+                setting => this.PostUiBackground(
+                    () =>
+                    {
+                        SelectedTheme = setting.Theme;
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
@@ -121,6 +111,18 @@ public partial class SettingViewModel : NavigatableViewModelBase
         if (e.PropertyName == nameof(SelectedTheme))
         {
             application.RequestedThemeVariant = SelectedTheme.ToThemeVariant();
+        }
+        else if (e.PropertyName == nameof(Language))
+        {
+            application.Resources.MergedDictionaries.Insert(
+                0,
+                new ResourceInclude((Uri?)null)
+                {
+                    Source = new($"avares://Spravy.Ui/Assets/Lang/{Language}.axaml"),
+                }
+            );
+
+            application.Resources.MergedDictionaries.RemoveAt(1);
         }
     }
 }

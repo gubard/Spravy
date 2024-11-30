@@ -26,7 +26,7 @@
                 <StackPanel Grid.Column="1">
                     <StackPanel Classes="horizontal alignment-left">
                         <TextBlock Classes="field"
-                                   Text="{DynamicResource ToDoItemContentView.Color}" />
+                                   Text="{DynamicResource Lang.Color}" />
                         <ToggleSwitch Classes="field" IsChecked="{Binding IsEditColor}"
                                       IsVisible="{Binding IsEditShow}" />
                     </StackPanel>

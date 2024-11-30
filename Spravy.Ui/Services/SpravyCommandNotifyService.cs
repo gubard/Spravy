@@ -10,7 +10,7 @@ public class SpravyCommandNotifyService
         Delete = new("mdi-delete", new("Command.Delete"), commandService.Delete);
         ShowSetting = new("mdi-cog", new("Command.Setting"), commandService.ShowSetting);
         OpenLeaf = new("mdi-leaf", new("Command.OpenLeaf"), commandService.OpenLeaf);
-        CreateTimer = new("mdi-timer", new("Command.CreateTimer"), commandService.CreateTimer);
+        CreateTimer = new("mdi-timer", new("Lang.CreateTimer"), commandService.CreateTimer);
         Reset = new("mdi-refresh", new("Command.Reset"), commandService.Reset);
         Clone = new("mdi-copyleft", new("Command.Clone"), commandService.Clone);
 
@@ -46,7 +46,7 @@ public class SpravyCommandNotifyService
 
         CopyToClipboard = new(
             "mdi-clipboard",
-            new("Command.CopyToClipboard"),
+            new("Lang.CopyToClipboard"),
             commandService.ToDoItemCopyToClipboard
         );
 
