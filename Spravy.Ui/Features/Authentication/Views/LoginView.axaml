@@ -1,14 +1,14 @@
 <c:NavigatableUserControl x:TypeArguments="vm:LoginViewModel"
-                   xmlns="https://github.com/avaloniaui"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
-                   xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                   xmlns:c="clr-namespace:Spravy.Ui.Controls"
-                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                   x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
-                   x:DataType="vm:LoginViewModel">
+                          xmlns="https://github.com/avaloniaui"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                          xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                          xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                          x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
+                          x:DataType="vm:LoginViewModel">
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding}" />
     </UserControl.KeyBindings>
@@ -16,6 +16,13 @@
     <c:BusyAreaControl Classes="card"
                        MinWidth="300"
                        IsBusy="{Binding IsBusy}">
+        <c:BusyAreaControl.BusyArea>
+            <StackPanel Classes="alignment-center">
+                <ProgressBar IsIndeterminate="True" />
+                <TextBlock Classes="alignment-center" Text="{StaticResource LoginView.Busy}" />
+            </StackPanel>
+        </c:BusyAreaControl.BusyArea>
+
         <c:GroupBoxControl Classes="header-alignment-center">
             <c:GroupBoxControl.Header>
                 <TextBlock Classes="alignment-center" Text="{DynamicResource LoginView.WelcomeToSpravy}" />

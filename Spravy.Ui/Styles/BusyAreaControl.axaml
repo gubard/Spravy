@@ -28,17 +28,6 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^">
-            <Setter Property="BusyArea">
-                <Template>
-                    <StackPanel Classes="alignment-center">
-                        <ProgressBar IsIndeterminate="True" />
-                        <TextBlock Text="{StaticResource LoginView.Busy}" />
-                    </StackPanel>
-                </Template>
-            </Setter>
-        </Style>
-
         <Style Selector="^:is-busy /template/ ContentPresenter#ContentPresenter">
             <Setter Property="Effect" Value="blur(20)" />
         </Style>

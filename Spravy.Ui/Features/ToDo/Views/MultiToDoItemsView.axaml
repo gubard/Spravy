@@ -143,9 +143,9 @@
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
-                                    <TextBlock Text="{Binding Type}" Classes="small" />
+                                    <TextBlock Text="{Binding Type}" Classes="small alignment-center" />
                                     <TextBlock Text="{Binding ActualDueDate}"
-                                               Classes="small"
+                                               Classes="small alignment-center"
                                                IsVisible="{Binding ActualDueDate, Converter={StaticResource NullToBooleanConverter}}" />
                                 </StackPanel>
                             </Grid>

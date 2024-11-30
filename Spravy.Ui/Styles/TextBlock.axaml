@@ -1,24 +1,5 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Border Padding="20">
-           <StackPanel>
-               <TextBlock Text="QAZqaz" />
-               <TextBlock Text="QAZqaz" Classes="h1" />
-               <TextBlock Text="QAZqaz" Classes="h2" />
-               <TextBlock Text="QAZqaz" Classes="h3" />
-               <TextBlock Text="QAZqaz" Classes="h4" />
-               <TextBlock Text="QAZqaz" Classes="h5" />
-               <TextBlock Text="QAZqaz" Classes="h6" />
-           </StackPanel>
-        </Border>
-    </Design.PreviewWith>
-    
-    <Style Selector="TextBlock">
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-    </Style>
-
     <Style Selector="TextBlock.text-wrap">
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
@@ -52,7 +33,7 @@
     <Style Selector="TextBlock.h6">
         <Setter Property="FontSize" Value="14" />
     </Style>
-    
+
     <Style Selector="TextBlock.small">
         <Setter Property="FontSize" Value="11.2" />
     </Style>
