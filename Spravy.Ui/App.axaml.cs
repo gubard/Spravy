@@ -1,5 +1,4 @@
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml.Styling;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui;
@@ -65,34 +64,10 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var objectStorage = serviceFactory.CreateService<IObjectStorage>();
-
-        objectStorage.GetObjectOrDefaultAsync<Setting.Setting>(ViewId, CancellationToken.None)
-           .IfSuccessAsync(
-                setting => this.PostUiBackground(
-                    () =>
-                    {
-                        RequestedThemeVariant = setting.Theme.ToThemeVariant();
-
-                        Resources.MergedDictionaries.Insert(
-                            0,
-                            new ResourceInclude((Uri?)null)
-                            {
-                                Source = new($"avares://Spravy.Ui/Assets/Lang/{setting.Language}.axaml"),
-                            }
-                        );
-
-                        return Result.Success;
-                    },
-                    CancellationToken.None
-                ),
-                CancellationToken.None
-            )
-           .GetAwaiter()
-           .GetResult();
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var objectStorage = serviceFactory.CreateService<IObjectStorage>();
+
             var settings = objectStorage
                .GetObjectOrDefaultAsync<WindowSetting>(TypeCache<WindowSetting>.Type.Name, CancellationToken.None)
                .GetAwaiter()
