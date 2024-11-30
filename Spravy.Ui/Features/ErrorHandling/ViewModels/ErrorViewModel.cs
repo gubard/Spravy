@@ -13,11 +13,14 @@ public class ErrorViewModel : DialogableViewModelBase
     {
         this.errors.AddRange(errors);
 
-        CopyErrorCommand =
-            SpravyCommand.Create(
-                ct => clipboardService.SetTextAsync(
-                    this.errors.Select(x => $"{x.Id}{Environment.NewLine}{x.Message}").JoinString(Environment.NewLine),
-                    ct), errorHandler, taskProgressService);
+        CopyErrorCommand = SpravyCommand.Create(
+            ct => clipboardService.SetTextAsync(
+                this.errors.Select(x => $"{x.Id}{Environment.NewLine}{x.Message}").JoinString(Environment.NewLine),
+                ct
+            ),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public override string ViewId => TypeCache<ErrorViewModel>.Type.Name;
