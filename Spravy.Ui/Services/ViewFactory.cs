@@ -64,7 +64,13 @@ public class ViewFactory : IViewFactory
 
     public EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow)
     {
-        return new(objectStorage, CreateToDoItemSelectorViewModel(), toDoCache, isEditShow, isEditDescriptionShow);
+        return new(
+            objectStorage,
+            CreateToDoItemSelectorViewModel(),
+            toDoCache,
+            isEditShow,
+            isEditDescriptionShow
+        );
     }
 
     public ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(
@@ -75,7 +81,11 @@ public class ViewFactory : IViewFactory
         if (item.TryGetValue(out var value) && items.IsEmpty)
         {
             var result = new ToDoItemSettingsViewModel(
-                item, items, toDoService, CreateEditToDoItemViewModel(false, false));
+                item,
+                items,
+                toDoService,
+                CreateEditToDoItemViewModel(false, false)
+            );
 
             result.EditToDoItemViewModel.SetItem(value);
             result.EditToDoItemViewModel.UndoAllUi();
@@ -91,14 +101,25 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex), errorHandler, objectStorage,
-            toDoUiService);
+        return new(
+            item,
+            items,
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
+            errorHandler,
+            objectStorage,
+            toDoUiService
+        );
     }
 
     public ToDoItemViewModel CreateToDoItemViewModel(ToDoItemEntityNotify item)
     {
-        return new(item, objectStorage, CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex), errorHandler,
-            toDoUiService);
+        return new(
+            item,
+            objectStorage,
+            CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
+            errorHandler,
+            toDoUiService
+        );
     }
 
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
@@ -108,8 +129,13 @@ public class ViewFactory : IViewFactory
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
-        return new(toDoService, toDoCache, CreateMultiToDoItemsViewModel(viewModelSortBy), taskProgressService,
-            appOptions);
+        return new(
+            toDoService,
+            toDoCache,
+            CreateMultiToDoItemsViewModel(viewModelSortBy),
+            taskProgressService,
+            appOptions
+        );
     }
 
     public LoginViewModel CreateLoginViewModel()
@@ -119,20 +145,33 @@ public class ViewFactory : IViewFactory
 
     public RootToDoItemsViewModel CreateRootToDoItemsViewModel()
     {
-        return new(serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex), objectStorage, errorHandler, toDoUiService);
+        return new(
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
+            objectStorage,
+            errorHandler,
+            toDoUiService
+        );
     }
 
     public TodayToDoItemsViewModel CreateTodayToDoItemsViewModel()
     {
-        return new(CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
-            serviceFactory.CreateService<SpravyCommandNotifyService>(), toDoUiService);
+        return new(
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            toDoUiService
+        );
     }
 
     public SearchToDoItemsViewModel CreateSearchToDoItemsViewModel()
     {
-        return new(CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
-            serviceFactory.CreateService<SpravyCommandNotifyService>(), errorHandler, objectStorage, toDoUiService);
+        return new(
+            CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
+            serviceFactory.CreateService<SpravyCommandNotifyService>(),
+            errorHandler,
+            objectStorage,
+            toDoUiService
+        );
     }
 
     public PasswordGeneratorViewModel CreatePasswordGeneratorViewModel()
@@ -142,7 +181,15 @@ public class ViewFactory : IViewFactory
 
     public SettingViewModel CreateSettingViewModel()
     {
-        return new(errorHandler, navigator, accountNotify, taskProgressService, application, objectStorage, this);
+        return new(
+            errorHandler,
+            navigator,
+            accountNotify,
+            taskProgressService,
+            application,
+            objectStorage,
+            this
+        );
     }
 
     public TimersViewModel CreateTimersViewModel()
@@ -157,7 +204,14 @@ public class ViewFactory : IViewFactory
 
     public EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel()
     {
-        return new(errorHandler, navigator, objectStorage, authenticationService, taskProgressService, this);
+        return new(
+            errorHandler,
+            navigator,
+            objectStorage,
+            authenticationService,
+            taskProgressService,
+            this
+        );
     }
 
     public CreateUserViewModel CreateCreateUserViewModel()
@@ -175,7 +229,15 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, objectStorage, serializer, scheduleService, errorHandler, taskProgressService);
+        return new(
+            item,
+            items,
+            objectStorage,
+            serializer,
+            scheduleService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public EditDescriptionViewModel CreateEditDescriptionViewModel(
@@ -191,7 +253,13 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService, toDoCache);
+        return new(
+            item,
+            items,
+            CreateToDoItemSelectorViewModel(item, items),
+            toDoService,
+            toDoCache
+        );
     }
 
     public ResetToDoItemViewModel CreateResetToDoItemViewModel(
@@ -211,10 +279,18 @@ public class ViewFactory : IViewFactory
         {
             if (item.TryGetValue(out var i))
             {
-                return new(item, items, CreateToDoItemSelectorViewModel(i.Parent.ToOption(), new[]
-                {
-                    i,
-                }), toDoService);
+                return new(
+                    item,
+                    items,
+                    CreateToDoItemSelectorViewModel(
+                        i.Parent.ToOption(),
+                        new[]
+                        {
+                            i,
+                        }
+                    ),
+                    toDoService
+                );
             }
 
             return new(item, items, CreateToDoItemSelectorViewModel(item, items), toDoService);
@@ -225,8 +301,15 @@ public class ViewFactory : IViewFactory
 
     public DeleteAccountViewModel CreateDeleteAccountViewModel(string emailOrLogin, UserIdentifierType identifierType)
     {
-        return new(emailOrLogin, identifierType, errorHandler, navigator, authenticationService, taskProgressService,
-            this);
+        return new(
+            emailOrLogin,
+            identifierType,
+            errorHandler,
+            navigator,
+            authenticationService,
+            taskProgressService,
+            this
+        );
     }
 
     public VerificationCodeViewModel CreateVerificationCodeViewModel(
@@ -264,13 +347,25 @@ public class ViewFactory : IViewFactory
 
     public AddTimerViewModel CreateAddTimerViewModel()
     {
-        return new(this, objectStorage, errorHandler, taskProgressService, scheduleService);
+        return new(
+            this,
+            objectStorage,
+            errorHandler,
+            taskProgressService,
+            scheduleService
+        );
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
     {
-        return new(new(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty, toDoCache, toDoUiService, errorHandler,
-            taskProgressService);
+        return new(
+            new(),
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
@@ -278,7 +373,14 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoCache, toDoUiService, errorHandler, taskProgressService);
+        return new(
+            item,
+            items,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public ChangeParentViewModel CreateChangeParentViewModel(
@@ -290,10 +392,18 @@ public class ViewFactory : IViewFactory
         {
             if (item.TryGetValue(out var i))
             {
-                return new(item, items, toDoService, CreateToDoItemSelectorViewModel(i.Parent.ToOption(), new[]
-                {
-                    i,
-                }));
+                return new(
+                    item,
+                    items,
+                    toDoService,
+                    CreateToDoItemSelectorViewModel(
+                        i.Parent.ToOption(),
+                        new[]
+                        {
+                            i,
+                        }
+                    )
+                );
             }
 
             return new(item, items, toDoService, CreateToDoItemSelectorViewModel(item, items));
@@ -304,7 +414,8 @@ public class ViewFactory : IViewFactory
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
-        return new(CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("MultiToDoItemsView.Favorite")),
+        return new(
+            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("MultiToDoItemsView.Favorite")),
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByNoneView.Header")),
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Missed")),
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.ReadyForCompleted")),
@@ -318,7 +429,8 @@ public class ViewFactory : IViewFactory
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Circles")),
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Steps")),
             CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.References")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.ComingSoon")));
+            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.ComingSoon"))
+        );
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
@@ -326,7 +438,14 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     )
     {
-        return new(item.ToOption(), ignoreItems, toDoCache, toDoUiService, errorHandler, taskProgressService);
+        return new(
+            item.ToOption(),
+            ignoreItems,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public ConfirmViewModel CreateConfirmViewModel(
@@ -335,7 +454,13 @@ public class ViewFactory : IViewFactory
         Func<IDialogable, Cvtar> cancelTask
     )
     {
-        return new(content, errorHandler, taskProgressService, confirmTask, cancelTask);
+        return new(
+            content,
+            errorHandler,
+            taskProgressService,
+            confirmTask,
+            cancelTask
+        );
     }
 
     public RandomizeChildrenOrderViewModel CreateRandomizeChildrenOrderViewModel(
@@ -390,7 +515,13 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, objectStorage, toDoService, CreateEditToDoItemViewModel(false, true));
+        return new(
+            item,
+            items,
+            objectStorage,
+            toDoService,
+            CreateEditToDoItemViewModel(false, true)
+        );
     }
 
     public DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item)
