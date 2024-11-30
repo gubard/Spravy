@@ -7,42 +7,75 @@
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.EditToDoItemView"
              x:DataType="vm:EditToDoItemViewModel">
     <ScrollViewer Classes="vertical">
         <StackPanel>
-            <StackPanel Classes="horizontal">
-                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
-                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditName}" IsVisible="{Binding IsEditShow}" />
-            </StackPanel>
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <StackPanel Classes="horizontal">
+                        <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
+                        <ToggleSwitch Classes="field" IsChecked="{Binding IsEditName}" IsVisible="{Binding IsEditShow}" />
+                    </StackPanel>
 
-            <TextBox Text="{Binding Name}" />
+                    <TextBox Text="{Binding Name}" />
+                </StackPanel>
 
-            <StackPanel Classes="horizontal">
-                <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
-                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditLink}" IsVisible="{Binding IsEditShow}" />
-            </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <StackPanel Classes="horizontal alignment-left">
+                        <TextBlock Classes="field"
+                                   Text="{DynamicResource ToDoItemContentView.Color}" />
+                        <ToggleSwitch Classes="field" IsChecked="{Binding IsEditColor}"
+                                      IsVisible="{Binding IsEditShow}" />
+                    </StackPanel>
 
-            <TextBox Classes="content-type-url" Text="{Binding Link}" />
+                    <Button Classes="alignment-left">
+                        <Ellipse Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
+                                 Width="20"
+                                 Height="20" />
 
-            <StackPanel Classes="horizontal">
-                <TextBlock Classes="field"
-                           Text="{DynamicResource ToDoItemContentView.Color}" />
-                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditColor}" IsVisible="{Binding IsEditShow}" />
-            </StackPanel>
+                        <Button.Flyout>
+                            <Flyout>
+                                <c:ColorSelectorControl ItemsSource="{x:Static h:ColorData.ColorsA400}"
+                                                        SelectedColor="{Binding Color}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
-            <c:ColorSelectorControl ItemsSource="{x:Static h:ColorData.ColorsA400}" SelectedColor="{Binding Color}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <StackPanel Classes="horizontal">
+                        <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Url}" />
+                        <ToggleSwitch Classes="field" IsChecked="{Binding IsEditLink}" IsVisible="{Binding IsEditShow}" />
+                    </StackPanel>
 
-            <StackPanel Classes="horizontal">
-                <TextBlock Classes="field"
-                           Text="{DynamicResource ValueToDoItemSettingsView.Icon}" />
-                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIcon}" IsVisible="{Binding IsEditShow}" />
-            </StackPanel>
+                    <TextBox Classes="content-type-url" Text="{Binding Link}" />
+                </StackPanel>
 
-            <c:IconSelectorControl SelectedIcon="{Binding Icon}"
-                                   ItemsSource="{x:Static h:UiHelper.Icons}"
-                                   FavoriteItemsSource="{Binding FavoriteIcons}" />
+                <StackPanel Grid.Column="1">
+                    <StackPanel Classes="horizontal alignment-left">
+                        <TextBlock Classes="field"
+                                   Text="{DynamicResource ValueToDoItemSettingsView.Icon}" />
+                        <ToggleSwitch Classes="field" IsChecked="{Binding IsEditIcon}" IsVisible="{Binding IsEditShow}" />
+                    </StackPanel>
+
+                    <Button Classes="alignment-left">
+                        <i:Icon Value="{Binding Icon}" Classes="h3" />
+
+                        <Button.Flyout>
+                            <Flyout>
+                                <c:IconSelectorControl SelectedIcon="{Binding Icon}"
+                                                       ItemsSource="{x:Static h:UiHelper.Icons}"
+                                                       FavoriteItemsSource="{Binding FavoriteIcons}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
             <StackPanel IsVisible="{Binding IsEditDescriptionShow}">
                 <StackPanel Classes="horizontal">
