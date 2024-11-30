@@ -16,7 +16,7 @@
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel>
                     <StackPanel Classes="horizontal">
-                        <TextBlock Classes="field" Text="{DynamicResource MultiToDoItemSettingView.Name}" />
+                        <TextBlock Classes="field" Text="{DynamicResource Lang.Name}" />
                         <ToggleSwitch Classes="field" IsChecked="{Binding IsEditName}" IsVisible="{Binding IsEditShow}" />
                     </StackPanel>
 

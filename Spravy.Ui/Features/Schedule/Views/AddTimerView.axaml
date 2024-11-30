@@ -17,7 +17,7 @@
             </c:GroupBoxControl.Header>
 
             <StackPanel>
-                <TextBlock Classes="field" Text="{StaticResource AddTimerView.Name}" />
+                <TextBlock Classes="field" Text="{StaticResource Lang.Name}" />
                 <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
                 <Calendar SelectedDate="{Binding Date}" />

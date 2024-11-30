@@ -1,44 +1,32 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-    <!--ToDoItemContentView-->
     <sys:String x:Key="Lang.Color">Колір</sys:String>
-
-    <!--ToDoItemCreateTimerView-->
     <sys:String x:Key="Lang.CreateTimer">Створити таймер</sys:String>
-
-    <!--Notification-->
     <sys:String x:Key="Lang.CopyToClipboard">Скопіювати в буфер обміну</sys:String>
     <sys:String x:Key="Lang.UpdateSchedule">Обновився графік</sys:String>
     <sys:String x:Key="Lang.UpdateToDoEvents">Обновилася справа</sys:String>
-
-    <!--Command-->
     <sys:String x:Key="Lang.Complete">Виконати</sys:String>
     <sys:String x:Key="Lang.AddChildToDoItem">Додати підсправу</sys:String>
     <sys:String x:Key="Lang.Delete">Видалити</sys:String>
     <sys:String x:Key="Lang.OpenLeaf">Відкрити пелюстки</sys:String>
-    <sys:String x:Key="Command.ChangeParent">Змінити корінь</sys:String>
-    <sys:String x:Key="Command.MakeAsRootToDoItem">Зробити кріневую</sys:String>
-    <sys:String x:Key="Command.RandomizeChildrenOrder">Випадковий порядок підсправ</sys:String>
-    <sys:String x:Key="Command.Reset">Cкинути</sys:String>
-    <sys:String x:Key="Command.Reorder">Змінити чергу</sys:String>
-    <sys:String x:Key="Command.Setting">Налаштування</sys:String>
-    <sys:String x:Key="Command.AddToFavorite">Додати до обраних</sys:String>
-    <sys:String x:Key="Command.RemoveFromFavorite">Видалити з обраних</sys:String>
-    <sys:String x:Key="Command.AddToBookmark">Додати до закладок</sys:String>
-    <sys:String x:Key="Command.RemoveFromBookmark">Видалити з закладок</sys:String>
-    <sys:String x:Key="Command.OpenLink">Відкрити посилання</sys:String>
-    <sys:String x:Key="Command.Clone">Дублювати</sys:String>
-    <sys:String x:Key="Command.CreateReference">Створити посилання</sys:String>
-
-    <!--AddToDoItemToFavoriteEventView-->
-    <sys:String x:Key="AddToDoItemToFavoriteEventView.ToDoItem">To do item</sys:String>
-
-    <!--DeleteTimerView-->
-    <sys:String x:Key="DeleteTimerView.Header">Are you sure you want to delete "{Name}"?</sys:String>
-
+    <sys:String x:Key="Lang.ChangeParent">Змінити корінь</sys:String>
+    <sys:String x:Key="Lang.RandomizeChildrenOrder">Випадковий порядок підсправ</sys:String>
+    <sys:String x:Key="Lang.Reset">Cкинути</sys:String>
+    <sys:String x:Key="Lang.Reorder">Змінити чергу</sys:String>
+    <sys:String x:Key="Lang.Setting">Налаштування</sys:String>
+    <sys:String x:Key="Lang.AddToFavorite">Додати до обраних</sys:String>
+    <sys:String x:Key="Lang.RemoveFromFavorite">Видалити з обраних</sys:String>
+    <sys:String x:Key="Lang.AddToBookmark">Додати до закладок</sys:String>
+    <sys:String x:Key="Lang.RemoveFromBookmark">Видалити з закладок</sys:String>
+    <sys:String x:Key="Lang.OpenLink">Відкрити посилання</sys:String>
+    <sys:String x:Key="Lang.Clone">Дублювати</sys:String>
+    <sys:String x:Key="Lang.CreateReference">Створити посилання</sys:String>
+    <sys:String x:Key="Lang.ToDoItem">To do item</sys:String>
+    <sys:String x:Key="Lang.Header">Are you sure you want to delete "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.Name">Name</sys:String>
+    
     <!--MultiToDoItemSettingView-->
-    <sys:String x:Key="MultiToDoItemSettingView.Name">Name</sys:String>
     <sys:String x:Key="MultiToDoItemSettingView.Url">URL</sys:String>
     <sys:String x:Key="MultiToDoItemSettingView.Type">Type</sys:String>
     <sys:String x:Key="MultiToDoItemSettingView.DueDate">Due date</sys:String>
@@ -52,10 +40,6 @@
 
     <!--LeafToDoItemsView-->
     <sys:String x:Key="LeafToDoItemsView.Header">Leaf {Header}</sys:String>
-
-    <!--FastToDoItemView-->
-    <sys:String x:Key="FastAddToDoItemView.Type">Type</sys:String>
-    <sys:String x:Key="FastAddToDoItemView.Name">Name</sys:String>
 
     <!--RandomizeChildrenOrderView-->
     <sys:String x:Key="RandomizeChildrenOrderView.Header">Are you sure you want randomize "{Name}" children?</sys:String>
@@ -97,7 +81,6 @@
 
     <!--AddPasswordItemView-->
     <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Name">Name</sys:String>
     <sys:String x:Key="AddPasswordItemView.Key">Key</sys:String>
     <sys:String x:Key="AddPasswordItemView.Length">Length</sys:String>
     <sys:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</sys:String>
@@ -127,12 +110,6 @@
 
     <!--InfoView-->
     <sys:String x:Key="InfoView.Accept">Accept</sys:String>
-
-    <!--AddRootToDoItemView-->
-    <sys:String x:Key="ToDoItemSettingsView.Settings">Settings</sys:String>
-    <sys:String x:Key="ToDoItemSettingsView.Name">Name</sys:String>
-    <sys:String x:Key="ToDoItemSettingsView.Type">Type</sys:String>
-    <sys:String x:Key="ToDoItemSettingsView.Url">URL</sys:String>
 
     <!--DescriptionType-->
     <sys:String x:Key="DescriptionType.PlainText">Plain text</sys:String>
@@ -240,19 +217,16 @@
     <sys:String x:Key="VerificationCodeView.Header">Action confirmation</sys:String>
 
     <!--AddRootToDoItemView-->
-    <sys:String x:Key="AddRootToDoItemView.Name">Name</sys:String>
     <sys:String x:Key="AddRootToDoItemView.Type">Type</sys:String>
     <sys:String x:Key="AddRootToDoItemView.Url">URL</sys:String>
     <sys:String x:Key="AddRootToDoItemView.Header">New Task</sys:String>
 
     <!--AddTimerView-->
     <sys:String x:Key="AddTimerView.Header">Add timer</sys:String>
-    <sys:String x:Key="AddTimerView.Name">Name</sys:String>
     <sys:String x:Key="AddTimerView.DueDate">Due date</sys:String>
     <sys:String x:Key="AddTimerView.DueTime">Due time</sys:String>
 
     <!--AddToDoItemView-->
-    <sys:String x:Key="AddToDoItemView.Name">Name</sys:String>
     <sys:String x:Key="AddToDoItemView.Type">Type</sys:String>
     <sys:String x:Key="AddToDoItemView.Header">New Task</sys:String>
 

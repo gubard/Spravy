@@ -7,7 +7,7 @@
              x:Class="Spravy.Ui.Features.Schedule.Views.AddToDoItemToFavoriteEventView"
              x:DataType="vm:AddToDoItemToFavoriteEventViewModel">
     <StackPanel>
-        <TextBlock Classes="field" Text="{StaticResource AddToDoItemToFavoriteEventView.ToDoItem}" />
+        <TextBlock Classes="field" Text="{StaticResource Lang.ToDoItem}" />
         <ContentControl Content="{Binding ToDoItemSelectorViewModel}" />
     </StackPanel>
 </UserControl>

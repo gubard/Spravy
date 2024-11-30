@@ -5,42 +5,42 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotifyService(SpravyCommandService commandService)
     {
         Complete = new("mdi-check", new("Lang.Complete"), commandService.Complete);
-        OpenLink = new("mdi-link", new("Command.OpenLink"), commandService.OpenLink);
+        OpenLink = new("mdi-link", new("Lang.OpenLink"), commandService.OpenLink);
         AddChild = new("mdi-plus", new("Lang.AddChildToDoItem"), commandService.AddChild);
         Delete = new("mdi-delete", new("Lang.Delete"), commandService.Delete);
-        ShowSetting = new("mdi-cog", new("Command.Setting"), commandService.ShowSetting);
+        ShowSetting = new("mdi-cog", new("Lang.Setting"), commandService.ShowSetting);
         OpenLeaf = new("mdi-leaf", new("Lang.OpenLeaf"), commandService.OpenLeaf);
         CreateTimer = new("mdi-timer", new("Lang.CreateTimer"), commandService.CreateTimer);
-        Reset = new("mdi-refresh", new("Command.Reset"), commandService.Reset);
-        Clone = new("mdi-copyleft", new("Command.Clone"), commandService.Clone);
+        Reset = new("mdi-refresh", new("Lang.Reset"), commandService.Reset);
+        Clone = new("mdi-copyleft", new("Lang.Clone"), commandService.Clone);
 
         AddToFavorite = new(
             "mdi-star-outline",
-            new("Command.AddToFavorite"),
+            new("Lang.AddToFavorite"),
             commandService.AddToFavorite
         );
 
         RemoveFromFavorite = new(
             "mdi-star",
-            new("Command.RemoveFromFavorite"),
+            new("Lang.RemoveFromFavorite"),
             commandService.RemoveFromFavorite
         );
 
         AddToBookmark = new(
             "mdi-bookmark-outline",
-            new("Command.AddToBookmark"),
+            new("Lang.AddToBookmark"),
             commandService.AddToBookmark
         );
 
         RemoveFromBookmark = new(
             "mdi-bookmark",
-            new("Command.RemoveFromBookmark"),
+            new("Lang.RemoveFromBookmark"),
             commandService.RemoveFromBookmark
         );
 
         ChangeParent = new(
             "mdi-swap-horizontal",
-            new("Command.ChangeParent"),
+            new("Lang.ChangeParent"),
             commandService.ChangeParent
         );
 
@@ -52,19 +52,19 @@ public class SpravyCommandNotifyService
 
         RandomizeChildrenOrder = new(
             "mdi-dice-6",
-            new("Command.RandomizeChildrenOrder"),
+            new("Lang.RandomizeChildrenOrder"),
             commandService.RandomizeChildrenOrder
         );
 
         ChangeOrder = new(
             "mdi-reorder-horizontal",
-            new("Command.Reorder"),
+            new("Lang.Reorder"),
             commandService.ChangeOrder
         );
 
         CreateReference = new(
             "mdi-link-variant",
-            new("Command.CreateReference"),
+            new("Lang.CreateReference"),
             commandService.CreateReference
         );
 
