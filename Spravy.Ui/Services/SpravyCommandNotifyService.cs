@@ -4,12 +4,12 @@ public class SpravyCommandNotifyService
 {
     public SpravyCommandNotifyService(SpravyCommandService commandService)
     {
-        Complete = new("mdi-check", new("Command.Complete"), commandService.Complete);
+        Complete = new("mdi-check", new("Lang.Complete"), commandService.Complete);
         OpenLink = new("mdi-link", new("Command.OpenLink"), commandService.OpenLink);
-        AddChild = new("mdi-plus", new("Command.AddChildToDoItem"), commandService.AddChild);
-        Delete = new("mdi-delete", new("Command.Delete"), commandService.Delete);
+        AddChild = new("mdi-plus", new("Lang.AddChildToDoItem"), commandService.AddChild);
+        Delete = new("mdi-delete", new("Lang.Delete"), commandService.Delete);
         ShowSetting = new("mdi-cog", new("Command.Setting"), commandService.ShowSetting);
-        OpenLeaf = new("mdi-leaf", new("Command.OpenLeaf"), commandService.OpenLeaf);
+        OpenLeaf = new("mdi-leaf", new("Lang.OpenLeaf"), commandService.OpenLeaf);
         CreateTimer = new("mdi-timer", new("Lang.CreateTimer"), commandService.CreateTimer);
         Reset = new("mdi-refresh", new("Command.Reset"), commandService.Reset);
         Clone = new("mdi-copyleft", new("Command.Clone"), commandService.Clone);

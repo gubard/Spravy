@@ -9,14 +9,14 @@
 
     <!--Notification-->
     <sys:String x:Key="Lang.CopyToClipboard">Copy to clipboard</sys:String>
-    <sys:String x:Key="Notification.UpdateSchedule">Update schedule</sys:String>
-    <sys:String x:Key="Notification.UpdateToDoEvents">Update to do</sys:String>
+    <sys:String x:Key="Lang.UpdateSchedule">Update schedule</sys:String>
+    <sys:String x:Key="Lang.UpdateToDoEvents">Update to do</sys:String>
 
     <!--Command-->
-    <sys:String x:Key="Command.Complete">Complete</sys:String>
-    <sys:String x:Key="Command.AddChildToDoItem">Add child to-do item</sys:String>
-    <sys:String x:Key="Command.Delete">Delete</sys:String>
-    <sys:String x:Key="Command.OpenLeaf">Open leaf</sys:String>
+    <sys:String x:Key="Lang.Complete">Complete</sys:String>
+    <sys:String x:Key="Lang.AddChildToDoItem">Add child to-do item</sys:String>
+    <sys:String x:Key="Lang.Delete">Delete</sys:String>
+    <sys:String x:Key="Lang.OpenLeaf">Open leaf</sys:String>
     <sys:String x:Key="Command.ChangeParent">Change parent</sys:String>
     <sys:String x:Key="Command.MakeAsRootToDoItem">Make as root</sys:String>
     <sys:String x:Key="Command.RandomizeChildrenOrder">Randomize children order</sys:String>

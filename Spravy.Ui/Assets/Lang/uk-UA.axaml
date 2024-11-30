@@ -9,14 +9,14 @@
 
     <!--Notification-->
     <sys:String x:Key="Lang.CopyToClipboard">Скопіювати в буфер обміну</sys:String>
-    <sys:String x:Key="Notification.UpdateSchedule">Обновився графік</sys:String>
-    <sys:String x:Key="Notification.UpdateToDoEvents">Обновилася справа</sys:String>
+    <sys:String x:Key="Lang.UpdateSchedule">Обновився графік</sys:String>
+    <sys:String x:Key="Lang.UpdateToDoEvents">Обновилася справа</sys:String>
 
     <!--Command-->
-    <sys:String x:Key="Command.Complete">Виконати</sys:String>
-    <sys:String x:Key="Command.AddChildToDoItem">Додати підсправу</sys:String>
-    <sys:String x:Key="Command.Delete">Видалити</sys:String>
-    <sys:String x:Key="Command.OpenLeaf">Відкрити пелюстки</sys:String>
+    <sys:String x:Key="Lang.Complete">Виконати</sys:String>
+    <sys:String x:Key="Lang.AddChildToDoItem">Додати підсправу</sys:String>
+    <sys:String x:Key="Lang.Delete">Видалити</sys:String>
+    <sys:String x:Key="Lang.OpenLeaf">Відкрити пелюстки</sys:String>
     <sys:String x:Key="Command.ChangeParent">Змінити корінь</sys:String>
     <sys:String x:Key="Command.MakeAsRootToDoItem">Зробити кріневую</sys:String>
     <sys:String x:Key="Command.RandomizeChildrenOrder">Випадковий порядок підсправ</sys:String>

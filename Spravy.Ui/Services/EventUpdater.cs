@@ -44,9 +44,8 @@ public class EventUpdater : IEventUpdater
         {
             try
             {
-                await scheduleService
-                    .UpdateEventsAsync(ct)
-                    .IfSuccessAsync(
+                await scheduleService.UpdateEventsAsync(ct)
+                   .IfSuccessAsync(
                         isUpdated =>
                         {
                             if (!isUpdated)
@@ -54,11 +53,10 @@ public class EventUpdater : IEventUpdater
                                 return Result.AwaitableSuccess;
                             }
 
-                            return spravyNotificationManager
-                                .ShowAsync(new TextLocalization("Notification.UpdateSchedule"), ct)
-                                .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
-                                .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
-                                .IfSuccessAsync(
+                            return spravyNotificationManager.ShowAsync(new TextLocalization("Lang.UpdateSchedule"), ct)
+                               .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
+                               .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
+                               .IfSuccessAsync(
                                     x =>
                                     {
                                         if (!x)
@@ -67,37 +65,21 @@ public class EventUpdater : IEventUpdater
                                         }
 
                                         return spravyNotificationManager
-                                            .ShowAsync(
-                                                new TextLocalization(
-                                                    "Notification.UpdateToDoEvents"
-                                                ),
-                                                ct
-                                            )
-                                            .IfSuccessAsync(
-                                                () => audioService.PlayNotificationAsync(ct),
-                                                ct
-                                            )
-                                            .IfSuccessAsync(
-                                                () =>
-                                                    uiApplicationService.RefreshCurrentViewAsync(
-                                                        ct
-                                                    ),
-                                                ct
-                                            );
+                                           .ShowAsync(new TextLocalization("lang.UpdateToDoEvents"), ct)
+                                           .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
+                                           .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
                                     },
                                     ct
                                 );
                         },
                         ct
                     )
-                    .IfErrorsAsync(
-                        errors =>
-                            spravyNotificationManager.ShowAsync(
-                                errors
-                                    .Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
-                                    .JoinString(Environment.NewLine),
-                                ct
-                            ),
+                   .IfErrorsAsync(
+                        errors => spravyNotificationManager.ShowAsync(
+                            errors.Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
+                               .JoinString(Environment.NewLine),
+                            ct
+                        ),
                         ct
                     );
             }
