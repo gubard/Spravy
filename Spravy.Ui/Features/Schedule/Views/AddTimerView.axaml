@@ -19,7 +19,7 @@
             <StackPanel>
                 <TextBlock Classes="field" Text="{StaticResource Lang.Name}" />
                 <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
-                <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueDate}" />
+                <TextBlock Classes="field" Text="{StaticResource Lang.DueDate}" />
                 <Calendar SelectedDate="{Binding Date}" />
                 <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
                 <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />

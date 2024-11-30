@@ -22,24 +22,15 @@
     <sys:String x:Key="Lang.OpenLink">Відкрити посилання</sys:String>
     <sys:String x:Key="Lang.Clone">Дублювати</sys:String>
     <sys:String x:Key="Lang.CreateReference">Створити посилання</sys:String>
-    <sys:String x:Key="Lang.ToDoItem">To do item</sys:String>
-    <sys:String x:Key="Lang.Header">Are you sure you want to delete "{Name}"?</sys:String>
-    <sys:String x:Key="Lang.Name">Name</sys:String>
-    
-    <!--MultiToDoItemSettingView-->
-    <sys:String x:Key="MultiToDoItemSettingView.Url">URL</sys:String>
-    <sys:String x:Key="MultiToDoItemSettingView.Type">Type</sys:String>
-    <sys:String x:Key="MultiToDoItemSettingView.DueDate">Due date</sys:String>
-
-    <!--TodayToDoItemsView-->
-    <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>
-
-    <!--TimersView-->
-    <sys:String x:Key="TimersView.Header">Timers</sys:String>
-    <sys:String x:Key="TimersView.CreateTimer">Create timer</sys:String>
-
-    <!--LeafToDoItemsView-->
-    <sys:String x:Key="LeafToDoItemsView.Header">Leaf {Header}</sys:String>
+    <sys:String x:Key="Lang.ToDoItem">Спарава</sys:String>
+    <sys:String x:Key="Lang.DeleteToDoItem">Ви впевнені що хочите видалити "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.Name">Назва</sys:String>
+    <sys:String x:Key="Lang.Url">УЛР</sys:String>
+    <sys:String x:Key="Lang.Type">Тип</sys:String>
+    <sys:String x:Key="Lang.DueDate">День виконання</sys:String>
+    <sys:String x:Key="Lang.TodayToDoItems">Сьогоднішні справи</sys:String>
+    <sys:String x:Key="Lang.Timers">Таймери</sys:String>
+    <sys:String x:Key="Lang.Leafs">Перлюстки {Header}</sys:String>
 
     <!--RandomizeChildrenOrderView-->
     <sys:String x:Key="RandomizeChildrenOrderView.Header">Are you sure you want randomize "{Name}" children?</sys:String>
@@ -191,9 +182,7 @@
 
     <!--PaneView-->
     <sys:String x:Key="PaneView.ToDoItems">To-do items</sys:String>
-    <sys:String x:Key="PaneView.TodayToDoItems">Today to-do items</sys:String>
     <sys:String x:Key="PaneView.Search">Search</sys:String>
-    <sys:String x:Key="PaneView.Timers">Timers</sys:String>
     <sys:String x:Key="PaneView.Settings">Settings</sys:String>
     <sys:String x:Key="PaneView.Policy">Policy</sys:String>
     <sys:String x:Key="PaneView.PasswordGenerator">Password generator</sys:String>
@@ -205,7 +194,6 @@
 
     <!--ToDoItemView-->
     <sys:String x:Key="ToDoItemView.Description">Description</sys:String>
-    <sys:String x:Key="ToDoItemView.Type">Type</sys:String>
     <sys:String x:Key="ToDoItemView.Link">Link</sys:String>
 
     <!--VerificationCodeView-->
@@ -217,17 +205,15 @@
     <sys:String x:Key="VerificationCodeView.Header">Action confirmation</sys:String>
 
     <!--AddRootToDoItemView-->
-    <sys:String x:Key="AddRootToDoItemView.Type">Type</sys:String>
+    <sys:String x:Key="AddRootLang.Type">Type</sys:String>
     <sys:String x:Key="AddRootToDoItemView.Url">URL</sys:String>
     <sys:String x:Key="AddRootToDoItemView.Header">New Task</sys:String>
 
     <!--AddTimerView-->
     <sys:String x:Key="AddTimerView.Header">Add timer</sys:String>
-    <sys:String x:Key="AddTimerView.DueDate">Due date</sys:String>
     <sys:String x:Key="AddTimerView.DueTime">Due time</sys:String>
 
     <!--AddToDoItemView-->
-    <sys:String x:Key="AddToDoItemView.Type">Type</sys:String>
     <sys:String x:Key="AddToDoItemView.Header">New Task</sys:String>
 
     <!--CreateUserView-->
@@ -245,8 +231,6 @@
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
-    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</sys:String>
-    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</sys:String>
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</sys:String>
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</sys:String>
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</sys:String>
@@ -255,15 +239,12 @@
     <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore">Remind days before</sys:String>
 
     <!--PeriodicityToDoItemSettingsView-->
-    <sys:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</sys:String>
-    <sys:String x:Key="PeriodicityToDoItemSettingsView.DueDate">Due date</sys:String>
     <sys:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</sys:String>
     <sys:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
     <sys:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
     <sys:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</sys:String>
 
     <!--PlannedToDoItemSettingsView-->
-    <sys:String x:Key="PlannedToDoItemSettingsView.Type">Type</sys:String>
     <sys:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</sys:String>
     <sys:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
     <sys:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
@@ -272,7 +253,6 @@
     <sys:String x:Key="ToDoItemSelectorView.SearchText">Search text</sys:String>
 
     <!--ValueToDoItemSettingsView-->
-    <sys:String x:Key="ValueToDoItemSettingsView.Type">Type</sys:String>
     <sys:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
     <sys:String x:Key="ValueToDoItemSettingsView.Icon">Icon</sys:String>
 

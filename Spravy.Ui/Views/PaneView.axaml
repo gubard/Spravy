@@ -47,7 +47,7 @@
                 Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-calendar-today" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.TodayToDoItems}" />
             </Grid>
         </Button>
 
@@ -72,7 +72,7 @@
                 Command="{x:Static h:UiHelper.NavigateToTimers}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-timer" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Timers}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Timers}" />
             </Grid>
         </Button>
 

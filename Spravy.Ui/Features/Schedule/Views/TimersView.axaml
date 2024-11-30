@@ -15,7 +15,7 @@
             </Button>
 
             <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
-            <TextBlock Text="{StaticResource TimersView.Header}" Classes="h3" />
+            <TextBlock Text="{StaticResource Lang.Timers}" Classes="h3" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" Classes="vertical">
@@ -30,7 +30,7 @@
                 VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <i:Icon Value="mdi-plus" Classes="h1" />
-                <TextBlock Text="{DynamicResource TimersView.CreateTimer}" Classes="alignment-center h3" />
+                <TextBlock Text="{DynamicResource Lang.CreateTimer}" Classes="alignment-center h3" />
             </StackPanel>
         </Button>
     </Grid>

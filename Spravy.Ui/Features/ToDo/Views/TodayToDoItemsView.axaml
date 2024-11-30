@@ -22,7 +22,7 @@
             <ScrollViewer Grid.Column="1"
                           Classes="horizontal"
                           HorizontalAlignment="Left">
-                <TextBlock Text="{DynamicResource TodayToDoItemsView.Header}" Classes="h3" />
+                <TextBlock Text="{DynamicResource Lang.TodayToDoItems}" Classes="h3" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">

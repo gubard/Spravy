@@ -26,7 +26,7 @@
                           Classes="horizontal"
                           HorizontalAlignment="Left">
                 <TextBlock
-                    Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=LeafToDoItemsView.Header}" />
+                    Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=Lang.Leafs}" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
