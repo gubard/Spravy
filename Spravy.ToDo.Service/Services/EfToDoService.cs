@@ -1640,24 +1640,27 @@ public class EfToDoService : IToDoService
                 var daysOfYear = item.GetDaysOfYear().OrderBy(x => x).Select(x => (DayOfYear?)x).ToArray();
 
                 var nextDay = daysOfYear.FirstOrDefault(
-                    x => x.ThrowIfNullStruct().Month >= currentDueDate.Month
+                    x => x.ThrowIfNullStruct().Month >= (Month)currentDueDate.Month
                      && x.ThrowIfNullStruct().Day > currentDueDate.Day
                 );
 
                 var daysInNextMonth = DateTime.DaysInMonth(
                     currentDueDate.Year + 1,
-                    daysOfYear.First().ThrowIfNullStruct().Month
+                    (byte)daysOfYear.First().ThrowIfNullStruct().Month
                 );
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate
-                       .WithMonth(nextDay.Value.Month)
+                       .WithMonth((byte)nextDay.Value.Month)
                        .WithDay(
-                            Math.Min(DateTime.DaysInMonth(currentDueDate.Year, nextDay.Value.Month), nextDay.Value.Day)
+                            Math.Min(
+                                DateTime.DaysInMonth(currentDueDate.Year, (byte)nextDay.Value.Month),
+                                nextDay.Value.Day
+                            )
                         )
                     : item.DueDate
                        .AddYears(1)
-                       .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
+                       .WithMonth((byte)daysOfYear.First().ThrowIfNullStruct().Month)
                        .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
 
                 break;

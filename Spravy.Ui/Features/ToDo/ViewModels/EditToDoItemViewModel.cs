@@ -138,7 +138,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
                .Select(
                     x => new DayOfYearSelectItem
                     {
-                        Month = (byte)x,
+                        Month = (Month)x,
                     }
                 )
         );

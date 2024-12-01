@@ -142,6 +142,29 @@
     <s:String x:Key="Lang.Icon">Значок</s:String>
     <s:String x:Key="Lang.ToDoItemChildrenType.RequireCompletion">Вимагати завершення</s:String>
     <s:String x:Key="Lang.ToDoItemChildrenType.IgnoreCompletion">Ігнорувати завершення</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Sunday">Неділя</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Monday">Понеділок</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Tuesday">Вівторок</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Wednesday">Середа</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Thursday">Четверг</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Friday">П'ятниця</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Saturday">Субота</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Daily">Щодня</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Weekly">Щотижня</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Monthly">Щомісяця</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Annually">Щорічно</s:String>
+    <s:String x:Key="Lang.Month.January">Січня</s:String>
+    <s:String x:Key="Lang.Month.February">Лютий</s:String>
+    <s:String x:Key="Lang.Month.March">Березень</s:String>
+    <s:String x:Key="Lang.Month.April">Квітень</s:String>
+    <s:String x:Key="Lang.Month.May">Травня</s:String>
+    <s:String x:Key="Lang.Month.June">Червень</s:String>
+    <s:String x:Key="Lang.Month.July">Липень</s:String>
+    <s:String x:Key="Lang.Month.August">Серпень</s:String>
+    <s:String x:Key="Lang.Month.September">Вересень</s:String>
+    <s:String x:Key="Lang.Month.October">Жовтень</s:String>
+    <s:String x:Key="Lang.Month.November">Листопад</s:String>
+    <s:String x:Key="Lang.Month.December">Грудень</s:String>
 
     <s:String x:Key="PolicyView.Policy">
         Умови використання

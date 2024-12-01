@@ -70,7 +70,7 @@ public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewM
         new()
         {
             Day = 1,
-            Month = 1,
+            Month = Month.January,
         },
     ];
 

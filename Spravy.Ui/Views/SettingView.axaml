@@ -62,7 +62,7 @@
                                        Text="{DynamicResource Lang.Version}" />
 
                             <StackPanel Classes="horizontal">
-                                <TextBlock Text="{Binding Version}" />
+                                <TextBlock Classes="alignment-center" Text="{Binding Version}" />
 
                                 <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
                                         CommandParameter="{Binding Version}">

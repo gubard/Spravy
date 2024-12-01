@@ -315,7 +315,7 @@
                                 <TabControl ItemsSource="{Binding AnnuallyDays}">
                                     <TabControl.ItemTemplate>
                                         <DataTemplate x:DataType="m:DayOfYearSelectItem">
-                                            <TextBlock Text="{Binding Month}" />
+                                            <TextBlock Text="{Binding Month, Converter={StaticResource EnumLocalizationValueConverter}}" />
                                         </DataTemplate>
                                     </TabControl.ItemTemplate>
                                 </TabControl>

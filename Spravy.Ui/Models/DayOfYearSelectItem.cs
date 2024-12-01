@@ -3,7 +3,7 @@ namespace Spravy.Ui.Models;
 public partial class DayOfYearSelectItem : NotifyBase
 {
     [ObservableProperty]
-    private byte month;
+    private Month month;
 
     public DayOfYearSelectItem()
     {

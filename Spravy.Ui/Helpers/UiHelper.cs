@@ -157,9 +157,9 @@ public static class UiHelper
     public static ReadOnlyMemory<DayOfWeek> DayOfWeeks = new(
         [
             DayOfWeek.Monday,
-            DayOfWeek.Thursday,
-            DayOfWeek.Wednesday,
             DayOfWeek.Tuesday,
+            DayOfWeek.Wednesday,
+            DayOfWeek.Thursday,
             DayOfWeek.Friday,
             DayOfWeek.Saturday,
             DayOfWeek.Sunday,

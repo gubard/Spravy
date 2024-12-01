@@ -4,7 +4,7 @@
     <ControlTheme x:Key="EnumSelectorItemControlStyle" TargetType="c:EnumSelectorItemControl">
         <Setter Property="Template">
             <ControlTemplate>
-                <ToggleButton x:Name="PART_ToggleButton" Content="{TemplateBinding Value}" />
+                <ToggleButton x:Name="PART_ToggleButton" Content="{TemplateBinding DisplayValue}" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>

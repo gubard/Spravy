@@ -151,11 +151,14 @@ public class EnumsSelectorControl : TemplatedControl
                     x => new EnumSelectorItemControl
                     {
                         Value = x,
-                        [!EnumSelectorItemControl.ValueProperty] = new Binding
-                        {
-                            Converter = EnumLocalizationValueConverter.Default,
-                        },
-                    }
+                        DisplayValue =
+                            EnumLocalizationValueConverter.Default.Convert(
+                                x,
+                                x.GetType(),
+                                null,
+                                CultureInfo.CurrentCulture
+                            )
+                         ?? x, }
                 )
                .ToArray()
         );

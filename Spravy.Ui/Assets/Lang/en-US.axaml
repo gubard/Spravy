@@ -142,6 +142,29 @@
     <s:String x:Key="Lang.Icon">Icon</s:String>
     <s:String x:Key="Lang.ToDoItemChildrenType.RequireCompletion">Require completion</s:String>
     <s:String x:Key="Lang.ToDoItemChildrenType.IgnoreCompletion">Ignore completion</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Sunday">Sunday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Monday">Monday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Tuesday">Tuesday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Wednesday">Wednesday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Thursday">Thursday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Friday">Friday</s:String>
+    <s:String x:Key="Lang.DayOfWeek.Saturday">Saturday</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Daily">Daily</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Weekly">Weekly</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Monthly">Monthly</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity.Annually">Annually</s:String>
+    <s:String x:Key="Lang.Month.January">January</s:String>
+    <s:String x:Key="Lang.Month.February">February</s:String>
+    <s:String x:Key="Lang.Month.March">March</s:String>
+    <s:String x:Key="Lang.Month.April">April</s:String>
+    <s:String x:Key="Lang.Month.May">May</s:String>
+    <s:String x:Key="Lang.Month.June">June</s:String>
+    <s:String x:Key="Lang.Month.July">July</s:String>
+    <s:String x:Key="Lang.Month.August">August</s:String>
+    <s:String x:Key="Lang.Month.September">September</s:String>
+    <s:String x:Key="Lang.Month.October">October</s:String>
+    <s:String x:Key="Lang.Month.November">November</s:String>
+    <s:String x:Key="Lang.Month.December">December</s:String>
 
     <s:String x:Key="PolicyView.Policy">
         Terms of Use

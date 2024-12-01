@@ -12,8 +12,6 @@ using AuthenticationSchedule::Spravy.Schedule.Protos;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Models;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Services;
 using AuthenticationToDo::Spravy.ToDo.Protos;
-using AuthenticationService = AuthenticationService;
-using EventBusService = EventBusService;
 using Protos_AuthenticationService = AuthenticationClient::Spravy.Authentication.Protos.AuthenticationService;
 using Protos_EventBusService = AuthenticationEventBus::Spravy.EventBus.Protos.EventBusService;
 

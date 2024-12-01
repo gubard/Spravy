@@ -5,6 +5,9 @@ public class EnumSelectorItemControl : TemplatedControl
     public static readonly StyledProperty<object> ValueProperty =
         AvaloniaProperty.Register<EnumSelectorItemControl, object>(nameof(Value));
 
+    public static readonly StyledProperty<object> DisplayValueProperty =
+        AvaloniaProperty.Register<EnumSelectorItemControl, object>(nameof(DisplayValue));
+
     public static readonly StyledProperty<bool> IsSelectedProperty =
         AvaloniaProperty.Register<EnumSelectorItemControl, bool>(nameof(IsSelected));
 
@@ -26,6 +29,12 @@ public class EnumSelectorItemControl : TemplatedControl
                 }
             }
         );
+    }
+
+    public object DisplayValue
+    {
+        get => GetValue(DisplayValueProperty);
+        set => SetValue(DisplayValueProperty, value);
     }
 
     public object Value
