@@ -89,7 +89,7 @@
     <s:String x:Key="Lang.ForgotPassword">Забув пароль</s:String>
     <s:String x:Key="Lang.Accept">Прийняти</s:String>
     <s:String x:Key="Lang.DescriptionType.PlainText">Звичайний текст</s:String>
-    <s:String x:Key="Lang.DescriptionType.Markdown">Мова розмітки даних,</s:String>
+    <s:String x:Key="Lang.DescriptionType.Markdown">Мова розмітки даних</s:String>
     <s:String x:Key="Lang.Description">Опис</s:String>
     <s:String x:Key="Lang.DescriptionType">Тип опису</s:String>
     <s:String x:Key="Lang.AlsoDeleteAllChildToDoItems">Ви також видаляєте всі дочірні завдання:</s:String>
