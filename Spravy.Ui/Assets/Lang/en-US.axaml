@@ -112,7 +112,7 @@
     <s:String x:Key="Lang.RememberMe">Remember Me</s:String>
     <s:String x:Key="Lang.Password">Password</s:String>
     <s:String x:Key="Lang.CreateAccount">Create account</s:String>
-    <s:String x:Key="Lang.LogIn">Log inning...</s:String>
+    <s:String x:Key="Lang.LogInning">Log inning...</s:String>
     <s:String x:Key="Lang.Spravy">Spravy</s:String>
     <s:String x:Key="Lang.Settings">Settings</s:String>
     <s:String x:Key="Lang.Policy">Policy</s:String>
@@ -127,7 +127,8 @@
     <s:String x:Key="Lang.Email">Email</s:String>
     <s:String x:Key="Lang.RepeatPassword">Repeat password</s:String>
     <s:String x:Key="Lang.CreatingAccount">Creating account...</s:String>
-    <s:String x:Key="Lang.ErrorMessage">Повідомлення про помилку</s:String>
+    <s:String x:Key="Lang.ErrorMessage">Error message</s:String>
+    <s:String x:Key="Lang.LogIn">Log in</s:String>
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
     <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</s:String>

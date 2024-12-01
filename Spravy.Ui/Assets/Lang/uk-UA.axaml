@@ -112,7 +112,7 @@
     <s:String x:Key="Lang.RememberMe">Пам'ятай мене</s:String>
     <s:String x:Key="Lang.Password">Пароль</s:String>
     <s:String x:Key="Lang.CreateAccount">Створити акаунт</s:String>
-    <s:String x:Key="Lang.LogIn">Вхід в систему...</s:String>
+    <s:String x:Key="Lang.LogInning">Вхід в систему...</s:String>
     <s:String x:Key="Lang.Spravy">Справи</s:String>
     <s:String x:Key="Lang.Settings">Налаштування</s:String>
     <s:String x:Key="Lang.Policy">Політика</s:String>
@@ -128,6 +128,7 @@
     <s:String x:Key="Lang.RepeatPassword">Повторіть пароль</s:String>
     <s:String x:Key="Lang.CreatingAccount">Створення облікового запису...</s:String>
     <s:String x:Key="Lang.ErrorMessage">Повідомлення про помилку</s:String>
+    <s:String x:Key="Lang.LogIn">Вхід</s:String>
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
     <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</s:String>
