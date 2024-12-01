@@ -48,7 +48,7 @@
     <s:String x:Key="Lang.ToDoItemStatus.ComingSoon">Скоро</s:String>
     <s:String x:Key="Lang.ToDoItemStatus.Completed">Виконаний</s:String>
     <s:String x:Key="Lang.ToDoItemStatus.Planned">Запланований</s:String>
-    <s:String x:Key="Lang.ToDoItemStatus.ReadyForCompleted">Готовий до виконання</s:String>
+    <s:String x:Key="Lang.ToDoItemStatus.ReadyForCompleted">Готовий до виконання </s:String>
     <s:String x:Key="Lang.ToDoItemStatus.Missed">Пропущений</s:String>
     <s:String x:Key="Lang.Items">Елементи</s:String>
     <s:String x:Key="Lang.Favorite">Обрані</s:String>
