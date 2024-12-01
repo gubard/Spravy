@@ -37,26 +37,21 @@
     <sys:String x:Key="Lang.MoveCircleOrderIndex">Оновити циклічні справи</sys:String>
     <sys:String x:Key="Lang.OnlyCompletedTasks">Тільки виконані справи</sys:String>
     <sys:String x:Key="Lang.CompleteCurrentTask">Виконати поточну справу</sys:String>
-
-    <!--ToDoItemsGroupByTypeView-->
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Values</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Groups">Groups</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.ComingSoon">Coming soon</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Planneds">Planneds</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Periodicitys">Periodicitys</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">Periodicity offsets</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Circles">Circles</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Steps">Steps</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.References">References</sys:String>
-
-    <!--ToDoItemsGroupByStatusView-->
-    <sys:String x:Key="ToDoItemsGroupByStatusView.Completed">Completed</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByStatusView.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByStatusView.ReadyForCompleted">Ready for completed</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByStatusView.Missed">Missed</sys:String>
-
-    <!--ToDoItemsGroupByNoneView-->
-    <sys:String x:Key="ToDoItemsGroupByNoneView.Header">Items</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Value">Значення</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Group">Группа</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Planned">Запланований</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Periodicity">Періодично</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.PeriodicityOffset">Періодичний відступ</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Circle">Круговий</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Step">Крок</sys:String>
+    <sys:String x:Key="Lang.ToDoItemType.Reference">Посилання</sys:String>
+    <sys:String x:Key="Lang.ToDoItemStatus.ComingSoon">Скоро</sys:String>
+    <sys:String x:Key="Lang.ToDoItemStatus.Completed">Виконаний</sys:String>
+    <sys:String x:Key="Lang.ToDoItemStatus.Planned">Запланований</sys:String>
+    <sys:String x:Key="Lang.ToDoItemStatus.ReadyForCompleted">Готовий до виконання</sys:String>
+    <sys:String x:Key="Lang.ToDoItemStatus.Missed">Пропущений</sys:String>
+    <sys:String x:Key="Lang.Items">Елементи</sys:String>
+    <sys:String x:Key="Lang.Favorite">Обрані</sys:String>
 
     <!--DeletePasswordItemView-->
     <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{Name}"?</sys:String>
@@ -121,7 +116,6 @@
     <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.SortBy">Sort by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.ViewLike">View like</sys:String>
-    <sys:String x:Key="MultiToDoItemsView.Favorite">Favorite</sys:String>
 
     <!--ToDoItemType-->
     <sys:String x:Key="ToDoItemType.Value">Value</sys:String>

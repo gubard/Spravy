@@ -415,21 +415,21 @@ public class ViewFactory : IViewFactory
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
         return new(
-            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("MultiToDoItemsView.Favorite")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByNoneView.Header")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Missed")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.ReadyForCompleted")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Planned")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByStatusView.Completed")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Values")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Groups")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Planneds")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Periodicitys")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.PeriodicityOffsets")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Circles")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.Steps")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.References")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("ToDoItemsGroupByTypeView.ComingSoon"))
+            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("Lang.Favorite")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.Items")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Missed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ReadyForCompleted")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Planned")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Completed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Value")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Group")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Planned")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Periodicity")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.PeriodicityOffset")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Circle")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Step")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Reference")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ComingSoon"))
         );
     }
 
