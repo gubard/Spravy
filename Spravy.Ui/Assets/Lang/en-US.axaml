@@ -129,36 +129,20 @@
     <s:String x:Key="Lang.CreatingAccount">Creating account...</s:String>
     <s:String x:Key="Lang.ErrorMessage">Error message</s:String>
     <s:String x:Key="Lang.LogIn">Log in</s:String>
+    <s:String x:Key="Lang.ChildrenTypes">Children types</s:String>
+    <s:String x:Key="Lang.DaysOffset">Days offset</s:String>
+    <s:String x:Key="Lang.MonthsOffset">Months offset</s:String>
+    <s:String x:Key="Lang.WeeksOffset">Weeks offset</s:String>
+    <s:String x:Key="Lang.YearsOffset">Years offset</s:String>
+    <s:String x:Key="Lang.RequiredCompleteInDueDate">Required complete by the due date</s:String>
+    <s:String x:Key="Lang.RemindDaysBefore">Remind days before</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity">Type of periodicity</s:String>
+    <s:String x:Key="Lang.Periodicity">Periodicity</s:String>
+    <s:String x:Key="Lang.SearchText">Search text</s:String>
+    <s:String x:Key="Lang.Icon">Icon</s:String>
+    <s:String x:Key="Lang.ToDoItemChildrenType.RequireCompletion">Require completion</s:String>
+    <s:String x:Key="Lang.ToDoItemChildrenType.IgnoreCompletion">Ignore completion</s:String>
 
-    <!--PeriodicityOffsetToDoItemSettingsView-->
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore">Remind days before</s:String>
-
-    <!--PeriodicityToDoItemSettingsView-->
-    <s:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</s:String>
-
-    <!--PlannedToDoItemSettingsView-->
-    <s:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</s:String>
-    <s:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-
-    <!--ToDoItemSelectorView-->
-    <s:String x:Key="ToDoItemSelectorView.SearchText">Search text</s:String>
-
-    <!--ValueToDoItemSettingsView-->
-    <s:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="ValueToDoItemSettingsView.Icon">Icon</s:String>
-
-    <!--PolicyView-->
-    <s:String x:Key="PolicyView.Header">Policy</s:String>
     <s:String x:Key="PolicyView.Policy">
         Terms of Use
         Introduction

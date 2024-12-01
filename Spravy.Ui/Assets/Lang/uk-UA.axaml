@@ -129,36 +129,20 @@
     <s:String x:Key="Lang.CreatingAccount">Створення облікового запису...</s:String>
     <s:String x:Key="Lang.ErrorMessage">Повідомлення про помилку</s:String>
     <s:String x:Key="Lang.LogIn">Вхід</s:String>
+    <s:String x:Key="Lang.ChildrenTypes">Типи підсправ</s:String>
+    <s:String x:Key="Lang.DaysOffset">Зміщення днів</s:String>
+    <s:String x:Key="Lang.MonthsOffset">Зміщення місяців</s:String>
+    <s:String x:Key="Lang.WeeksOffset">Зміщення тижнів</s:String>
+    <s:String x:Key="Lang.YearsOffset">Зміщення років</s:String>
+    <s:String x:Key="Lang.RequiredCompleteInDueDate">Потрібно заповнити до встановленого терміну</s:String>
+    <s:String x:Key="Lang.RemindDaysBefore">Нагадати днями раніше</s:String>
+    <s:String x:Key="Lang.TypeOfPeriodicity">Тип періодичності</s:String>
+    <s:String x:Key="Lang.Periodicity">Періодичність</s:String>
+    <s:String x:Key="Lang.SearchText">Пошуковий текст</s:String>
+    <s:String x:Key="Lang.Icon">Значок</s:String>
+    <s:String x:Key="Lang.ToDoItemChildrenType.RequireCompletion">Вимагати завершення</s:String>
+    <s:String x:Key="Lang.ToDoItemChildrenType.IgnoreCompletion">Ігнорувати завершення</s:String>
 
-    <!--PeriodicityOffsetToDoItemSettingsView-->
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-    <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.RemindDaysBefore">Remind days before</s:String>
-
-    <!--PeriodicityToDoItemSettingsView-->
-    <s:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-    <s:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</s:String>
-
-    <!--PlannedToDoItemSettingsView-->
-    <s:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</s:String>
-    <s:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</s:String>
-
-    <!--ToDoItemSelectorView-->
-    <s:String x:Key="ToDoItemSelectorView.SearchText">Search text</s:String>
-
-    <!--ValueToDoItemSettingsView-->
-    <s:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</s:String>
-    <s:String x:Key="ValueToDoItemSettingsView.Icon">Icon</s:String>
-
-    <!--PolicyView-->
-    <s:String x:Key="PolicyView.Header">Policy</s:String>
     <s:String x:Key="PolicyView.Policy">
         Умови використання
         вступ
