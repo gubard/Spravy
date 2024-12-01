@@ -105,7 +105,7 @@ public class SpravyCommandService
                .IfSuccessAsync(text => clipboardService.SetTextAsync(text, ct), ct)
                .IfSuccessAsync(
                     () => spravyNotificationManager.ShowAsync(
-                        new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", passwordItem),
+                        new TextLocalization("Lang.CopiedPassword", passwordItem),
                         ct
                     ),
                     ct
@@ -119,7 +119,7 @@ public class SpravyCommandService
                 clipboardService.SetTextAsync(passwordItem.Login, ct)
                    .IfSuccessAsync(
                         () => spravyNotificationManager.ShowAsync(
-                            new TextLocalization("PasswordGeneratorView.Notification.CopyLogin", passwordItem),
+                            new TextLocalization("Lang.CopiedLogin", passwordItem),
                             ct
                         ),
                         ct

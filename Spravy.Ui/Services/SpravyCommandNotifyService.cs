@@ -13,42 +13,12 @@ public class SpravyCommandNotifyService
         CreateTimer = new("mdi-timer", new("Lang.CreateTimer"), commandService.CreateTimer);
         Reset = new("mdi-refresh", new("Lang.Reset"), commandService.Reset);
         Clone = new("mdi-copyleft", new("Lang.Clone"), commandService.Clone);
-
-        AddToFavorite = new(
-            "mdi-star-outline",
-            new("Lang.AddToFavorite"),
-            commandService.AddToFavorite
-        );
-
-        RemoveFromFavorite = new(
-            "mdi-star",
-            new("Lang.RemoveFromFavorite"),
-            commandService.RemoveFromFavorite
-        );
-
-        AddToBookmark = new(
-            "mdi-bookmark-outline",
-            new("Lang.AddToBookmark"),
-            commandService.AddToBookmark
-        );
-
-        RemoveFromBookmark = new(
-            "mdi-bookmark",
-            new("Lang.RemoveFromBookmark"),
-            commandService.RemoveFromBookmark
-        );
-
-        ChangeParent = new(
-            "mdi-swap-horizontal",
-            new("Lang.ChangeParent"),
-            commandService.ChangeParent
-        );
-
-        CopyToClipboard = new(
-            "mdi-clipboard",
-            new("Lang.CopyToClipboard"),
-            commandService.ToDoItemCopyToClipboard
-        );
+        AddToFavorite = new("mdi-star-outline", new("Lang.AddToFavorite"), commandService.AddToFavorite);
+        RemoveFromFavorite = new("mdi-star", new("Lang.RemoveFromFavorite"), commandService.RemoveFromFavorite);
+        AddToBookmark = new("mdi-bookmark-outline", new("Lang.AddToBookmark"), commandService.AddToBookmark);
+        RemoveFromBookmark = new("mdi-bookmark", new("Lang.RemoveFromBookmark"), commandService.RemoveFromBookmark);
+        ChangeParent = new("mdi-swap-horizontal", new("Lang.ChangeParent"), commandService.ChangeParent);
+        CopyToClipboard = new("mdi-clipboard", new("Lang.CopyToClipboard"), commandService.ToDoItemCopyToClipboard);
 
         RandomizeChildrenOrder = new(
             "mdi-dice-6",
@@ -56,21 +26,12 @@ public class SpravyCommandNotifyService
             commandService.RandomizeChildrenOrder
         );
 
-        ChangeOrder = new(
-            "mdi-reorder-horizontal",
-            new("Lang.Reorder"),
-            commandService.ChangeOrder
-        );
-
-        CreateReference = new(
-            "mdi-link-variant",
-            new("Lang.CreateReference"),
-            commandService.CreateReference
-        );
+        ChangeOrder = new("mdi-reorder-horizontal", new("Lang.Reorder"), commandService.ChangeOrder);
+        CreateReference = new("mdi-link-variant", new("Lang.CreateReference"), commandService.CreateReference);
 
         NavigateToCurrentToDoItem = new(
             "mdi-arrow-right",
-            new("Command.OpenCurrent"),
+            new("Lang.OpenCurrent"),
             commandService.NavigateToCurrentToDoItem,
             new(Key.Q, KeyModifiers.Control)
         );

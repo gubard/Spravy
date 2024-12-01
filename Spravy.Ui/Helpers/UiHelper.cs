@@ -273,7 +273,7 @@ public static class UiHelper
     public static ReadOnlyMemory<GroupBy> GroupBys = new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
 
     public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
-        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
+        new([Lang.DescriptionType.PlainText, Lang.DescriptionType.Markdown,]);
 
     public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
         new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);

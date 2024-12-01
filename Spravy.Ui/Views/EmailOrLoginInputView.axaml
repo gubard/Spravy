@@ -13,24 +13,24 @@
                        MinWidth="300">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Classes="alignment-center" Text="{DynamicResource EmailOrLoginInputView.Header}" />
+                <TextBlock Classes="alignment-center" Text="{DynamicResource Lang.ForgotPassword}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
                 <TextBlock Classes="field"
-                           Text="{DynamicResource EmailOrLoginInputView.EmailOrLogin}" />
+                           Text="{DynamicResource Lang.EmailOrLogin}" />
                 <TextBox x:Name="EmailOrLoginTextBox" Text="{Binding EmailOrLogin}" />
 
                 <Grid ColumnDefinitions="*,*">
                     <Button x:Name="BackButton"
                             Classes="mode-press"
                             Command="{x:Static h:UiHelper.Back}"
-                            Content="{DynamicResource EmailOrLoginInputView.Back}" />
+                            Content="{DynamicResource Lang.Back}" />
                     <Button x:Name="ForgotPasswordButton"
                             Grid.Column="1"
                             Classes="mode-press"
                             Command="{Binding ForgotPasswordCommand.Command}"
-                            Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
+                            Content="{DynamicResource Lang.ChangePassword}" />
                 </Grid>
             </StackPanel>
         </c:GroupBoxControl>

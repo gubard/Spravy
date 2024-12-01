@@ -75,7 +75,7 @@
                             Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
 
             <StackPanel Grid.Column="2">
-                <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
+                <TextBlock Classes="field" Text="{DynamicResource Lang.Search}" />
                 <AutoCompleteBox x:Name="SearchTextTextBox"
                                  Text="{Binding SearchText}"
                                  ItemsSource="{Binding SearchTexts}" />

@@ -35,12 +35,12 @@
                             Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <ToolTip.Tip>
                             <c:ViewSelectorControl State="{Binding DescriptionType}">
-                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
+                                <c:ViewSelectorItemControl State="{x:Static e:Lang.DescriptionType.PlainText}">
                                     <TextBlock Classes="alignment-left text-wrap"
                                                Text="{Binding Description}" />
                                 </c:ViewSelectorItemControl>
 
-                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
+                                <c:ViewSelectorItemControl State="{x:Static e:Lang.DescriptionType.Markdown}">
                                     <mdxaml:MarkdownScrollViewer MinWidth="320" Markdown="{Binding Description}" />
                                 </c:ViewSelectorItemControl>
                             </c:ViewSelectorControl>

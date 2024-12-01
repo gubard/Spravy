@@ -1,3 +1,5 @@
+using Spravy.Ui.Converters;
+
 namespace Spravy.Ui.Controls;
 
 public class EnumSelectorControl : TemplatedControl
@@ -12,9 +14,7 @@ public class EnumSelectorControl : TemplatedControl
 
     static EnumSelectorControl()
     {
-        SelectedEnumProperty.Changed.AddClassHandler<EnumSelectorControl>(
-            (control, _) => control.UpdateEnums()
-        );
+        SelectedEnumProperty.Changed.AddClassHandler<EnumSelectorControl>((control, _) => control.UpdateEnums());
     }
 
     public ValueType? SelectedEnum
@@ -42,6 +42,11 @@ public class EnumSelectorControl : TemplatedControl
         if (selectingItemsControl is not null)
         {
             selectingItemsControl.SelectionChanged += OnSelectionChanged;
+
+            selectingItemsControl.DisplayMemberBinding = new Binding
+            {
+                Converter = EnumLocalizationValueConverter.Default,
+            };
         }
 
         UpdateEnums();

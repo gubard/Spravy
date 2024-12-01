@@ -13,9 +13,8 @@
     <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
     <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
     <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
-    <c:ToDoItemStatusLocalizationValueConverter x:Key="ToDoItemStatusLocalizationValueConverter" />
+    <c:EnumLocalizationValueConverter x:Key="EnumLocalizationValueConverter" />
     <c:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
-    <c:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
     <c:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
     <c:StringIsNullOrWhiteSpaceConverter x:Key="StringIsNullOrWhiteSpaceConverter" />
     <c:ColorToTextForegroundConverter x:Key="ColorToTextForegroundConverter" />
@@ -23,7 +22,6 @@
     <c:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
     <c:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
     <c:Int32PositiveToBooleanConverter x:Key="Int32PositiveToBooleanConverterReverse" IsReverse="True" />
-    <c:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
     <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
     <c:ColorToUserControlBackgroundConverter x:Key="ColorToUserControlBackgroundConverter" />
     <c:ColorToButtonBackgroundConverter x:Key="ColorToButtonBackgroundConverter" />

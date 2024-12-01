@@ -16,10 +16,10 @@
             <StackPanel>
                 <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />
                 <TextBlock Classes="field"
-                           Text="{DynamicResource EditDescriptionView.DescriptionType}" />
+                           Text="{DynamicResource Lang.DescriptionType}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
                 <TextBlock Classes="field"
-                           Text="{DynamicResource EditDescriptionView.Description}" />
+                           Text="{DynamicResource Lang.Description}" />
                 <TextBox x:Name="DescriptionTextBox"
                          Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
                          Text="{Binding Description}" />

@@ -24,7 +24,7 @@
     <sys:String x:Key="Lang.Clone">Дублювати</sys:String>
     <sys:String x:Key="Lang.CreateReference">Створити посилання</sys:String>
     <sys:String x:Key="Lang.ToDoItem">Спарава</sys:String>
-    <sys:String x:Key="Lang.DeleteToDoItem">Ви впевнені що хочите видалити "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.DeleteMessage">Ви впевнені що хочите видалити "{Name}"?</sys:String>
     <sys:String x:Key="Lang.Name">Назва</sys:String>
     <sys:String x:Key="Lang.Url">УЛР</sys:String>
     <sys:String x:Key="Lang.Type">Тип</sys:String>
@@ -52,59 +52,48 @@
     <sys:String x:Key="Lang.ToDoItemStatus.Missed">Пропущений</sys:String>
     <sys:String x:Key="Lang.Items">Елементи</sys:String>
     <sys:String x:Key="Lang.Favorite">Обрані</sys:String>
-
-    <!--DeletePasswordItemView-->
-    <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{Name}"?</sys:String>
-
-    <!--PasswordGeneratorView-->
-    <sys:String x:Key="PasswordGeneratorView.Header">Password generator</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Notification.CopyPassword">Copied password "{Name}"</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Notification.CopyLogin">Copied login "{Name}"</sys:String>
-
-    <!--AddPasswordItemView-->
-    <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Key">Key</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Length">Length</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</sys:String>
-    <sys:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Regex">Regex</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Login">Login</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableNumber">Available number</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableSpecialSymbols">Available special symbols</sys:String>
-
-    <!--DeleteAccountView-->
-    <sys:String x:Key="DeleteAccountView.VerificationCode">Verification Code</sys:String>
-    <sys:String x:Key="DeleteAccountView.SendNewCode">Send new code</sys:String>
-    <sys:String x:Key="DeleteAccountView.Back">Back</sys:String>
-    <sys:String x:Key="DeleteAccountView.DeleteAccount">Delete account</sys:String>
-
-    <!--SearchView-->
-    <sys:String x:Key="SearchView.Search">Search</sys:String>
-
-    <!--EmailOrLoginInputView-->
-    <sys:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Back">Back</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Header">Forgot password</sys:String>
-
-    <!--InfoView-->
-    <sys:String x:Key="InfoView.Accept">Accept</sys:String>
-
-    <!--DescriptionType-->
-    <sys:String x:Key="DescriptionType.PlainText">Plain text</sys:String>
-    <sys:String x:Key="DescriptionType.Markdown">Markdown</sys:String>
-
-    <!--EditDescriptionView-->
-    <sys:String x:Key="EditDescriptionView.Description">Description</sys:String>
-    <sys:String x:Key="EditDescriptionView.DescriptionType">Description type</sys:String>
+    <sys:String x:Key="Lang.DeleteToDoItems">Ви впевнені що хочите виделати "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.PasswordGenerator">Генератор паролів</sys:String>
+    <sys:String x:Key="Lang.CreatePassword">Створити пароль</sys:String>
+    <sys:String x:Key="Lang.CopiedPassword">Скопійовано пароль "{Name}"</sys:String>
+    <sys:String x:Key="Lang.CopiedLogin">Скопійовано логін "{Name}"</sys:String>
+    <sys:String x:Key="Lang.OpenCurrent">Відкрити поточну справу</sys:String>
+    <sys:String x:Key="Lang.NewPassword">Новий пароль</sys:String>
+    <sys:String x:Key="Lang.Key">Ключ</sys:String>
+    <sys:String x:Key="Lang.Length">Довжина</sys:String>
+    <sys:String x:Key="Lang.AvailableCharacters">Доступні символи</sys:String>
+    <sys:String x:Key="Lang.CustomAvailableCharacters">Користувальницькі доступні символи</sys:String>
+    <sys:String x:Key="Lang.Regex">Регулярний вираз</sys:String>
+    <sys:String x:Key="Lang.Login">Логін</sys:String>
+    <sys:String x:Key="Lang.AvailableUpperLatin">Доступна верхня латиниця</sys:String>
+    <sys:String x:Key="Lang.AvailableLowerLatin">Доступна нижня латиниця</sys:String>
+    <sys:String x:Key="Lang.AvailableNumber">Доступний номер</sys:String>
+    <sys:String x:Key="Lang.AvailableSpecialSymbols">Доступні спеціальні символи</sys:String>
+    <sys:String x:Key="Lang.GroupBy.None">Жодного</sys:String>
+    <sys:String x:Key="Lang.GroupBy.ByStatus">За статусом</sys:String>
+    <sys:String x:Key="Lang.GroupBy.ByType">За типом</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.Index">Індекс</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.Name">Назва</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.DueDate">День виконання</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Default">За замовчуванням</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Light">Світла</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Dark">Темна</sys:String>
+    <sys:String x:Key="Lang.VerificationCode">Код підтвердження</sys:String>
+    <sys:String x:Key="Lang.SendNewCode">Надіслати новий код</sys:String>
+    <sys:String x:Key="Lang.Back">Назад</sys:String>
+    <sys:String x:Key="Lang.DeleteAccount">Видалити акаунт</sys:String>
+    <sys:String x:Key="Lang.Search">Пошук</sys:String>
+    <sys:String x:Key="Lang.EmailOrLogin">Електронна пошта або логін</sys:String>
+    <sys:String x:Key="Lang.ChangePassword">Змінити пароль</sys:String>
+    <sys:String x:Key="Lang.SendingVerificationCode">Надсилання коду підтвердження...</sys:String>
+    <sys:String x:Key="Lang.ForgotPassword">Забув пароль</sys:String>
+    <sys:String x:Key="Lang.Accept">Прийняти</sys:String>
+    <sys:String x:Key="Lang.DescriptionType.PlainText">Звичайний текст</sys:String>
+    <sys:String x:Key="Lang.DescriptionType.Markdown">Мова розмітки даних,</sys:String>
+    <sys:String x:Key="Lang.Description">Опис</sys:String>
+    <sys:String x:Key="Lang.DescriptionType">Тип опису</sys:String>
 
     <!--DeleteToDoItemView-->
-    <sys:String x:Key="DeleteToDoItemView.NamedHeader">Are you sure you want to delete "{Name}"?</sys:String>
-    <sys:String x:Key="DeleteToDoItemView.Header">Are you sure you want to delete?</sys:String>
     <sys:String x:Key="DeleteToDoItemView.Body">You also delete all child to-do items:</sys:String>
 
     <!--ConfirmView-->
@@ -116,23 +105,6 @@
     <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.SortBy">Sort by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.ViewLike">View like</sys:String>
-
-    <!--ToDoItemType-->
-    <sys:String x:Key="ToDoItemType.Value">Value</sys:String>
-    <sys:String x:Key="ToDoItemType.Group">Group</sys:String>
-    <sys:String x:Key="ToDoItemType.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemType.Periodicity">Periodicity</sys:String>
-    <sys:String x:Key="ToDoItemType.PeriodicityOffset">Periodicity offset</sys:String>
-    <sys:String x:Key="ToDoItemType.Circle">Circle</sys:String>
-    <sys:String x:Key="ToDoItemType.Step">Step</sys:String>
-    <sys:String x:Key="ToDoItemType.Reference">Reference</sys:String>
-
-    <!--ToDoItemStatus-->
-    <sys:String x:Key="ToDoItemStatus.Miss">Miss</sys:String>
-    <sys:String x:Key="ToDoItemStatus.ComingSoon">Coming soon</sys:String>
-    <sys:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</sys:String>
-    <sys:String x:Key="ToDoItemStatus.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemStatus.Completed">Completed</sys:String>
 
     <!--SettingView-->
     <sys:String x:Key="SettingView.Header">Setting</sys:String>

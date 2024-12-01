@@ -17,6 +17,6 @@
                 Grid.Row="1"
                 Classes="mode-press alignment-right label accept-high"
                 Command="{Binding OkCommand.Command}"
-                Content="{DynamicResource InfoView.Accept}" />
+                Content="{DynamicResource Lang.Accept}" />
     </Grid>
 </UserControl>

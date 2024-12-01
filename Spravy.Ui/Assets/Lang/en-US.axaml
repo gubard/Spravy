@@ -24,7 +24,7 @@
     <sys:String x:Key="Lang.Clone">Clone</sys:String>
     <sys:String x:Key="Lang.CreateReference">Create reference</sys:String>
     <sys:String x:Key="Lang.ToDoItem">To do item</sys:String>
-    <sys:String x:Key="Lang.DeleteToDoItem">Are you sure you want to delete "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.DeleteMessage">Are you sure you want to delete "{Name}"?</sys:String>
     <sys:String x:Key="Lang.Name">Name</sys:String>
     <sys:String x:Key="Lang.Url">URL</sys:String>
     <sys:String x:Key="Lang.Type">Type</sys:String>
@@ -51,62 +51,49 @@
     <sys:String x:Key="Lang.ToDoItemStatus.ReadyForCompleted">Ready for completed</sys:String>
     <sys:String x:Key="Lang.ToDoItemStatus.Missed">Missed</sys:String>
     <sys:String x:Key="Lang.Favorite">Favorite</sys:String>
-
-    <!--ToDoItemsGroupByNoneView-->
+    <sys:String x:Key="Lang.OpenCurrent">Open current to do item</sys:String>
     <sys:String x:Key="Lang.Items">Items</sys:String>
-
-    <!--DeletePasswordItemView-->
-    <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{Name}"?</sys:String>
-
-    <!--PasswordGeneratorView-->
-    <sys:String x:Key="PasswordGeneratorView.Header">Password generator</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Notification.CopyPassword">Copied password "{Name}"</sys:String>
-    <sys:String x:Key="PasswordGeneratorView.Notification.CopyLogin">Copied login "{Name}"</sys:String>
-
-    <!--AddPasswordItemView-->
-    <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Key">Key</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Length">Length</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</sys:String>
-    <sys:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Regex">Regex</sys:String>
-    <sys:String x:Key="AddPasswordItemView.Login">Login</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableNumber">Available number</sys:String>
-    <sys:String x:Key="AddPasswordItemView.AvailableSpecialSymbols">Available special symbols</sys:String>
-
-    <!--DeleteAccountView-->
-    <sys:String x:Key="DeleteAccountView.VerificationCode">Verification Code</sys:String>
-    <sys:String x:Key="DeleteAccountView.SendNewCode">Send new code</sys:String>
-    <sys:String x:Key="DeleteAccountView.Back">Back</sys:String>
-    <sys:String x:Key="DeleteAccountView.DeleteAccount">Delete account</sys:String>
-
-    <!--SearchView-->
-    <sys:String x:Key="SearchView.Search">Search</sys:String>
-
-    <!--EmailOrLoginInputView-->
-    <sys:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Back">Back</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</sys:String>
-    <sys:String x:Key="EmailOrLoginInputView.Header">Forgot password</sys:String>
-
-    <!--InfoView-->
-    <sys:String x:Key="InfoView.Accept">Accept</sys:String>
-
-    <!--DescriptionType-->
-    <sys:String x:Key="DescriptionType.PlainText">Plain text</sys:String>
-    <sys:String x:Key="DescriptionType.Markdown">Markdown</sys:String>
-
-    <!--EditDescriptionView-->
-    <sys:String x:Key="EditDescriptionView.Description">Description</sys:String>
-    <sys:String x:Key="EditDescriptionView.DescriptionType">Description type</sys:String>
+    <sys:String x:Key="Lang.DeleteToDoItems">Are you sure you want to delete "{Name}"?</sys:String>
+    <sys:String x:Key="Lang.PasswordGenerator">Password generator</sys:String>
+    <sys:String x:Key="Lang.CreatePassword">Create password</sys:String>
+    <sys:String x:Key="Lang.CopiedPassword">Copied password "{Name}"</sys:String>
+    <sys:String x:Key="Lang.CopiedLogin">Copied login "{Name}"</sys:String>
+    <sys:String x:Key="Lang.GroupBy.None">None</sys:String>
+    <sys:String x:Key="Lang.GroupBy.ByStatus">By status</sys:String>
+    <sys:String x:Key="Lang.GroupBy.ByType">By type</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.Index">Index</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.Name">Name</sys:String>
+    <sys:String x:Key="Lang.SortByToDoItem.DueDate">Due date</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Default">Default</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Light">Light</sys:String>
+    <sys:String x:Key="Lang.ThemeType.Dark">Dark</sys:String>
+    <sys:String x:Key="Lang.NewPassword">New password</sys:String>
+    <sys:String x:Key="Lang.Key">Key</sys:String>
+    <sys:String x:Key="Lang.Length">Length</sys:String>
+    <sys:String x:Key="Lang.AvailableCharacters">Available characters</sys:String>
+    <sys:String x:Key="Lang.CustomAvailableCharacters">Custom available characters</sys:String>
+    <sys:String x:Key="Lang.Regex">Regex</sys:String>
+    <sys:String x:Key="Lang.Login">Login</sys:String>
+    <sys:String x:Key="Lang.AvailableUpperLatin">Available upper latin</sys:String>
+    <sys:String x:Key="Lang.AvailableLowerLatin">Available lower latin</sys:String>
+    <sys:String x:Key="Lang.AvailableNumber">Available number</sys:String>
+    <sys:String x:Key="Lang.AvailableSpecialSymbols">Available special symbols</sys:String>
+    <sys:String x:Key="Lang.VerificationCode">Verification code</sys:String>
+    <sys:String x:Key="Lang.SendNewCode">Send new code</sys:String>
+    <sys:String x:Key="Lang.Back">Back</sys:String>
+    <sys:String x:Key="Lang.DeleteAccount">Delete account</sys:String>
+    <sys:String x:Key="Lang.Search">Search</sys:String>
+    <sys:String x:Key="Lang.EmailOrLogin">Email or login</sys:String>
+    <sys:String x:Key="Lang.ChangePassword">Change password</sys:String>
+    <sys:String x:Key="Lang.SendingVerificationCode">Sending verification code...</sys:String>
+    <sys:String x:Key="Lang.ForgotPassword">Forgot password</sys:String>
+    <sys:String x:Key="Lang.Accept">Accept</sys:String>
+    <sys:String x:Key="Lang.DescriptionType.PlainText">Plain text</sys:String>
+    <sys:String x:Key="Lang.DescriptionType.Markdown">Markdown</sys:String>
+    <sys:String x:Key="Lang.Description">Description</sys:String>
+    <sys:String x:Key="Lang.DescriptionType">Description type</sys:String>
 
     <!--DeleteToDoItemView-->
-    <sys:String x:Key="DeleteToDoItemView.NamedHeader">Are you sure you want to delete "{Name}"?</sys:String>
-    <sys:String x:Key="DeleteToDoItemView.Header">Are you sure you want to delete?</sys:String>
     <sys:String x:Key="DeleteToDoItemView.Body">You also delete all child to-do items:</sys:String>
 
     <!--ConfirmView-->
@@ -118,23 +105,6 @@
     <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.SortBy">Sort by</sys:String>
     <sys:String x:Key="MultiToDoItemsView.ViewLike">View like</sys:String>
-
-    <!--ToDoItemType-->
-    <sys:String x:Key="ToDoItemType.Value">Value</sys:String>
-    <sys:String x:Key="ToDoItemType.Group">Group</sys:String>
-    <sys:String x:Key="ToDoItemType.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemType.Periodicity">Periodicity</sys:String>
-    <sys:String x:Key="ToDoItemType.PeriodicityOffset">Periodicity offset</sys:String>
-    <sys:String x:Key="ToDoItemType.Circle">Circle</sys:String>
-    <sys:String x:Key="ToDoItemType.Step">Step</sys:String>
-    <sys:String x:Key="ToDoItemType.Reference">Reference</sys:String>
-
-    <!--ToDoItemStatus-->
-    <sys:String x:Key="ToDoItemStatus.Miss">Miss</sys:String>
-    <sys:String x:Key="ToDoItemStatus.ComingSoon">Coming soon</sys:String>
-    <sys:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</sys:String>
-    <sys:String x:Key="ToDoItemStatus.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemStatus.Completed">Completed</sys:String>
 
     <!--SettingView-->
     <sys:String x:Key="SettingView.Header">Setting</sys:String>
