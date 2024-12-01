@@ -39,7 +39,7 @@
                 Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-check-all" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Spravy}" />
             </Grid>
         </Button>
 
@@ -55,7 +55,7 @@
                 Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-magnify" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Search}" />
             </Grid>
         </Button>
 
@@ -64,7 +64,7 @@
                 IsVisible="{Binding IsShowPasswordGenerator}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-lock" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.PasswordGenerator}" />
             </Grid>
         </Button>
 
@@ -80,7 +80,7 @@
                 Command="{x:Static h:UiHelper.NavigateToSetting}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-cog" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Settings}" />
             </Grid>
         </Button>
 
@@ -88,7 +88,7 @@
                 Command="{x:Static h:UiHelper.NavigateToPolicy}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-file-document" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Policy}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Policy}" />
             </Grid>
         </Button>
 
@@ -96,7 +96,7 @@
                 Command="{x:Static h:UiHelper.Logout}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-logout" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Logout}" />
             </Grid>
         </Button>
 

@@ -20,7 +20,7 @@
             <AutoCompleteBox Text="{Binding Name}" ItemsSource="{Binding Names}" />
             <TextBlock Classes="field" Text="{StaticResource Lang.DueDate}" />
             <Calendar SelectedDate="{Binding Date}" />
-            <TextBlock Classes="field" Text="{StaticResource AddTimerView.DueTime}" />
+            <TextBlock Classes="field" Text="{StaticResource Lang.DueTime}" />
             <TimePicker SelectedTime="{Binding Time}" ClockIdentifier="24HourClock" />
 
             <c:ListControl ItemsSource="{Binding Times}">

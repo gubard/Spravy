@@ -35,12 +35,12 @@
                             Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
                         <ToolTip.Tip>
                             <c:ViewSelectorControl State="{Binding DescriptionType}">
-                                <c:ViewSelectorItemControl State="{x:Static e:Lang.DescriptionType.PlainText}">
+                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
                                     <TextBlock Classes="alignment-left text-wrap"
                                                Text="{Binding Description}" />
                                 </c:ViewSelectorItemControl>
 
-                                <c:ViewSelectorItemControl State="{x:Static e:Lang.DescriptionType.Markdown}">
+                                <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
                                     <mdxaml:MarkdownScrollViewer MinWidth="320" Markdown="{Binding Description}" />
                                 </c:ViewSelectorItemControl>
                             </c:ViewSelectorControl>
@@ -204,13 +204,13 @@
         <StackPanel Classes="horizontal" Margin="2">
             <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
-                           Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
+                           Text="{DynamicResource Lang.GroupBy}" />
                 <c:EnumSelectorControl MinWidth="150" Classes="combo-box" SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
 
             <StackPanel Margin="2,0,2,0">
                 <TextBlock Classes="field"
-                           Text="{DynamicResource MultiToDoItemsView.SortBy}" />
+                           Text="{DynamicResource Lang.SortBy}" />
                 <c:EnumSelectorControl MinWidth="150" Classes="combo-box" SelectedEnum="{Binding SortBy}" />
             </StackPanel>
         </StackPanel>

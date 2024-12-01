@@ -21,9 +21,9 @@
                                Segments="{Binding Path}" />
 
                 <StackPanel Classes="horizontal">
-                    <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
+                    <TextBlock Text="{DynamicResource Lang.Before}" Classes="alignment-center" />
                     <ToggleSwitch IsChecked="{Binding IsAfter}" />
-                    <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
+                    <TextBlock Text="{DynamicResource Lang.After}" Classes="alignment-center" />
                 </StackPanel>
 
 

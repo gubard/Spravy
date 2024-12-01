@@ -29,7 +29,7 @@
             <ScrollViewer Grid.Column="1"
                           Classes="horizontal"
                           HorizontalAlignment="Left">
-                <TextBlock Text="{DynamicResource RootToDoItemsView.Header}" Classes="h3" />
+                <TextBlock Text="{DynamicResource Lang.Spravy}" Classes="h3" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -100,7 +100,7 @@
                 Height="64">
             <StackPanel Classes="horizontal alignment-center">
                 <i:Icon Value="mdi-plus" Classes="h1" />
-                <TextBlock Classes="alignment-center h3" Text="{DynamicResource RootToDoItemsView.CreateTask}" />
+                <TextBlock Classes="alignment-center h3" Text="{DynamicResource Lang.CreateToDoItem}" />
             </StackPanel>
         </Button>
     </Grid>

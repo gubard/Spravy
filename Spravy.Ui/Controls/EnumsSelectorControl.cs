@@ -1,3 +1,5 @@
+using Spravy.Ui.Converters;
+
 namespace Spravy.Ui.Controls;
 
 public class EnumsSelectorControl : TemplatedControl
@@ -45,11 +47,11 @@ public class EnumsSelectorControl : TemplatedControl
 
             selectedEnums = null;
 
-            foreach (var integerControl in enumControls)
+            foreach (var enumControl in enumControls)
             {
-                if (integerControl.IsSelected)
+                if (enumControl.IsSelected)
                 {
-                    integerControl.IsSelected = false;
+                    enumControl.IsSelected = false;
                 }
             }
         }
@@ -59,8 +61,7 @@ public class EnumsSelectorControl : TemplatedControl
             {
                 if (selectedEnums is INotifyCollectionChanged notifyCollectionChanged)
                 {
-                    notifyCollectionChanged.CollectionChanged -=
-                        SelectedIntegersChangedEventHandler;
+                    notifyCollectionChanged.CollectionChanged -= SelectedIntegersChangedEventHandler;
                 }
 
                 selectedEnums = SelectedEnums;
@@ -71,22 +72,19 @@ public class EnumsSelectorControl : TemplatedControl
                 }
             }
 
-            foreach (var integerControl in enumControls)
+            foreach (var enumControl in enumControls)
             {
-                var value = SelectedEnums.OfType<object>().Contains(integerControl.Value);
+                var value = SelectedEnums.OfType<object>().Contains(enumControl.Value);
 
-                if (value != integerControl.IsSelected)
+                if (value != enumControl.IsSelected)
                 {
-                    integerControl.IsSelected = value;
+                    enumControl.IsSelected = value;
                 }
             }
         }
     }
 
-    private void SelectedIntegersChangedEventHandler(
-        object? sender,
-        NotifyCollectionChangedEventArgs e
-    )
+    private void SelectedIntegersChangedEventHandler(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (sender is not IEnumerable enumerable)
         {
@@ -111,13 +109,13 @@ public class EnumsSelectorControl : TemplatedControl
 
         var array = enumerable.OfType<object>().ToArray();
 
-        foreach (var integerControl in enumControls)
+        foreach (var enumControl in enumControls)
         {
-            var value = array.Contains(integerControl.Value);
+            var value = array.Contains(enumControl.Value);
 
-            if (value != integerControl.IsSelected)
+            if (value != enumControl.IsSelected)
             {
-                integerControl.IsSelected = value;
+                enumControl.IsSelected = value;
             }
         }
     }
@@ -146,16 +144,25 @@ public class EnumsSelectorControl : TemplatedControl
         }
 
         Clear();
+
         enumControls.AddRange(
-            UiHelper
-                .GetEnumValues(SelectedEnums.GetType().GetGenericArguments()[0])
-                .Select(x => new EnumSelectorItemControl { Value = x })
-                .ToArray()
+            UiHelper.GetEnumValues(SelectedEnums.GetType().GetGenericArguments()[0])
+               .Select(
+                    x => new EnumSelectorItemControl
+                    {
+                        Value = x,
+                        [!EnumSelectorItemControl.ValueProperty] = new Binding
+                        {
+                            Converter = EnumLocalizationValueConverter.Default,
+                        },
+                    }
+                )
+               .ToArray()
         );
 
-        foreach (var integerControl in enumControls)
+        foreach (var enumControl in enumControls)
         {
-            integerControl.PropertyChanged += OnPropertyChanged;
+            enumControl.PropertyChanged += OnPropertyChanged;
         }
 
         foreach (var enumControl in enumControls)
@@ -168,7 +175,7 @@ public class EnumsSelectorControl : TemplatedControl
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        if (sender is not EnumSelectorItemControl integerControl)
+        if (sender is not EnumSelectorItemControl enumControl)
         {
             return;
         }
@@ -180,28 +187,28 @@ public class EnumsSelectorControl : TemplatedControl
                 return;
             }
 
-            if (integerControl.IsSelected)
+            if (enumControl.IsSelected)
             {
-                if (selectedEnums.OfType<object>().Contains(integerControl.Value))
+                if (selectedEnums.OfType<object>().Contains(enumControl.Value))
                 {
                     return;
                 }
 
                 if (selectedEnums is IList collection)
                 {
-                    collection.Add(integerControl.Value);
+                    collection.Add(enumControl.Value);
                 }
             }
             else
             {
-                if (!selectedEnums.OfType<object>().Contains(integerControl.Value))
+                if (!selectedEnums.OfType<object>().Contains(enumControl.Value))
                 {
                     return;
                 }
 
                 if (selectedEnums is IList collection)
                 {
-                    collection.Remove(integerControl.Value);
+                    collection.Remove(enumControl.Value);
                 }
             }
         }

@@ -48,7 +48,7 @@
 
         <DataTemplate DataType="s:EmptyNavigatable">
             <StackPanel Classes="alignment-center">
-                <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" />
+                <TextBlock Text="{DynamicResource Lang.WelcomeToSpravy}" />
                 <Image Source="../Assets/Images/Logo.ico" Width="128" Height="128" />
             </StackPanel>
         </DataTemplate>

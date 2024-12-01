@@ -21,16 +21,16 @@
                 </StackPanel>
 
                 <ScrollViewer Grid.Column="1" Classes="horizontal alignment-left">
-                    <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
+                    <TextBlock Text="{DynamicResource Lang.Setting}" Classes="h3" />
                 </ScrollViewer>
             </Grid>
 
             <ScrollViewer Grid.Row="1" Classes="vertical">
                 <StackPanel>
-                    <c:GroupBoxControl Header="{StaticResource SettingView.AccountSetting}" Margin="5">
+                    <c:GroupBoxControl Header="{StaticResource Lang.AccountSetting}" Margin="5">
                         <StackPanel>
                             <TextBlock Classes="field"
-                                       Text="{DynamicResource SettingView.Login}" />
+                                       Text="{DynamicResource Lang.Login}" />
 
                             <StackPanel Classes="horizontal">
                                 <TextBlock Text="{Binding AccountNotify.Login}" />
@@ -43,23 +43,23 @@
 
                             <StackPanel Classes="horizontal">
                                 <Button Classes="mode-press"
-                                        Content="{DynamicResource SettingView.ChangePassword}"
+                                        Content="{DynamicResource Lang.ChangePassword}"
                                         Command="{Binding ChangePasswordCommand.Command}" />
                                 <Button Classes="mode-press"
-                                        Content="{DynamicResource SettingView.DeleteAccount}"
+                                        Content="{DynamicResource Lang.DeleteAccount}"
                                         Command="{Binding DeleteAccountCommand.Command}" />
                             </StackPanel>
                         </StackPanel>
                     </c:GroupBoxControl>
 
-                    <c:GroupBoxControl Header="{StaticResource SettingView.ApplicationInfo}" Margin="5">
+                    <c:GroupBoxControl Header="{StaticResource Lang.ApplicationInfo}" Margin="5">
                         <StackPanel>
                             <TextBlock Classes="field"
-                                       Text="{StaticResource SettingView.BaseTheme}" />
+                                       Text="{StaticResource Lang.BaseTheme}" />
                             <c:EnumSelectorControl Classes="alignment-left"
                                                    SelectedEnum="{Binding SelectedTheme}" />
                             <TextBlock Classes="field"
-                                       Text="{DynamicResource SettingView.Version}" />
+                                       Text="{DynamicResource Lang.Version}" />
 
                             <StackPanel Classes="horizontal">
                                 <TextBlock Text="{Binding Version}" />
@@ -72,13 +72,13 @@
                         </StackPanel>
                     </c:GroupBoxControl>
 
-                    <c:GroupBoxControl Header="{StaticResource SettingView.Language}" Margin="5">
+                    <c:GroupBoxControl Header="{StaticResource Lang.Language}" Margin="5">
                         <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" />
                     </c:GroupBoxControl>
                 </StackPanel>
             </ScrollViewer>
 
-            <Button Grid.Row="2" Command="{Binding SaveCommand.Command}" Content="{DynamicResource SettingView.Save}" />
+            <Button Grid.Row="2" Command="{Binding SaveCommand.Command}" Content="{DynamicResource Lang.Save}" />
         </Grid>
     </c:BusyAreaControl>
 </UserControl>

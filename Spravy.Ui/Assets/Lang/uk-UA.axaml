@@ -26,7 +26,7 @@
     <s:String x:Key="Lang.ToDoItem">Спарава</s:String>
     <s:String x:Key="Lang.DeleteMessage">Ви впевнені що хочите видалити "{Name}"?</s:String>
     <s:String x:Key="Lang.Name">Назва</s:String>
-    <s:String x:Key="Lang.Url">УЛР</s:String>
+    <s:String x:Key="Lang.Url">УЛР(URL)</s:String>
     <s:String x:Key="Lang.Type">Тип</s:String>
     <s:String x:Key="Lang.DueDate">День виконання</s:String>
     <s:String x:Key="Lang.TodayToDoItems">Сьогоднішні справи</s:String>
@@ -92,105 +92,42 @@
     <s:String x:Key="Lang.DescriptionType.Markdown">Мова розмітки даних,</s:String>
     <s:String x:Key="Lang.Description">Опис</s:String>
     <s:String x:Key="Lang.DescriptionType">Тип опису</s:String>
-
-    <!--DeleteToDoItemView-->
-    <s:String x:Key="DeleteToDoItemView.Body">You also delete all child to-do items:</s:String>
-
-    <!--ConfirmView-->
-    <s:String x:Key="ConfirmView.Apply">Apply</s:String>
-    <s:String x:Key="ConfirmView.Cancel">Cancel</s:String>
-
-    <!--MultiToDoItemsView-->
-    <s:String x:Key="MultiToDoItemsView.IsMulti">Select a few</s:String>
-    <s:String x:Key="MultiToDoItemsView.GroupBy">Group by</s:String>
-    <s:String x:Key="MultiToDoItemsView.SortBy">Sort by</s:String>
-    <s:String x:Key="MultiToDoItemsView.ViewLike">View like</s:String>
-
-    <!--SettingView-->
-    <s:String x:Key="SettingView.Header">Setting</s:String>
-    <s:String x:Key="SettingView.Login">Login</s:String>
-    <s:String x:Key="SettingView.ChangePassword">Change password</s:String>
-    <s:String x:Key="SettingView.Setting">Setting</s:String>
-    <s:String x:Key="SettingView.Version">Version</s:String>
-    <s:String x:Key="SettingView.Save">Save</s:String>
-    <s:String x:Key="SettingView.Busy">Saving...</s:String>
-    <s:String x:Key="SettingView.DeleteAccount">Delete account</s:String>
-    <s:String x:Key="SettingView.SaveSetting">Save setting</s:String>
-    <s:String x:Key="SettingView.BaseTheme">Base Theme</s:String>
-    <s:String x:Key="SettingView.ApplicationInfo">Application Info</s:String>
-    <s:String x:Key="SettingView.AccountSetting">Account Setting</s:String>
-    <s:String x:Key="SettingView.Language">Language</s:String>
-
-    <!--ChangeToDoItemOrderIndexView-->
-    <s:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</s:String>
-    <s:String x:Key="ChangeToDoItemOrderIndexView.After">After</s:String>
-    <s:String x:Key="ChangeToDoItemOrderIndexView.Header">Chang order</s:String>
-
-    <!--ForgotPasswordView-->
-    <s:String x:Key="ForgotPasswordView.SendNewCode">Send new code</s:String>
-    <s:String x:Key="ForgotPasswordView.VerificationCode">Verification code</s:String>
-    <s:String x:Key="ForgotPasswordView.NewPassword">New password</s:String>
-    <s:String x:Key="ForgotPasswordView.NewRepeatPassword">New repeat password</s:String>
-    <s:String x:Key="ForgotPasswordView.ChangePassword">Change password</s:String>
-    <s:String x:Key="ForgotPasswordView.Back">Back</s:String>
-
-    <!--LoginView-->
-    <s:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</s:String>
-    <s:String x:Key="LoginView.RememberMe">Remember Me</s:String>
-    <s:String x:Key="LoginView.ForgotPassword">Forgot password</s:String>
-    <s:String x:Key="LoginView.Login">Login</s:String>
-    <s:String x:Key="LoginView.Password">Password</s:String>
-    <s:String x:Key="LoginView.CreateAccount">Create account</s:String>
-    <s:String x:Key="LoginView.Busy">Login...</s:String>
-
-    <!--PaneView-->
-    <s:String x:Key="PaneView.ToDoItems">To-do items</s:String>
-    <s:String x:Key="PaneView.Search">Search</s:String>
-    <s:String x:Key="PaneView.Settings">Settings</s:String>
-    <s:String x:Key="PaneView.Policy">Policy</s:String>
-    <s:String x:Key="PaneView.PasswordGenerator">Password generator</s:String>
-    <s:String x:Key="PaneView.Logout">Logout</s:String>
-
-    <!--RootToDoItemsView-->
-    <s:String x:Key="RootToDoItemsView.CreateTask">Create To-Do Item</s:String>
-    <s:String x:Key="RootToDoItemsView.Header">Spravy</s:String>
-
-    <!--ToDoItemView-->
-    <s:String x:Key="ToDoItemView.Description">Description</s:String>
-    <s:String x:Key="ToDoItemView.Link">Link</s:String>
-
-    <!--VerificationCodeView-->
-    <s:String x:Key="VerificationCodeView.SendNewCode">Send new code</s:String>
-    <s:String x:Key="VerificationCodeView.ChangeEmail">Change email</s:String>
-    <s:String x:Key="VerificationCodeView.VerificationCode">Verification code</s:String>
-    <s:String x:Key="VerificationCodeView.Back">Back</s:String>
-    <s:String x:Key="VerificationCodeView.SubmitCode">Submit code</s:String>
-    <s:String x:Key="VerificationCodeView.Header">Action confirmation</s:String>
-
-    <!--AddRootToDoItemView-->
-    <s:String x:Key="AddRootLang.Type">Type</s:String>
-    <s:String x:Key="AddRootToDoItemView.Url">URL</s:String>
-    <s:String x:Key="AddRootToDoItemView.Header">New Task</s:String>
-
-    <!--AddTimerView-->
-    <s:String x:Key="AddTimerView.Header">Add timer</s:String>
-    <s:String x:Key="AddTimerView.DueTime">Due time</s:String>
-
-    <!--AddToDoItemView-->
-    <s:String x:Key="AddToDoItemView.Header">New Task</s:String>
-
-    <!--CreateUserView-->
-    <s:String x:Key="CreateUserView.CreateAccountHeader">Create Account</s:String>
-    <s:String x:Key="CreateUserView.Email">Email</s:String>
-    <s:String x:Key="CreateUserView.Login">Login</s:String>
-    <s:String x:Key="CreateUserView.Password">Password</s:String>
-    <s:String x:Key="CreateUserView.RepeatPassword">Repeat password</s:String>
-    <s:String x:Key="CreateUserView.CreateAccount">Create account</s:String>
-    <s:String x:Key="CreateUserView.Back">Back</s:String>
-    <s:String x:Key="CreateUserView.Busy">Create account...</s:String>
-
-    <!--ExceptionView-->
-    <s:String x:Key="ExceptionView.ErrorMessage">Error message</s:String>
+    <s:String x:Key="Lang.AlsoDeleteAllChildToDoItems">Ви також видаляєте всі дочірні завдання:</s:String>
+    <s:String x:Key="Lang.Apply">Застосувати</s:String>
+    <s:String x:Key="Lang.Cancel">Скасувати</s:String>
+    <s:String x:Key="Lang.GroupBy">Групувати за</s:String>
+    <s:String x:Key="Lang.SortBy">Сортувати за</s:String>
+    <s:String x:Key="Lang.Version">Версія</s:String>
+    <s:String x:Key="Lang.Save">Зберегти</s:String>
+    <s:String x:Key="Lang.Saving">Збереження...</s:String>
+    <s:String x:Key="Lang.BaseTheme">Основна тема</s:String>
+    <s:String x:Key="Lang.ApplicationInfo">Інформація про додаток</s:String>
+    <s:String x:Key="Lang.AccountSetting">Налаштування облікового запису</s:String>
+    <s:String x:Key="Lang.Language">Мова</s:String>
+    <s:String x:Key="Lang.Before">Раніше</s:String>
+    <s:String x:Key="Lang.After">Після</s:String>
+    <s:String x:Key="Lang.ChangOrder">Змінити порядок</s:String>
+    <s:String x:Key="Lang.NewRepeatPassword">Новий повторний пароль</s:String>
+    <s:String x:Key="Lang.WelcomeToSpravy">Ласкаво просимо до Справи</s:String>
+    <s:String x:Key="Lang.RememberMe">Пам'ятай мене</s:String>
+    <s:String x:Key="Lang.Password">Пароль</s:String>
+    <s:String x:Key="Lang.CreateAccount">Створити акаунт</s:String>
+    <s:String x:Key="Lang.LogIn">Вхід в систему...</s:String>
+    <s:String x:Key="Lang.Spravy">Справи</s:String>
+    <s:String x:Key="Lang.Settings">Налаштування</s:String>
+    <s:String x:Key="Lang.Policy">Політика</s:String>
+    <s:String x:Key="Lang.Logout">Вийти</s:String>
+    <s:String x:Key="Lang.CreateToDoItem">Створити справу</s:String>
+    <s:String x:Key="Lang.Link">Посилання</s:String>
+    <s:String x:Key="Lang.ChangeEmail">Змінити електронну адресу</s:String>
+    <s:String x:Key="Lang.SubmitCode">Надіслати код</s:String>
+    <s:String x:Key="Lang.ActionConfirmation">Підтвердження дії</s:String>
+    <s:String x:Key="Lang.NewToDoItem">Створити нову справу</s:String>
+    <s:String x:Key="Lang.DueTime">Належний час</s:String>
+    <s:String x:Key="Lang.Email">Електронна пошта</s:String>
+    <s:String x:Key="Lang.RepeatPassword">Повторіть пароль</s:String>
+    <s:String x:Key="Lang.CreatingAccount">Створення облікового запису...</s:String>
+    <s:String x:Key="Lang.ErrorMessage">Повідомлення про помилку</s:String>
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
     <s:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</s:String>

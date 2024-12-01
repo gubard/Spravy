@@ -104,7 +104,7 @@
                 <ToggleSwitch Classes="field" IsChecked="{Binding IsEditType}" IsVisible="{Binding IsEditShow}" />
             </StackPanel>
 
-            <ListBox Classes="wrap-panel" SelectedItem="{Binding Type}" ItemsSource="{Binding ToDoItemTypes}" />
+            <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
 
             <c:ViewSelectorControl State="{Binding Type}">
                 <c:ViewSelectorItemControl State="{x:Static e:ToDoItemType.Group}" />

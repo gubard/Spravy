@@ -30,7 +30,7 @@
 
                 <TextBlock Classes="alignment-left"
                            IsVisible="{Binding ChildrenText, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
-                           Text="{DynamicResource DeleteToDoItemView.Body}" />
+                           Text="{DynamicResource Lang.AlsoDeleteAllChildToDoItems}" />
                 <TextBlock Classes="alignment-left" Text="{Binding ChildrenText}" />
             </StackPanel>
         </c:GroupBoxControl>

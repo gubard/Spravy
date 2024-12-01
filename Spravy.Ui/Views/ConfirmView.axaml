@@ -19,11 +19,11 @@
         <StackPanel Grid.Row="1" Classes="horizontal alignment-right">
             <Button Classes="mode-press label bold accept-medium"
                     Command="{Binding CancelCommand.Command}"
-                    Content="{DynamicResource ConfirmView.Cancel}"
-                    ToolTip.Tip="{DynamicResource ConfirmView.Cancel}" />
+                    Content="{DynamicResource Lang.Cancel}"
+                    ToolTip.Tip="{DynamicResource Lang.Cancel}" />
             <Button Classes="mode-press label bold accept-high"
                     Command="{Binding ConfirmCommand.Command}"
-                    Content="{DynamicResource ConfirmView.Apply}" />
+                    Content="{DynamicResource Lang.Apply}" />
         </StackPanel>
     </Grid>
 </c:DialogableUserControl>
