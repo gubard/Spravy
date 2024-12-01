@@ -10,7 +10,7 @@
     <c:GroupBoxControl>
         <c:GroupBoxControl.Header>
             <TextBlock Classes="alignment-left"
-                       Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
+                       Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=Lang.RandomizeToDoItems}" />
         </c:GroupBoxControl.Header>
 
         <c:PathControl Classes="alignment-center read-only-to-do-item" Segments="{Binding Path}" />

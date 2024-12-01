@@ -16,14 +16,14 @@
             </ScrollViewer>
 
             <CheckBox IsChecked="{Binding IsCompleteChildrenTask}"
-                      Content="{DynamicResource ResetToDoItemView.CompleteChildrenTask}" />
+                      Content="{DynamicResource Lang.CompleteChildrenTask}" />
             <CheckBox Name="{x:Static v:ResetToDoItemView.IsMoveCircleOrderIndexCheckBoxName}"
                       IsChecked="{Binding IsMoveCircleOrderIndex}"
-                      Content="{DynamicResource ResetToDoItemView.MoveCircleOrderIndex}" />
+                      Content="{DynamicResource Lang.MoveCircleOrderIndex}" />
             <CheckBox IsChecked="{Binding IsOnlyCompletedTasks}"
-                      Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />
+                      Content="{DynamicResource Lang.OnlyCompletedTasks}" />
             <CheckBox IsChecked="{Binding IsCompleteCurrentTask}"
-                      Content="{DynamicResource ResetToDoItemView.CompleteCurrentTask}" />
+                      Content="{DynamicResource Lang.CompleteCurrentTask}" />
         </StackPanel>
     </c:GroupBoxControl>
 </c:DialogableUserControl>
