@@ -199,7 +199,7 @@ public class ViewFactory : IViewFactory
 
     public PolicyViewModel CreatePolicyViewModel()
     {
-        return new();
+        return new(application, clipboardService, errorHandler, taskProgressService);
     }
 
     public EmailOrLoginInputViewModel CreateEmailOrLoginInputViewModel()

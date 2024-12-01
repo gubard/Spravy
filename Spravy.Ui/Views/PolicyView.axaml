@@ -23,8 +23,15 @@
             </ScrollViewer>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" Classes="vertical">
-            <TextBlock Classes="alignment-left alignment-top text-wrap" Text="{DynamicResource PolicyView.Policy}" />
-        </ScrollViewer>
+        <Panel Grid.Row="1">
+            <ScrollViewer Classes="vertical">
+                <TextBlock Classes="alignment-left alignment-top text-wrap" Text="{DynamicResource PolicyView.Policy}" />
+            </ScrollViewer>
+
+            <Button Classes="label alignment-top alignment-right"
+                    Command="{Binding CopyPolicyCommand.Command}">
+                <i:Icon Value="mdi-content-copy" />
+            </Button>
+        </Panel>
     </Grid>
 </UserControl>

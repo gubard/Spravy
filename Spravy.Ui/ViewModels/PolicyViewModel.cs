@@ -2,14 +2,22 @@ namespace Spravy.Ui.ViewModels;
 
 public class PolicyViewModel : NavigatableViewModelBase
 {
-    public PolicyViewModel() : base(true)
+    public PolicyViewModel(
+        Application application,
+        IClipboardService clipboardService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    ) : base(true)
     {
+        CopyPolicyCommand = SpravyCommand.Create(
+            ct => clipboardService.SetTextAsync(application.GetResource("PolicyView.Policy")?.ToString(), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
-    public override string ViewId
-    {
-        get => $"{TypeCache<PolicyViewModel>.Type}";
-    }
+    public SpravyCommand CopyPolicyCommand { get; }
+    public override string ViewId => $"{TypeCache<PolicyViewModel>.Type}";
 
     public override Result Stop()
     {
