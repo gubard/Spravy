@@ -2,33 +2,6 @@ namespace Spravy.Ui.Helpers;
 
 public static class ColorData
 {
-    static ColorData()
-    {
-        ColorsA400 =
-        [
-            Colors.Transparent,
-            RedA400,
-            PinkA400,
-            PurpleA400,
-            DeepPurpleA400,
-            IndigoA400,
-            BlueA400,
-            LightBlueA400,
-            CyanA400,
-            TealA400,
-            GreenA400,
-            LightGreenA400,
-            LimeA400,
-            YellowA400,
-            AmberA400,
-            OrangeA400,
-            DeepOrangeA400,
-            BrownA400,
-            GreyA400,
-            BlueGreyA400
-        ];
-    }
-
     public static readonly IEnumerable<Color> ColorsA400;
     public static readonly Color Red50 = Color.Parse("#FFEBEE");
     public static readonly Color Red100 = Color.Parse("#FFCDD2");
@@ -296,4 +269,31 @@ public static class ColorData
     public static readonly Color BlueGreyA200 = Color.Parse("#B0BEC5");
     public static readonly Color BlueGreyA400 = Color.Parse("#78909C");
     public static readonly Color BlueGreyA700 = Color.Parse("#455A64");
+
+    static ColorData()
+    {
+        ColorsA400 =
+        [
+            Colors.Transparent,
+            RedA400,
+            PinkA400,
+            PurpleA400,
+            DeepPurpleA400,
+            IndigoA400,
+            BlueA400,
+            LightBlueA400,
+            CyanA400,
+            TealA400,
+            GreenA400,
+            LightGreenA400,
+            LimeA400,
+            YellowA400,
+            AmberA400,
+            OrangeA400,
+            DeepOrangeA400,
+            BrownA400,
+            GreyA400,
+            BlueGreyA400,
+        ];
+    }
 }

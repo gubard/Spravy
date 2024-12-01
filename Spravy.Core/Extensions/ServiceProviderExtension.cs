@@ -2,8 +2,7 @@ namespace Spravy.Core.Extensions;
 
 public static class ServiceProviderExtension
 {
-    public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider)
-        where T : IOptionsValue
+    public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider) where T : IOptionsValue
     {
         return serviceProvider.GetRequiredService<IConfiguration>().GetConfigurationSection<T>();
     }
@@ -11,8 +10,6 @@ public static class ServiceProviderExtension
     public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider, string path)
         where T : IOptionsValue
     {
-        return serviceProvider
-            .GetRequiredService<IConfiguration>()
-            .GetConfigurationSection<T>(path);
+        return serviceProvider.GetRequiredService<IConfiguration>().GetConfigurationSection<T>(path);
     }
 }

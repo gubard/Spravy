@@ -7,11 +7,12 @@ namespace _build.Services;
 
 public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptions>
 {
-    public AndroidProjectBuilder(
-        VersionService versionService,
-        AndroidProjectBuilderOptions androidOptions
+    public AndroidProjectBuilder(VersionService versionService, AndroidProjectBuilderOptions androidOptions) : base(
+        androidOptions,
+        versionService
     )
-        : base(androidOptions, versionService) { }
+    {
+    }
 
     public override void Compile()
     {
@@ -23,45 +24,37 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
             {
                 if (Options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetBuild(setting =>
-                        setting
-                            .SetProjectFile(Options.CsprojFile.FullName)
-                            .EnableNoRestore()
-                            .SetConfiguration(Options.Configuration)
-                            .SetProperty("AndroidKeyStore", "true")
-                            .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
-                            .SetProperty("AndroidSigningKeyAlias", "spravy")
-                            .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                            .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
-                            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                            .SetProperty("ApplicationVersion", versionService.Version.Code)
-                            .AddProperty("Version", versionService.Version.ToString())
+                    DotNetTasks.DotNetBuild(
+                        setting => setting.SetProjectFile(Options.CsprojFile.FullName)
+                           .EnableNoRestore()
+                           .SetConfiguration(Options.Configuration)
+                           .SetProperty("AndroidKeyStore", "true")
+                           .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
+                           .SetProperty("AndroidSigningKeyAlias", "spravy")
+                           .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                           .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
+                           .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                           .SetProperty("ApplicationVersion", versionService.Version.Code)
+                           .AddProperty("Version", versionService.Version.ToString())
                     );
                 }
                 else
                 {
                     foreach (var runtime in Options.Runtimes.Span)
                     {
-                        DotNetTasks.DotNetBuild(setting =>
-                            setting
-                                .SetProjectFile(Options.CsprojFile.FullName)
-                                .EnableNoRestore()
-                                .SetConfiguration(Options.Configuration)
-                                .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty(
-                                    "AndroidSigningKeyStore",
-                                    Options.KeyStoreFile.FullName
-                                )
-                                .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                                .SetProperty(
-                                    "AndroidSigningStorePass",
-                                    Options.AndroidSigningStorePass
-                                )
-                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                                .SetProperty("ApplicationVersion", versionService.Version.Code)
-                                .AddProperty("Version", versionService.Version.ToString())
-                                .SetRuntime(runtime.Name)
+                        DotNetTasks.DotNetBuild(
+                            setting => setting.SetProjectFile(Options.CsprojFile.FullName)
+                               .EnableNoRestore()
+                               .SetConfiguration(Options.Configuration)
+                               .SetProperty("AndroidKeyStore", "true")
+                               .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
+                               .SetProperty("AndroidSigningKeyAlias", "spravy")
+                               .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                               .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
+                               .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                               .SetProperty("ApplicationVersion", versionService.Version.Code)
+                               .AddProperty("Version", versionService.Version.ToString())
+                               .SetRuntime(runtime.Name)
                         );
                     }
                 }
@@ -93,49 +86,41 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
             {
                 if (Options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetPublish(setting =>
-                        setting
-                            .SetProject(Options.CsprojFile.FullName)
-                            .SetProperty("AndroidKeyStore", "true")
-                            .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
-                            .SetProperty("AndroidSigningKeyAlias", "spravy")
-                            .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                            .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
-                            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                            .SetProperty("ApplicationVersion", versionService.Version.Code)
-                            .SetProperty("Version", versionService.Version.ToString())
-                            .SetConfiguration(Options.Configuration)
-                            .SetOutput(Options.PublishFolder.FullName)
-                            .EnableNoRestore()
-                            .DisableNoBuild()
+                    DotNetTasks.DotNetPublish(
+                        setting => setting.SetProject(Options.CsprojFile.FullName)
+                           .SetProperty("AndroidKeyStore", "true")
+                           .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
+                           .SetProperty("AndroidSigningKeyAlias", "spravy")
+                           .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                           .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
+                           .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                           .SetProperty("ApplicationVersion", versionService.Version.Code)
+                           .SetProperty("Version", versionService.Version.ToString())
+                           .SetConfiguration(Options.Configuration)
+                           .SetOutput(Options.PublishFolder.FullName)
+                           .EnableNoRestore()
+                           .DisableNoBuild()
                     );
                 }
                 else
                 {
                     foreach (var runtime in Options.Runtimes.Span)
                     {
-                        DotNetTasks.DotNetPublish(setting =>
-                            setting
-                                .SetProject(Options.CsprojFile.FullName)
-                                .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty(
-                                    "AndroidSigningKeyStore",
-                                    Options.KeyStoreFile.FullName
-                                )
-                                .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                                .SetProperty(
-                                    "AndroidSigningStorePass",
-                                    Options.AndroidSigningStorePass
-                                )
-                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                                .SetProperty("ApplicationVersion", versionService.Version.Code)
-                                .SetProperty("Version", versionService.Version.ToString())
-                                .SetConfiguration(Options.Configuration)
-                                .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
-                                .SetRuntime(runtime.Name)
-                                .EnableNoRestore()
-                                .DisableNoBuild()
+                        DotNetTasks.DotNetPublish(
+                            setting => setting.SetProject(Options.CsprojFile.FullName)
+                               .SetProperty("AndroidKeyStore", "true")
+                               .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
+                               .SetProperty("AndroidSigningKeyAlias", "spravy")
+                               .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                               .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
+                               .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                               .SetProperty("ApplicationVersion", versionService.Version.Code)
+                               .SetProperty("Version", versionService.Version.ToString())
+                               .SetConfiguration(Options.Configuration)
+                               .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
+                               .SetRuntime(runtime.Name)
+                               .EnableNoRestore()
+                               .DisableNoBuild()
                         );
                     }
                 }

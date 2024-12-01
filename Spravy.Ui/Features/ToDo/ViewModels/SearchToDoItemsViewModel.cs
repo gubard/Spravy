@@ -2,10 +2,10 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId, IRemove
 {
-    private readonly TaskWork refreshWork;
-    private readonly IToDoUiService toDoUiService;
     private readonly IObjectStorage objectStorage;
+    private readonly TaskWork refreshWork;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -16,8 +16,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
         IToDoUiService toDoUiService
-    )
-        : base(true)
+    ) : base(true)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
@@ -33,9 +32,22 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<string> SearchTexts { get; }
 
-    public override string ViewId
+    public override string ViewId => TypeCache<SearchToDoItemsViewModel>.Type.Name;
+
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
+        return ToDoSubItemsViewModel.RemoveUi(items);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel.GetSelectedItems()
+           .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -57,20 +69,18 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(
-                s =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            SearchText = s.SearchText;
-                            SearchTexts.UpdateUi(s.SearchTexts);
+        return objectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(
+                s => this.PostUiBackground(
+                    () =>
+                    {
+                        SearchText = s.SearchText;
+                        SearchTexts.UpdateUi(s.SearchTexts);
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
@@ -93,22 +103,5 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
                 Commands.Clear();
             }
         }
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
-    }
-
-    public Result<ToDoItemEditId> GetToDoItemEditId()
-    {
-        if (!ToDoSubItemsViewModel.List.IsMulti)
-        {
-            return new(new NonItemSelectedError());
-        }
-
-        return ToDoSubItemsViewModel
-            .GetSelectedItems()
-            .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 }

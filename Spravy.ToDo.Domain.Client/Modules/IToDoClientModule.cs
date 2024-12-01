@@ -2,10 +2,7 @@ namespace Spravy.ToDo.Domain.Client.Modules;
 
 [ServiceProviderModule]
 [Singleton(typeof(GrpcToDoServiceOptions), Factory = nameof(GrpcToDoServiceOptionsFactory))]
-[Singleton(
-    typeof(IFactory<Uri, ToDoService.ToDoServiceClient>),
-    Factory = nameof(ToDoServiceClientsFactory)
-)]
+[Singleton(typeof(IFactory<Uri, ToDoService.ToDoServiceClient>), Factory = nameof(ToDoServiceClientsFactory))]
 [Transient(typeof(IToDoService), Factory = nameof(ToDoServiceFactory))]
 public interface IToDoClientModule
 {
@@ -36,18 +33,15 @@ public interface IToDoClientModule
     {
         if (options.UseCache)
         {
-            return GrpcClientFactoryHelper.CreateCacheGrpcFactory<
-                GrpcToDoService,
-                ToDoService.ToDoServiceClient,
-                GrpcToDoServiceOptions
-            >(serviceOptions, cacheValidator);
+            return GrpcClientFactoryHelper
+               .CreateCacheGrpcFactory<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(
+                    serviceOptions,
+                    cacheValidator
+                );
         }
 
-        return GrpcClientFactoryHelper.CreateGrpcFactory<
-            GrpcToDoService,
-            ToDoService.ToDoServiceClient,
-            GrpcToDoServiceOptions
-        >(serviceOptions);
+        return GrpcClientFactoryHelper
+           .CreateGrpcFactory<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(serviceOptions);
     }
 
     static IToDoService ToDoServiceFactory(
@@ -58,10 +52,13 @@ public interface IToDoClientModule
         IRetryService retryService
     )
     {
-        return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
-            GrpcToDoService,
-            ToDoService.ToDoServiceClient,
-            GrpcToDoServiceOptions
-        >(options, grpcClientFactory, handler, metadataFactory, retryService);
+        return GrpcClientFactoryHelper
+           .CreateGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(
+                options,
+                grpcClientFactory,
+                handler,
+                metadataFactory,
+                retryService
+            );
     }
 }

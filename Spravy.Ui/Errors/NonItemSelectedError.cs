@@ -4,11 +4,9 @@ public class NonItemSelectedError : Error
 {
     public static readonly Guid MainId = new("10B7FEA9-2630-4261-99EC-6934631CD172");
 
-    public NonItemSelectedError()
-        : base(MainId) { }
-
-    public override string Message
+    public NonItemSelectedError() : base(MainId)
     {
-        get => "Non item selected.";
     }
+
+    public override string Message => "Non item selected.";
 }

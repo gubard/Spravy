@@ -56,10 +56,7 @@ public static class HttpContextExtension
             }
             case Role.Service:
             {
-                var nameIdentifier = httpContext
-                    .Request.Headers[HttpNames.HeaderUserIdName]
-                    .Single()
-                    .ThrowIfNull();
+                var nameIdentifier = httpContext.Request.Headers[HttpNames.HeaderUserIdName].Single().ThrowIfNull();
 
                 return nameIdentifier;
             }

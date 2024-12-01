@@ -9,11 +9,7 @@ public static class FtpOptionsExtension
 {
     public static FtpClient CreateFtpClient(this IFtpOptions options)
     {
-        Log.Logger.Information(
-            "Connecting FTP {FtpHost} {FtpUser}",
-            options.FtpHost,
-            options.FtpUser
-        );
+        Log.Logger.Information("Connecting FTP {FtpHost} {FtpUser}", options.FtpHost, options.FtpUser);
         var values = options.FtpHost.Split(":");
 
         if (values.Length == 2)

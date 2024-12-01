@@ -1,7 +1,6 @@
 ﻿namespace Spravy.Domain.Models;
 
-public class Tree<TKey, TValue>
-    where TKey : notnull
+public class Tree<TKey, TValue> where TKey : notnull
 {
     public Tree(TreeNode<TKey, TValue> root)
     {

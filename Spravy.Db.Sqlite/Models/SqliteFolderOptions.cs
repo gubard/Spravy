@@ -4,8 +4,5 @@ public class SqliteFolderOptions : IOptionsValue
 {
     public string? DataBasesFolder { get; set; }
 
-    public static string Section
-    {
-        get => "Sqlite";
-    }
+    public static string Section => "Sqlite";
 }

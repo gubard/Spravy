@@ -19,14 +19,11 @@ public class InfoViewModel : DialogableViewModelBase
     public SpravyCommand OkCommand { get; }
     public IDialogable Content { get; }
 
+    public override string ViewId => $"{TypeCache<InfoViewModel>.Type}";
+
     private Cvtar OkAsync(CancellationToken ct)
     {
         return okTask.Invoke(Content);
-    }
-
-    public override string ViewId
-    {
-        get => $"{TypeCache<InfoViewModel>.Type}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

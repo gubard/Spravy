@@ -39,10 +39,7 @@ public interface IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
-    CloneViewModel CreateCloneViewModel(
-        Option<ToDoItemEntityNotify> item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    );
+    CloneViewModel CreateCloneViewModel(Option<ToDoItemEntityNotify> item, ReadOnlyMemory<ToDoItemEntityNotify> items);
 
     ResetToDoItemViewModel CreateResetToDoItemViewModel(
         Option<ToDoItemEntityNotify> item,
@@ -79,24 +76,13 @@ public interface IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     );
 
-    DeleteAccountViewModel CreateDeleteAccountViewModel(
-        string emailOrLogin,
-        UserIdentifierType identifierType
-    );
+    DeleteAccountViewModel CreateDeleteAccountViewModel(string emailOrLogin, UserIdentifierType identifierType);
 
-    VerificationCodeViewModel CreateVerificationCodeViewModel(
-        string emailOrLogin,
-        UserIdentifierType identifierType
-    );
+    VerificationCodeViewModel CreateVerificationCodeViewModel(string emailOrLogin, UserIdentifierType identifierType);
 
-    ForgotPasswordViewModel CreateForgotPasswordViewModel(
-        string emailOrLogin,
-        UserIdentifierType identifierType
-    );
+    ForgotPasswordViewModel CreateForgotPasswordViewModel(string emailOrLogin, UserIdentifierType identifierType);
 
-    PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(
-        PasswordItemEntityNotify item
-    );
+    PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(PasswordItemEntityNotify item);
 
     ConfirmViewModel CreateConfirmViewModel(
         IDialogable content,

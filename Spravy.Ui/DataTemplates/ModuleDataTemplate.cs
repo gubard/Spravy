@@ -2,15 +2,11 @@ namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate
 {
-    private readonly IViewSelector viewSelector;
     private readonly IServiceFactory serviceFactory;
     private readonly IViewFactory viewFactory;
+    private readonly IViewSelector viewSelector;
 
-    public ModuleDataTemplate(
-        IViewSelector viewSelector,
-        IServiceFactory serviceFactory,
-        IViewFactory viewFactory
-    )
+    public ModuleDataTemplate(IViewSelector viewSelector, IServiceFactory serviceFactory, IViewFactory viewFactory)
     {
         this.viewSelector = viewSelector;
         this.serviceFactory = serviceFactory;
@@ -38,6 +34,11 @@ public class ModuleDataTemplate : IDataTemplate
         return control;
     }
 
+    public bool Match(object? data)
+    {
+        return data is ViewModelBase;
+    }
+
     private ErrorView CreateErrorView(ReadOnlyMemory<Error> errors)
     {
         var errorView = serviceFactory.CreateService<ErrorView>();
@@ -45,10 +46,5 @@ public class ModuleDataTemplate : IDataTemplate
         errorView.DataContext = viewModel;
 
         return errorView;
-    }
-
-    public bool Match(object? data)
-    {
-        return data is ViewModelBase;
     }
 }

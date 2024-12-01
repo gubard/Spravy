@@ -5,10 +5,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
     private readonly IAuthenticationService authenticationService;
     private readonly ISerializer serializer;
 
-    public GrpcRouterAuthenticationService(
-        IAuthenticationService authenticationService,
-        ISerializer serializer
-    )
+    public GrpcRouterAuthenticationService(IAuthenticationService authenticationService, ISerializer serializer)
     {
         this.authenticationService = authenticationService;
         this.serializer = serializer;
@@ -47,10 +44,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateVerificationCodeByLoginAsync(
-            request.Login,
-            context.CancellationToken
-        );
+        await authenticationService.UpdateVerificationCodeByLoginAsync(request.Login, context.CancellationToken);
 
         return new();
     }
@@ -60,10 +54,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateVerificationCodeByEmailAsync(
-            request.Email,
-            context.CancellationToken
-        );
+        await authenticationService.UpdateVerificationCodeByEmailAsync(request.Email, context.CancellationToken);
 
         return new();
     }
@@ -131,11 +122,13 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         ServerCallContext context
     )
     {
-        return authenticationService
-            .IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
-            .HandleAsync(
+        return authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
+           .HandleAsync(
                 serializer,
-                value => new IsVerifiedByLoginReply { IsVerified = value },
+                value => new IsVerifiedByLoginReply
+                {
+                    IsVerified = value,
+                },
                 context.CancellationToken
             );
     }
@@ -145,19 +138,18 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         ServerCallContext context
     )
     {
-        return authenticationService
-            .IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
-            .HandleAsync(
+        return authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
+           .HandleAsync(
                 serializer,
-                value => new IsVerifiedByEmailReply { IsVerified = value },
+                value => new IsVerifiedByEmailReply
+                {
+                    IsVerified = value,
+                },
                 context.CancellationToken
             );
     }
 
-    public override async Task<CreateUserReply> CreateUser(
-        CreateUserRequest request,
-        ServerCallContext context
-    )
+    public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = request.ToCreateUserOptions();
         await authenticationService.CreateUserAsync(options, context.CancellationToken);
@@ -169,22 +161,13 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
     {
         var user = request.User.ToUser();
 
-        return authenticationService
-            .LoginAsync(user, context.CancellationToken)
-            .HandleAsync(serializer, token => token.ToLoginReply(), context.CancellationToken);
+        return authenticationService.LoginAsync(user, context.CancellationToken)
+           .HandleAsync(serializer, token => token.ToLoginReply(), context.CancellationToken);
     }
 
-    public override Task<RefreshTokenReply> RefreshToken(
-        RefreshTokenRequest request,
-        ServerCallContext context
-    )
+    public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
-        return authenticationService
-            .RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
-            .HandleAsync(
-                serializer,
-                login => login.ToRefreshTokenReply(),
-                context.CancellationToken
-            );
+        return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
+           .HandleAsync(serializer, login => login.ToRefreshTokenReply(), context.CancellationToken);
     }
 }

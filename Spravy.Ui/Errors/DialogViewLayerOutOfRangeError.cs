@@ -4,9 +4,11 @@ public class DialogViewLayerOutOfRangeError : ValueOutOfRangeError<DialogViewLay
 {
     public static readonly Guid MainId = new("30985255-1004-478E-A6C8-B96FD99AC5F9");
 
-    protected DialogViewLayerOutOfRangeError()
-        : base(DialogViewLayer.Error, MainId) { }
+    protected DialogViewLayerOutOfRangeError() : base(DialogViewLayer.Error, MainId)
+    {
+    }
 
-    public DialogViewLayerOutOfRangeError(DialogViewLayer value)
-        : base(value, MainId) { }
+    public DialogViewLayerOutOfRangeError(DialogViewLayer value) : base(value, MainId)
+    {
+    }
 }

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
+public class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
 
@@ -9,8 +9,7 @@ public partial class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApply
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService,
         EditToDoItemViewModel editToDoItemViewModel
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
         EditToDoItemViewModel = editToDoItemViewModel;
@@ -18,9 +17,16 @@ public partial class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApply
 
     public EditToDoItemViewModel EditToDoItemViewModel { get; }
 
-    public override string ViewId
+    public override string ViewId => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
+        return toDoService.EditToDoItemsAsync(EditToDoItemViewModel.GetEditToDoItems().SetIds(ResultIds), ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -36,18 +42,5 @@ public partial class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApply
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        return toDoService.EditToDoItemsAsync(
-            EditToDoItemViewModel.GetEditToDoItems().SetIds(ResultIds),
-            ct
-        );
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

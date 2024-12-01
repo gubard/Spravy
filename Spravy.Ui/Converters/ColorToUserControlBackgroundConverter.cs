@@ -24,12 +24,7 @@ public class ColorToUserControlBackgroundConverter : IValueConverter
         return new SolidColorBrush(new Color(51, color.R, color.G, color.B));
     }
 
-    public object? ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

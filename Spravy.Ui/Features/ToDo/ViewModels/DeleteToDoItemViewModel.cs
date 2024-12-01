@@ -11,18 +11,24 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
     }
 
-    public override string ViewId
+    public override string ViewId =>
+        EditItem.TryGetValue(out var editItem)
+            ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{editItem.Id}"
+            : $"{TypeCache<AddToDoItemViewModel>.Type.Name}";
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        get =>
-            EditItem.TryGetValue(out var editItem)
-                ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{editItem.Id}"
-                : $"{TypeCache<AddToDoItemViewModel>.Type.Name}";
+        return toDoService.DeleteToDoItemsAsync(ResultIds, ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -39,23 +45,24 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
     {
         var statuses = UiHelper.ToDoItemStatuses;
 
-        return ResultItems
-            .ToResult()
-            .IfSuccessForEachAsync(
-                id =>
-                    toDoService
-                        .ToDoItemToStringAsync(
-                            new ToDoItemToStringOptions[] { new(statuses, id.Id) },
-                            ct
-                        )
-                        .IfSuccessAsync(
-                            str =>
-                                $"{id.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}".ToResult(),
-                            ct
-                        ),
+        return ResultItems.ToResult()
+           .IfSuccessForEachAsync(
+                id => toDoService.ToDoItemToStringAsync(
+                        new ToDoItemToStringOptions[]
+                        {
+                            new(statuses, id.Id),
+                        },
+                        ct
+                    )
+                   .IfSuccessAsync(
+                        str =>
+                            $"{id.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}"
+                               .ToResult(),
+                        ct
+                    ),
                 ct
             )
-            .IfSuccessAsync(
+           .IfSuccessAsync(
                 values =>
                 {
                     var text = string.Join(Environment.NewLine, values.ToArray());
@@ -72,15 +79,5 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
                 },
                 ct
             );
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        return toDoService.DeleteToDoItemsAsync(ResultIds, ct);
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

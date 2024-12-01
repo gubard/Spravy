@@ -6,9 +6,6 @@ public interface IObjectStorage
     Cvtar DeleteAsync(string id, CancellationToken ct);
     Cvtar SaveObjectAsync(string id, object obj, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(
-        string id,
-        CancellationToken ct
-    )
+    ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id, CancellationToken ct)
         where TObject : notnull;
 }

@@ -1,7 +1,6 @@
 ﻿namespace Spravy.Domain.Models;
 
-public class TreeNode<TKey, TValue>
-    where TKey : notnull
+public class TreeNode<TKey, TValue> where TKey : notnull
 {
     private readonly Dictionary<TKey, TreeNode<TKey, TValue>> nodes;
 
@@ -22,10 +21,7 @@ public class TreeNode<TKey, TValue>
         Nodes = this.nodes.Values;
     }
 
-    public TreeNode<TKey, TValue> this[TKey key]
-    {
-        get => nodes[key];
-    }
+    public TreeNode<TKey, TValue> this[TKey key] => nodes[key];
 
     public TreeNode<TKey, TValue> this[params TKey[] keys]
     {

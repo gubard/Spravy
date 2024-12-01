@@ -78,17 +78,21 @@ public static class SpanExtension
         return result.Slice(0, resultIndex);
     }
 
-    public static void BinarySortDefault<TSource, TValue>(
-        this Span<TSource> a,
-        Func<TSource, TValue> keySelector
-    )
+    public static void BinarySortDefault<TSource, TValue>(this Span<TSource> a, Func<TSource, TValue> keySelector)
     {
         for (var i = 1; i < a.Length; ++i)
         {
             var j = i - 1;
             var key = a[i];
             var keyValue = keySelector.Invoke(a[i]);
-            var pos = BinarySearchDefault(a, keyValue, 0, j, keySelector);
+
+            var pos = BinarySearchDefault(
+                a,
+                keyValue,
+                0,
+                j,
+                keySelector
+            );
 
             while (j >= pos)
             {
@@ -110,9 +114,7 @@ public static class SpanExtension
     {
         if (high <= low)
         {
-            return Comparer<TValue>.Default.Compare(x, keySelector.Invoke(a[low])) > 0
-                ? low + 1
-                : low;
+            return Comparer<TValue>.Default.Compare(x, keySelector.Invoke(a[low])) > 0 ? low + 1 : low;
         }
 
         var mid = (low + high) / 2;
@@ -125,10 +127,22 @@ public static class SpanExtension
 
         if (Comparer<TValue>.Default.Compare(x, midValue) > 0)
         {
-            return BinarySearchDefault(a, x, mid + 1, high, keySelector);
+            return BinarySearchDefault(
+                a,
+                x,
+                mid + 1,
+                high,
+                keySelector
+            );
         }
 
-        return BinarySearchDefault(a, x, low, mid - 1, keySelector);
+        return BinarySearchDefault(
+            a,
+            x,
+            low,
+            mid - 1,
+            keySelector
+        );
     }
 
     public static int GetStringsLength(this ReadOnlySpan<string> span)
@@ -143,10 +157,7 @@ public static class SpanExtension
         return result;
     }
 
-    public static TSource? FirstOrDefault<TSource>(
-        this ReadOnlySpan<TSource> source,
-        Func<TSource, bool> predicate
-    )
+    public static TSource? FirstOrDefault<TSource>(this ReadOnlySpan<TSource> source, Func<TSource, bool> predicate)
     {
         foreach (var value in source)
         {
@@ -159,10 +170,7 @@ public static class SpanExtension
         return default;
     }
 
-    public static bool All<TSource>(
-        this ReadOnlySpan<TSource> source,
-        Func<TSource, bool> predicate
-    )
+    public static bool All<TSource>(this ReadOnlySpan<TSource> source, Func<TSource, bool> predicate)
     {
         foreach (var value in source)
         {
@@ -195,9 +203,7 @@ public static class SpanExtension
         return result;
     }
 
-    public static Span<TSource> SelectMany<TSource>(
-        this ReadOnlySpan<ReadOnlyMemory<TSource>> memory
-    )
+    public static Span<TSource> SelectMany<TSource>(this ReadOnlySpan<ReadOnlyMemory<TSource>> memory)
     {
         var result = new Span<TSource>(new TSource[memory.Select(x => x.Length).Sum()]);
         var currentIndex = 0;
@@ -252,10 +258,7 @@ public static class SpanExtension
         return result;
     }
 
-    public static ReadOnlySpan<TSource> OrderBy<TSource>(
-        this Span<TSource> source,
-        Func<TSource, uint> keySelector
-    )
+    public static ReadOnlySpan<TSource> OrderBy<TSource>(this Span<TSource> source, Func<TSource, uint> keySelector)
     {
         var result = new Span<TSource>(new TSource[source.Length]);
         source.CopyTo(result);
@@ -299,10 +302,22 @@ public static class SpanExtension
 
         if (x > midValue)
         {
-            return BinarySearch(a, x, mid + 1, high, keySelector);
+            return BinarySearch(
+                a,
+                x,
+                mid + 1,
+                high,
+                keySelector
+            );
         }
 
-        return BinarySearch(a, x, low, mid - 1, keySelector);
+        return BinarySearch(
+            a,
+            x,
+            low,
+            mid - 1,
+            keySelector
+        );
     }
 
     private static int BinarySearch<TSource, TValue>(
@@ -311,8 +326,7 @@ public static class SpanExtension
         int low,
         int high,
         Func<TSource, TValue> keySelector
-    )
-        where TValue : IComparable<TValue>
+    ) where TValue : IComparable<TValue>
     {
         if (high <= low)
         {
@@ -329,10 +343,22 @@ public static class SpanExtension
 
         if (x.CompareTo(midValue) > 0)
         {
-            return BinarySearch(a, x, mid + 1, high, keySelector);
+            return BinarySearch(
+                a,
+                x,
+                mid + 1,
+                high,
+                keySelector
+            );
         }
 
-        return BinarySearch(a, x, low, mid - 1, keySelector);
+        return BinarySearch(
+            a,
+            x,
+            low,
+            mid - 1,
+            keySelector
+        );
     }
 
     public static void BinarySort<TSource>(this Span<TSource> a, Func<TSource, uint> keySelector)
@@ -342,7 +368,14 @@ public static class SpanExtension
             var j = i - 1;
             var key = a[i];
             var keyValue = keySelector.Invoke(a[i]);
-            var pos = BinarySearch(a, keyValue, 0, j, keySelector);
+
+            var pos = BinarySearch(
+                a,
+                keyValue,
+                0,
+                j,
+                keySelector
+            );
 
             while (j >= pos)
             {
@@ -354,10 +387,7 @@ public static class SpanExtension
         }
     }
 
-    public static void BinarySort<TSource, TValue>(
-        this Span<TSource> a,
-        Func<TSource, TValue> keySelector
-    )
+    public static void BinarySort<TSource, TValue>(this Span<TSource> a, Func<TSource, TValue> keySelector)
         where TValue : IComparable<TValue>
     {
         for (var i = 1; i < a.Length; ++i)
@@ -365,7 +395,14 @@ public static class SpanExtension
             var j = i - 1;
             var key = a[i];
             var keyValue = keySelector.Invoke(a[i]);
-            var pos = BinarySearch(a, keyValue, 0, j, keySelector);
+
+            var pos = BinarySearch(
+                a,
+                keyValue,
+                0,
+                j,
+                keySelector
+            );
 
             while (j >= pos)
             {

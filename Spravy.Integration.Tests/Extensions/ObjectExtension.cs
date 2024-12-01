@@ -14,11 +14,7 @@ public static class ObjectExtension
         return _.WaitUntil(predicate, TimeSpan.FromSeconds(60));
     }
 
-    public static TObject WaitUntil<TObject>(
-        this object _,
-        Func<TObject> predicate,
-        TimeSpan timeout
-    )
+    public static TObject WaitUntil<TObject>(this object _, Func<TObject> predicate, TimeSpan timeout)
     {
         var index = 0ul;
         var currentTick = Environment.TickCount;
@@ -45,14 +41,10 @@ public static class ObjectExtension
                     var value = index;
 
                     Dispatcher.UIThread.Post(
-                        () =>
-                            Task.Delay(
-                                    TimeSpan.FromSeconds(Math.Exp(value)),
-                                    cancellationTokenSource.Token
-                                )
-                                .ConfigureAwait(false)
-                                .GetAwaiter()
-                                .GetResult()
+                        () => Task.Delay(TimeSpan.FromSeconds(Math.Exp(value)), cancellationTokenSource.Token)
+                           .ConfigureAwait(false)
+                           .GetAwaiter()
+                           .GetResult()
                     );
 
                     Dispatcher.UIThread.RunJobs();
@@ -72,11 +64,7 @@ public static class ObjectExtension
                 Dispatcher.UIThread.RunJobs();
 
                 Dispatcher.UIThread.Post(
-                    () =>
-                        Task.Delay(TimeSpan.FromMilliseconds(100))
-                            .ConfigureAwait(false)
-                            .GetAwaiter()
-                            .GetResult()
+                    () => Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false).GetAwaiter().GetResult()
                 );
 
                 Dispatcher.UIThread.RunJobs();
@@ -86,11 +74,7 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject TryCatch<TObject>(
-        this TObject obj,
-        Action<TObject> @try,
-        Action<TObject, Exception> @catch
-    )
+    public static TObject TryCatch<TObject>(this TObject obj, Action<TObject> @try, Action<TObject, Exception> @catch)
     {
         var a = obj;
 

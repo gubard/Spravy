@@ -24,10 +24,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     public static MainActivity Instance => _instance.ThrowIfNull();
 
-    private INavigator Navigator
-    {
-        get => navigator ??= DiHelper.ServiceFactory.CreateService<INavigator>();
-    }
+    private INavigator Navigator => navigator ??= DiHelper.ServiceFactory.CreateService<INavigator>();
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {

@@ -2,10 +2,7 @@ namespace Spravy.Ui.Browser.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
-[Singleton(
-    typeof(IFactory<ISingleViewTopLevelControl>),
-    typeof(BrowserSingleViewTopLevelControlFactory)
-)]
+[Singleton(typeof(IFactory<ISingleViewTopLevelControl>), typeof(BrowserSingleViewTopLevelControlFactory))]
 [Singleton(typeof(IConfigurationLoader), typeof(EmbeddedConfigurationLoader))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
@@ -18,6 +15,11 @@ namespace Spravy.Ui.Browser.Modules;
 [Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
 public partial class BrowserServiceProvider : IServiceFactory
 {
+    public T CreateService<T>() where T : notnull
+    {
+        return GetService<T>();
+    }
+
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
@@ -30,16 +32,8 @@ public partial class BrowserServiceProvider : IServiceFactory
 
     public IConfiguration ConfigurationFactory()
     {
-        using var stream = SpravyUiBrowserMark
-            .GetResourceStream(FileNames.DefaultConfigFileName)
-            .ThrowIfNull();
+        using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName).ThrowIfNull();
 
         return new ConfigurationBuilder().AddJsonStream(stream).Build();
-    }
-
-    public T CreateService<T>()
-        where T : notnull
-    {
-        return GetService<T>();
     }
 }

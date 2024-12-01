@@ -106,7 +106,10 @@ public class ProjectBuilderFactory
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
-                        new[] { Runtime.LinuxX64 },
+                        new[]
+                        {
+                            Runtime.LinuxX64,
+                        },
                         configuration,
                         domain,
                         ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()],
@@ -133,7 +136,10 @@ public class ProjectBuilderFactory
                             csprojFile,
                             csprojFile.Directory.ToFile("appsettings.json"),
                             ports,
-                            new[] { Runtime.AndroidArm64 },
+                            new[]
+                            {
+                                Runtime.AndroidArm64,
+                            },
                             configuration,
                             domain,
                             keyStoreFile,
@@ -156,7 +162,10 @@ public class ProjectBuilderFactory
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
-                        new[] { Runtime.BrowserWasm },
+                        new[]
+                        {
+                            Runtime.BrowserWasm,
+                        },
                         configuration,
                         domain,
                         ftpHost,

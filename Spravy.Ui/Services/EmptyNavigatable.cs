@@ -2,15 +2,9 @@ namespace Spravy.Ui.Services;
 
 public class EmptyNavigatable : INavigatable
 {
-    public bool IsPooled
-    {
-        get => false;
-    }
+    public bool IsPooled => false;
 
-    public string ViewId
-    {
-        get => TypeCache<EmptyNavigatable>.Type.Name;
-    }
+    public string ViewId => TypeCache<EmptyNavigatable>.Type.Name;
 
     public Cvtar SaveStateAsync(CancellationToken ct)
     {

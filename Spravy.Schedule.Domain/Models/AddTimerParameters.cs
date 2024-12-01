@@ -2,12 +2,7 @@ namespace Spravy.Schedule.Domain.Models;
 
 public readonly struct AddTimerParameters
 {
-    public AddTimerParameters(
-        DateTime dueDateTime,
-        Guid eventId,
-        ReadOnlyMemory<byte> content,
-        string name
-    )
+    public AddTimerParameters(DateTime dueDateTime, Guid eventId, ReadOnlyMemory<byte> content, string name)
     {
         DueDateTime = dueDateTime;
         EventId = eventId;

@@ -12,12 +12,7 @@ public class EmailService : IEmailService
         this.options = options;
     }
 
-    public Cvtar SendEmailAsync(
-        string subject,
-        string recipientEmail,
-        string text,
-        CancellationToken ct
-    )
+    public Cvtar SendEmailAsync(string subject, string recipientEmail, string text, CancellationToken ct)
     {
         return SendEmailCore(subject, recipientEmail, text, ct).ConfigureAwait(false);
     }
@@ -34,7 +29,10 @@ public class EmailService : IEmailService
         message.To.Add(new MailboxAddress("User", recipientEmail));
         message.Subject = subject;
 
-        message.Body = new TextPart("plain") { Text = text };
+        message.Body = new TextPart("plain")
+        {
+            Text = text,
+        };
 
         using var client = new SmtpClient();
         await client.ConnectAsync(options.Host, 587, false, ct);

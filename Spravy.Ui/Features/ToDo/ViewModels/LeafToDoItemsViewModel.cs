@@ -1,15 +1,11 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class LeafToDoItemsViewModel
-    : NavigatableViewModelBase,
-        IObjectParameters,
-        IToDoItemEditId,
-        IRemove
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameters, IToDoItemEditId, IRemove
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
+    private readonly IObjectStorage objectStorage;
 
     private readonly TaskWork refreshWork;
-    private readonly IObjectStorage objectStorage;
     private readonly IToDoUiService toDoUiService;
 
     public LeafToDoItemsViewModel(
@@ -19,8 +15,7 @@ public class LeafToDoItemsViewModel
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
         IToDoUiService toDoUiService
-    )
-        : base(true)
+    ) : base(true)
     {
         Item = item;
         Items = items;
@@ -55,90 +50,7 @@ public class LeafToDoItemsViewModel
         }
     }
 
-    public override string ViewId
-    {
-        get => TypeCache<LeafToDoItemsViewModel>.Type.Name;
-    }
-
-    public override Cvtar RefreshAsync(CancellationToken ct)
-    {
-        return RefreshCore(ct).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> RefreshCore(CancellationToken ct)
-    {
-        await refreshWork.RunAsync();
-
-        return Result.Success;
-    }
-
-    private Cvtar RefreshCoreAsync(CancellationToken ct)
-    {
-        if (Items.IsEmpty)
-        {
-            return Item.GetValue()
-                .IfSuccessAsync(
-                    i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
-                    ct
-                );
-        }
-
-        return Items
-            .ToArray()
-            .ToReadOnlyMemory()
-            .ToResult()
-            .IfSuccessForEachAllAsync(
-                i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct),
-                ct
-            );
-    }
-
-    public override Result Stop()
-    {
-        refreshWork.Cancel();
-
-        return Result.Success;
-    }
-
-    public override Cvtar LoadStateAsync(CancellationToken ct)
-    {
-        return objectStorage
-            .GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ToDoSubItemsViewModel.List.IsMulti = setting.IsMulti;
-                            ToDoSubItemsViewModel.List.GroupBy = setting.GroupBy;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public override Cvtar SaveStateAsync(CancellationToken ct)
-    {
-        return objectStorage.SaveObjectAsync(ViewId, new LeafToDoItemsViewModelSetting(this), ct);
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
-        {
-            if (ToDoSubItemsViewModel.List.IsMulti)
-            {
-                Commands.UpdateUi(UiHelper.ToDoItemCommands);
-            }
-            else
-            {
-                Commands.Clear();
-            }
-        }
-    }
+    public override string ViewId => TypeCache<LeafToDoItemsViewModel>.Type.Name;
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
@@ -167,8 +79,78 @@ public class LeafToDoItemsViewModel
             return new(new NonItemSelectedError());
         }
 
-        return ToDoSubItemsViewModel
-            .GetSelectedItems()
-            .IfSuccess(selected => new ToDoItemEditId(Item, selected).ToResult());
+        return ToDoSubItemsViewModel.GetSelectedItems()
+           .IfSuccess(selected => new ToDoItemEditId(Item, selected).ToResult());
+    }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return RefreshCore(ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> RefreshCore(CancellationToken ct)
+    {
+        await refreshWork.RunAsync();
+
+        return Result.Success;
+    }
+
+    private Cvtar RefreshCoreAsync(CancellationToken ct)
+    {
+        if (Items.IsEmpty)
+        {
+            return Item.GetValue()
+               .IfSuccessAsync(i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct), ct);
+        }
+
+        return Items.ToArray()
+           .ToReadOnlyMemory()
+           .ToResult()
+           .IfSuccessForEachAllAsync(i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct), ct);
+    }
+
+    public override Result Stop()
+    {
+        refreshWork.Cancel();
+
+        return Result.Success;
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return objectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(
+                setting => this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.IsMulti = setting.IsMulti;
+                        ToDoSubItemsViewModel.List.GroupBy = setting.GroupBy;
+
+                        return Result.Success;
+                    },
+                    ct
+                ),
+                ct
+            );
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return objectStorage.SaveObjectAsync(ViewId, new LeafToDoItemsViewModelSetting(this), ct);
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDoSubItemsViewModel.List.IsMulti))
+        {
+            if (ToDoSubItemsViewModel.List.IsMulti)
+            {
+                Commands.UpdateUi(UiHelper.ToDoItemCommands);
+            }
+            else
+            {
+                Commands.Clear();
+            }
+        }
     }
 }

@@ -9,32 +9,17 @@ public interface IPasswordService
     Cvtar UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken ct);
     Cvtar UpdatePasswordItemLoginAsync(Guid id, string login, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken ct);
 
     Cvtar DeletePasswordItemAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
-        Guid id,
-        CancellationToken ct
-    );
 
-    Cvtar UpdatePasswordItemIsAvailableNumberAsync(
-        Guid id,
-        bool isAvailableNumber,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken ct);
 
-    Cvtar UpdatePasswordItemIsAvailableLowerLatinAsync(
-        Guid id,
-        bool isAvailableLowerLatin,
-        CancellationToken ct
-    );
+    Cvtar UpdatePasswordItemIsAvailableNumberAsync(Guid id, bool isAvailableNumber, CancellationToken ct);
+
+    Cvtar UpdatePasswordItemIsAvailableLowerLatinAsync(Guid id, bool isAvailableLowerLatin, CancellationToken ct);
 
     Cvtar UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
@@ -48,9 +33,5 @@ public interface IPasswordService
         CancellationToken ct
     );
 
-    Cvtar UpdatePasswordItemIsAvailableUpperLatinAsync(
-        Guid id,
-        bool isAvailableUpperLatin,
-        CancellationToken ct
-    );
+    Cvtar UpdatePasswordItemIsAvailableUpperLatinAsync(Guid id, bool isAvailableUpperLatin, CancellationToken ct);
 }

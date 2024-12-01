@@ -2,8 +2,8 @@ namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
 {
-    public static bool IsDrag;
     public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
+    public static bool IsDrag;
     public static object? DragData;
     public static Control? DragControl;
     public static Panel? DragPanel;
@@ -79,6 +79,112 @@ public static class UiHelper
         "mdi-penguin",
     ];
 
+    public static readonly ICommand CopyLogin;
+    public static readonly ICommand AddChild;
+    public static readonly ICommand MainSplitViewModelInitialized;
+    public static readonly ICommand UpdateEmail;
+    public static readonly ICommand NavigateToPolicy;
+    public static readonly ICommand VerificationEmail;
+    public static readonly ICommand Back;
+    public static readonly ICommand CopyToClipboard;
+    public static readonly ICommand NavigateToToDoItem;
+    public static readonly ICommand Complete;
+    public static readonly ICommand RemoveFromFavorite;
+    public static readonly ICommand AddToFavorite;
+    public static readonly ICommand SendNewVerificationCode;
+    public static readonly ICommand NavigateToRootToDoItems;
+    public static readonly ICommand NavigateToTodayToDoItems;
+    public static readonly ICommand NavigateToSearchToDoItems;
+    public static readonly ICommand NavigateToPasswordGenerator;
+    public static readonly ICommand NavigateToTimers;
+    public static readonly ICommand NavigateToEmailOrLoginInput;
+    public static readonly ICommand NavigateToCreateUser;
+    public static readonly ICommand NavigateToSetting;
+    public static readonly ICommand SwitchPane;
+    public static readonly ICommand AddTimer;
+    public static readonly ICommand DeleteTimer;
+    public static readonly ICommand Logout;
+    public static readonly ICommand RefreshCurrentView;
+    public static readonly ICommand SetToDoItemDescription;
+    public static readonly ICommand AddPasswordItem;
+    public static readonly ICommand ShowPasswordItemSetting;
+    public static readonly ICommand ForgotPassword;
+    public static readonly ICommand NavigateToActiveToDoItem;
+    public static readonly ICommand CreateUserViewEnter;
+    public static readonly ICommand CreateUser;
+    public static readonly ICommand LoginViewInitialized;
+    public static readonly ICommand MainViewInitialized;
+    public static readonly ICommand LoginViewEnter;
+    public static readonly ICommand Login;
+    public static readonly ICommand GeneratePassword;
+    public static readonly ICommand DeletePasswordItem;
+    public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
+    public static readonly SpravyCommandNotify ShowSetting;
+    public static readonly SpravyCommandNotify RemoveFromBookmark;
+    public static readonly ReadOnlyMemory<SpravyCommandNotify> ToDoItemCommands;
+
+    public static ReadOnlyMemory<SortByToDoItem> SortByToDoItems = new(
+        [
+            SortByToDoItem.Index,
+            SortByToDoItem.Name,
+            SortByToDoItem.DueDate,
+        ]
+    );
+
+    public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses = new(
+        [
+            ToDoItemStatus.Miss,
+            ToDoItemStatus.ReadyForComplete,
+            ToDoItemStatus.Planned,
+            ToDoItemStatus.ComingSoon,
+            ToDoItemStatus.Completed,
+        ]
+    );
+
+    public static ReadOnlyMemory<ToDoItemType> ToDoItemTypes = new(
+        [
+            ToDoItemType.Value,
+            ToDoItemType.Circle,
+            ToDoItemType.Group,
+            ToDoItemType.Periodicity,
+            ToDoItemType.Reference,
+            ToDoItemType.Planned,
+            ToDoItemType.Step,
+            ToDoItemType.PeriodicityOffset,
+        ]
+    );
+
+    public static ReadOnlyMemory<DayOfWeek> DayOfWeeks = new(
+        [
+            DayOfWeek.Monday,
+            DayOfWeek.Thursday,
+            DayOfWeek.Wednesday,
+            DayOfWeek.Tuesday,
+            DayOfWeek.Friday,
+            DayOfWeek.Saturday,
+            DayOfWeek.Sunday,
+        ]
+    );
+
+    public static ReadOnlyMemory<GroupBy> GroupBys = new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
+
+    public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
+        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
+
+    public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
+        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);
+
+    public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys = new(
+        [
+            TypeOfPeriodicity.Daily,
+            TypeOfPeriodicity.Weekly,
+            TypeOfPeriodicity.Monthly,
+            TypeOfPeriodicity.Annually,
+        ]
+    );
+
+    public static ReadOnlyMemory<ThemeType> ThemeTypes = new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
+
     static UiHelper()
     {
         var commands = DiHelper.ServiceFactory.CreateService<SpravyCommandService>();
@@ -127,50 +233,6 @@ public static class UiHelper
         ShowSetting = commandsNotify.ShowSetting;
         RemoveFromBookmark = commandsNotify.RemoveFromBookmark;
     }
-
-    public static readonly ICommand CopyLogin;
-    public static readonly ICommand AddChild;
-    public static readonly ICommand MainSplitViewModelInitialized;
-    public static readonly ICommand UpdateEmail;
-    public static readonly ICommand NavigateToPolicy;
-    public static readonly ICommand VerificationEmail;
-    public static readonly ICommand Back;
-    public static readonly ICommand CopyToClipboard;
-    public static readonly ICommand NavigateToToDoItem;
-    public static readonly ICommand Complete;
-    public static readonly ICommand RemoveFromFavorite;
-    public static readonly ICommand AddToFavorite;
-    public static readonly ICommand SendNewVerificationCode;
-    public static readonly ICommand NavigateToRootToDoItems;
-    public static readonly ICommand NavigateToTodayToDoItems;
-    public static readonly ICommand NavigateToSearchToDoItems;
-    public static readonly ICommand NavigateToPasswordGenerator;
-    public static readonly ICommand NavigateToTimers;
-    public static readonly ICommand NavigateToEmailOrLoginInput;
-    public static readonly ICommand NavigateToCreateUser;
-    public static readonly ICommand NavigateToSetting;
-    public static readonly ICommand SwitchPane;
-    public static readonly ICommand AddTimer;
-    public static readonly ICommand DeleteTimer;
-    public static readonly ICommand Logout;
-    public static readonly ICommand RefreshCurrentView;
-    public static readonly ICommand SetToDoItemDescription;
-    public static readonly ICommand AddPasswordItem;
-    public static readonly ICommand ShowPasswordItemSetting;
-    public static readonly ICommand ForgotPassword;
-    public static readonly ICommand NavigateToActiveToDoItem;
-    public static readonly ICommand CreateUserViewEnter;
-    public static readonly ICommand CreateUser;
-    public static readonly ICommand LoginViewInitialized;
-    public static readonly ICommand MainViewInitialized;
-    public static readonly ICommand LoginViewEnter;
-    public static readonly ICommand Login;
-    public static readonly ICommand GeneratePassword;
-    public static readonly ICommand DeletePasswordItem;
-    public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
-    public static readonly SpravyCommandNotify ShowSetting;
-    public static readonly SpravyCommandNotify RemoveFromBookmark;
-    public static readonly ReadOnlyMemory<SpravyCommandNotify> ToDoItemCommands;
 
     public static Os Os
     {
@@ -234,58 +296,6 @@ public static class UiHelper
             throw new ArgumentOutOfRangeException();
         }
     }
-    
-    public static ReadOnlyMemory<SortByToDoItem> SortByToDoItems = new([
-        SortByToDoItem.Index,
-        SortByToDoItem.Name,
-        SortByToDoItem.DueDate,
-    ]);
-
-    public static ReadOnlyMemory<ToDoItemStatus> ToDoItemStatuses = new([
-        ToDoItemStatus.Miss,
-        ToDoItemStatus.ReadyForComplete,
-        ToDoItemStatus.Planned,
-        ToDoItemStatus.ComingSoon,
-        ToDoItemStatus.Completed,
-    ]);
-
-    public static ReadOnlyMemory<ToDoItemType> ToDoItemTypes = new([
-        ToDoItemType.Value,
-        ToDoItemType.Circle,
-        ToDoItemType.Group,
-        ToDoItemType.Periodicity,
-        ToDoItemType.Reference,
-        ToDoItemType.Planned,
-        ToDoItemType.Step,
-        ToDoItemType.PeriodicityOffset,
-    ]);
-
-    public static ReadOnlyMemory<DayOfWeek> DayOfWeeks = new([
-        DayOfWeek.Monday,
-        DayOfWeek.Thursday,
-        DayOfWeek.Wednesday,
-        DayOfWeek.Tuesday,
-        DayOfWeek.Friday,
-        DayOfWeek.Saturday,
-        DayOfWeek.Sunday,
-    ]);
-
-    public static ReadOnlyMemory<GroupBy> GroupBys = new([GroupBy.None, GroupBy.ByStatus, GroupBy.ByType,]);
-
-    public static ReadOnlyMemory<DescriptionType> DescriptionTypes =
-        new([DescriptionType.PlainText, DescriptionType.Markdown,]);
-
-    public static ReadOnlyMemory<ToDoItemChildrenType> ToDoItemChildrenTypes =
-        new([ToDoItemChildrenType.RequireCompletion, ToDoItemChildrenType.IgnoreCompletion,]);
-
-    public static ReadOnlyMemory<TypeOfPeriodicity> TypeOfPeriodicitys = new([
-        TypeOfPeriodicity.Daily,
-        TypeOfPeriodicity.Weekly,
-        TypeOfPeriodicity.Monthly,
-        TypeOfPeriodicity.Annually,
-    ]);
-
-    public static ReadOnlyMemory<ThemeType> ThemeTypes = new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
 
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
@@ -328,7 +338,7 @@ public static class UiHelper
         {
             return new(TypeOfPeriodicitys.ToArray().OfType<object>().ToArray());
         }
-        
+
         if (typeof(SortByToDoItem) == type)
         {
             return new(SortByToDoItems.ToArray().OfType<object>().ToArray());

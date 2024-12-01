@@ -2,18 +2,18 @@ namespace Spravy.Db.Extensions;
 
 public static class DbContextExtension
 {
-    public static Result RemoveEntity<TEntity>(this DbContext context, TEntity entity)
-        where TEntity : class
+    public static Result RemoveEntity<TEntity>(this DbContext context, TEntity entity) where TEntity : class
     {
         context.Remove(entity);
 
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<
-        Result<EntityEntry<TEntity>>
-    > AddEntityAsync<TEntity>(this DbContext context, TEntity entity, CancellationToken ct)
-        where TEntity : class
+    public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
+        this DbContext context,
+        TEntity entity,
+        CancellationToken ct
+    ) where TEntity : class
     {
         return AddEntityCore(context, entity, ct).ConfigureAwait(false);
     }
@@ -22,8 +22,7 @@ public static class DbContextExtension
         this DbContext context,
         TEntity entity,
         CancellationToken ct
-    )
-        where TEntity : class
+    ) where TEntity : class
     {
         var value = await context.AddAsync(entity, ct);
 
@@ -33,16 +32,12 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<TEntity>> GetEntityAsync<TEntity>(
         this DbContext context,
         object key
-    )
-        where TEntity : class
+    ) where TEntity : class
     {
         return GetEntityCore<TEntity>(context, key).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result<TEntity>> GetEntityCore<TEntity>(
-        this DbContext context,
-        object key
-    )
+    private static async ValueTask<Result<TEntity>> GetEntityCore<TEntity>(this DbContext context, object key)
         where TEntity : class
     {
         var value = await context.FindAsync<TEntity>(key);
@@ -58,16 +53,12 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<Option<TEntity>>> FindEntityAsync<TEntity>(
         this DbContext context,
         object key
-    )
-        where TEntity : class
+    ) where TEntity : class
     {
         return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result<Option<TEntity>>> FindEntityCore<TEntity>(
-        this DbContext context,
-        object key
-    )
+    private static async ValueTask<Result<Option<TEntity>>> FindEntityCore<TEntity>(this DbContext context, object key)
         where TEntity : class
     {
         var value = await context.FindAsync<TEntity>(key);
@@ -75,16 +66,11 @@ public static class DbContextExtension
         return value.ToOption().ToResult();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<
-        TDbContext,
-        TReturn
-    >(
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<TDbContext, TReturn>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
-    )
-        where TDbContext : DbContext
-        where TReturn : notnull
+    ) where TDbContext : DbContext where TReturn : notnull
     {
         return AtomicExecuteCore(context, func, ct).ConfigureAwait(false);
     }
@@ -93,9 +79,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
-    )
-        where TDbContext : DbContext
-        where TReturn : notnull
+    ) where TDbContext : DbContext where TReturn : notnull
     {
         await using var transaction = await context.Database.BeginTransactionAsync(ct);
         Result<TReturn> result;
@@ -124,11 +108,7 @@ public static class DbContextExtension
         return result;
     }
 
-    public static Cvtar AtomicExecuteAsync<TDbContext>(
-        this TDbContext context,
-        Func<Cvtar> func,
-        CancellationToken ct
-    )
+    public static Cvtar AtomicExecuteAsync<TDbContext>(this TDbContext context, Func<Cvtar> func, CancellationToken ct)
         where TDbContext : DbContext
     {
         return AtomicExecuteCore(context, func, ct).ConfigureAwait(false);
@@ -138,8 +118,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<Cvtar> func,
         CancellationToken ct
-    )
-        where TDbContext : DbContext
+    ) where TDbContext : DbContext
     {
         await using var transaction = await context.Database.BeginTransactionAsync(ct);
         Result result;

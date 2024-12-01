@@ -12,18 +12,17 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         this.serializer = serializer;
     }
 
-    public override Task<UpdateEventsReply> UpdateEvents(
-        UpdateEventsRequest request,
-        ServerCallContext context
-    )
+    public override Task<UpdateEventsReply> UpdateEvents(UpdateEventsRequest request, ServerCallContext context)
     {
-        return scheduleService
-            .UpdateEventsAsync(context.CancellationToken)
-            .HandleAsync(
+        return scheduleService.UpdateEventsAsync(context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 isUpdated =>
                 {
-                    var reply = new UpdateEventsReply { IsUpdated = isUpdated };
+                    var reply = new UpdateEventsReply
+                    {
+                        IsUpdated = isUpdated,
+                    };
 
                     return reply;
                 },
@@ -31,10 +30,7 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
             );
     }
 
-    public override async Task<AddTimerReply> AddTimer(
-        AddTimerRequest request,
-        ServerCallContext context
-    )
+    public override async Task<AddTimerReply> AddTimer(AddTimerRequest request, ServerCallContext context)
     {
         var parameters = request.Items.Select(x => x.ToAddTimerParameters()).ToArray();
         await scheduleService.AddTimerAsync(parameters, context.CancellationToken);
@@ -42,10 +38,7 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         return new();
     }
 
-    public override async Task<RemoveTimerReply> RemoveTimer(
-        RemoveTimerRequest request,
-        ServerCallContext context
-    )
+    public override async Task<RemoveTimerReply> RemoveTimer(RemoveTimerRequest request, ServerCallContext context)
     {
         var id = request.Id.ToGuid();
         await scheduleService.RemoveTimerAsync(id, context.CancellationToken);
@@ -53,14 +46,10 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         return new();
     }
 
-    public override Task<GetTimersReply> GetTimers(
-        GetTimersRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetTimersReply> GetTimers(GetTimersRequest request, ServerCallContext context)
     {
-        return scheduleService
-            .GetTimersAsync(context.CancellationToken)
-            .HandleAsync(
+        return scheduleService.GetTimersAsync(context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 items =>
                 {

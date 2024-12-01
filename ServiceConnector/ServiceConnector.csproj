@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Service\Spravy.Authentication.Service.csproj" />
-      <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
-      <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
+        <ProjectReference Include="..\Spravy.Authentication.Service\Spravy.Authentication.Service.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 </Project>

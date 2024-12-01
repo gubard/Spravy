@@ -11,8 +11,7 @@ public readonly struct SpravyPasswordGeneratorDbSqliteMigratorMark : IAssemblyMa
     public static string AssemblyFullName { get; } =
         typeof(SpravyPasswordGeneratorDbSqliteMigratorMark).Assembly.GetName().FullName;
 
-    public static Assembly Assembly { get; } =
-        typeof(SpravyPasswordGeneratorDbSqliteMigratorMark).Assembly;
+    public static Assembly Assembly { get; } = typeof(SpravyPasswordGeneratorDbSqliteMigratorMark).Assembly;
 
     public static Stream? GetResourceStream(string resourceName)
     {

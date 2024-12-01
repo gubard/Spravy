@@ -2,7 +2,7 @@ namespace Spravy.Ui.Converters;
 
 public class ColorToTextForegroundConverter : IValueConverter
 {
-    private static Application application;
+    private static readonly Application application;
 
     static ColorToTextForegroundConverter()
     {
@@ -13,13 +13,7 @@ public class ColorToTextForegroundConverter : IValueConverter
     {
         if (value is not Color color)
         {
-            if (
-                application.TryFindResource(
-                    "TextControlForeground",
-                    application.ActualThemeVariant,
-                    out var resource
-                )
-            )
+            if (application.TryFindResource("TextControlForeground", application.ActualThemeVariant, out var resource))
             {
                 return resource;
             }
@@ -29,13 +23,7 @@ public class ColorToTextForegroundConverter : IValueConverter
 
         if (color.A == 0)
         {
-            if (
-                application.TryFindResource(
-                    "TextControlForeground",
-                    application.ActualThemeVariant,
-                    out var resource
-                )
-            )
+            if (application.TryFindResource("TextControlForeground", application.ActualThemeVariant, out var resource))
             {
                 return resource;
             }
@@ -46,12 +34,7 @@ public class ColorToTextForegroundConverter : IValueConverter
         return new SolidColorBrush(color);
     }
 
-    public object? ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

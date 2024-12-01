@@ -2,8 +2,7 @@
 
 public class RecursionTypeDelegateInvokeException : Exception
 {
-    public RecursionTypeDelegateInvokeException(Type type, Delegate del)
-        : base($"{type} contains in parameters {del}.")
+    public RecursionTypeDelegateInvokeException(Type type, Delegate del) : base($"{type} contains in parameters {del}.")
     {
         Type = type;
         Delegate = del;

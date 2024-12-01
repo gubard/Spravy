@@ -22,7 +22,7 @@
         <Style Selector="TextBlock.planned">
             <Setter Property="TextDecorations">
                 <TextDecorationCollection>
-                    <TextDecoration Location="Strikethrough" 
+                    <TextDecoration Location="Strikethrough"
                                     StrokeDashArray="5"
                                     StrokeThickness="3"
                                     StrokeThicknessUnit="Pixel"
@@ -41,7 +41,7 @@
                 </TextDecorationCollection>
             </Setter>
         </Style>
-        
+
         <Style Selector="TextBlock.coming-soon">
             <Setter Property="TextDecorations">
                 <TextDecorationCollection>
@@ -265,7 +265,7 @@
                     <Rectangle Height="40" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
-            
+
             <c:DialogControl x:Name="ErrorDialogControl"
                              Grid.Row="1"
                              Classes="adaptive-dialog-host"
@@ -289,7 +289,7 @@
                     </c:DialogControl>
                 </c:DialogControl>
             </c:DialogControl>
-            
+
             <c:ViewSelectorControl Grid.Row="2" State="{x:Static h:UiHelper.Os}">
                 <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
                     <Rectangle Height="45" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />

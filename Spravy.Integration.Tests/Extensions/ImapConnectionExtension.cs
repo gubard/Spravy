@@ -18,10 +18,7 @@ public static class ImapConnectionExtension
         }
     }
 
-    public static TValue Execute<TValue>(
-        this ImapConnection connection,
-        Func<ImapClient, TValue> action
-    )
+    public static TValue Execute<TValue>(this ImapConnection connection, Func<ImapClient, TValue> action)
     {
         using var client = new ImapClient();
 
@@ -40,64 +37,68 @@ public static class ImapConnectionExtension
 
     public static string GetLastEmailText(this ImapConnection connection)
     {
-        return connection.Execute(client =>
-        {
-            var inbox = client.Inbox;
-            var i = 0;
-
-            while (true)
+        return connection.Execute(
+            client =>
             {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                i++;
-                inbox.Open(FolderAccess.ReadWrite);
+                var inbox = client.Inbox;
+                var i = 0;
 
-                if (inbox.Count == 0)
+                while (true)
                 {
-                    inbox.Close();
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                    i++;
+                    inbox.Open(FolderAccess.ReadWrite);
 
-                    if (i == 100)
+                    if (inbox.Count == 0)
                     {
-                        throw new("Inbox timeout");
+                        inbox.Close();
+
+                        if (i == 100)
+                        {
+                            throw new("Inbox timeout");
+                        }
+
+                        continue;
                     }
 
-                    continue;
+                    var message = inbox.GetMessage(0);
+
+                    return message.TextBody;
                 }
-
-                var message = inbox.GetMessage(0);
-
-                return message.TextBody;
             }
-        });
+        );
     }
 
     public static void ClearInbox(this ImapConnection connection)
     {
-        connection.Execute(client =>
-        {
-            var inbox = client.Inbox;
-            var i = 0;
-
-            while (true)
+        connection.Execute(
+            client =>
             {
-                i++;
-                inbox.Open(FolderAccess.ReadWrite);
+                var inbox = client.Inbox;
+                var i = 0;
 
-                if (inbox.Count == 0)
+                while (true)
                 {
+                    i++;
+                    inbox.Open(FolderAccess.ReadWrite);
+
+                    if (inbox.Count == 0)
+                    {
+                        inbox.Close();
+
+                        return;
+                    }
+
+                    var trash = client.GetFolder("Trash");
+                    inbox.MoveTo(0, trash);
                     inbox.Close();
 
-                    return;
-                }
-
-                var trash = client.GetFolder("Trash");
-                inbox.MoveTo(0, trash);
-                inbox.Close();
-
-                if (i == 100)
-                {
-                    return;
+                    if (i == 100)
+                    {
+                        return;
+                    }
                 }
             }
-        });
+        );
     }
 }

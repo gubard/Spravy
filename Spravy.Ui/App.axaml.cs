@@ -8,17 +8,13 @@ public class App : Application
     private static MaterialDesignSizeType materialDesignSizeType;
     public static readonly string ViewId;
 
-    public static App? CurrentApp => (App?)Current;
-
-    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
-
     public static readonly DirectProperty<App, MaterialDesignSizeType> MaterialDesignSizeTypeProperty =
         AvaloniaProperty.RegisterDirect<App, MaterialDesignSizeType>(
             nameof(MaterialDesignSizeType),
             app => app.MaterialDesignSizeType
         );
 
-    public static event Action<MaterialDesignSizeType>? MaterialDesignSizeTypeChanged;
+    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
 
     static App()
     {
@@ -48,12 +44,16 @@ public class App : Application
         );
     }
 
+    public static App? CurrentApp => (App?)Current;
+
     public MaterialDesignSizeType MaterialDesignSizeType
     {
         get => materialDesignSizeType;
         private set =>
             SetAndRaise(MaterialDesignSizeTypeProperty, ref materialDesignSizeType, value);
     }
+
+    public static event Action<MaterialDesignSizeType>? MaterialDesignSizeTypeChanged;
 
     public override void Initialize()
     {

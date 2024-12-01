@@ -14,15 +14,17 @@ public class DateTimeToDateOnlyValueConverter : IValueConverter
             return DateTime.MinValue;
         }
 
-        return new DateTime(dateOnly.Year, dateOnly.Month, dateOnly.Day, 0, 0, 0);
+        return new DateTime(
+            dateOnly.Year,
+            dateOnly.Month,
+            dateOnly.Day,
+            0,
+            0,
+            0
+        );
     }
 
-    public object? ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not DateTime dateTimeOffset)
         {

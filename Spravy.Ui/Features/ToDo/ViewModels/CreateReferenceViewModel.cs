@@ -2,7 +2,6 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
-    public override string ViewId => TypeCache<CreateReferenceViewModel>.Type.Name;
     private readonly IToDoService toDoService;
 
     public CreateReferenceViewModel(
@@ -10,38 +9,23 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         ToDoItemSelectorViewModel toDoItemSelectorViewModel,
         IToDoService toDoService
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         ToDoItemSelectorViewModel = toDoItemSelectorViewModel;
         this.toDoService = toDoService;
     }
 
+    public override string ViewId => TypeCache<CreateReferenceViewModel>.Type.Name;
+
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
-
-    public override Cvtar LoadStateAsync(CancellationToken ct)
-    {
-        return Result.AwaitableSuccess;
-    }
-
-    public override Cvtar SaveStateAsync(CancellationToken ct)
-    {
-        return Result.AwaitableSuccess;
-    }
-
-    public override Cvtar RefreshAsync(CancellationToken ct)
-    {
-        return Result.AwaitableSuccess;
-    }
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
         if (ToDoItemSelectorViewModel.SelectedItem is null)
         {
-            return ResultItems
-                .ToResult()
-                .IfSuccessForEach(x =>
-                    new AddToDoItemOptions(
+            return ResultItems.ToResult()
+               .IfSuccessForEach(
+                    x => new AddToDoItemOptions(
                         x.Name,
                         x.Description,
                         ToDoItemType.Reference,
@@ -67,14 +51,13 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                         0
                     ).ToResult()
                 )
-                .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
-                .ToResultOnlyAsync();
+               .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
+               .ToResultOnlyAsync();
         }
 
-        return ResultItems
-            .ToResult()
-            .IfSuccessForEach(x =>
-                new AddToDoItemOptions(
+        return ResultItems.ToResult()
+           .IfSuccessForEach(
+                x => new AddToDoItemOptions(
                     x.Name,
                     x.Description,
                     ToDoItemType.Reference,
@@ -100,21 +83,29 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                     0
                 ).ToResult()
             )
-            .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
-            .ToResultOnlyAsync();
+           .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, ct), ct)
+           .ToResultOnlyAsync();
     }
 
     public Result UpdateItemUi()
     {
-        return ToDoItemSelectorViewModel
-            .GetSelectedItem()
-            .IfSuccess(selectedItem =>
-            {
-                if (EditItem.TryGetValue(out var item))
+        return ToDoItemSelectorViewModel.GetSelectedItem()
+           .IfSuccess(
+                selectedItem =>
                 {
-                    if (EditItems.IsEmpty)
+                    if (EditItem.TryGetValue(out var item))
                     {
-                        item.Reference = selectedItem;
+                        if (EditItems.IsEmpty)
+                        {
+                            item.Reference = selectedItem;
+                        }
+                        else
+                        {
+                            foreach (var i in EditItems.Span)
+                            {
+                                i.Reference = selectedItem;
+                            }
+                        }
                     }
                     else
                     {
@@ -123,16 +114,24 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
                             i.Reference = selectedItem;
                         }
                     }
-                }
-                else
-                {
-                    foreach (var i in EditItems.Span)
-                    {
-                        i.Reference = selectedItem;
-                    }
-                }
 
-                return Result.Success;
-            });
+                    return Result.Success;
+                }
+            );
+    }
+
+    public override Cvtar LoadStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar SaveStateAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
+    }
+
+    public override Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Result.AwaitableSuccess;
     }
 }

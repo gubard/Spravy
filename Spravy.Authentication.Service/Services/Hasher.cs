@@ -15,8 +15,7 @@ public class Hasher : IHasher
         this.bytesToString = bytesToString.Value.Value;
         this.hashService = hashService.Value.Value;
         this.stringToBytes = stringToBytes.Value.Value;
-        HashMethod =
-            $"{stringToBytes.Value.Name};{hashService.Value.Name};{bytesToString.Value.Name}";
+        HashMethod = $"{stringToBytes.Value.Name};{hashService.Value.Name};{bytesToString.Value.Name}";
     }
 
     public string HashMethod { get; }

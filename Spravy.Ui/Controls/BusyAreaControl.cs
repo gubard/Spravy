@@ -2,15 +2,11 @@ namespace Spravy.Ui.Controls;
 
 public class BusyAreaControl : ContentControl
 {
-    public static readonly StyledProperty<object?> BusyAreaProperty = AvaloniaProperty.Register<
-        BusyAreaControl,
-        object?
-    >(nameof(BusyArea));
+    public static readonly StyledProperty<object?> BusyAreaProperty =
+        AvaloniaProperty.Register<BusyAreaControl, object?>(nameof(BusyArea));
 
-    public static readonly StyledProperty<bool> IsBusyProperty = AvaloniaProperty.Register<
-        BusyAreaControl,
-        bool
-    >(nameof(IsBusy));
+    public static readonly StyledProperty<bool> IsBusyProperty =
+        AvaloniaProperty.Register<BusyAreaControl, bool>(nameof(IsBusy));
 
     static BusyAreaControl()
     {

@@ -6,12 +6,10 @@ public abstract partial class IconViewModel : ViewModelBase, IStateHolder
 {
     private readonly IObjectStorage objectStorage;
 
-    [ObservableProperty]
-    private string icon = string.Empty;
-
     private bool firstIconChanged = true;
 
-    public abstract string ViewId { get; }
+    [ObservableProperty]
+    private string icon = string.Empty;
 
     public IconViewModel(IObjectStorage objectStorage)
     {
@@ -21,21 +19,21 @@ public abstract partial class IconViewModel : ViewModelBase, IStateHolder
 
     public AvaloniaList<string> FavoriteIcons { get; } = new();
 
+    public abstract string ViewId { get; }
+
     public Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<AppSetting>(App.ViewId, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            FavoriteIcons.UpdateUi(setting.FavoriteIcons);
+        return objectStorage.GetObjectOrDefaultAsync<AppSetting>(App.ViewId, ct)
+           .IfSuccessAsync(
+                setting => this.PostUiBackground(
+                    () =>
+                    {
+                        FavoriteIcons.UpdateUi(setting.FavoriteIcons);
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
@@ -44,7 +42,10 @@ public abstract partial class IconViewModel : ViewModelBase, IStateHolder
     {
         return objectStorage.SaveObjectAsync(
             App.ViewId,
-            new AppSetting { FavoriteIcons = FavoriteIcons.ToArray(), },
+            new AppSetting
+            {
+                FavoriteIcons = FavoriteIcons.ToArray(),
+            },
             ct
         );
     }

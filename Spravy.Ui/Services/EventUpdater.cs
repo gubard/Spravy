@@ -2,11 +2,11 @@ namespace Spravy.Ui.Services;
 
 public class EventUpdater : IEventUpdater
 {
-    private readonly IScheduleService scheduleService;
-    private readonly IUiApplicationService uiApplicationService;
     private readonly IAudioService audioService;
-    private readonly IToDoService toDoService;
+    private readonly IScheduleService scheduleService;
     private readonly ISpravyNotificationManager spravyNotificationManager;
+    private readonly IToDoService toDoService;
+    private readonly IUiApplicationService uiApplicationService;
     private CancellationTokenSource cancellationTokenSource = new();
 
     public EventUpdater(

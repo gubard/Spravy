@@ -7,11 +7,7 @@ namespace _build.Extensions;
 
 public static class Utf8JsonWriterExtension
 {
-    public static void AddObject(
-        this Utf8JsonWriter writer,
-        string name,
-        Action<Utf8JsonWriter> setup
-    )
+    public static void AddObject(this Utf8JsonWriter writer, string name, Action<Utf8JsonWriter> setup)
     {
         writer.WritePropertyName(name);
         writer.WriteStartObject();
@@ -33,12 +29,7 @@ public static class Utf8JsonWriterExtension
         writer.WriteStringValue(value);
     }
 
-    public static bool SetKestrel(
-        this Utf8JsonWriter writer,
-        JsonProperty property,
-        uint port,
-        string domain
-    )
+    public static bool SetKestrel(this Utf8JsonWriter writer, JsonProperty property, uint port, string domain)
     {
         if (property.Name != "Kestrel")
         {
@@ -51,32 +42,25 @@ public static class Utf8JsonWriterExtension
             {
                 writer.AddObject(
                     "EndPoints",
-                    () =>
-                        writer.AddObject(
-                            "HttpsInlineCertAndKeyFile",
-                            () =>
-                            {
-                                writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
-                                Log.Information("Added Url: https://0.0.0.0:{Port}", port);
+                    () => writer.AddObject(
+                        "HttpsInlineCertAndKeyFile",
+                        () =>
+                        {
+                            writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
+                            Log.Information("Added Url: https://0.0.0.0:{Port}", port);
 
-                                writer.AddObject(
-                                    "Certificate",
-                                    () =>
-                                    {
-                                        writer.AddStringValue(
-                                            "Path",
-                                            $"/etc/letsencrypt/live/{domain}/fullchain.pem"
-                                        );
-                                        writer.AddStringValue(
-                                            "KeyPath",
-                                            $"/etc/letsencrypt/live/{domain}/privkey.pem"
-                                        );
-                                    }
-                                );
+                            writer.AddObject(
+                                "Certificate",
+                                () =>
+                                {
+                                    writer.AddStringValue("Path", $"/etc/letsencrypt/live/{domain}/fullchain.pem");
+                                    writer.AddStringValue("KeyPath", $"/etc/letsencrypt/live/{domain}/privkey.pem");
+                                }
+                            );
 
-                                Log.Information("Added Certificate");
-                            }
-                        )
+                            Log.Information("Added Certificate");
+                        }
+                    )
                 );
 
                 foreach (var obj in property.Value.EnumerateObject())
@@ -143,11 +127,7 @@ public static class Utf8JsonWriterExtension
         return true;
     }
 
-    public static bool SetEmailService(
-        this Utf8JsonWriter writer,
-        JsonProperty property,
-        string password
-    )
+    public static bool SetEmailService(this Utf8JsonWriter writer, JsonProperty property, string password)
     {
         if (property.Name != "EmailService")
         {
@@ -208,10 +188,7 @@ public static class Utf8JsonWriterExtension
                             () =>
                             {
                                 writer.AddStringValue("Default", "Information");
-                                writer.AddObject(
-                                    "Override",
-                                    () => writer.AddStringValue("Microsoft", "Information")
-                                );
+                                writer.AddObject("Override", () => writer.AddStringValue("Microsoft", "Information"));
                             }
                         );
 

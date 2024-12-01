@@ -2,17 +2,22 @@ namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class LeafToDoItemsViewModelSetting : IViewModelSetting<LeafToDoItemsViewModelSetting>
 {
+    static LeafToDoItemsViewModelSetting()
+    {
+        Default = new()
+        {
+            GroupBy = GroupBy.ByStatus,
+        };
+    }
+
     public LeafToDoItemsViewModelSetting(LeafToDoItemsViewModel viewModel)
     {
         GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
         IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
     }
 
-    public LeafToDoItemsViewModelSetting() { }
-
-    static LeafToDoItemsViewModelSetting()
+    public LeafToDoItemsViewModelSetting()
     {
-        Default = new() { GroupBy = GroupBy.ByStatus };
     }
 
     public GroupBy GroupBy { get; set; }

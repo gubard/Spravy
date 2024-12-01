@@ -9,8 +9,7 @@ public static class DialogViewerExtension
         TViewModel viewModel,
         Func<TViewModel, Cvtar> confirmTask,
         CancellationToken ct
-    )
-        where TViewModel : IDialogable
+    ) where TViewModel : IDialogable
     {
         var confirm = viewFactory.CreateConfirmViewModel(
             viewModel,
@@ -27,13 +26,9 @@ public static class DialogViewerExtension
         DialogViewLayer layer,
         TViewModel viewModel,
         CancellationToken ct
-    )
-        where TViewModel : IDialogable
+    ) where TViewModel : IDialogable
     {
-        var info = viewFactory.CreateInfoViewModel(
-            viewModel,
-            _ => dialogViewer.CloseDialogAsync(layer, ct)
-        );
+        var info = viewFactory.CreateInfoViewModel(viewModel, _ => dialogViewer.CloseDialogAsync(layer, ct));
 
         return dialogViewer.ShowDialogAsync(layer, info, ct);
     }

@@ -4,5 +4,5 @@ public enum SortByToDoItem : byte
 {
     Index,
     Name,
-    DueDate
+    DueDate,
 }

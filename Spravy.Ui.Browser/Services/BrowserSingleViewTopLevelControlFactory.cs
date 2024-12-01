@@ -4,13 +4,10 @@ namespace Spravy.Ui.Browser.Services;
 
 public class BrowserSingleViewTopLevelControlFactory : IFactory<ISingleViewTopLevelControl>
 {
-    private readonly ISingleViewTopLevelControl singleView;
     private readonly ISingleViewTopLevelControl policyView;
+    private readonly ISingleViewTopLevelControl singleView;
 
-    public BrowserSingleViewTopLevelControlFactory(
-        ISingleViewTopLevelControl singleView,
-        PolicyView policyView
-    )
+    public BrowserSingleViewTopLevelControlFactory(ISingleViewTopLevelControl singleView, PolicyView policyView)
     {
         this.singleView = singleView;
         this.policyView = policyView;

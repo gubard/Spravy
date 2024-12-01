@@ -2,24 +2,19 @@ namespace Spravy.Ui.Controls;
 
 public class ColorSelectorControl : TemplatedControl
 {
-    public static readonly StyledProperty<Color?> SelectedColorProperty = AvaloniaProperty.Register<
-        ColorSelectorControl,
-        Color?
-    >(nameof(SelectedColor), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<Color?> SelectedColorProperty =
+        AvaloniaProperty.Register<ColorSelectorControl, Color?>(
+            nameof(SelectedColor),
+            defaultBindingMode: BindingMode.TwoWay
+        );
 
     public static readonly StyledProperty<IEnumerable<Color>?> ItemsSourceProperty =
         AvaloniaProperty.Register<ColorSelectorControl, IEnumerable<Color>?>(nameof(ItemsSource));
 
-    private SelectingItemsControl? selectingItemsControl;
     private bool bockSelectedColor;
     private bool bockSelectedItem;
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-        var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
-        UpdateSelectingItemsControl(ref selectingItemsControl, lb);
-    }
+    private SelectingItemsControl? selectingItemsControl;
 
     public Color? SelectedColor
     {
@@ -31,6 +26,13 @@ public class ColorSelectorControl : TemplatedControl
     {
         get => GetValue(ItemsSourceProperty);
         set => SetValue(ItemsSourceProperty, value);
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
+        UpdateSelectingItemsControl(ref selectingItemsControl, lb);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -62,10 +64,7 @@ public class ColorSelectorControl : TemplatedControl
         }
     }
 
-    private void UpdateSelectingItemsControl(
-        ref SelectingItemsControl? itemsControl,
-        SelectingItemsControl? lb
-    )
+    private void UpdateSelectingItemsControl(ref SelectingItemsControl? itemsControl, SelectingItemsControl? lb)
     {
         if (itemsControl is not null)
         {
@@ -129,10 +128,7 @@ public class ColorSelectorControl : TemplatedControl
         }
     }
 
-    private void SelectingItemsControlPropertyChanged(
-        object? sender,
-        AvaloniaPropertyChangedEventArgs e
-    )
+    private void SelectingItemsControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
         if (sender is not SelectingItemsControl itemsControl)
         {

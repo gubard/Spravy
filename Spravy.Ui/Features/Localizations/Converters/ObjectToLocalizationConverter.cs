@@ -46,12 +46,7 @@ public class ObjectToLocalizationConverter : IValueConverter
         return string.Join(Environment.NewLine, result.Errors.Select(x => x.Message).ToArray());
     }
 
-    public object ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

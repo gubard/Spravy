@@ -2,8 +2,7 @@
 
 namespace Spravy.Domain.Models;
 
-public struct MarshalRef<T> : IDisposable
-    where T : struct
+public struct MarshalRef<T> : IDisposable where T : struct
 {
     public nint Handle;
 
@@ -13,14 +12,8 @@ public struct MarshalRef<T> : IDisposable
         Marshal.StructureToPtr(value, Handle, true);
     }
 
-    public T Value
-    {
-        get =>
-            (T)(
-                Marshal.PtrToStructure(Handle, typeof(T))
-                ?? throw new NullReferenceException(nameof(Handle))
-            );
-    }
+    public T Value =>
+        (T)(Marshal.PtrToStructure(Handle, typeof(T)) ?? throw new NullReferenceException(nameof(Handle)));
 
     public void Dispose()
     {

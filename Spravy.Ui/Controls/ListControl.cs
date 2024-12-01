@@ -11,10 +11,13 @@ public class ListControl : TemplatedControl
         AvaloniaProperty.Register<ListControl, IEnumerable?>(nameof(ItemsSource));
 
     public static readonly DirectProperty<ListControl, IList?> ItemsProperty =
-        AvaloniaProperty.RegisterDirect<ListControl, IList?>(
-            nameof(Items),
-            control => control.items
-        );
+        AvaloniaProperty.RegisterDirect<ListControl, IList?>(nameof(Items), control => control.items);
+
+    private IAddItem? addItem;
+    private bool isEdit;
+
+    private IList? items;
+    private INotifyCollectionChanged? notifyCollectionChanged;
 
     static ListControl()
     {
@@ -26,11 +29,6 @@ public class ListControl : TemplatedControl
             }
         );
     }
-
-    private IList? items;
-    private IAddItem? addItem;
-    private INotifyCollectionChanged? notifyCollectionChanged;
-    private bool isEdit;
 
     public ITemplate<Control>? AddItem
     {
@@ -118,24 +116,28 @@ public class ListControl : TemplatedControl
             }
 
             var list = new List<object>(
-                ItemsSource
-                    .OfType<object>()
-                    .Select(x =>
-                    {
-                        var item = new DeleteItemControl { Content = x, };
-
-                        item.ClickDelete += (_, _) =>
+                ItemsSource.OfType<object>()
+                   .Select(
+                        x =>
                         {
-                            if (ItemsSource is IList l)
+                            var item = new DeleteItemControl
                             {
-                                l.Remove(x);
-                            }
+                                Content = x,
+                            };
 
-                            UpdateEditingItems();
-                        };
+                            item.ClickDelete += (_, _) =>
+                            {
+                                if (ItemsSource is IList l)
+                                {
+                                    l.Remove(x);
+                                }
 
-                        return (object)item;
-                    })
+                                UpdateEditingItems();
+                            };
+
+                            return (object)item;
+                        }
+                    )
             );
 
             var ai = AddItem.Build();
@@ -154,7 +156,13 @@ public class ListControl : TemplatedControl
 
     private Button CreateEditButton()
     {
-        var result = new Button { Content = new Icon { Value = "mdi-pencil", }, };
+        var result = new Button
+        {
+            Content = new Icon
+            {
+                Value = "mdi-pencil",
+            },
+        };
 
         result.Click += (_, _) => UpdateEditingItems();
 
@@ -163,7 +171,13 @@ public class ListControl : TemplatedControl
 
     private Button CreateAddButton()
     {
-        var result = new Button { Content = new Icon { Value = "mdi-plus", }, };
+        var result = new Button
+        {
+            Content = new Icon
+            {
+                Value = "mdi-plus",
+            },
+        };
 
         result.Click += (_, _) =>
         {
@@ -185,7 +199,13 @@ public class ListControl : TemplatedControl
 
     private Button CreateCancelButton()
     {
-        var result = new Button { Content = new Icon { Value = "mdi-close", }, };
+        var result = new Button
+        {
+            Content = new Icon
+            {
+                Value = "mdi-close",
+            },
+        };
 
         result.Click += (_, _) => UpdateDefaultItems();
 

@@ -45,7 +45,10 @@ public readonly struct SpravyVersion
         return new(major, minor, build, revision);
     }
 
-    public override string ToString() => $"{Major}.{Minor}.{Build}.{Revision}";
+    public override string ToString()
+    {
+        return $"{Major}.{Minor}.{Build}.{Revision}";
+    }
 
     public static bool TryParse(string str, out SpravyVersion version)
     {

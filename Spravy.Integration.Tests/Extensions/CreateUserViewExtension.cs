@@ -9,19 +9,12 @@ public static class CreateUserViewExtension
         Window window,
         CreateUserView createUserView,
         string text
-    )
-        where TTextBox : TextBox
+    ) where TTextBox : TextBox
     {
-        return textBox
-            .Case(() => window.SetKeyTextInput(text))
-            .MustHasError()
-            .Case(
-                () =>
-                    createUserView
-                        .GetControl<BusyAreaControl>(ElementNames.CreateUserCard)
-                        .MustWidth(400)
-            )
-            .ClearText(window);
+        return textBox.Case(() => window.SetKeyTextInput(text))
+           .MustHasError()
+           .Case(() => createUserView.GetControl<BusyAreaControl>(ElementNames.CreateUserCard).MustWidth(400))
+           .ClearText(window);
     }
 
     public static TTextBox ValidateCreateUserViewTextBox<TTextBox>(
@@ -29,18 +22,11 @@ public static class CreateUserViewExtension
         Window window,
         CreateUserView createUserView,
         string text
-    )
-        where TTextBox : TextBox
+    ) where TTextBox : TextBox
     {
-        return textBox
-            .Case(() => window.SetKeyTextInput(text))
-            .MustNotHasError()
-            .Case(
-                () =>
-                    createUserView
-                        .GetControl<BusyAreaControl>(ElementNames.CreateUserCard)
-                        .MustWidth(400)
-            )
-            .ClearText(window);
+        return textBox.Case(() => window.SetKeyTextInput(text))
+           .MustNotHasError()
+           .Case(() => createUserView.GetControl<BusyAreaControl>(ElementNames.CreateUserCard).MustWidth(400))
+           .ClearText(window);
     }
 }

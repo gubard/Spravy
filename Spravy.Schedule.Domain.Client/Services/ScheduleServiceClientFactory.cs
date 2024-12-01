@@ -1,7 +1,6 @@
 namespace Spravy.Schedule.Domain.Client.Services;
 
-public class ScheduleServiceClientFactory
-    : IFactory<ChannelBase, ScheduleService.ScheduleServiceClient>
+public class ScheduleServiceClientFactory : IFactory<ChannelBase, ScheduleService.ScheduleServiceClient>
 {
     public Result<ScheduleService.ScheduleServiceClient> Create(ChannelBase key)
     {

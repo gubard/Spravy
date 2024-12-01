@@ -24,9 +24,7 @@ public static class TaskExtension
         return new(errors);
     }
 
-    public static async Task<Result> ToResult<TReturn>(
-        this ConfiguredTaskAwaitable<Result<TReturn>> task
-    )
+    public static async Task<Result> ToResult<TReturn>(this ConfiguredTaskAwaitable<Result<TReturn>> task)
         where TReturn : notnull
     {
         var result = await task;

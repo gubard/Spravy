@@ -11,8 +11,12 @@ namespace _build.Services;
 
 public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 {
-    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService)
-        : base(options, versionService) { }
+    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService) : base(
+        options,
+        versionService
+    )
+    {
+    }
 
     public override void Setup()
     {
@@ -28,12 +32,12 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
     {
         for (var i = 0ul; i < ulong.MaxValue; i++)
         {
-            var output = DotNetTasks.DotNetTest(s =>
-                s.SetConfiguration(Options.Configuration)
-                    .EnableNoRestore()
-                    .EnableNoBuild()
-                    .SetProjectFile(Options.CsprojFile.FullName)
-                    .SetFilter($"Priority={i}")
+            var output = DotNetTasks.DotNetTest(
+                s => s.SetConfiguration(Options.Configuration)
+                   .EnableNoRestore()
+                   .EnableNoBuild()
+                   .SetProjectFile(Options.CsprojFile.FullName)
+                   .SetFilter($"Priority={i}")
             );
 
             if (output.Any(x => x.Text.Contains("No test matches the given testcase filter")))
@@ -45,7 +49,10 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 
     void SetAppSettingsStream(Stream stream, JsonDocument jsonDocument)
     {
-        var jsonWriterOptions = new JsonWriterOptions { Indented = true };
+        var jsonWriterOptions = new JsonWriterOptions
+        {
+            Indented = true,
+        };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
         writer.WriteStartObject();

@@ -20,8 +20,14 @@ public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IPublished
         string ftpPassword,
         string ftpUser,
         DirectoryInfo publishFolder
+    ) : base(
+        csprojFile,
+        appSettingsFile,
+        hosts,
+        runtimes,
+        configuration,
+        domain
     )
-        : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         KeyStoreFile = keyStoreFile;
         AndroidSigningKeyPass = androidSigningKeyPass;

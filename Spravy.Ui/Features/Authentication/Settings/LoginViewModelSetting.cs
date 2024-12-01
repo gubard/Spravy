@@ -2,16 +2,18 @@
 
 public class LoginViewModelSetting : IViewModelSetting<LoginViewModelSetting>
 {
+    static LoginViewModelSetting()
+    {
+        Default = new();
+    }
+
     public LoginViewModelSetting(LoginViewModel viewModel)
     {
         Login = viewModel.Login;
     }
 
-    public LoginViewModelSetting() { }
-
-    static LoginViewModelSetting()
+    public LoginViewModelSetting()
     {
-        Default = new();
     }
 
     public string Login { get; set; } = string.Empty;

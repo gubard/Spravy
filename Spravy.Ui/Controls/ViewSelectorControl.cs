@@ -8,8 +8,9 @@ public class ViewSelectorControl : TemplatedControl
     public static readonly StyledProperty<object?> StateProperty =
         AvaloniaProperty.Register<ViewSelectorControl, object?>(nameof(State), defaultBindingMode: BindingMode.TwoWay);
 
-    private Panel? panel;
     private IAvaloniaReadOnlyList<ViewSelectorItemControl>? itemsNotify;
+
+    private Panel? panel;
 
     public ViewSelectorControl()
     {

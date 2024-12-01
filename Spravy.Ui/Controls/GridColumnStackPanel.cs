@@ -2,10 +2,8 @@ namespace Spravy.Ui.Controls;
 
 public class GridColumnStackPanel : Panel
 {
-    public static readonly StyledProperty<int> ColumnsProperty = AvaloniaProperty.Register<
-        GridColumnStackPanel,
-        int
-    >(nameof(Columns));
+    public static readonly StyledProperty<int> ColumnsProperty =
+        AvaloniaProperty.Register<GridColumnStackPanel, int>(nameof(Columns));
 
     private int columns;
 
@@ -32,9 +30,7 @@ public class GridColumnStackPanel : Panel
         }
 
         var currentColumn = 0;
-        var layoutSlotSize = new Size()
-            .WithWidth(availableSize.Width / columns)
-            .WithHeight(double.PositiveInfinity);
+        var layoutSlotSize = new Size().WithWidth(availableSize.Width / columns).WithHeight(double.PositiveInfinity);
 
         foreach (var child in Children)
         {

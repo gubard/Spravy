@@ -11,7 +11,7 @@ public static class ByteExtension
     {
         var hex = new StringBuilder(bytes.Length * 2);
 
-        foreach (byte b in bytes)
+        foreach (var b in bytes)
         {
             hex.AppendFormat("{0:x2}", b);
         }

@@ -13,10 +13,7 @@ public class TaskWork
         this.errorHandler = errorHandler;
     }
 
-    public Cvtar Current
-    {
-        get => current.ThrowIfNullStruct();
-    }
+    public Cvtar Current => current.ThrowIfNullStruct();
 
     public async Task RunAsync()
     {
@@ -47,10 +44,7 @@ public class TaskWork
         return new(task, errorHandler);
     }
 
-    public static TaskWork Create<T>(
-        IErrorHandler errorHandler,
-        Func<T, CancellationToken, Cvtar> task
-    )
+    public static TaskWork Create<T>(IErrorHandler errorHandler, Func<T, CancellationToken, Cvtar> task)
     {
         return new(task, errorHandler);
     }

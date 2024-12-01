@@ -4,17 +4,15 @@ namespace Spravy.Db.Extensions;
 
 public static class QueryableExtension
 {
-    public static ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<TSource>>
-    > ToArrayEntitiesAsync<TSource>(this IQueryable<TSource> source, CancellationToken ct)
+    public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TSource>>> ToArrayEntitiesAsync<TSource>(
+        this IQueryable<TSource> source,
+        CancellationToken ct
+    )
     {
         return source.ToArrayEntitiesCore(ct).ConfigureAwait(false);
     }
 
-    public static Result RemoveRangeEntities<TSource>(
-        this DbContext context,
-        ReadOnlyMemory<TSource> items
-    )
+    public static Result RemoveRangeEntities<TSource>(this DbContext context, ReadOnlyMemory<TSource> items)
         where TSource : class
     {
         context.Set<TSource>().RemoveRange(items.ToArray());

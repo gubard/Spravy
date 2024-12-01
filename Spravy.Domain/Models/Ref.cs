@@ -1,7 +1,6 @@
 namespace Spravy.Domain.Models;
 
-public class Ref<T>
-    where T : struct
+public class Ref<T> where T : struct
 {
     public Ref(T value)
     {

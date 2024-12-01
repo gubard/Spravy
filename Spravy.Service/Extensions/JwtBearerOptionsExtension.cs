@@ -4,10 +4,7 @@ namespace Spravy.Service.Extensions;
 
 public static class JwtBearerOptionsExtension
 {
-    public static JwtBearerOptions SetJwtOptions(
-        this JwtBearerOptions options,
-        IConfiguration configuration
-    )
+    public static JwtBearerOptions SetJwtOptions(this JwtBearerOptions options, IConfiguration configuration)
     {
         var jwtOptions = configuration.GetConfigurationSection<JwtOptions>();
         var key = Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNullOrWhiteSpace());

@@ -18,35 +18,37 @@ public class GetterToDoItemParametersService
     )
     {
         return GetToDoItemParameters(allItems, entity, offset, new())
-            .IfSuccess(parameters =>
-            {
-                if (!parameters.ActiveItem.TryGetValue(out var active))
+           .IfSuccess(
+                parameters =>
                 {
+                    if (!parameters.ActiveItem.TryGetValue(out var active))
+                    {
+                        return parameters.ToResult();
+                    }
+
+                    if (active.Id == entity.Id)
+                    {
+                        return parameters.With(OptionStruct<ToDoShortItem>.Default).ToResult();
+                    }
+
                     return parameters.ToResult();
                 }
-
-                if (active.Id == entity.Id)
+            )
+           .IfSuccess(
+                parameters =>
                 {
-                    return parameters.With(OptionStruct<ToDoShortItem>.Default).ToResult();
+                    var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+
+                    if (parameters.Status == ToDoItemStatus.Planned
+                     && entity.RemindDaysBefore != 0
+                     && today >= entity.DueDate.AddDays((int)-entity.RemindDaysBefore))
+                    {
+                        return parameters.With(ToDoItemStatus.ComingSoon).ToResult();
+                    }
+
+                    return parameters.ToResult();
                 }
-
-                return parameters.ToResult();
-            })
-            .IfSuccess(parameters =>
-            {
-                var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
-
-                if (
-                    parameters.Status == ToDoItemStatus.Planned
-                    && entity.RemindDaysBefore != 0
-                    && today >= entity.DueDate.AddDays((int)-entity.RemindDaysBefore)
-                )
-                {
-                    return parameters.With(ToDoItemStatus.ComingSoon).ToResult();
-                }
-
-                return parameters.ToResult();
-            });
+            );
     }
 
     private Result<ToDoItemParameters> GetToDoItemParameters(
@@ -57,31 +59,33 @@ public class GetterToDoItemParametersService
     )
     {
         return IsDueable(allItems, entity)
-            .IfSuccess(isDueable =>
-            {
-                if (isDueable)
+           .IfSuccess(
+                isDueable =>
                 {
+                    if (isDueable)
+                    {
+                        return GetToDoItemParameters(
+                            allItems,
+                            entity,
+                            entity.DueDate,
+                            offset,
+                            parameters,
+                            false,
+                            new()
+                        );
+                    }
+
                     return GetToDoItemParameters(
                         allItems,
                         entity,
-                        entity.DueDate,
+                        DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
                         offset,
                         parameters,
                         false,
                         new()
                     );
                 }
-
-                return GetToDoItemParameters(
-                    allItems,
-                    entity,
-                    DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
-                    offset,
-                    parameters,
-                    false,
-                    new()
-                );
-            });
+            );
     }
 
     private Result<ToDoItemParameters> GetToDoItemParameters(
@@ -119,11 +123,10 @@ public class GetterToDoItemParametersService
                 );
             }
 
-            return parameters
-                .With(ToDoItemIsCan.None)
-                .With(OptionStruct<ToDoShortItem>.Default)
-                .With(ToDoItemStatus.Miss)
-                .ToResult();
+            return parameters.With(ToDoItemIsCan.None)
+               .With(OptionStruct<ToDoShortItem>.Default)
+               .With(ToDoItemStatus.Miss)
+               .ToResult();
         }
 
         var isCompletable = IsCompletable(entity);
@@ -135,11 +138,10 @@ public class GetterToDoItemParametersService
 
         if (entity.IsCompleted && i)
         {
-            return parameters
-                .With(ToDoItemIsCan.CanIncomplete)
-                .With(OptionStruct<ToDoShortItem>.Default)
-                .With(ToDoItemStatus.Completed)
-                .ToResult();
+            return parameters.With(ToDoItemIsCan.CanIncomplete)
+               .With(OptionStruct<ToDoShortItem>.Default)
+               .With(ToDoItemStatus.Completed)
+               .ToResult();
         }
 
         var isMiss = false;
@@ -161,38 +163,34 @@ public class GetterToDoItemParametersService
 
                 if (entity.DueDate > dueDate)
                 {
-                    return parameters
-                        .With(OptionStruct<ToDoShortItem>.Default)
-                        .With(ToDoItemStatus.Planned)
-                        .With(ToDoItemIsCan.None)
-                        .ToResult();
+                    return parameters.With(OptionStruct<ToDoShortItem>.Default)
+                       .With(ToDoItemStatus.Planned)
+                       .With(ToDoItemIsCan.None)
+                       .ToResult();
                 }
             }
             else
             {
-                if (
-                    entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
-                    && entity.IsRequiredCompleteInDueDate
-                )
+                if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                 && entity.IsRequiredCompleteInDueDate)
                 {
                     isMiss = true;
                 }
 
                 if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                 {
-                    return parameters
-                        .With(OptionStruct<ToDoShortItem>.Default)
-                        .With(ToDoItemStatus.Planned)
-                        .With(ToDoItemIsCan.None)
-                        .ToResult();
+                    return parameters.With(OptionStruct<ToDoShortItem>.Default)
+                       .With(ToDoItemStatus.Planned)
+                       .With(ToDoItemIsCan.None)
+                       .ToResult();
                 }
             }
         }
 
-        var items = allItems
-            .Values.Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
-            .OrderBy(x => x.OrderIndex)
-            .ToArray();
+        var items = allItems.Values
+           .Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
+           .OrderBy(x => x.OrderIndex)
+           .ToArray();
 
         var firstReadyForComplete = new OptionStruct<ToDoShortItem>();
         var firstMiss = new OptionStruct<ToDoShortItem>();
@@ -275,45 +273,37 @@ public class GetterToDoItemParametersService
         {
             if (isMiss)
             {
-                return parameters
-                    .With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
-                    .ToResult();
+                return parameters.With(ToDoItemStatus.Miss)
+                   .With(ToDoItemIsCan.None)
+                   .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
+                   .ToResult();
             }
 
             if (firstMiss.IsHasValue)
             {
-                return parameters
-                    .With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstMiss)
-                    .ToResult();
+                return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss).ToResult();
             }
 
             if (firstReadyForComplete.IsHasValue)
             {
-                return parameters
-                    .With(ToDoItemStatus.ReadyForComplete)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstReadyForComplete)
-                    .ToResult();
+                return parameters.With(ToDoItemStatus.ReadyForComplete)
+                   .With(ToDoItemIsCan.None)
+                   .With(firstReadyForComplete)
+                   .ToResult();
             }
 
             if (hasPlanned)
             {
-                return parameters
-                    .With(ToDoItemStatus.Planned)
-                    .With(ToDoItemIsCan.None)
-                    .With(OptionStruct<ToDoShortItem>.Default)
-                    .ToResult();
+                return parameters.With(ToDoItemStatus.Planned)
+                   .With(ToDoItemIsCan.None)
+                   .With(OptionStruct<ToDoShortItem>.Default)
+                   .ToResult();
             }
 
-            return parameters
-                .With(ToDoItemStatus.Completed)
-                .With(ToDoItemIsCan.None)
-                .With(OptionStruct<ToDoShortItem>.Default)
-                .ToResult();
+            return parameters.With(ToDoItemStatus.Completed)
+               .With(ToDoItemIsCan.None)
+               .With(OptionStruct<ToDoShortItem>.Default)
+               .ToResult();
         }
 
         if (isMiss)
@@ -323,24 +313,21 @@ public class GetterToDoItemParametersService
                 case ToDoItemChildrenType.RequireCompletion:
                     if (firstActive.IsHasValue)
                     {
-                        return parameters
-                            .With(ToDoItemStatus.Miss)
-                            .With(ToDoItemIsCan.None)
-                            .With(firstActive)
-                            .ToResult();
+                        return parameters.With(ToDoItemStatus.Miss)
+                           .With(ToDoItemIsCan.None)
+                           .With(firstActive)
+                           .ToResult();
                     }
 
-                    return parameters
-                        .With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(ToActiveToDoItem(entity))
-                        .ToResult();
+                    return parameters.With(ToDoItemStatus.Miss)
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(ToActiveToDoItem(entity))
+                       .ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
-                    return parameters
-                        .With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
-                        .ToResult();
+                    return parameters.With(ToDoItemStatus.Miss)
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
+                       .ToResult();
                 default:
                     return new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType));
             }
@@ -350,18 +337,14 @@ public class GetterToDoItemParametersService
         {
             return entity.ChildrenType switch
             {
-                ToDoItemChildrenType.RequireCompletion
-                    => parameters
-                        .With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.None)
-                        .With(firstMiss)
-                        .ToResult(),
-                ToDoItemChildrenType.IgnoreCompletion
-                    => parameters
-                        .With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstMiss)
-                        .ToResult(),
+                ToDoItemChildrenType.RequireCompletion => parameters.With(ToDoItemStatus.Miss)
+                   .With(ToDoItemIsCan.None)
+                   .With(firstMiss)
+                   .ToResult(),
+                ToDoItemChildrenType.IgnoreCompletion => parameters.With(ToDoItemStatus.Miss)
+                   .With(ToDoItemIsCan.CanComplete)
+                   .With(firstMiss)
+                   .ToResult(),
                 _ => new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType)),
             };
         }
@@ -370,33 +353,25 @@ public class GetterToDoItemParametersService
         {
             return entity.ChildrenType switch
             {
-                ToDoItemChildrenType.RequireCompletion
-                    => parameters
-                        .With(ToDoItemStatus.ReadyForComplete)
-                        .With(ToDoItemIsCan.None)
-                        .With(firstReadyForComplete)
-                        .ToResult(),
-                ToDoItemChildrenType.IgnoreCompletion
-                    => parameters
-                        .With(ToDoItemStatus.ReadyForComplete)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstReadyForComplete)
-                        .ToResult(),
+                ToDoItemChildrenType.RequireCompletion => parameters.With(ToDoItemStatus.ReadyForComplete)
+                   .With(ToDoItemIsCan.None)
+                   .With(firstReadyForComplete)
+                   .ToResult(),
+                ToDoItemChildrenType.IgnoreCompletion => parameters.With(ToDoItemStatus.ReadyForComplete)
+                   .With(ToDoItemIsCan.CanComplete)
+                   .With(firstReadyForComplete)
+                   .ToResult(),
                 _ => new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType)),
             };
         }
 
-        return parameters
-            .With(ToDoItemStatus.ReadyForComplete)
-            .With(ToDoItemIsCan.CanComplete)
-            .With(OptionStruct<ToDoShortItem>.Default)
-            .ToResult();
+        return parameters.With(ToDoItemStatus.ReadyForComplete)
+           .With(ToDoItemIsCan.CanComplete)
+           .With(OptionStruct<ToDoShortItem>.Default)
+           .ToResult();
     }
 
-    private Result<bool> IsDueable(
-        FrozenDictionary<Guid, ToDoItemEntity> allItems,
-        ToDoItemEntity entity
-    )
+    private Result<bool> IsDueable(FrozenDictionary<Guid, ToDoItemEntity> allItems, ToDoItemEntity entity)
     {
         return entity.Type switch
         {
@@ -407,10 +382,9 @@ public class GetterToDoItemParametersService
             ToDoItemType.PeriodicityOffset => true.ToResult(),
             ToDoItemType.Circle => false.ToResult(),
             ToDoItemType.Step => false.ToResult(),
-            ToDoItemType.Reference
-                => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
-                    ? IsDueable(allItems, allItems[entity.ReferenceId.Value])
-                    : false.ToResult(),
+            ToDoItemType.Reference => entity.ReferenceId.HasValue && entity.ReferenceId != entity.Id
+                ? IsDueable(allItems, allItems[entity.ReferenceId.Value])
+                : false.ToResult(),
             _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
@@ -449,8 +423,6 @@ public class GetterToDoItemParametersService
 
     private OptionStruct<ToDoShortItem> ToActiveToDoItem(ToDoItemEntity entity)
     {
-        return entity.ParentId is null
-            ? OptionStruct<ToDoShortItem>.Default
-            : entity.ToToDoShortItem().ToOption();
+        return entity.ParentId is null ? OptionStruct<ToDoShortItem>.Default : entity.ToToDoShortItem().ToOption();
     }
 }

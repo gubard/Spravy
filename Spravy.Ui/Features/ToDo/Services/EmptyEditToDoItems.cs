@@ -4,6 +4,8 @@ public class EmptyEditToDoItems : IEditToDoItems
 {
     public static EmptyEditToDoItems Default = new();
 
+    public string ViewId => TypeCache<EmptyEditToDoItems>.Type.Name;
+
     public EditToDoItems GetEditToDoItems()
     {
         return new();
@@ -13,8 +15,6 @@ public class EmptyEditToDoItems : IEditToDoItems
     {
         return Result.Success;
     }
-
-    public string ViewId => TypeCache<EmptyEditToDoItems>.Type.Name;
 
     public Cvtar LoadStateAsync(CancellationToken ct)
     {

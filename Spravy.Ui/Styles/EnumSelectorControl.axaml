@@ -7,7 +7,8 @@
         <Setter Property="Margin" Value="0,2,0,2" />
         <Setter Property="Template">
             <ControlTemplate>
-                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single" MinWidth="{TemplateBinding MinWidth}" />
+                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single"
+                         MinWidth="{TemplateBinding MinWidth}" />
             </ControlTemplate>
         </Setter>
 

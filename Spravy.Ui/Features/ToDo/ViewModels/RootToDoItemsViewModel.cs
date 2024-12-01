@@ -2,11 +2,11 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
 {
-    private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
-    private readonly IToDoUiService toDoUiService;
+    private readonly TaskWork refreshWork;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
-    
+    private readonly IToDoUiService toDoUiService;
+
     [ObservableProperty]
     private bool isMulti;
 
@@ -16,8 +16,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
         IToDoUiService toDoUiService
-    )
-        : base(true)
+    ) : base(true)
     {
         Commands = new();
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -39,9 +38,21 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
-    public override string ViewId
+    public override string ViewId => TypeCache<RootToDoItemsViewModel>.Type.Name;
+
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        get => TypeCache<RootToDoItemsViewModel>.Type.Name;
+        return ToDoSubItemsViewModel.RemoveUi(items);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel.GetSelectedItems().IfSuccess(items => new ToDoItemEditId(new(), items).ToResult());
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -75,24 +86,22 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(
-                s =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                            IsMulti = s.IsMulti;
+        return objectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(
+                s => this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        IsMulti = s.IsMulti;
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
-    
+
     private void UpdateCommands()
     {
         if (IsMulti)
@@ -103,22 +112,5 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         {
             Commands.Clear();
         }
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
-    }
-
-    public Result<ToDoItemEditId> GetToDoItemEditId()
-    {
-        if (!ToDoSubItemsViewModel.List.IsMulti)
-        {
-            return new(new NonItemSelectedError());
-        }
-
-        return ToDoSubItemsViewModel
-            .GetSelectedItems()
-            .IfSuccess(items => new ToDoItemEditId(new(), items).ToResult());
     }
 }

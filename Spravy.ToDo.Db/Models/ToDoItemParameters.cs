@@ -6,11 +6,7 @@ namespace Spravy.ToDo.Db.Models;
 
 public readonly struct ToDoItemParameters
 {
-    public ToDoItemParameters(
-        OptionStruct<ToDoShortItem> activeItem,
-        ToDoItemStatus status,
-        ToDoItemIsCan isCan
-    )
+    public ToDoItemParameters(OptionStruct<ToDoShortItem> activeItem, ToDoItemStatus status, ToDoItemIsCan isCan)
     {
         ActiveItem = activeItem;
         Status = status;

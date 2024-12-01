@@ -4,11 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class ServiceProjectBuilderOptions
-    : ProjectBuilderOptions,
-        IFtpOptions,
-        ISshOptions,
-        IPublishFolder
+public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, ISshOptions, IPublishFolder
 {
     public ServiceProjectBuilderOptions(
         FileInfo csprojFile,
@@ -28,8 +24,14 @@ public class ServiceProjectBuilderOptions
         string sshUser,
         string sshPassword,
         Runtime runtime
+    ) : base(
+        csprojFile,
+        appSettingsFile,
+        hosts,
+        runtimes,
+        configuration,
+        domain
     )
-        : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         Port = port;
         Token = token;

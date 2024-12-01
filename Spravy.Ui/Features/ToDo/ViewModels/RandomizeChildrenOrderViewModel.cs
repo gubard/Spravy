@@ -8,15 +8,21 @@ public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySe
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
     }
 
-    public override string ViewId
+    public override string ViewId => $"{TypeCache<RandomizeChildrenOrderViewModel>.Type}";
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        get => $"{TypeCache<RandomizeChildrenOrderViewModel>.Type}";
+        return toDoService.RandomizeChildrenOrderIndexAsync(ResultCurrentIds, ct);
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -32,15 +38,5 @@ public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySe
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        return toDoService.RandomizeChildrenOrderIndexAsync(ResultCurrentIds, ct);
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

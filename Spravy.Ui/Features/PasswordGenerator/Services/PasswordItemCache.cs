@@ -16,7 +16,11 @@ public class PasswordItemCache : IPasswordItemCache
             return value.ToResult();
         }
 
-        var result = new PasswordItemEntityNotify { Id = id, Name = "Loading..." };
+        var result = new PasswordItemEntityNotify
+        {
+            Id = id,
+            Name = "Loading...",
+        };
 
         if (cache.TryAdd(id, result))
         {
@@ -29,20 +33,22 @@ public class PasswordItemCache : IPasswordItemCache
     public Result UpdateUi(PasswordItem passwordItem)
     {
         return GetPasswordItem(passwordItem.Id)
-            .IfSuccess(item =>
-            {
-                item.Name = passwordItem.Name;
-                item.IsAvailableNumber = passwordItem.IsAvailableNumber;
-                item.IsAvailableUpperLatin = passwordItem.IsAvailableUpperLatin;
-                item.Regex = passwordItem.Regex;
-                item.Key = passwordItem.Key;
-                item.Length = passwordItem.Length;
-                item.IsAvailableLowerLatin = passwordItem.IsAvailableLowerLatin;
-                item.CustomAvailableCharacters = passwordItem.CustomAvailableCharacters;
-                item.IsAvailableSpecialSymbols = passwordItem.IsAvailableSpecialSymbols;
-                item.Login = passwordItem.Login;
+           .IfSuccess(
+                item =>
+                {
+                    item.Name = passwordItem.Name;
+                    item.IsAvailableNumber = passwordItem.IsAvailableNumber;
+                    item.IsAvailableUpperLatin = passwordItem.IsAvailableUpperLatin;
+                    item.Regex = passwordItem.Regex;
+                    item.Key = passwordItem.Key;
+                    item.Length = passwordItem.Length;
+                    item.IsAvailableLowerLatin = passwordItem.IsAvailableLowerLatin;
+                    item.CustomAvailableCharacters = passwordItem.CustomAvailableCharacters;
+                    item.IsAvailableSpecialSymbols = passwordItem.IsAvailableSpecialSymbols;
+                    item.Login = passwordItem.Login;
 
-                return Result.Success;
-            });
+                    return Result.Success;
+                }
+            );
     }
 }

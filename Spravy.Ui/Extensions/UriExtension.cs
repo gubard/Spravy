@@ -8,6 +8,7 @@ public static class UriExtension
     {
         using var stream = AssetLoader.Open(uri);
         var span = stream.ToByteArray();
+
         return span.ToArray();
     }
 }

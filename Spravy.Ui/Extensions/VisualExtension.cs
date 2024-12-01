@@ -2,8 +2,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class VisualExtension
 {
-    public static T? FindVisualParent<T>(this Visual visual)
-        where T : class
+    public static T? FindVisualParent<T>(this Visual visual) where T : class
     {
         var visualParent = visual.GetVisualParent();
 
@@ -20,8 +19,7 @@ public static class VisualExtension
         return visualParent.FindVisualParent<T>();
     }
 
-    public static T? FindVisualParent<T>(this Visual visual, string name)
-        where T : class
+    public static T? FindVisualParent<T>(this Visual visual, string name) where T : class
     {
         var visualParent = visual.GetVisualParent();
 

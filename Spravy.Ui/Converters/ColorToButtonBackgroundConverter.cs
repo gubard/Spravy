@@ -2,7 +2,7 @@ namespace Spravy.Ui.Converters;
 
 public class ColorToButtonBackgroundConverter : IValueConverter
 {
-    private static Application application;
+    private static readonly Application application;
 
     static ColorToButtonBackgroundConverter()
     {
@@ -13,13 +13,7 @@ public class ColorToButtonBackgroundConverter : IValueConverter
     {
         if (value is not Color color)
         {
-            if (
-                application.TryFindResource(
-                    "ButtonBackground",
-                    application.ActualThemeVariant,
-                    out var resource
-                )
-            )
+            if (application.TryFindResource("ButtonBackground", application.ActualThemeVariant, out var resource))
             {
                 return resource;
             }
@@ -29,13 +23,7 @@ public class ColorToButtonBackgroundConverter : IValueConverter
 
         if (color.A == 0)
         {
-            if (
-                application.TryFindResource(
-                    "ButtonBackground",
-                    application.ActualThemeVariant,
-                    out var resource
-                )
-            )
+            if (application.TryFindResource("ButtonBackground", application.ActualThemeVariant, out var resource))
             {
                 return resource;
             }
@@ -46,12 +34,7 @@ public class ColorToButtonBackgroundConverter : IValueConverter
         return new SolidColorBrush(new Color(51, color.R, color.G, color.B));
     }
 
-    public object? ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

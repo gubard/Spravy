@@ -12,10 +12,7 @@ public partial class TaskProgressItem : NotifyBase
 
     public ushort Impact { get; }
 
-    public bool IsFinished
-    {
-        get => Progress >= Impact;
-    }
+    public bool IsFinished => Progress >= Impact;
 
     public void Finish()
     {

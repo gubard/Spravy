@@ -15,10 +15,7 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         this.serializer = serializer;
     }
 
-    public override async Task<RemoveTimerReply> RemoveTimer(
-        RemoveTimerRequest request,
-        ServerCallContext context
-    )
+    public override async Task<RemoveTimerReply> RemoveTimer(RemoveTimerRequest request, ServerCallContext context)
     {
         var id = request.Id.ToGuid();
         await scheduleService.RemoveTimerAsync(id, context.CancellationToken);
@@ -26,14 +23,10 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         return new();
     }
 
-    public override Task<GetTimersReply> GetTimers(
-        GetTimersRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetTimersReply> GetTimers(GetTimersRequest request, ServerCallContext context)
     {
-        return scheduleService
-            .GetTimersAsync(context.CancellationToken)
-            .HandleAsync(
+        return scheduleService.GetTimersAsync(context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 items =>
                 {

@@ -5,17 +5,16 @@ public partial class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplyS
     private readonly IToDoService toDoService;
 
     [ObservableProperty]
-    private DescriptionType descriptionType;
+    private string description = string.Empty;
 
     [ObservableProperty]
-    private string description = string.Empty;
+    private DescriptionType descriptionType;
 
     public EditDescriptionViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
 
@@ -28,9 +27,21 @@ public partial class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplyS
         description = item.Description;
     }
 
-    public override string ViewId
+    public override string ViewId => $"{TypeCache<EditDescriptionViewModel>.Type}";
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        get => $"{TypeCache<EditDescriptionViewModel>.Type}";
+        return toDoService.EditToDoItemsAsync(
+            new EditToDoItems().SetIds(ResultIds)
+               .SetDescriptionType(new(DescriptionType))
+               .SetDescription(new(Description)),
+            ct
+        );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
@@ -46,21 +57,5 @@ public partial class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplyS
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        return toDoService.EditToDoItemsAsync(
-            new EditToDoItems()
-                .SetIds(ResultIds)
-                .SetDescriptionType(new(DescriptionType))
-                .SetDescription(new(Description)),
-            ct
-        );
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

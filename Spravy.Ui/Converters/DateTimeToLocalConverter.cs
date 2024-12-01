@@ -4,7 +4,7 @@ public class DateTimeToLocalConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is DateTime { Kind: DateTimeKind.Utc } dateTime)
+        if (value is DateTime { Kind: DateTimeKind.Utc, } dateTime)
         {
             return dateTime.ToLocalTime();
         }
@@ -12,12 +12,7 @@ public class DateTimeToLocalConverter : IValueConverter
         return value;
     }
 
-    public object? ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return value;
     }

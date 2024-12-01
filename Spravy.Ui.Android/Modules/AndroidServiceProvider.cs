@@ -4,10 +4,7 @@ namespace Spravy.Ui.Android.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
-[Singleton(
-    typeof(IFactory<ISingleViewTopLevelControl>),
-    typeof(AndroidSingleViewTopLevelControlFactory)
-)]
+[Singleton(typeof(IFactory<ISingleViewTopLevelControl>), typeof(AndroidSingleViewTopLevelControlFactory))]
 [Singleton(typeof(IConfigurationLoader), typeof(EmbeddedConfigurationLoader))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
@@ -18,17 +15,19 @@ namespace Spravy.Ui.Android.Modules;
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 public partial class AndroidServiceProvider : IServiceFactory
 {
-    static ISoundPlayer SoundPlayerFactory()
+    public T CreateService<T>() where T : notnull
+    {
+        return GetService<T>();
+    }
+
+    private static ISoundPlayer SoundPlayerFactory()
     {
         return new SoundPlayer(new Md5HashService());
     }
 
-    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    private static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
     {
-        return new SqliteObjectStorage(
-            serializer,
-            FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db")
-        );
+        return new SqliteObjectStorage(serializer, FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"));
     }
 
     public IServiceFactory ServiceFactoryFactory()
@@ -46,11 +45,5 @@ public partial class AndroidServiceProvider : IServiceFactory
         using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
 
         return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
-    }
-
-    public T CreateService<T>()
-        where T : notnull
-    {
-        return GetService<T>();
     }
 }

@@ -2,8 +2,9 @@ namespace Spravy.Domain.Exceptions;
 
 public class NotEqualsException<TValue> : Exception
 {
-    public NotEqualsException(string name, TValue value, TValue expected)
-        : base($"{name} equals {value} expected {expected}.")
+    public NotEqualsException(string name, TValue value, TValue expected) : base(
+        $"{name} equals {value} expected {expected}."
+    )
     {
         Name = name;
         Value = value;

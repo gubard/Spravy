@@ -21,12 +21,17 @@ namespace Spravy.Integration.Tests.Modules;
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class TestServiceProvider : IServiceFactory
 {
-    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    public T CreateService<T>() where T : notnull
+    {
+        return GetService<T>();
+    }
+
+    private static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
     {
         return new SqliteObjectStorage(serializer, "./storage/storage.db".ToFile());
     }
 
-    static TopLevel TopLevelFactory(IDesktopTopLevelControl desktopTopLevelControl)
+    private static TopLevel TopLevelFactory(IDesktopTopLevelControl desktopTopLevelControl)
     {
         return desktopTopLevelControl.ThrowIfIsNotCast<Window>();
     }
@@ -44,11 +49,5 @@ public partial class TestServiceProvider : IServiceFactory
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile("testsettings.json").Build();
-    }
-
-    public T CreateService<T>()
-        where T : notnull
-    {
-        return GetService<T>();
     }
 }

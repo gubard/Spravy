@@ -2,8 +2,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
 {
-    private readonly TaskWork refreshWork;
     private readonly IObjectStorage objectStorage;
+    private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
@@ -38,9 +38,22 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
-    public override string ViewId
+    public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Item.Id}";
+
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Item.Id}";
+        return ToDoSubItemsViewModel.RemoveUi(items);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new ToDoItemEditId(Item.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty).ToResult();
+        }
+
+        return ToDoSubItemsViewModel.GetSelectedItems()
+           .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -58,12 +71,15 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return toDoUiService.UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
-           .IfSuccessAsync(() =>
-            {
-                UpdateCommands();
+           .IfSuccessAsync(
+                () =>
+                {
+                    UpdateCommands();
 
-                return Result.Success;
-            }, ct);
+                    return Result.Success;
+                },
+                ct
+            );
     }
 
     public override Result Stop()
@@ -81,29 +97,19 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
         return objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, ct)
-           .IfSuccessAsync(s => this.PostUiBackground(() =>
-            {
-                ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                IsMulti = s.IsMulti;
+           .IfSuccessAsync(
+                s => this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        IsMulti = s.IsMulti;
 
-                return Result.Success;
-            }, ct), ct);
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
-    }
-
-    public Result<ToDoItemEditId> GetToDoItemEditId()
-    {
-        if (!ToDoSubItemsViewModel.List.IsMulti)
-        {
-            return new ToDoItemEditId(Item.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty).ToResult();
-        }
-
-        return ToDoSubItemsViewModel.GetSelectedItems()
-           .IfSuccess(selected => new ToDoItemEditId(Item.ToOption(), selected).ToResult());
+                        return Result.Success;
+                    },
+                    ct
+                ),
+                ct
+            );
     }
 
     private void UpdateCommands()

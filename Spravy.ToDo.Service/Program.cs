@@ -4,14 +4,13 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication
-        .CreateBuilder(args)
-        .BuildSpravy<GrpcToDoService, SpravyToDoServiceMark>(
+    WebApplication.CreateBuilder(args)
+       .BuildSpravy<GrpcToDoService, SpravyToDoServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbToDoDbContext>),
             services => services.RegisterToDo()
         )
-        .Run();
+       .Run();
 }
 catch (Exception ex)
 {

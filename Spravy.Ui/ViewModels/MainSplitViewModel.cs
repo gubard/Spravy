@@ -3,10 +3,10 @@ namespace Spravy.Ui.ViewModels;
 public partial class MainSplitViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private bool isPaneOpen;
+    private INavigatable content = new EmptyNavigatable();
 
     [ObservableProperty]
-    private INavigatable content = new EmptyNavigatable();
+    private bool isPaneOpen;
 
     public MainSplitViewModel(PaneViewModel pane)
     {

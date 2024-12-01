@@ -12,7 +12,11 @@ public static partial class AuthenticationMapper
 {
     public static UserGrpc ToUserGrpc(this User user)
     {
-        return new() { Login = user.Login, Password = user.Password, };
+        return new()
+        {
+            Login = user.Login,
+            Password = user.Password,
+        };
     }
 
     public static User ToUser(this UserGrpc user)

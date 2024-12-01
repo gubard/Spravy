@@ -6,7 +6,5 @@ public interface IScheduleService
     Cvtar RemoveTimerAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(CancellationToken ct);
 }

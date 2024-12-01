@@ -18,12 +18,11 @@ public class SpravyEventBusDbContextFactory : IFactory<string, SpravyDbEventBusD
 
     public Result<SpravyDbEventBusDbContext> Create(string key)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(
+        var options = new DbContextOptionsBuilder().UseSqlite(
                 key,
                 b => b.MigrationsAssembly(SpravyEventBusDbSqliteMigratorMark.AssemblyFullName)
             )
-            .Options;
+           .Options;
 
         return new SpravyDbEventBusDbContext(options, dbContextSetup).ToResult();
     }

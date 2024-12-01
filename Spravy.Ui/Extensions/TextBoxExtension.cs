@@ -2,8 +2,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class TextBoxExtension
 {
-    public static Result FocusTextBoxUi<T>(this T textBox)
-        where T : TextBox
+    public static Result FocusTextBoxUi<T>(this T textBox) where T : TextBox
     {
         textBox.Focus();
 

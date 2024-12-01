@@ -25,12 +25,14 @@ public class TaskProgressService : ITaskProgressService
                 },
                 ct
             )
-            .IfSuccess(() =>
-            {
-                result.PropertyChanged += OnPropertyChanged;
+           .IfSuccess(
+                () =>
+                {
+                    result.PropertyChanged += OnPropertyChanged;
 
-                return result.ToResult();
-            });
+                    return result.ToResult();
+                }
+            );
     }
 
     private bool IsAllFinished(Span<TaskProgressItem> span)

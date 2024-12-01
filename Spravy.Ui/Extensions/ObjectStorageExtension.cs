@@ -6,12 +6,10 @@ public static class ObjectStorageExtension
         this IObjectStorage objectStorage,
         string id,
         CancellationToken ct
-    )
-        where TObject : IViewModelSetting<TObject>
+    ) where TObject : IViewModelSetting<TObject>
     {
-        return objectStorage
-            .IsExistsAsync(id, ct)
-            .IfSuccessAsync(
+        return objectStorage.IsExistsAsync(id, ct)
+           .IfSuccessAsync(
                 value =>
                 {
                     if (value)

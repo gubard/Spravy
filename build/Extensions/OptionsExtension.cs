@@ -9,7 +9,6 @@ public static class OptionsExtension
         where TOptions : ICsprojFile, IFtpOptions =>
         options.GetAppsFolder().Combine(options.GetProjectName());
 
-    public static FileInfo GetAppDll<TOptions>(this TOptions options)
-        where TOptions : ICsprojFile, IFtpOptions =>
+    public static FileInfo GetAppDll<TOptions>(this TOptions options) where TOptions : ICsprojFile, IFtpOptions =>
         options.GetAppFolder().ToFile($"{options.GetProjectName()}.dll");
 }

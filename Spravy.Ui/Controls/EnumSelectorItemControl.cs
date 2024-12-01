@@ -2,15 +2,11 @@ namespace Spravy.Ui.Controls;
 
 public class EnumSelectorItemControl : TemplatedControl
 {
-    public static readonly StyledProperty<object> ValueProperty = AvaloniaProperty.Register<
-        EnumSelectorItemControl,
-        object
-    >(nameof(Value));
+    public static readonly StyledProperty<object> ValueProperty =
+        AvaloniaProperty.Register<EnumSelectorItemControl, object>(nameof(Value));
 
-    public static readonly StyledProperty<bool> IsSelectedProperty = AvaloniaProperty.Register<
-        EnumSelectorItemControl,
-        bool
-    >(nameof(IsSelected));
+    public static readonly StyledProperty<bool> IsSelectedProperty =
+        AvaloniaProperty.Register<EnumSelectorItemControl, bool>(nameof(IsSelected));
 
     private ToggleButton? toggleButton;
 

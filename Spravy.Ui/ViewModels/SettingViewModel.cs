@@ -1,4 +1,3 @@
-using Avalonia.Markup.Xaml.Styling;
 using Spravy.Ui.Setting;
 using AppConst = Spravy.Domain.Helpers.AppConst;
 
@@ -6,19 +5,20 @@ namespace Spravy.Ui.ViewModels;
 
 public partial class SettingViewModel : NavigatableViewModelBase
 {
+    private readonly Application application;
     private readonly INavigator navigator;
     private readonly IObjectStorage objectStorage;
-    private readonly Application application;
     private readonly IViewFactory viewFactory;
-
-    [ObservableProperty]
-    private ThemeType selectedTheme;
+    public string[] FavoriteIcons = [];
 
     [ObservableProperty]
     private bool isBusy;
 
     [ObservableProperty]
     private string language;
+
+    [ObservableProperty]
+    private ThemeType selectedTheme;
 
     public SettingViewModel(
         IErrorHandler errorHandler,
@@ -56,7 +56,6 @@ public partial class SettingViewModel : NavigatableViewModelBase
     public AvaloniaList<string> Languages { get; }
     public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
     public string Version => AppConst.VersionString;
-    public string[] FavoriteIcons = [];
 
     private Cvtar DeleteAccountAsync(CancellationToken ct)
     {

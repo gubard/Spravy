@@ -29,12 +29,7 @@ public class ObjectEqualsParameterConverter : IValueConverter
         return value.Equals(parameter);
     }
 
-    public object ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

@@ -2,14 +2,12 @@ namespace Spravy.EventBus.Domain.Client.Services;
 
 public class EventBusServiceFactory : IFactory<string, IEventBusService>
 {
-    private readonly IFactory<
-        Uri,
-        EventBusService.EventBusServiceClient
-    > eventBusServiceClientFactory;
+    private readonly IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory;
+
+    private readonly IRpcExceptionHandler handler;
 
     private readonly IMetadataFactory metadataFactory;
     private readonly GrpcEventBusServiceOptions options;
-    private readonly IRpcExceptionHandler handler;
     private readonly IRetryService retryService;
 
     public EventBusServiceFactory(

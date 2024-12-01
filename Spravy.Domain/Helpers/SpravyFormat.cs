@@ -7,10 +7,7 @@ public static class SpravyFormat
         return Format(input.AsSpan(), objectParameters);
     }
 
-    public static Result<string> Format(
-        ReadOnlySpan<char> input,
-        IObjectParameters objectParameters
-    )
+    public static Result<string> Format(ReadOnlySpan<char> input, IObjectParameters objectParameters)
     {
         var currentSlice = input;
         var result = new StringBuilder();

@@ -4,16 +4,17 @@ namespace Spravy.Ui.ViewModels;
 
 public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
-    [ObservableProperty]
-    private bool isBusy;
+    private readonly IAuthenticationService authenticationService;
+
+    private readonly INavigator navigator;
+    private readonly IObjectStorage objectStorage;
+    private readonly IViewFactory viewFactory;
 
     [ObservableProperty]
     private string emailOrLogin = string.Empty;
 
-    private readonly INavigator navigator;
-    private readonly IObjectStorage objectStorage;
-    private readonly IAuthenticationService authenticationService;
-    private readonly IViewFactory viewFactory;
+    [ObservableProperty]
+    private bool isBusy;
 
     public EmailOrLoginInputViewModel(
         IErrorHandler errorHandler,
@@ -22,44 +23,36 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
         IAuthenticationService authenticationService,
         ITaskProgressService taskProgressService,
         IViewFactory viewFactory
-    )
-        : base(true)
+    ) : base(true)
     {
         this.navigator = navigator;
         this.objectStorage = objectStorage;
         this.authenticationService = authenticationService;
         this.viewFactory = viewFactory;
-
-        ForgotPasswordCommand = SpravyCommand.Create(
-            ForgotPasswordAsync,
-            errorHandler,
-            taskProgressService
-        );
+        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand ForgotPasswordCommand { get; }
 
-    public override string ViewId
-    {
-        get => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
-    }
+    public override string ViewId => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
 
     private Cvtar ForgotPasswordAsync(CancellationToken ct)
     {
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                IsBusy = true;
+        return this.InvokeUiBackgroundAsync(
+                () =>
+                {
+                    IsBusy = true;
 
-                return Result.Success;
-            })
-            .IfSuccessTryFinallyAsync(
+                    return Result.Success;
+                }
+            )
+           .IfSuccessTryFinallyAsync(
                 () =>
                 {
                     if (EmailOrLogin.Contains('@'))
                     {
-                        return authenticationService
-                            .IsVerifiedByEmailAsync(EmailOrLogin, ct)
-                            .IfSuccessAsync(
+                        return authenticationService.IsVerifiedByEmailAsync(EmailOrLogin, ct)
+                           .IfSuccessAsync(
                                 value =>
                                 {
                                     if (value)
@@ -85,9 +78,8 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
                             );
                     }
 
-                    return authenticationService
-                        .IsVerifiedByLoginAsync(EmailOrLogin, ct)
-                        .IfSuccessAsync(
+                    return authenticationService.IsVerifiedByLoginAsync(EmailOrLogin, ct)
+                       .IfSuccessAsync(
                             value =>
                             {
                                 if (value)
@@ -102,25 +94,23 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                 }
 
                                 return navigator.NavigateToAsync(
-                                    viewFactory.CreateVerificationCodeViewModel(
-                                        EmailOrLogin,
-                                        UserIdentifierType.Email
-                                    ),
+                                    viewFactory.CreateVerificationCodeViewModel(EmailOrLogin, UserIdentifierType.Email),
                                     ct
                                 );
                             },
                             ct
                         );
                 },
-                () =>
-                    this.InvokeUiBackgroundAsync(() =>
+                () => this.InvokeUiBackgroundAsync(
+                        () =>
                         {
                             IsBusy = false;
 
                             return Result.Success;
-                        })
-                        .ToValueTask()
-                        .ConfigureAwait(false),
+                        }
+                    )
+                   .ToValueTask()
+                   .ConfigureAwait(false),
                 ct
             );
     }
@@ -132,11 +122,7 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     public override Cvtar SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(
-            ViewId,
-            new EmailOrLoginInputViewModelSetting(this),
-            ct
-        );
+        return objectStorage.SaveObjectAsync(ViewId, new EmailOrLoginInputViewModelSetting(this), ct);
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)

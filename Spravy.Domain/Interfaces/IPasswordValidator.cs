@@ -1,3 +1,5 @@
 namespace Spravy.Domain.Interfaces;
 
-public interface IPasswordValidator : IValidator<string> { }
+public interface IPasswordValidator : IValidator<string>
+{
+}

@@ -9,10 +9,7 @@ public class DeletePasswordItemViewModel : DialogableViewModelBase
 
     public PasswordItemEntityNotify Item { get; }
 
-    public override string ViewId
-    {
-        get => $"{TypeCache<DeletePasswordItemViewModel>.Type}";
-    }
+    public override string ViewId => $"{TypeCache<DeletePasswordItemViewModel>.Type}";
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

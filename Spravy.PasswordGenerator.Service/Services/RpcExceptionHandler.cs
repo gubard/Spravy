@@ -39,11 +39,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
         return !errors.IsEmpty ? new(errors) : Result.Success;
     }
 
-    private async ValueTask<ReadOnlyMemory<Error>> GetErrorsAsync(
-        Guid id,
-        Metadata.Entry trailer,
-        CancellationToken ct
-    )
+    private async ValueTask<ReadOnlyMemory<Error>> GetErrorsAsync(Guid id, Metadata.Entry trailer, CancellationToken ct)
     {
         await using var stream = new MemoryStream(trailer.ValueBytes);
 
@@ -56,7 +52,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (UnknownError.MainId == id)
@@ -68,7 +64,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (UserWithLoginExistsError.MainId == id)
@@ -80,7 +76,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (CastError.MainId == id)
@@ -92,7 +88,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (ServiceUnavailableError.MainId == id)
@@ -104,7 +100,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (DefaultCtorResultError.MainId == id)
@@ -116,7 +112,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (CanceledByUserError.MainId == id)
@@ -128,7 +124,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (UserWithLoginNotExistsError.MainId == id)
@@ -140,22 +136,19 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (MultiUsersWithSameLoginError.MainId == id)
         {
-            var result = await serializer.DeserializeAsync<MultiUsersWithSameLoginError>(
-                stream,
-                ct
-            );
+            var result = await serializer.DeserializeAsync<MultiUsersWithSameLoginError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (UserNotVerifiedError.MainId == id)
@@ -167,7 +160,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (PropertyNullValueError.MainId == id)
@@ -179,7 +172,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (PropertyEmptyStringError.MainId == id)
@@ -191,22 +184,19 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (PropertyWhiteSpaceStringError.MainId == id)
         {
-            var result = await serializer.DeserializeAsync<PropertyWhiteSpaceStringError>(
-                stream,
-                ct
-            );
+            var result = await serializer.DeserializeAsync<PropertyWhiteSpaceStringError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (VariableNullValueError.MainId == id)
@@ -218,37 +208,31 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (VariableStringMaxLengthError.MainId == id)
         {
-            var result = await serializer.DeserializeAsync<VariableStringMaxLengthError>(
-                stream,
-                ct
-            );
+            var result = await serializer.DeserializeAsync<VariableStringMaxLengthError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (VariableStringMinLengthError.MainId == id)
         {
-            var result = await serializer.DeserializeAsync<VariableStringMinLengthError>(
-                stream,
-                ct
-            );
+            var result = await serializer.DeserializeAsync<VariableStringMinLengthError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (VariableInvalidCharsError.MainId == id)
@@ -260,7 +244,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (NotFoundNamedError.MainId == id)
@@ -272,7 +256,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (EmptyArrayError.MainId == id)
@@ -284,22 +268,19 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (MultiUsersWithSameEmailError.MainId == id)
         {
-            var result = await serializer.DeserializeAsync<MultiUsersWithSameEmailError>(
-                stream,
-                ct
-            );
+            var result = await serializer.DeserializeAsync<MultiUsersWithSameEmailError>(stream, ct);
 
             if (!result.TryGetValue(out var value))
             {
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (MultiValuesArrayError.MainId == id)
@@ -311,7 +292,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (UserWithEmailNotExistsError.MainId == id)
@@ -323,7 +304,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (RoleOutOfRangeError.MainId == id)
@@ -335,7 +316,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (ContinueError.MainId == id)
@@ -347,7 +328,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (MaxCycleCountReachedError.MainId == id)
@@ -359,7 +340,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (NotFoundTypeError.MainId == id)
@@ -371,7 +352,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (NotFoundError.MainId == id)
@@ -383,7 +364,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (NotFoundEntityError.MainId == id)
@@ -395,7 +376,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
         if (NotFoundUserSecretError.MainId == id)
@@ -407,9 +388,9 @@ public class RpcExceptionHandler : IRpcExceptionHandler
                 return result.Errors;
             }
 
-            return new([value]);
+            return new([value,]);
         }
 
-        return new([new NotFoundError(id)]);
+        return new([new NotFoundError(id),]);
     }
 }

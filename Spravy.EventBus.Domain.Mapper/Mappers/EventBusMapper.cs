@@ -12,7 +12,11 @@ public static partial class EventBusMapper
 {
     public static Event ToEvent(this EventValue value)
     {
-        return new() { EventId = value.Id.ToByteString(), Content = value.Content.ToByteString() };
+        return new()
+        {
+            EventId = value.Id.ToByteString(),
+            Content = value.Content.ToByteString(),
+        };
     }
 
     public static ReadOnlyMemory<Event> ToEvent(this ReadOnlyMemory<EventValue> value)

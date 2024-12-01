@@ -8,9 +8,8 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken ct
     )
     {
-        return context
-            .GetUserByEmailAsync(email, ct)
-            .IfSuccessAsync(
+        return context.GetUserByEmailAsync(email, ct)
+           .IfSuccessAsync(
                 user =>
                 {
                     if (user.IsEmailVerified)
@@ -34,9 +33,8 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken ct
     )
     {
-        return context
-            .GetUserByLoginAsync(login, ct)
-            .IfSuccessAsync(
+        return context.GetUserByLoginAsync(login, ct)
+           .IfSuccessAsync(
                 user =>
                 {
                     if (!user.IsEmailVerified)
@@ -60,9 +58,8 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken ct
     )
     {
-        return context
-            .GetUserByEmailAsync(email, ct)
-            .IfSuccessAsync(
+        return context.GetUserByEmailAsync(email, ct)
+           .IfSuccessAsync(
                 user =>
                 {
                     if (!user.IsEmailVerified)
@@ -86,9 +83,8 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken ct
     )
     {
-        return context
-            .GetUserByLoginAsync(login, ct)
-            .IfSuccessAsync(
+        return context.GetUserByLoginAsync(login, ct)
+           .IfSuccessAsync(
                 user =>
                 {
                     if (!user.IsEmailVerified)

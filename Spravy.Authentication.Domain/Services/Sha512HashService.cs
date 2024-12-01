@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Spravy.Authentication.Domain.Services;
 
 public class Sha512HashService : IHashService

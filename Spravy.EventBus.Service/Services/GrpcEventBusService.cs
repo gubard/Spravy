@@ -17,28 +17,17 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         this.serializer = serializer;
     }
 
-    public override Task<PublishEventReply> PublishEvent(
-        PublishEventRequest request,
-        ServerCallContext context
-    )
+    public override Task<PublishEventReply> PublishEvent(PublishEventRequest request, ServerCallContext context)
     {
         return eventStorage
-            .AddEventAsync(
-                request.EventId.ToGuid(),
-                request.Content.ToByteArray(),
-                context.CancellationToken
-            )
-            .HandleAsync<PublishEventReply>(serializer, context.CancellationToken);
+           .AddEventAsync(request.EventId.ToGuid(), request.Content.ToByteArray(), context.CancellationToken)
+           .HandleAsync<PublishEventReply>(serializer, context.CancellationToken);
     }
 
-    public override Task<GetEventsReply> GetEvents(
-        GetEventsRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
     {
-        return eventStorage
-            .PushEventAsync(request.EventIds.ToGuid(), context.CancellationToken)
-            .HandleAsync(
+        return eventStorage.PushEventAsync(request.EventIds.ToGuid(), context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 events =>
                 {

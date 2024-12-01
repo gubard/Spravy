@@ -2,24 +2,24 @@ namespace Spravy.Ui.Services;
 
 public class ViewFactory : IViewFactory
 {
-    private readonly IToDoService toDoService;
-    private readonly INavigator navigator;
-    private readonly IErrorHandler errorHandler;
-    private readonly ITaskProgressService taskProgressService;
-    private readonly IToDoUiService toDoUiService;
-    private readonly IToDoCache toDoCache;
-    private readonly IObjectStorage objectStorage;
-    private readonly AppOptions appOptions;
-    private readonly IAuthenticationService authenticationService;
-    private readonly IPropertyValidator propertyValidator;
-    private readonly IServiceFactory serviceFactory;
-    private readonly IPasswordService passwordService;
-    private readonly IPasswordItemCache passwordItemCache;
     private readonly AccountNotify accountNotify;
     private readonly Application application;
+    private readonly AppOptions appOptions;
+    private readonly IAuthenticationService authenticationService;
+    private readonly IClipboardService clipboardService;
+    private readonly IErrorHandler errorHandler;
+    private readonly INavigator navigator;
+    private readonly IObjectStorage objectStorage;
+    private readonly IPasswordItemCache passwordItemCache;
+    private readonly IPasswordService passwordService;
+    private readonly IPropertyValidator propertyValidator;
     private readonly IScheduleService scheduleService;
     private readonly ISerializer serializer;
-    private readonly IClipboardService clipboardService;
+    private readonly IServiceFactory serviceFactory;
+    private readonly ITaskProgressService taskProgressService;
+    private readonly IToDoCache toDoCache;
+    private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -125,17 +125,6 @@ public class ViewFactory : IViewFactory
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
     {
         return new();
-    }
-
-    public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(ViewModelSortBy viewModelSortBy)
-    {
-        return new(
-            toDoService,
-            toDoCache,
-            CreateMultiToDoItemsViewModel(viewModelSortBy),
-            taskProgressService,
-            appOptions
-        );
     }
 
     public LoginViewModel CreateLoginViewModel()
@@ -335,11 +324,6 @@ public class ViewFactory : IViewFactory
         return new(item);
     }
 
-    public ToDoItemsViewModel CreateToDoItemsViewModel(ViewModelSortBy viewModelSortBy, TextLocalization header)
-    {
-        return new(viewModelSortBy, header, errorHandler, taskProgressService);
-    }
-
     public DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item)
     {
         return new(item);
@@ -353,18 +337,6 @@ public class ViewFactory : IViewFactory
             errorHandler,
             taskProgressService,
             scheduleService
-        );
-    }
-
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
-    {
-        return new(
-            new(),
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            toDoCache,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
         );
     }
 
@@ -410,42 +382,6 @@ public class ViewFactory : IViewFactory
         }
 
         return new(item, items, toDoService, CreateToDoItemSelectorViewModel(item, items));
-    }
-
-    public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
-    {
-        return new(
-            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("Lang.Favorite")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.Items")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Missed")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ReadyForCompleted")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Planned")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Completed")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Value")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Group")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Planned")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Periodicity")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.PeriodicityOffset")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Circle")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Step")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Reference")),
-            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ComingSoon"))
-        );
-    }
-
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
-    )
-    {
-        return new(
-            item.ToOption(),
-            ignoreItems,
-            toDoCache,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
-        );
     }
 
     public ConfirmViewModel CreateConfirmViewModel(
@@ -527,5 +463,69 @@ public class ViewFactory : IViewFactory
     public DeletePasswordItemViewModel CreateDeletePasswordItemViewModel(PasswordItemEntityNotify item)
     {
         return new(item);
+    }
+
+    public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(ViewModelSortBy viewModelSortBy)
+    {
+        return new(
+            toDoService,
+            toDoCache,
+            CreateMultiToDoItemsViewModel(viewModelSortBy),
+            taskProgressService,
+            appOptions
+        );
+    }
+
+    public ToDoItemsViewModel CreateToDoItemsViewModel(ViewModelSortBy viewModelSortBy, TextLocalization header)
+    {
+        return new(viewModelSortBy, header, errorHandler, taskProgressService);
+    }
+
+    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
+    {
+        return new(
+            new(),
+            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
+    }
+
+    public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
+    {
+        return new(
+            CreateToDoItemsViewModel(ViewModelSortBy.LoadedIndex, new("Lang.Favorite")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.Items")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Missed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ReadyForCompleted")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Planned")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.Completed")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Value")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Group")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Planned")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Periodicity")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.PeriodicityOffset")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Circle")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Step")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Reference")),
+            CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ComingSoon"))
+        );
+    }
+
+    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
+        ToDoItemEntityNotify item,
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
+    )
+    {
+        return new(
+            item.ToOption(),
+            ignoreItems,
+            toDoCache,
+            toDoUiService,
+            errorHandler,
+            taskProgressService
+        );
     }
 }

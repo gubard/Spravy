@@ -2,9 +2,9 @@ namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewModelSettings>
 {
-    public static EditToDoItemViewModelSettings Default { get; } = new();
-
-    public EditToDoItemViewModelSettings() { }
+    public EditToDoItemViewModelSettings()
+    {
+    }
 
     public EditToDoItemViewModelSettings(EditToDoItemViewModel viewModel)
     {
@@ -26,12 +26,19 @@ public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewM
         MonthlyDays = viewModel.MonthlyDays.Select(x => (byte)x).ToArray();
         WeeklyDays = viewModel.WeeklyDays.ToArray();
 
-        AnnuallyDays = viewModel
-            .AnnuallyDays.SelectMany(x =>
-                x.Days.Where(y => y.IsSelected)
-                    .Select(y => new DayOfYearSettings { Day = y.Day, Month = x.Month })
+        AnnuallyDays = viewModel.AnnuallyDays
+           .SelectMany(
+                x => x.Days
+                   .Where(y => y.IsSelected)
+                   .Select(
+                        y => new DayOfYearSettings
+                        {
+                            Day = y.Day,
+                            Month = x.Month,
+                        }
+                    )
             )
-            .ToArray();
+           .ToArray();
 
         if (viewModel.ToDoItemSelector.SelectedItem is not null)
         {
@@ -55,8 +62,18 @@ public class EditToDoItemViewModelSettings : IViewModelSetting<EditToDoItemViewM
     public ushort MonthsOffset { get; set; }
     public ushort WeeksOffset { get; set; }
     public ushort YearsOffset { get; set; }
-    public DayOfWeek[] WeeklyDays { get; } = [DayOfWeek.Monday];
-    public byte[] MonthlyDays { get; } = [1];
-    public DayOfYearSettings[] AnnuallyDays { get; } = [new() { Day = 1, Month = 1, }];
+    public DayOfWeek[] WeeklyDays { get; } = [DayOfWeek.Monday,];
+    public byte[] MonthlyDays { get; } = [1,];
+
+    public DayOfYearSettings[] AnnuallyDays { get; } =
+    [
+        new()
+        {
+            Day = 1,
+            Month = 1,
+        },
+    ];
+
     public Guid? ReferenceId { get; set; }
+    public static EditToDoItemViewModelSettings Default { get; } = new();
 }

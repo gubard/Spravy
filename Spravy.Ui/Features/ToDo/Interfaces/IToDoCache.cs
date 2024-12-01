@@ -13,8 +13,5 @@ public interface IToDoCache
     Result<ToDoItemEntityNotify> UpdateUi(ToDoShortItem toDoShortItem);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateUi(ReadOnlyMemory<ToDoSelectorItem> items);
 
-    Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItemsUi(
-        Guid id,
-        ReadOnlyMemory<Guid> items
-    );
+    Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItemsUi(Guid id, ReadOnlyMemory<Guid> items);
 }

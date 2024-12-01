@@ -6,20 +6,16 @@ namespace Spravy.PasswordGenerator.Db.Sqlite.Services;
 
 public class SqliteUserSecretDbContextSetup : IDbContextSetup
 {
-    public bool AutoCreateDataBase
-    {
-        get => false;
-    }
+    public bool AutoCreateDataBase => false;
 
-    public bool DataBaseCreated
-    {
-        get => true;
-    }
+    public bool DataBaseCreated => true;
 
     public void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserSecretEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder) { }
+    public void OnConfiguring(DbContextOptionsBuilder builder)
+    {
+    }
 }

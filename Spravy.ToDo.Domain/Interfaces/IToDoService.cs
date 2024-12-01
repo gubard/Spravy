@@ -22,39 +22,25 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    Cvtar UpdateToDoItemOrderIndexAsync(
-        ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> options,
-        CancellationToken ct
-    );
+    Cvtar UpdateToDoItemOrderIndexAsync(ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> options, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<FullToDoItem>> GetToDoItemAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<FullToDoItem>> GetToDoItemAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<OptionStruct<ToDoShortItem>>> GetActiveToDoItemAsync(
         Guid id,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
         string searchText,
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
         OptionStruct<Guid> id,
@@ -62,9 +48,7 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(
         ReadOnlyMemory<AddToDoItemOptions> options,
@@ -76,9 +60,7 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> CloneToDoItemAsync(
         ReadOnlyMemory<Guid> cloneIds,
@@ -86,9 +68,10 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<ToDoSelectorItem>>
-    > GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
+        ReadOnlyMemory<Guid> ignoreIds,
+        CancellationToken ct
+    );
 
     ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<FullToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,

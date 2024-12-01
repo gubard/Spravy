@@ -2,8 +2,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class ConfirmViewModel : DialogableViewModelBase
 {
-    private readonly Func<IDialogable, Cvtar> confirmTask;
     private readonly Func<IDialogable, Cvtar> cancelTask;
+    private readonly Func<IDialogable, Cvtar> confirmTask;
 
     public ConfirmViewModel(
         IDialogable content,
@@ -24,6 +24,8 @@ public class ConfirmViewModel : DialogableViewModelBase
     public SpravyCommand ConfirmCommand { get; }
     public IDialogable Content { get; }
 
+    public override string ViewId => $"{TypeCache<ConfirmViewModel>.Type}";
+
     private Cvtar CancelAsync(CancellationToken ct)
     {
         return cancelTask.Invoke(Content);
@@ -32,11 +34,6 @@ public class ConfirmViewModel : DialogableViewModelBase
     private Cvtar ConfirmAsync(CancellationToken ct)
     {
         return confirmTask.Invoke(Content);
-    }
-
-    public override string ViewId
-    {
-        get => $"{TypeCache<ConfirmViewModel>.Type}";
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

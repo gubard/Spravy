@@ -3,23 +3,23 @@ namespace Spravy.Domain.Models;
 public class Result
 {
     public static readonly Result CanceledByUserError = new(new CanceledByUserError());
-    public static readonly ValueTask<Result> CanceledByUserErrorValueTask = ValueTask.FromResult(
-        CanceledByUserError
-    );
 
-    public static readonly Cvtar AwaitableCanceledByUserError =
-        CanceledByUserErrorValueTask.ConfigureAwait(false);
+    public static readonly ValueTask<Result> CanceledByUserErrorValueTask = ValueTask.FromResult(CanceledByUserError);
+
+    public static readonly Cvtar AwaitableCanceledByUserError = CanceledByUserErrorValueTask.ConfigureAwait(false);
 
     public static readonly Result Success = new(true);
     public static readonly ValueTask<Result> SuccessValueTask = ValueTask.FromResult(Success);
 
     public static readonly Cvtar AwaitableSuccess = SuccessValueTask.ConfigureAwait(false);
 
-    private Result(bool _) { }
+    private Result(bool _)
+    {
+    }
 
     public Result()
     {
-        Errors = new([DefaultObject<DefaultCtorResultError>.Default]);
+        Errors = new([DefaultObject<DefaultCtorResultError>.Default,]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -34,15 +34,12 @@ public class Result
 
     public Result(Error error)
     {
-        Errors = new([error]);
+        Errors = new([error,]);
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
 
-    public bool IsHasError
-    {
-        get => !Errors.IsEmpty;
-    }
+    public bool IsHasError => !Errors.IsEmpty;
 
     public Cvtar GetAwaitable()
     {
@@ -57,15 +54,15 @@ public class Result
     }
 }
 
-public class Result<TValue>
-    where TValue : notnull
+public class Result<TValue> where TValue : notnull
 {
     public static readonly Result<TValue> CanceledByUserError = new(new CanceledByUserError());
+
     public static readonly ValueTask<Result<TValue>> CanceledByUserErrorValueTask =
         ValueTask.FromResult(CanceledByUserError);
-    public static readonly ConfiguredValueTaskAwaitable<
-        Result<TValue>
-    > AwaitableCanceledByUserError = CanceledByUserErrorValueTask.ConfigureAwait(false);
+
+    public static readonly ConfiguredValueTaskAwaitable<Result<TValue>> AwaitableCanceledByUserError =
+        CanceledByUserErrorValueTask.ConfigureAwait(false);
 
     public static readonly Func<TValue, Cvtar> EmptyFunc = _ => Result.AwaitableSuccess;
 
@@ -73,7 +70,7 @@ public class Result<TValue>
 
     public Result()
     {
-        Errors = new([DefaultObject<DefaultCtorResultError<TValue>>.Default]);
+        Errors = new([DefaultObject<DefaultCtorResultError<TValue>>.Default,]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -88,7 +85,7 @@ public class Result<TValue>
 
     public Result(Error error)
     {
-        Errors = new([error]);
+        Errors = new([error,]);
     }
 
     public Result(TValue value)
@@ -97,6 +94,8 @@ public class Result<TValue>
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
+
+    public bool IsHasError => !Errors.IsEmpty;
 
     public ConfiguredValueTaskAwaitable<Result<TValue>> GetAwaitable()
     {
@@ -120,10 +119,5 @@ public class Result<TValue>
         result = value!;
 
         return true;
-    }
-
-    public bool IsHasError
-    {
-        get => !Errors.IsEmpty;
     }
 }

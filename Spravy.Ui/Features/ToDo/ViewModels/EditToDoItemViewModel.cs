@@ -8,112 +8,112 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
-    private bool isEditName;
-
-    [ObservableProperty]
-    private string name = string.Empty;
-
-    [ObservableProperty]
-    private bool isEditLink;
-
-    [ObservableProperty]
-    private string link = string.Empty;
-
-    [ObservableProperty]
-    private bool isEditType;
-
-    [ObservableProperty]
-    private ToDoItemType type;
-
-    [ObservableProperty]
-    private bool isEditDueDate;
-
-    [ObservableProperty]
-    private DateOnly dueDate = DateTime.Now.ToDateOnly();
-
-    [ObservableProperty]
-    private bool isEditRemindDaysBefore;
-
-    [ObservableProperty]
-    private uint remindDaysBefore;
-
-    [ObservableProperty]
-    private bool isEditIcon;
-
-    [ObservableProperty]
-    private string icon = string.Empty;
-
-    [ObservableProperty]
-    private bool isEditColor;
+    private ToDoItemChildrenType childrenType;
 
     [ObservableProperty]
     private Color color = Colors.Transparent;
 
     [ObservableProperty]
-    private bool isEditDescriptionType;
-
-    [ObservableProperty]
-    private DescriptionType descriptionType;
-
-    [ObservableProperty]
-    private bool isEditDescription;
+    private ushort daysOffset;
 
     [ObservableProperty]
     private string description = string.Empty;
 
     [ObservableProperty]
-    private bool isEditChildrenType;
+    private DescriptionType descriptionType;
 
     [ObservableProperty]
-    private ToDoItemChildrenType childrenType;
+    private DateOnly dueDate = DateTime.Now.ToDateOnly();
 
     [ObservableProperty]
-    private bool isEditIsRequiredCompleteInDueDate;
-
-    [ObservableProperty]
-    private bool isRequiredCompleteInDueDate = true;
-
-    [ObservableProperty]
-    private bool isEditTypeOfPeriodicity;
-
-    [ObservableProperty]
-    private TypeOfPeriodicity typeOfPeriodicity;
-
-    [ObservableProperty]
-    private bool isEditDaysOffset;
-
-    [ObservableProperty]
-    private ushort daysOffset;
-
-    [ObservableProperty]
-    private bool isEditMonthsOffset;
-
-    [ObservableProperty]
-    private ushort monthsOffset;
-
-    [ObservableProperty]
-    private bool isEditWeeksOffset;
-
-    [ObservableProperty]
-    private ushort weeksOffset;
-
-    [ObservableProperty]
-    private bool isEditYearsOffset;
-
-    [ObservableProperty]
-    private ushort yearsOffset;
-
-    [ObservableProperty]
-    private bool isEditReference;
+    private string icon = string.Empty;
 
     [ObservableProperty]
     private bool isEditAnnuallyDays;
 
     [ObservableProperty]
+    private bool isEditChildrenType;
+
+    [ObservableProperty]
+    private bool isEditColor;
+
+    [ObservableProperty]
+    private bool isEditDaysOffset;
+
+    [ObservableProperty]
+    private bool isEditDescription;
+
+    [ObservableProperty]
+    private bool isEditDescriptionType;
+
+    [ObservableProperty]
+    private bool isEditDueDate;
+
+    [ObservableProperty]
+    private bool isEditIcon;
+
+    [ObservableProperty]
+    private bool isEditIsRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private bool isEditLink;
+
+    [ObservableProperty]
     private bool isEditMonthlyDays;
 
     [ObservableProperty]
+    private bool isEditMonthsOffset;
+
+    [ObservableProperty]
+    private bool isEditName;
+
+    [ObservableProperty]
+    private bool isEditReference;
+
+    [ObservableProperty]
+    private bool isEditRemindDaysBefore;
+
+    [ObservableProperty]
+    private bool isEditType;
+
+    [ObservableProperty]
+    private bool isEditTypeOfPeriodicity;
+
+    [ObservableProperty]
     private bool isEditWeeklyDays;
+
+    [ObservableProperty]
+    private bool isEditWeeksOffset;
+
+    [ObservableProperty]
+    private bool isEditYearsOffset;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate = true;
+
+    [ObservableProperty]
+    private string link = string.Empty;
+
+    [ObservableProperty]
+    private ushort monthsOffset;
+
+    [ObservableProperty]
+    private string name = string.Empty;
+
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
+    [ObservableProperty]
+    private ToDoItemType type;
+
+    [ObservableProperty]
+    private TypeOfPeriodicity typeOfPeriodicity;
+
+    [ObservableProperty]
+    private ushort weeksOffset;
+
+    [ObservableProperty]
+    private ushort yearsOffset;
 
     public EditToDoItemViewModel(
         IObjectStorage objectStorage,
@@ -134,7 +134,13 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         FavoriteIcons = new();
 
         AnnuallyDays = new(
-            Enumerable.Range(1, 12).Select(x => new DayOfYearSelectItem { Month = (byte)x })
+            Enumerable.Range(1, 12)
+               .Select(
+                    x => new DayOfYearSelectItem
+                    {
+                        Month = (byte)x,
+                    }
+                )
         );
 
         PropertyChanged += OnPropertyChanged;
@@ -151,7 +157,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
             IsEditReference = e.PropertyName switch
             {
                 nameof(ToDoItemSelector.SelectedItem) => true,
-                _ => IsEditReference
+                _ => IsEditReference,
             };
         };
 
@@ -179,26 +185,21 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     public AvaloniaList<DayOfYearSelectItem> AnnuallyDays { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
 
-    public override string ViewId
-    {
-        get => $"{TypeCache<ToDoItemToStringSettingsViewModel>.Type}";
-    }
+    public override string ViewId => $"{TypeCache<ToDoItemToStringSettingsViewModel>.Type}";
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<AppSetting>(App.ViewId, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            FavoriteIcons.UpdateUi(setting.FavoriteIcons);
+        return objectStorage.GetObjectOrDefaultAsync<AppSetting>(App.ViewId, ct)
+           .IfSuccessAsync(
+                setting => this.PostUiBackground(
+                    () =>
+                    {
+                        FavoriteIcons.UpdateUi(setting.FavoriteIcons);
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
@@ -207,7 +208,10 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     {
         return objectStorage.SaveObjectAsync(
             App.ViewId,
-            new AppSetting { FavoriteIcons = FavoriteIcons.ToArray() },
+            new AppSetting
+            {
+                FavoriteIcons = FavoriteIcons.ToArray(),
+            },
             ct
         );
     }
@@ -227,11 +231,8 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
             false,
             DueDate,
             TypeOfPeriodicity,
-            AnnuallyDays
-                .SelectMany(x =>
-                    x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
-                )
-                .ToArray(),
+            AnnuallyDays.SelectMany(x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month)))
+               .ToArray(),
             MonthlyDays.Select(x => (byte)x).ToArray(),
             WeeklyDays.ToArray(),
             DaysOffset,
@@ -318,12 +319,10 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         {
             result = result.SetAnnuallyDays(
                 new(
-                    AnnuallyDays
-                        .SelectMany(x =>
-                            x.Days.Where(y => y.IsSelected)
-                                .Select(y => new DayOfYear(y.Day, x.Month))
+                    AnnuallyDays.SelectMany(
+                            x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
                         )
-                        .ToArray()
+                       .ToArray()
                 )
             );
         }
@@ -533,10 +532,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         {
             if (months.Contains(daysOfYear.Month))
             {
-                var days = settings
-                    .AnnuallyDays.Where(x => x.Month == daysOfYear.Month)
-                    .Select(x => x.Day)
-                    .ToArray();
+                var days = settings.AnnuallyDays.Where(x => x.Month == daysOfYear.Month).Select(x => x.Day).ToArray();
 
                 foreach (var day in daysOfYear.Days.Where(x => days.Contains(x.Day)))
                 {
@@ -547,14 +543,15 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
 
         if (settings.ReferenceId is not null)
         {
-            return toDoCache
-                .GetToDoItem(settings.ReferenceId.Value)
-                .IfSuccess(x =>
-                {
-                    ToDoItemSelector.SelectedItem = x;
+            return toDoCache.GetToDoItem(settings.ReferenceId.Value)
+               .IfSuccess(
+                    x =>
+                    {
+                        ToDoItemSelector.SelectedItem = x;
 
-                    return Result.Success;
-                });
+                        return Result.Success;
+                    }
+                );
         }
 
         return Result.Success;
@@ -597,10 +594,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         {
             if (months.Contains(daysOfYear.Month))
             {
-                var days = notify
-                    .AnnuallyDays.Where(x => x.Month == daysOfYear.Month)
-                    .Select(x => x.Day)
-                    .ToArray();
+                var days = notify.AnnuallyDays.Where(x => x.Month == daysOfYear.Month).Select(x => x.Day).ToArray();
 
                 foreach (var day in daysOfYear.Days.Where(x => days.Contains(x.Day)))
                 {

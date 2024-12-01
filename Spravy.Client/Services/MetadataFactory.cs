@@ -11,9 +11,8 @@ public class MetadataFactory : IMetadataFactory
 
     public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken ct)
     {
-        return httpHeaderFactory
-            .CreateHeaderItemsAsync(ct)
-            .IfSuccessAsync(
+        return httpHeaderFactory.CreateHeaderItemsAsync(ct)
+           .IfSuccessAsync(
                 value =>
                 {
                     var metadata = new Metadata();

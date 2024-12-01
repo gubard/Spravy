@@ -11,44 +11,17 @@ public interface IAuthenticationService
     Cvtar DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken ct);
     Cvtar DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
-        string refreshToken,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
-        string login,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
-        string email,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken ct);
 
-    Cvtar UpdateEmailNotVerifiedUserByEmailAsync(
-        string email,
-        string newEmail,
-        CancellationToken ct
-    );
+    Cvtar UpdateEmailNotVerifiedUserByEmailAsync(string email, string newEmail, CancellationToken ct);
 
-    Cvtar UpdateEmailNotVerifiedUserByLoginAsync(
-        string login,
-        string newEmail,
-        CancellationToken ct
-    );
+    Cvtar UpdateEmailNotVerifiedUserByLoginAsync(string login, string newEmail, CancellationToken ct);
 
-    Cvtar UpdatePasswordByEmailAsync(
-        string email,
-        string verificationCode,
-        string newPassword,
-        CancellationToken ct
-    );
+    Cvtar UpdatePasswordByEmailAsync(string email, string verificationCode, string newPassword, CancellationToken ct);
 
-    Cvtar UpdatePasswordByLoginAsync(
-        string login,
-        string verificationCode,
-        string newPassword,
-        CancellationToken ct
-    );
+    Cvtar UpdatePasswordByLoginAsync(string login, string verificationCode, string newPassword, CancellationToken ct);
 }

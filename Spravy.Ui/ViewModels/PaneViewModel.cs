@@ -12,9 +12,11 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
     public AccountNotify Account { get; }
     public AvaloniaList<ToDoItemEntityNotify> Bookmarks { get; }
 
-    public bool IsShowPasswordGenerator
+    public bool IsShowPasswordGenerator => Account.Login is "vafnir" or "admin";
+
+    public Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        get => Account.Login is "vafnir" or "admin";
+        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByLoadedIndex());
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -23,10 +25,5 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
         {
             OnPropertyChanged(nameof(IsShowPasswordGenerator));
         }
-    }
-
-    public Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByLoadedIndex());
     }
 }

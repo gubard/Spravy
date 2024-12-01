@@ -8,13 +8,9 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication
-        .CreateBuilder(args)
-        .BuildSpravy<GrpcAuthenticationService, SpravyAuthenticationServiceMark>(
-            args,
-            x => x.RegisterAuthentication()
-        )
-        .Run();
+    WebApplication.CreateBuilder(args)
+       .BuildSpravy<GrpcAuthenticationService, SpravyAuthenticationServiceMark>(args, x => x.RegisterAuthentication())
+       .Run();
 }
 catch (Exception ex)
 {

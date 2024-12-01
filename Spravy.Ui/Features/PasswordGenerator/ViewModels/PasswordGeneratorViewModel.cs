@@ -5,20 +5,15 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     private readonly IPasswordItemCache passwordItemCache;
     private readonly IPasswordService passwordService;
 
-    public PasswordGeneratorViewModel(
-        IPasswordService passwordService,
-        IPasswordItemCache passwordItemCache
+    public PasswordGeneratorViewModel(IPasswordService passwordService, IPasswordItemCache passwordItemCache) : base(
+        true
     )
-        : base(true)
     {
         this.passwordService = passwordService;
         this.passwordItemCache = passwordItemCache;
     }
 
-    public override string ViewId
-    {
-        get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
-    }
+    public override string ViewId => TypeCache<PasswordGeneratorViewModel>.Type.Name;
 
     public AvaloniaList<PasswordItemEntityNotify> Items { get; } = new();
 
@@ -26,23 +21,21 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     {
         Items.Clear();
 
-        return passwordService
-            .GetPasswordItemsAsync(ct)
-            .IfSuccessForEachAsync(
-                item =>
-                    passwordItemCache
-                        .GetPasswordItem(item.Id)
-                        .IfSuccessAsync(
-                            i =>
-                                this.InvokeUiBackgroundAsync(() =>
-                                {
-                                    Items.Add(i);
-                                    passwordItemCache.UpdateUi(item);
+        return passwordService.GetPasswordItemsAsync(ct)
+           .IfSuccessForEachAsync(
+                item => passwordItemCache.GetPasswordItem(item.Id)
+                   .IfSuccessAsync(
+                        i => this.InvokeUiBackgroundAsync(
+                            () =>
+                            {
+                                Items.Add(i);
+                                passwordItemCache.UpdateUi(item);
 
-                                    return Result.Success;
-                                }),
-                            ct
+                                return Result.Success;
+                            }
                         ),
+                        ct
+                    ),
                 ct
             );
     }

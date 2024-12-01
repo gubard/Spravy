@@ -23,9 +23,8 @@ internal class Program
     {
         IconProvider.Current.Register<MaterialDesignIconProvider>();
 
-        return AppBuilder
-            .Configure(() => DiHelper.ServiceFactory.CreateService<App>())
-            .WithInterFont()
-            .WithJetBrainsMonoFont();
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.CreateService<App>())
+           .WithInterFont()
+           .WithJetBrainsMonoFont();
     }
 }

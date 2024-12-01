@@ -27,9 +27,8 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return authenticationService
-            .RefreshTokenAsync(token.RefreshToken, ct)
-            .IfSuccessAsync(
+        return authenticationService.RefreshTokenAsync(token.RefreshToken, ct)
+           .IfSuccessAsync(
                 value =>
                 {
                     token = value;
@@ -42,9 +41,8 @@ public class TokenService : ITokenService
 
     public Cvtar LoginAsync(User user, CancellationToken ct)
     {
-        return authenticationService
-            .LoginAsync(user, ct)
-            .IfSuccessAsync(
+        return authenticationService.LoginAsync(user, ct)
+           .IfSuccessAsync(
                 value =>
                 {
                     token = value;
@@ -57,9 +55,8 @@ public class TokenService : ITokenService
 
     public Cvtar LoginAsync(string refreshToken, CancellationToken ct)
     {
-        return authenticationService
-            .RefreshTokenAsync(refreshToken, ct)
-            .IfSuccessAsync(
+        return authenticationService.RefreshTokenAsync(refreshToken, ct)
+           .IfSuccessAsync(
                 value =>
                 {
                     token = value;

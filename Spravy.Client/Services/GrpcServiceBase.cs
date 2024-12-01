@@ -3,12 +3,11 @@ using Spravy.Core.Interfaces;
 
 namespace Spravy.Client.Services;
 
-public abstract class GrpcServiceBase<TGrpcClient>
-    where TGrpcClient : ClientBase
+public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
 {
     private readonly IFactory<Uri, TGrpcClient> grpcClientFactory;
-    private readonly Uri host;
     private readonly IRpcExceptionHandler handler;
+    private readonly Uri host;
     private readonly IRetryService retryService;
 
     protected GrpcServiceBase(
@@ -28,9 +27,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
     {
         try
         {
-            return retryService.TryAsync(
-                () => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct)
-            );
+            return retryService.TryAsync(() => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct));
         }
         catch (RpcException exception)
         {
@@ -67,15 +64,13 @@ public abstract class GrpcServiceBase<TGrpcClient>
                 case StatusCode.Internal:
                     throw;
                 case StatusCode.Unavailable:
-                    return new Result(new ServiceUnavailableError(host.ToString()))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
+                    return new Result(new ServiceUnavailableError(host.ToString())).ToValueTaskResult()
+                       .ConfigureAwait(false);
                 case StatusCode.DataLoss:
                     throw;
                 default:
-                    return new Result(new StatusCodeOutOfRangeError(exception.StatusCode))
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
+                    return new Result(new StatusCodeOutOfRangeError(exception.StatusCode)).ToValueTaskResult()
+                       .ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -87,8 +82,7 @@ public abstract class GrpcServiceBase<TGrpcClient>
     protected ConfiguredValueTaskAwaitable<Result<TValue>> CallClientAsync<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         return CallClientCore(func, ct).ConfigureAwait(false);
     }
@@ -96,14 +90,11 @@ public abstract class GrpcServiceBase<TGrpcClient>
     private async ValueTask<Result<TValue>> CallClientCore<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         try
         {
-            return await retryService.TryAsync(
-                () => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct)
-            );
+            return await retryService.TryAsync(() => grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct));
         }
         catch (RpcException exception)
         {

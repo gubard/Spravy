@@ -5,20 +5,16 @@ public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVeri
     [ObservableProperty]
     private string verificationCode = string.Empty;
 
-    public VerificationCodeViewModel(string emailOrLogin, UserIdentifierType identifierType)
-        : base(true)
+    public VerificationCodeViewModel(string emailOrLogin, UserIdentifierType identifierType) : base(true)
     {
         EmailOrLogin = emailOrLogin;
         IdentifierType = identifierType;
     }
 
+    public override string ViewId => TypeCache<VerificationCodeViewModel>.Type.Name;
+
     public string EmailOrLogin { get; }
     public UserIdentifierType IdentifierType { get; }
-
-    public override string ViewId
-    {
-        get => TypeCache<VerificationCodeViewModel>.Type.Name;
-    }
 
     public override Result Stop()
     {

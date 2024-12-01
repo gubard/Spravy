@@ -4,8 +4,5 @@ public class PasswordGeneratorOptions : IOptionsValue
 {
     public byte TryCount { get; set; }
 
-    public static string Section
-    {
-        get => "PasswordGenerator";
-    }
+    public static string Section => "PasswordGenerator";
 }

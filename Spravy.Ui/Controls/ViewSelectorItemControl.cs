@@ -6,8 +6,10 @@ public class ViewSelectorItemControl : TemplatedControl
         AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(Content));
 
     public static readonly StyledProperty<object?> StateProperty =
-        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(nameof(State),
-            defaultBindingMode: BindingMode.TwoWay);
+        AvaloniaProperty.Register<ViewSelectorItemControl, object?>(
+            nameof(State),
+            defaultBindingMode: BindingMode.TwoWay
+        );
 
     private ContentControl? contentControl;
     private object? lastState;

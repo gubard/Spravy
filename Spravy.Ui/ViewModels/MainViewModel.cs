@@ -3,13 +3,7 @@
 public partial class MainViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private bool errorDialogIsOpen;
-
-    [ObservableProperty]
-    private bool progressDialogIsOpen;
-
-    [ObservableProperty]
-    private bool inputDialogIsOpen;
+    private IDialogable contentDialogContent = new EmptyDialogable();
 
     [ObservableProperty]
     private bool contentDialogIsOpen;
@@ -18,13 +12,19 @@ public partial class MainViewModel : ViewModelBase
     private IDialogable errorDialogContent = new EmptyDialogable();
 
     [ObservableProperty]
-    private IDialogable progressDialogContent = new EmptyDialogable();
+    private bool errorDialogIsOpen;
 
     [ObservableProperty]
     private IDialogable inputDialogContent = new EmptyDialogable();
 
     [ObservableProperty]
-    private IDialogable contentDialogContent = new EmptyDialogable();
+    private bool inputDialogIsOpen;
+
+    [ObservableProperty]
+    private IDialogable progressDialogContent = new EmptyDialogable();
+
+    [ObservableProperty]
+    private bool progressDialogIsOpen;
 
     public MainViewModel(MainProgressBarViewModel mainProgressBar, MainSplitViewModel mainSplit)
     {

@@ -2,12 +2,12 @@ namespace Spravy.Ui.Services;
 
 public class RootViewFactory : IRootViewFactory
 {
-    private readonly MainWindowModel mainWindowModel;
-    private readonly MainViewModel mainViewModel;
-    private readonly SingleViewModel singleViewModel;
     private readonly MainProgressBarViewModel mainProgressBarViewModel;
     private readonly MainSplitViewModel mainSplitViewModel;
+    private readonly MainViewModel mainViewModel;
+    private readonly MainWindowModel mainWindowModel;
     private readonly PaneViewModel paneViewModel;
+    private readonly SingleViewModel singleViewModel;
 
     public RootViewFactory(AccountNotify account)
     {

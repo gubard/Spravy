@@ -1,7 +1,6 @@
 namespace Spravy.Service.Middlewares;
 
-public class DataBaseSetupSqliteMiddleware<TDbContext>
-    where TDbContext : DbContext
+public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbContext
 {
     private readonly RequestDelegate next;
     private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
@@ -27,10 +26,10 @@ public class DataBaseSetupSqliteMiddleware<TDbContext>
 
     private async Task SetupDataBaseAsync(string userId)
     {
-        var dataBaseFile = sqliteFolderOptions
-            .DataBasesFolder.ThrowIfNullOrWhiteSpace()
-            .ToDirectory()
-            .ToFile($"{userId}.db");
+        var dataBaseFile = sqliteFolderOptions.DataBasesFolder
+           .ThrowIfNullOrWhiteSpace()
+           .ToDirectory()
+           .ToFile($"{userId}.db");
 
         if (dataBaseFile.Exists)
         {
@@ -42,9 +41,7 @@ public class DataBaseSetupSqliteMiddleware<TDbContext>
             dataBaseFile.Directory.Create();
         }
 
-        await using var dbContext = spravyToDoDbContextFactory
-            .Create($"DataSource={dataBaseFile}")
-            .ThrowIfError();
+        await using var dbContext = spravyToDoDbContextFactory.Create($"DataSource={dataBaseFile}").ThrowIfError();
         await dbContext.Database.MigrateAsync();
     }
 }

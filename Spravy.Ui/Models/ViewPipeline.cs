@@ -13,15 +13,12 @@ public class ViewPipeline
 
     public ConfiguredValueTaskAwaitable<Result<INavigatable>> NextViewAsync(CancellationToken ct)
     {
-        return Result
-            .AwaitableSuccess.IfSuccessAsync(
-                () =>
-                    currentIndex == 0
-                        ? Result.AwaitableSuccess
-                        : views.Span[currentIndex - 1].SaveStateAsync(ct),
+        return Result.AwaitableSuccess
+           .IfSuccessAsync(
+                () => currentIndex == 0 ? Result.AwaitableSuccess : views.Span[currentIndex - 1].SaveStateAsync(ct),
                 ct
             )
-            .IfSuccessAsync(
+           .IfSuccessAsync(
                 () =>
                 {
                     if (currentIndex == maxIndex)
@@ -35,7 +32,7 @@ public class ViewPipeline
                 },
                 ct
             )
-            .IfSuccessAsync(() => views.Span[currentIndex++].ToResult(), ct);
+           .IfSuccessAsync(() => views.Span[currentIndex++].ToResult(), ct);
     }
 
     public Result<Option<INavigatable>> PreviousView()

@@ -28,10 +28,7 @@ public class LocalStorageObjectStorage : IObjectStorage
         return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(
-        string id,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id, CancellationToken ct)
         where TObject : notnull
     {
         return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);

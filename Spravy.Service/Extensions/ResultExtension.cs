@@ -6,8 +6,7 @@ public static class ResultExtension
         this Cvtar task,
         ISerializer serializer,
         CancellationToken ct
-    )
-        where TReturn : class, new()
+    ) where TReturn : class, new()
     {
         var result = await task;
 
@@ -43,8 +42,7 @@ public static class ResultExtension
         ISerializer serializer,
         Func<TValue, TReturn> func,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         var result = await task;
 
@@ -60,8 +58,7 @@ public static class ResultExtension
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         ISerializer serializer,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         var result = await task;
 
@@ -77,8 +74,7 @@ public static class ResultExtension
         this Result<TValue> result,
         ISerializer serializer,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         var metadata = new Metadata();
 
@@ -123,27 +119,20 @@ public static class ResultExtension
             throw new EmptyEnumerableException(nameof(result.Errors));
         }
 
-        return new(
-            new(StatusCode.InvalidArgument, result.GetTitle()),
-            await result.GetMetadataAsync(serializer, ct)
-        );
+        return new(new(StatusCode.InvalidArgument, result.GetTitle()), await result.GetMetadataAsync(serializer, ct));
     }
 
     public static async ValueTask<RpcException> ToRpcExceptionAsync<TValue>(
         this Result<TValue> result,
         ISerializer serializer,
         CancellationToken ct
-    )
-        where TValue : notnull
+    ) where TValue : notnull
     {
         if (!result.IsHasError)
         {
             throw new EmptyEnumerableException(nameof(result.Errors));
         }
 
-        return new(
-            new(StatusCode.InvalidArgument, result.GetTitle()),
-            await result.GetMetadataAsync(serializer, ct)
-        );
+        return new(new(StatusCode.InvalidArgument, result.GetTitle()), await result.GetMetadataAsync(serializer, ct));
     }
 }

@@ -1,9 +1,8 @@
 namespace Spravy.Schedule.Domain.Client.Services;
 
-public class GrpcScheduleService
-    : GrpcServiceBase<ScheduleService.ScheduleServiceClient>,
-        IScheduleService,
-        IGrpcServiceCreatorAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient>
+public class GrpcScheduleService : GrpcServiceBase<ScheduleService.ScheduleServiceClient>,
+    IScheduleService,
+    IGrpcServiceCreatorAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
 
@@ -13,8 +12,7 @@ public class GrpcScheduleService
         IMetadataFactory metadataFactory,
         IRpcExceptionHandler handler,
         IRetryService retryService
-    )
-        : base(grpcClientFactory, host, handler, retryService)
+    ) : base(grpcClientFactory, host, handler, retryService)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -27,31 +25,31 @@ public class GrpcScheduleService
         IRetryService retryService
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, handler, retryService);
+        return new(
+            grpcClientFactory,
+            host,
+            metadataFactory,
+            handler,
+            retryService
+        );
     }
 
     public Cvtar AddTimerAsync(ReadOnlyMemory<AddTimerParameters> parameters, CancellationToken ct)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                        {
-                            var request = new AddTimerRequest();
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata =>
+                    {
+                        var request = new AddTimerRequest();
+                        request.Items.AddRange(parameters.Select(x => x.ToAddTimerRequestGrpc()).ToArray());
 
-                            request.Items.AddRange(
-                                parameters.Select(x => x.ToAddTimerRequestGrpc()).ToArray()
-                            );
-
-                            return client
-                                .AddTimerAsync(request, metadata, cancellationToken: ct)
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false);
-                        },
-                        ct
-                    ),
+                        return client.AddTimerAsync(request, metadata, cancellationToken: ct)
+                           .ToValueTaskResultOnly()
+                           .ConfigureAwait(false);
+                    },
+                    ct
+                ),
             ct
         );
     }
@@ -59,42 +57,29 @@ public class GrpcScheduleService
     public ConfiguredValueTaskAwaitable<Result<bool>> UpdateEventsAsync(CancellationToken ct)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .UpdateEventsAsync(new(), metadata, cancellationToken: ct)
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(reply => reply.IsUpdated.ToResult(), ct),
-                        ct
-                    ),
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata => client.UpdateEventsAsync(new(), metadata, cancellationToken: ct)
+                       .ToValueTaskResultValueOnly()
+                       .ConfigureAwait(false)
+                       .IfSuccessAsync(reply => reply.IsUpdated.ToResult(), ct),
+                    ct
+                ),
             ct
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetTimersAsync(CancellationToken ct)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetTimersAsync(new(), metadata, cancellationToken: ct)
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    timers => timers.Items.ToTimerItem().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata => client.GetTimersAsync(new(), metadata, cancellationToken: ct)
+                       .ToValueTaskResultValueOnly()
+                       .ConfigureAwait(false)
+                       .IfSuccessAsync(timers => timers.Items.ToTimerItem().ToResult(), ct),
+                    ct
+                ),
             ct
         );
     }
@@ -102,17 +87,19 @@ public class GrpcScheduleService
     public Cvtar RemoveTimerAsync(Guid id, CancellationToken ct)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .RemoveTimerAsync(new() { Id = id.ToByteString() }, metadata)
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    ),
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata => client.RemoveTimerAsync(
+                            new()
+                            {
+                                Id = id.ToByteString(),
+                            },
+                            metadata
+                        )
+                       .ToValueTaskResultOnly()
+                       .ConfigureAwait(false),
+                    ct
+                ),
             ct
         );
     }

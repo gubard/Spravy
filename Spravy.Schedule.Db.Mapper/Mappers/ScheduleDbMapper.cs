@@ -9,15 +9,19 @@ namespace Spravy.Schedule.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class ScheduleDbMapper
 {
-    public static partial ReadOnlyMemory<TimerItem> ToTimerItem(
-        this ReadOnlyMemory<TimerEntity> entity
-    );
+    public static partial ReadOnlyMemory<TimerItem> ToTimerItem(this ReadOnlyMemory<TimerEntity> entity);
 
     public static partial TimerEntity ToTimerEntity(this TimerItem entity);
 
     public static TimerItem ToTimerItem(this TimerEntity entity)
     {
-        return new(entity.DueDateTime, entity.EventId, entity.Content, entity.Id, entity.Name);
+        return new(
+            entity.DueDateTime,
+            entity.EventId,
+            entity.Content,
+            entity.Id,
+            entity.Name
+        );
     }
 
     private static ByteString ToByteString(Guid id)

@@ -3,21 +3,20 @@ namespace Spravy.Ui.Services;
 public class AudioService : IAudioService
 {
     private const string AudioFileCompletePath = "avares://Spravy.Ui/Assets/Sounds/Complete.wav";
+    private const string AudioFileNotificationPath = "avares://Spravy.Ui/Assets/Sounds/Notification.wav";
+
     private static readonly Uri audioFileCompleteUri = new(AudioFileCompletePath);
     private static readonly ReadOnlyMemory<byte> completeSoundData;
-
-    private const string AudioFileNotificationPath =
-        "avares://Spravy.Ui/Assets/Sounds/Notification.wav";
     private static readonly Uri audioFileNotificationUri = new(AudioFileNotificationPath);
     private static readonly ReadOnlyMemory<byte> notificationSoundData;
+
+    private readonly ISoundPlayer soundPlayer;
 
     static AudioService()
     {
         completeSoundData = audioFileCompleteUri.GetAssetBytes();
         notificationSoundData = audioFileNotificationUri.GetAssetBytes();
     }
-
-    private readonly ISoundPlayer soundPlayer;
 
     public AudioService(ISoundPlayer soundPlayer)
     {

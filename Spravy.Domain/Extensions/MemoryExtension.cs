@@ -2,8 +2,7 @@
 
 public static class MemoryExtension
 {
-    public static bool Contains<TSource>(this ReadOnlyMemory<TSource> source, TSource item)
-        where TSource : notnull
+    public static bool Contains<TSource>(this ReadOnlyMemory<TSource> source, TSource item) where TSource : notnull
     {
         if (source.IsEmpty)
         {
@@ -21,10 +20,7 @@ public static class MemoryExtension
         return false;
     }
 
-    public static bool All<TSource>(
-        this ReadOnlyMemory<TSource> source,
-        Func<TSource, bool> predicate
-    )
+    public static bool All<TSource>(this ReadOnlyMemory<TSource> source, Func<TSource, bool> predicate)
     {
         foreach (var value in source.Span)
         {
@@ -49,9 +45,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static ReadOnlyMemory<TSource> SelectMany<TSource>(
-        this ReadOnlyMemory<ReadOnlyMemory<TSource>> memory
-    )
+    public static ReadOnlyMemory<TSource> SelectMany<TSource>(this ReadOnlyMemory<ReadOnlyMemory<TSource>> memory)
     {
         var result = new Memory<TSource>(new TSource[memory.Span.Select(x => x.Length).Sum()]);
         var currentIndex = 0;
@@ -90,10 +84,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static bool Any<TSource>(
-        this ReadOnlyMemory<TSource> memory,
-        Func<TSource, bool> predicate
-    )
+    public static bool Any<TSource>(this ReadOnlyMemory<TSource> memory, Func<TSource, bool> predicate)
     {
         if (memory.IsEmpty)
         {
@@ -126,8 +117,7 @@ public static class MemoryExtension
     public static ReadOnlyMemory<TSource> OrderBy<TSource, TValue>(
         this ReadOnlyMemory<TSource> source,
         Func<TSource, TValue> keySelector
-    )
-        where TValue : IComparable<TValue>
+    ) where TValue : IComparable<TValue>
     {
         var result = new Memory<TSource>(new TSource[source.Length]);
         source.CopyTo(result);
@@ -168,8 +158,7 @@ public static class MemoryExtension
         return result.Slice(0, resultIndex);
     }
 
-    public static Result<T> GetSingle<T>(this ReadOnlyMemory<T> memory, string arrayName)
-        where T : notnull
+    public static Result<T> GetSingle<T>(this ReadOnlyMemory<T> memory, string arrayName) where T : notnull
     {
         if (memory.IsEmpty)
         {
@@ -188,8 +177,7 @@ public static class MemoryExtension
         this ReadOnlyMemory<TSource> memory,
         string arrayName,
         Func<TSource, bool> predicate
-    )
-        where TSource : notnull
+    ) where TSource : notnull
     {
         if (memory.IsEmpty)
         {

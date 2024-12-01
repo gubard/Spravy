@@ -9,12 +9,7 @@ public class SpravyCommandNotify : NotifyBase
         Kind = kind;
     }
 
-    public SpravyCommandNotify(
-        string kind,
-        TextLocalization text,
-        SpravyCommand item,
-        KeyGesture hotKey
-    )
+    public SpravyCommandNotify(string kind, TextLocalization text, SpravyCommand item, KeyGesture hotKey)
     {
         Item = item;
         Text = text;

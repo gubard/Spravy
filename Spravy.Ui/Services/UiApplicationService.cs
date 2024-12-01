@@ -2,9 +2,9 @@ namespace Spravy.Ui.Services;
 
 public class UiApplicationService : IUiApplicationService
 {
-    private readonly IToDoUiService toDoUiService;
-    private readonly MainSplitViewModel mainSplitViewModel;
     private readonly AccountNotify accountNotify;
+    private readonly MainSplitViewModel mainSplitViewModel;
+    private readonly IToDoUiService toDoUiService;
 
     public UiApplicationService(
         IRootViewFactory rootViewFactory,
@@ -24,29 +24,27 @@ public class UiApplicationService : IUiApplicationService
 
     public Cvtar RefreshCurrentViewAsync(CancellationToken ct)
     {
-        return mainSplitViewModel
-            .Content.RefreshAsync(ct)
-            .IfSuccessAsync(
-                () =>
-                    accountNotify.Login.IsNullOrWhiteSpace()
-                        ? Result.AwaitableSuccess
-                        : toDoUiService.UpdateBookmarkItemsAsync(mainSplitViewModel.Pane, ct),
+        return mainSplitViewModel.Content
+           .RefreshAsync(ct)
+           .IfSuccessAsync(
+                () => accountNotify.Login.IsNullOrWhiteSpace()
+                    ? Result.AwaitableSuccess
+                    : toDoUiService.UpdateBookmarkItemsAsync(mainSplitViewModel.Pane, ct),
                 ct
             );
     }
 
     public Result<Type> GetCurrentViewType()
     {
-        return mainSplitViewModel
-            .Content.IfNotNull(nameof(mainSplitViewModel.Content))
-            .IfSuccess(content => content.GetType().ToResult());
+        return mainSplitViewModel.Content
+           .IfNotNull(nameof(mainSplitViewModel.Content))
+           .IfSuccess(content => content.GetType().ToResult());
     }
 
-    public Result<TView> GetCurrentView<TView>()
-        where TView : notnull
+    public Result<TView> GetCurrentView<TView>() where TView : notnull
     {
-        return mainSplitViewModel
-            .Content.IfNotNull(nameof(mainSplitViewModel.Content))
-            .IfSuccess(vm => vm.IfIs<TView>());
+        return mainSplitViewModel.Content
+           .IfNotNull(nameof(mainSplitViewModel.Content))
+           .IfSuccess(vm => vm.IfIs<TView>());
     }
 }

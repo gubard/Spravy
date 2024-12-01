@@ -3,13 +3,13 @@ namespace Spravy.Ui.ViewModels;
 public partial class MainProgressBarViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private double value;
+    private bool isIndeterminate;
 
     [ObservableProperty]
     private double maximum;
 
     [ObservableProperty]
-    private bool isIndeterminate;
+    private double value;
 
     public MainProgressBarViewModel()
     {

@@ -13,11 +13,7 @@ public static class FtpClientExtension
             return;
         }
 
-        var options =
-            FtpListOption.Recursive
-            | FtpListOption.ForceList
-            | FtpListOption.Auto
-            | FtpListOption.AllFiles;
+        var options = FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
         client.DeleteDirectory(folder.FullName, options);
         Log.Logger.Information("Delete FTP folder {Folder}", folder);
     }
@@ -33,11 +29,7 @@ public static class FtpClientExtension
         Log.Logger.Information("Create FTP folder {Folder}", folder);
     }
 
-    public static void UploadDirectory(
-        this FtpClient client,
-        DirectoryInfo localFolder,
-        DirectoryInfo remoteFolder
-    )
+    public static void UploadDirectory(this FtpClient client, DirectoryInfo localFolder, DirectoryInfo remoteFolder)
     {
         client.UploadDirectory(localFolder.FullName, remoteFolder.FullName);
         Log.Logger.Information("Upload {LocalFolder} to {RemoteFolder}", localFolder, remoteFolder);

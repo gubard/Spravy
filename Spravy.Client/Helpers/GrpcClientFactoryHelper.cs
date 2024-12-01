@@ -6,11 +6,10 @@ public static class GrpcClientFactoryHelper
 {
     public static Dictionary<Type, object> ClientFactories = new();
 
-    public static IFactory<Uri, TGrpcClient> CreateCacheGrpcFactory<
-        TGrpcService,
-        TGrpcClient,
-        TGrpcOptions
-    >(TGrpcOptions options, ICacheValidator<Uri, GrpcChannel> cacheValidator)
+    public static IFactory<Uri, TGrpcClient> CreateCacheGrpcFactory<TGrpcService, TGrpcClient, TGrpcOptions>(
+        TGrpcOptions options,
+        ICacheValidator<Uri, GrpcChannel> cacheValidator
+    )
         where TGrpcService : GrpcServiceBase<TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
@@ -24,19 +23,13 @@ public static class GrpcClientFactoryHelper
             (IFactory<ChannelBase, TGrpcClient>)ClientFactories[typeof(TGrpcClient)]
         );
 
-        var clientValidator = new GrpcClientCacheValidator<TGrpcClient>(
-            cacheValidator,
-            cacheFactory
-        );
+        var clientValidator = new GrpcClientCacheValidator<TGrpcClient>(cacheValidator, cacheFactory);
 
         return new CacheFactory<Uri, TGrpcClient>(clientFactory, clientValidator);
     }
 
-    public static IFactory<Uri, TGrpcClient> CreateGrpcFactory<
-        TGrpcService,
-        TGrpcClient,
-        TGrpcOptions
-    >(TGrpcOptions options)
+    public static IFactory<Uri, TGrpcClient>
+        CreateGrpcFactory<TGrpcService, TGrpcClient, TGrpcOptions>(TGrpcOptions options)
         where TGrpcService : GrpcServiceBase<TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
@@ -56,8 +49,7 @@ public static class GrpcClientFactoryHelper
         IRpcExceptionHandler handler,
         IRetryService retryService
     )
-        where TGrpcService : GrpcServiceBase<TGrpcClient>,
-            IGrpcServiceCreator<TGrpcService, TGrpcClient>
+        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator<TGrpcService, TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
@@ -73,8 +65,7 @@ public static class GrpcClientFactoryHelper
         IMetadataFactory metadataFactory,
         IRetryService retryService
     )
-        where TGrpcService : GrpcServiceBase<TGrpcClient>,
-            IGrpcServiceCreatorAuth<TGrpcService, TGrpcClient>
+        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreatorAuth<TGrpcService, TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
@@ -93,20 +84,14 @@ public static class GrpcClientFactoryHelper
         TGrpcOptions options,
         ITokenService tokenService,
         IHttpHeaderFactory httpHeaderFactory
-    )
-        where TGrpcOptions : IGrpcOptionsValue
+    ) where TGrpcOptions : IGrpcOptionsValue
     {
-        tokenService
-            .LoginAsync(options.Token.ThrowIfNullOrWhiteSpace(), CancellationToken.None)
-            .GetAwaiter()
-            .GetResult();
+        tokenService.LoginAsync(options.Token.ThrowIfNullOrWhiteSpace(), CancellationToken.None)
+           .GetAwaiter()
+           .GetResult();
 
         var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
-
-        var combineHttpHeaderFactory = new CombineHttpHeaderFactory(
-            httpHeaderFactory,
-            tokenHttpHeaderFactory
-        );
+        var combineHttpHeaderFactory = new CombineHttpHeaderFactory(httpHeaderFactory, tokenHttpHeaderFactory);
 
         return new MetadataFactory(combineHttpHeaderFactory);
     }

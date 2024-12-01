@@ -2,21 +2,19 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId, IRemove
 {
-    private readonly IToDoUiService toDoUiService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+    private readonly IToDoUiService toDoUiService;
 
     public TodayToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         SpravyCommandNotifyService spravyCommandNotifyService,
         IToDoUiService toDoUiService
-    )
-        : base(true)
+    ) : base(true)
     {
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
-
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
@@ -24,9 +22,22 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
-    public override string ViewId
+    public override string ViewId => TypeCache<TodayToDoItemsViewModel>.Type.Name;
+
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
+        return ToDoSubItemsViewModel.RemoveUi(items);
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        if (!ToDoSubItemsViewModel.List.IsMulti)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return ToDoSubItemsViewModel.GetSelectedItems()
+           .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
     }
 
     public override Cvtar RefreshAsync(CancellationToken ct)
@@ -62,22 +73,5 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
                 Commands.Clear();
             }
         }
-    }
-
-    public Result<ToDoItemEditId> GetToDoItemEditId()
-    {
-        if (!ToDoSubItemsViewModel.List.IsMulti)
-        {
-            return new(new NonItemSelectedError());
-        }
-
-        return ToDoSubItemsViewModel
-            .GetSelectedItems()
-            .IfSuccess(selected => new ToDoItemEditId(new(), selected).ToResult());
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 }

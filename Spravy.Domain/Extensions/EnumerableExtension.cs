@@ -101,8 +101,7 @@ public static class EnumerableExtension
         return string.Join(separator, memory.ToArray());
     }
 
-    public static string JoinString<TEnumerable>(this TEnumerable enumerable)
-        where TEnumerable : IEnumerable
+    public static string JoinString<TEnumerable>(this TEnumerable enumerable) where TEnumerable : IEnumerable
     {
         return enumerable.JoinString(string.Empty);
     }

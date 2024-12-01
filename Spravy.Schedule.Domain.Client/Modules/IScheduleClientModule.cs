@@ -38,18 +38,15 @@ public interface IScheduleClientModule
     {
         if (options.UseCache)
         {
-            return GrpcClientFactoryHelper.CreateCacheGrpcFactory<
-                GrpcScheduleService,
-                ScheduleService.ScheduleServiceClient,
-                GrpcScheduleServiceOptions
-            >(serviceOptions, cacheValidator);
+            return GrpcClientFactoryHelper
+               .CreateCacheGrpcFactory<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
+                    GrpcScheduleServiceOptions>(serviceOptions, cacheValidator);
         }
 
-        return GrpcClientFactoryHelper.CreateGrpcFactory<
-            GrpcScheduleService,
-            ScheduleService.ScheduleServiceClient,
-            GrpcScheduleServiceOptions
-        >(serviceOptions);
+        return GrpcClientFactoryHelper
+           .CreateGrpcFactory<GrpcScheduleService, ScheduleService.ScheduleServiceClient, GrpcScheduleServiceOptions>(
+                serviceOptions
+            );
     }
 
     static IScheduleService ScheduleServiceFactory(
@@ -60,10 +57,14 @@ public interface IScheduleClientModule
         IRetryService retryService
     )
     {
-        return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
-            GrpcScheduleService,
-            ScheduleService.ScheduleServiceClient,
-            GrpcScheduleServiceOptions
-        >(options, grpcClientFactory, handler, metadataFactory, retryService);
+        return GrpcClientFactoryHelper
+           .CreateGrpcServiceAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
+                GrpcScheduleServiceOptions>(
+                options,
+                grpcClientFactory,
+                handler,
+                metadataFactory,
+                retryService
+            );
     }
 }

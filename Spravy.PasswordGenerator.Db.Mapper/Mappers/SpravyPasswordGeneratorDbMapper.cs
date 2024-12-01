@@ -28,9 +28,7 @@ public static partial class SpravyPasswordGeneratorDbMapper
 
     public static partial PasswordItem ToPasswordItem(this PasswordItemEntity options);
 
-    public static partial ReadOnlyMemory<PasswordItem> ToPasswordItem(
-        this ReadOnlyMemory<PasswordItemEntity> options
-    );
+    public static partial ReadOnlyMemory<PasswordItem> ToPasswordItem(this ReadOnlyMemory<PasswordItemEntity> options);
 
     public static GeneratePasswordOptions ToGeneratePasswordOptions(this PasswordItemEntity entity)
     {

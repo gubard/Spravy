@@ -1,34 +1,15 @@
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
-public partial class PasswordItemEntityNotify
-    : NotifyBase,
-        IPasswordItem,
-        IIdProperty,
-        IObjectParameters
+public partial class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
 
     [ObservableProperty]
-    private Guid id;
-
-    [ObservableProperty]
-    private string name = string.Empty;
-
-    [ObservableProperty]
-    private string regex = string.Empty;
-
-    [ObservableProperty]
-    private string key = string.Empty;
-
-    [ObservableProperty]
     private string customAvailableCharacters = string.Empty;
 
     [ObservableProperty]
-    private ushort length = 512;
-
-    [ObservableProperty]
-    private bool isAvailableUpperLatin = true;
+    private Guid id;
 
     [ObservableProperty]
     private bool isAvailableLowerLatin = true;
@@ -40,7 +21,22 @@ public partial class PasswordItemEntityNotify
     private bool isAvailableSpecialSymbols = true;
 
     [ObservableProperty]
+    private bool isAvailableUpperLatin = true;
+
+    [ObservableProperty]
+    private string key = string.Empty;
+
+    [ObservableProperty]
+    private ushort length = 512;
+
+    [ObservableProperty]
     private string login = string.Empty;
+
+    [ObservableProperty]
+    private string name = string.Empty;
+
+    [ObservableProperty]
+    private string regex = string.Empty;
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {

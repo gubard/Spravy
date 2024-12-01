@@ -31,9 +31,7 @@ class Build : NukeBuild
     readonly string AndroidSigningStorePass;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild
-        ? Configuration.Debug
-        : Configuration.Release;
+    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     [Parameter]
     readonly string Domain;
@@ -100,6 +98,7 @@ class Build : NukeBuild
 
     [Parameter]
     readonly string TelegramToken;
+
     IReadOnlyDictionary<string, ushort> Ports;
     IProjectBuilder[] Projects;
 
@@ -108,46 +107,49 @@ class Build : NukeBuild
     VersionService VersionService;
 
     Target StagingSetupAppSettings =>
-        _ =>
-            _.Executes(() =>
+        _ => _.Executes(
+            () =>
             {
                 Projects = CreateStagingFactory()
-                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-                    .ToArray();
+                   .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                   .ToArray();
+
                 SetupAppSettings();
-            });
+            }
+        );
 
     Target ProdSetupAppSettings =>
-        _ =>
-            _.Executes(() =>
+        _ => _.Executes(
+            () =>
             {
-                Projects = CreateProdFactory()
-                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-                    .ToArray();
+                Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
                 SetupAppSettings();
-            });
+            }
+        );
 
     Target StagingBuildDocker =>
-        _ =>
-            _.DependsOn(StagingSetupAppSettings)
-                .Executes(() =>
+        _ => _.DependsOn(StagingSetupAppSettings)
+           .Executes(
+                () =>
                 {
                     foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
                     {
                         serviceProjectBuilder.BuildDocker();
                     }
-                });
+                }
+            );
 
     Target StagingPushDockerImage =>
-        _ =>
-            _.DependsOn(StagingBuildDocker)
-                .Executes(() =>
+        _ => _.DependsOn(StagingBuildDocker)
+           .Executes(
+                () =>
                 {
                     foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
                     {
                         serviceProjectBuilder.PushDockerImage();
                     }
-                });
+                }
+            );
 
     Target StagingClean => _ => _.DependsOn(StagingPushDockerImage).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
@@ -159,39 +161,36 @@ class Build : NukeBuild
     Target ProdCompile => _ => _.DependsOn(ProdRestore).Executes(Compile);
 
     Target StagingPublishServices =>
-        _ =>
-            _.DependsOn(CleanStagingDataBase, StagingCompile)
-                .Executes(
-                    () => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword)
-                );
+        _ => _.DependsOn(CleanStagingDataBase, StagingCompile)
+           .Executes(() => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword));
 
     Target CleanStagingDataBase =>
-        _ =>
-            _.Executes(() =>
+        _ => _.Executes(
+            () =>
             {
                 using var client = new SshClient(
                     CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword)
                 );
+
                 client.Connect();
-                client.SafeRun(
-                    $"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases"
-                );
-            });
+                client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
+            }
+        );
 
     Target Test =>
-        _ =>
-            _.DependsOn(StagingPublishBrowser)
-                .Executes(() =>
+        _ => _.DependsOn(StagingPublishBrowser)
+           .Executes(
+                () =>
                 {
                     foreach (var project in Projects.OfType<TestProjectBuilder>())
                     {
                         project.Test();
                     }
-                });
+                }
+            );
 
     Target ProdPublishServices =>
-        _ =>
-            _.DependsOn(ProdCompile).Executes(() => PublishServices(SshHost, SshUser, SshPassword));
+        _ => _.DependsOn(ProdCompile).Executes(() => PublishServices(SshHost, SshUser, SshPassword));
 
     Target StagingPublishDesktop =>
         _ => _.DependsOn(StagingPublishServices).Executes(PublishDesktop);
@@ -204,11 +203,12 @@ class Build : NukeBuild
     Target ProdPublishAndroid => _ => _.DependsOn(ProdPublishServices).Executes(PublishAndroid);
 
     Target StagingPublishBrowser =>
-        _ =>
-            _.DependsOn(StagingPublishAndroid, StagingPublishDesktop)
-                .Executes(() =>
+        _ => _.DependsOn(StagingPublishAndroid, StagingPublishDesktop)
+           .Executes(
+                () =>
                 {
                     PublishBrowser();
+
                     SendTelegramTextMessage(
                         "Staging",
                         StagingFtpHost,
@@ -216,17 +216,27 @@ class Build : NukeBuild
                         StagingFtpPassword,
                         StagingDomain
                     );
-                });
+                }
+            );
 
     Target ProdPublishBrowser =>
-        _ =>
-            _.DependsOn(ProdPublishAndroid, ProdPublishDesktop)
-                .Executes(() =>
+        _ => _.DependsOn(ProdPublishAndroid, ProdPublishDesktop)
+           .Executes(
+                () =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
+
+                    SendTelegramTextMessage(
+                        "Prod",
+                        FtpHost,
+                        FtpUser,
+                        FtpPassword,
+                        Domain
+                    );
+
                     VersionService.Save();
-                });
+                }
+            );
 
     public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
 
@@ -240,13 +250,27 @@ class Build : NukeBuild
 
         Ports = new Dictionary<string, ushort>
         {
-            { "Spravy.Authentication.Service".GetGrpcServiceName(), 5000 },
-            { "Spravy.EventBus.Service".GetGrpcServiceName(), 5001 },
-            { "Spravy.Router.Service".GetGrpcServiceName(), 5002 },
-            { "Spravy.Schedule.Service".GetGrpcServiceName(), 5003 },
-            { "Spravy.ToDo.Service".GetGrpcServiceName(), 5004 },
-            { "Spravy.PasswordGenerator.Service".GetGrpcServiceName(), 5005 },
-            { "Spravy.Password.Service".GetGrpcServiceName(), 5005 },
+            {
+                "Spravy.Authentication.Service".GetGrpcServiceName(), 5000
+            },
+            {
+                "Spravy.EventBus.Service".GetGrpcServiceName(), 5001
+            },
+            {
+                "Spravy.Router.Service".GetGrpcServiceName(), 5002
+            },
+            {
+                "Spravy.Schedule.Service".GetGrpcServiceName(), 5003
+            },
+            {
+                "Spravy.ToDo.Service".GetGrpcServiceName(), 5004
+            },
+            {
+                "Spravy.PasswordGenerator.Service".GetGrpcServiceName(), 5005
+            },
+            {
+                "Spravy.Password.Service".GetGrpcServiceName(), 5005
+            },
         };
     }
 
@@ -388,35 +412,28 @@ class Build : NukeBuild
         var html = PathHelper.WwwFolder.Combine(domain).Combine("html");
 
         var items = ftpClient
-            .GetListing(
-                html.Combine("downloads", VersionService.Version.ToString()).FullName,
-                FtpListOption.Recursive
+           .GetListing(html.Combine("downloads", VersionService.Version.ToString()).FullName, FtpListOption.Recursive)
+           .Where(
+                x => x.Type == FtpObjectType.File
+                 && (x.Name.EndsWith(".zip")
+                     || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed"))
             )
-            .Where(x =>
-                x.Type == FtpObjectType.File
-                && (
-                    x.Name.EndsWith(".zip")
-                    || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
-                        && x.Name.Contains("Spravy-Signed")
-                )
-            )
-            .Select(x =>
-                InlineKeyboardButton.WithUrl(
+           .Select(
+                x => InlineKeyboardButton.WithUrl(
                     GetButtonName(x.Name),
                     x.FullName.Replace(html.FullName, $"https://{domain}")
                 )
             )
-            .ToArray();
+           .ToArray();
 
         var botClient = new TelegramBotClient(TelegramToken);
 
-        botClient
-            .SendTextMessageAsync(
+        botClient.SendTextMessageAsync(
                 "@spravy_release",
                 $"Published {name} v{VersionService.Version}({VersionService.Version.Code})"
             )
-            .GetAwaiter()
-            .GetResult();
+           .GetAwaiter()
+           .GetResult();
 
         var currentItems = new List<InlineKeyboardButton>();
 
@@ -429,28 +446,18 @@ class Build : NukeBuild
                 continue;
             }
 
-            botClient
-                .SendTextMessageAsync(
-                    "@spravy_release",
-                    "^",
-                    replyMarkup: new InlineKeyboardMarkup(currentItems)
-                )
-                .GetAwaiter()
-                .GetResult();
+            botClient.SendTextMessageAsync("@spravy_release", "^", replyMarkup: new InlineKeyboardMarkup(currentItems))
+               .GetAwaiter()
+               .GetResult();
 
             currentItems.Clear();
         }
 
         if (currentItems.Count != 0)
         {
-            botClient
-                .SendTextMessageAsync(
-                    "@spravy_release",
-                    "#",
-                    replyMarkup: new InlineKeyboardMarkup(currentItems)
-                )
-                .GetAwaiter()
-                .GetResult();
+            botClient.SendTextMessageAsync("@spravy_release", "#", replyMarkup: new InlineKeyboardMarkup(currentItems))
+               .GetAwaiter()
+               .GetResult();
         }
     }
 
@@ -459,23 +466,21 @@ class Build : NukeBuild
         {
             ".APK" => ".APK",
             ".AAB" => ".AAB",
-            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name))
-                .ThrowIfNull()
-                .ToUpperInvariant(),
+            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
             _ => throw new ArgumentOutOfRangeException(name),
         };
 
     string CreteToken()
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
-        var signingCredentials = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha512Signature
-        );
+        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var expires = DateTime.UtcNow.AddDays(30);
 
-        var claims = new List<Claim> { new(ClaimTypes.Role, "Service") };
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Role, "Service"),
+        };
 
         var token = new JwtSecurityToken(
             JwtIssuer,

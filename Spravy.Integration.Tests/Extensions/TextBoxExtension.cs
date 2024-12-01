@@ -2,8 +2,7 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class TextBoxExtension
 {
-    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window)
-        where TTextBox : TextBox
+    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
     {
         if (textBox.Text.IsNullOrWhiteSpace())
         {
@@ -20,8 +19,7 @@ public static class TextBoxExtension
             window.RunJobsAll();
         }
 
-        CycleHelper
-            .While(
+        CycleHelper.While(
                 () => textBox.Text.ThrowIfNull().Length > 0,
                 () =>
                 {
@@ -31,17 +29,12 @@ public static class TextBoxExtension
                     window.RunJobsAll();
                 }
             )
-            .ThrowIfError();
+           .ThrowIfError();
 
         return textBox;
     }
 
-    public static TTextBox SetText<TTextBox>(
-        this TTextBox textBox,
-        Window window,
-        string text,
-        bool focus = true
-    )
+    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text, bool focus = true)
         where TTextBox : TextBox
     {
         if (focus)
@@ -58,8 +51,7 @@ public static class TextBoxExtension
         return textBox;
     }
 
-    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window)
-        where TTextBox : TextBox
+    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
     {
         textBox.ClickOn(window).RunJobsAll(2).MustFocused();
 

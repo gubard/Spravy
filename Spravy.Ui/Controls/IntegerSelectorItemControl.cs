@@ -2,15 +2,11 @@ namespace Spravy.Ui.Controls;
 
 public class IntegerSelectorItemControl : TemplatedControl
 {
-    public static readonly StyledProperty<int> ValueProperty = AvaloniaProperty.Register<
-        IntegerSelectorItemControl,
-        int
-    >(nameof(Value));
+    public static readonly StyledProperty<int> ValueProperty =
+        AvaloniaProperty.Register<IntegerSelectorItemControl, int>(nameof(Value));
 
-    public static readonly StyledProperty<bool> IsSelectedProperty = AvaloniaProperty.Register<
-        IntegerSelectorItemControl,
-        bool
-    >(nameof(IsSelected));
+    public static readonly StyledProperty<bool> IsSelectedProperty =
+        AvaloniaProperty.Register<IntegerSelectorItemControl, bool>(nameof(IsSelected));
 
     private ToggleButton? toggleButton;
 

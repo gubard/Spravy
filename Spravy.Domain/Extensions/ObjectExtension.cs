@@ -2,8 +2,7 @@ namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension2
 {
-    public static OptionStruct<TValue> ToOption<TValue>(this TValue value)
-        where TValue : struct
+    public static OptionStruct<TValue> ToOption<TValue>(this TValue value) where TValue : struct
     {
         return new(value);
     }
@@ -26,8 +25,7 @@ public static class ObjectExtension
         return result;
     }
 
-    public static Option<TValue> ToOption<TValue>(this TValue? value)
-        where TValue : class
+    public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : class
     {
         if (value is null)
         {
@@ -37,8 +35,7 @@ public static class ObjectExtension
         return new(value);
     }
 
-    public static OptionStruct<TValue> ToOption<TValue>(this TValue? value)
-        where TValue : struct
+    public static OptionStruct<TValue> ToOption<TValue>(this TValue? value) where TValue : struct
     {
         if (value is null)
         {
@@ -48,8 +45,7 @@ public static class ObjectExtension
         return new(value.Value);
     }
 
-    public static Result<TResult> IfIs<TResult>(this object obj)
-        where TResult : notnull
+    public static Result<TResult> IfIs<TResult>(this object obj) where TResult : notnull
     {
         if (obj is TResult result)
         {
@@ -59,14 +55,12 @@ public static class ObjectExtension
         return new(new CastError(obj.GetType(), typeof(TResult)));
     }
 
-    public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors)
-        where TValue : notnull
+    public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors) where TValue : notnull
     {
         return new(errors);
     }
 
-    public static Result<TValue> ToResult<TValue>(this TValue value)
-        where TValue : notnull
+    public static Result<TValue> ToResult<TValue>(this TValue value) where TValue : notnull
     {
         return new(value);
     }
@@ -99,7 +93,10 @@ public static class ObjectExtension
 
     public static T[] AsArray<T>(this T obj)
     {
-        return new[] { obj };
+        return new[]
+        {
+            obj,
+        };
     }
 
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
@@ -166,10 +163,7 @@ public static class ObjectExtension
         return array;
     }
 
-    public static ReadOnlyMemory<T> Combine<T>(
-        this ReadOnlyMemory<T> memory,
-        ReadOnlyMemory<T> value
-    )
+    public static ReadOnlyMemory<T> Combine<T>(this ReadOnlyMemory<T> memory, ReadOnlyMemory<T> value)
     {
         if (value.Length == 0)
         {
@@ -183,10 +177,7 @@ public static class ObjectExtension
         return result;
     }
 
-    public static ReadOnlyMemory<T> Combine<T>(
-        this ReadOnlyMemory<T> memory,
-        params ReadOnlyMemory<T>[] memories
-    )
+    public static ReadOnlyMemory<T> Combine<T>(this ReadOnlyMemory<T> memory, params ReadOnlyMemory<T>[] memories)
     {
         if (memories.Length == 0)
         {
@@ -220,7 +211,7 @@ public static class ObjectExtension
 
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T obj)
     {
-        return new([obj]);
+        return new([obj,]);
     }
 
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Memory<T> memory)
@@ -228,8 +219,7 @@ public static class ObjectExtension
         return memory;
     }
 
-    public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
-        where T : notnull
+    public static Result<T> IfNotNull<T>(this T? obj, string propertyName) where T : notnull
     {
         if (obj is null)
         {
@@ -239,8 +229,7 @@ public static class ObjectExtension
         return new(obj);
     }
 
-    public static Result<T> IfNotNullStruct<T>(this T? obj, string propertyName)
-        where T : struct
+    public static Result<T> IfNotNullStruct<T>(this T? obj, string propertyName) where T : struct
     {
         if (obj is null)
         {
@@ -250,8 +239,7 @@ public static class ObjectExtension
         return new(obj.Value);
     }
 
-    public static void ThrowDisposedException<T>(this T obj)
-        where T : notnull
+    public static void ThrowDisposedException<T>(this T obj) where T : notnull
     {
         throw new ObjectDisposedException<T>(obj);
     }
@@ -276,8 +264,7 @@ public static class ObjectExtension
         return (T)obj;
     }
 
-    public static Result<T> CastObject<T>(this object? obj, string name)
-        where T : notnull
+    public static Result<T> CastObject<T>(this object? obj, string name) where T : notnull
     {
         if (obj is null)
         {
@@ -292,8 +279,7 @@ public static class ObjectExtension
         return new(new CastError(obj.GetType(), typeof(T)));
     }
 
-    public static T? As<T>(this object value)
-        where T : class
+    public static T? As<T>(this object value) where T : class
     {
         return value as T;
     }
@@ -303,10 +289,7 @@ public static class ObjectExtension
         return (T)value;
     }
 
-    public static T ThrowIfNull<T>(
-        this T? obj,
-        [CallerArgumentExpression(nameof(obj))] string paramName = ""
-    )
+    public static T ThrowIfNull<T>(this T? obj, [CallerArgumentExpression(nameof(obj))] string paramName = "")
     {
         if (obj is null)
         {
@@ -316,10 +299,7 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static T ThrowIfNullStruct<T>(
-        this T? obj,
-        [CallerArgumentExpression(nameof(obj))] string paramName = ""
-    )
+    public static T ThrowIfNullStruct<T>(this T? obj, [CallerArgumentExpression(nameof(obj))] string paramName = "")
         where T : struct
     {
         return obj ?? throw new ArgumentNullException(paramName);
@@ -329,8 +309,7 @@ public static class ObjectExtension
         this TObj obj,
         TObj expected,
         [CallerArgumentExpression(nameof(obj))] string name = ""
-    )
-        where TObj : notnull
+    ) where TObj : notnull
     {
         if (obj.Equals(expected))
         {
@@ -350,8 +329,7 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static Ref<T> ToRef<T>(this T value)
-        where T : struct
+    public static Ref<T> ToRef<T>(this T value) where T : struct
     {
         return new(value);
     }

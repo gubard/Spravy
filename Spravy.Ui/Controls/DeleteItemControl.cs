@@ -1,7 +1,7 @@
 namespace Spravy.Ui.Controls;
 
 [TemplatePart(Name = "PART_TimePicker", Type = typeof(Button))]
-public partial class DeleteItemControl : ContentControl
+public class DeleteItemControl : ContentControl
 {
     public EventHandler? ClickDelete;
 

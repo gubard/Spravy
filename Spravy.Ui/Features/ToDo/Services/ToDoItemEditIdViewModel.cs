@@ -60,7 +60,10 @@ public abstract class ToDoItemEditIdViewModel : DialogableViewModelBase
 
         if (EditItems.IsEmpty)
         {
-            return new[] { item };
+            return new[]
+            {
+                item,
+            };
         }
 
         return EditItems;

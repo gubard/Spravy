@@ -13,10 +13,7 @@ public readonly struct HttpHeaderItem
 
     public static HttpHeaderItem CreateBearerAuthorization(string token)
     {
-        return new(
-            HttpNames.HeaderAuthorizationName,
-            $"{HttpNames.BearerAuthorizationName} {token}"
-        );
+        return new(HttpNames.HeaderAuthorizationName, $"{HttpNames.BearerAuthorizationName} {token}");
     }
 
     public static HttpHeaderItem CreateUserId(string userId)

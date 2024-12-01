@@ -5,17 +5,15 @@ using Spravy.EventBus.Db.Sqlite.Services;
 
 namespace Spravy.EventBus.Db.Sqlite.Migrator;
 
-public class SpravyEventBusDesignTimeDbContextFactory
-    : IDesignTimeDbContextFactory<SpravyDbEventBusDbContext>
+public class SpravyEventBusDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbEventBusDbContext>
 {
     public SpravyDbEventBusDbContext CreateDbContext(string[] args)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(
+        var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],
                 b => b.MigrationsAssembly(SpravyEventBusDbSqliteMigratorMark.AssemblyFullName)
             )
-            .Options;
+           .Options;
 
         return new(options, new SqliteEventBusDbContextSetup());
     }

@@ -1,11 +1,10 @@
 namespace Spravy.Ui.Features.ToDo.Settings;
 
-public class ToDoItemCreateTimerViewModelSettings
-    : IViewModelSetting<ToDoItemCreateTimerViewModelSettings>
+public class ToDoItemCreateTimerViewModelSettings : IViewModelSetting<ToDoItemCreateTimerViewModelSettings>
 {
-    public static ToDoItemCreateTimerViewModelSettings Default { get; } = new();
-
-    public ToDoItemCreateTimerViewModelSettings() { }
+    public ToDoItemCreateTimerViewModelSettings()
+    {
+    }
 
     public ToDoItemCreateTimerViewModelSettings(ToDoItemCreateTimerViewModel viewModel)
     {
@@ -19,4 +18,5 @@ public class ToDoItemCreateTimerViewModelSettings
     public string Name { get; set; } = string.Empty;
     public List<string> Names { get; set; } = new();
     public List<TimeSpan> Times { get; set; } = new();
+    public static ToDoItemCreateTimerViewModelSettings Default { get; } = new();
 }

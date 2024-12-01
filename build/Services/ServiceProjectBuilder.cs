@@ -11,11 +11,12 @@ namespace _build.Services;
 
 public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions>
 {
-    public ServiceProjectBuilder(
-        VersionService versionService,
-        ServiceProjectBuilderOptions serviceOptions
+    public ServiceProjectBuilder(VersionService versionService, ServiceProjectBuilderOptions serviceOptions) : base(
+        serviceOptions,
+        versionService
     )
-        : base(serviceOptions, versionService) { }
+    {
+    }
 
     public override void Setup()
     {
@@ -40,27 +41,25 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     {
         if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetPublish(setting =>
-                setting
-                    .SetConfiguration(Options.Configuration)
-                    .SetProject(Options.CsprojFile.FullName)
-                    .SetOutput(Options.PublishFolder.FullName)
-                    .EnableNoBuild()
-                    .EnableNoRestore()
+            DotNetTasks.DotNetPublish(
+                setting => setting.SetConfiguration(Options.Configuration)
+                   .SetProject(Options.CsprojFile.FullName)
+                   .SetOutput(Options.PublishFolder.FullName)
+                   .EnableNoBuild()
+                   .EnableNoRestore()
             );
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetPublish(setting =>
-                    setting
-                        .SetConfiguration(Options.Configuration)
-                        .SetProject(Options.CsprojFile.FullName)
-                        .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
-                        .EnableNoBuild()
-                        .EnableNoRestore()
-                        .SetRuntime(runtime.Name)
+                DotNetTasks.DotNetPublish(
+                    setting => setting.SetConfiguration(Options.Configuration)
+                       .SetProject(Options.CsprojFile.FullName)
+                       .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
+                       .EnableNoBuild()
+                       .EnableNoRestore()
+                       .SetRuntime(runtime.Name)
                 );
             }
         }
@@ -73,10 +72,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
 
         if (Options.Runtimes.IsEmpty)
         {
-            ftpClient.UploadDirectory(
-                Options.PublishFolder.FullName,
-                Options.GetAppFolder().FullName
-            );
+            ftpClient.UploadDirectory(Options.PublishFolder.FullName, Options.GetAppFolder().FullName);
         }
         else
         {
@@ -92,22 +88,18 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         serviceFile.WriteAllText(GetDaemonConfig());
         ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
-        sshClient.RunSudo(
-            Options,
-            $"cp {serviceFile} /etc/systemd/system/{Options.GetServiceName()}"
-        );
+        sshClient.RunSudo(Options, $"cp {serviceFile} /etc/systemd/system/{Options.GetServiceName()}");
     }
 
     public void BuildDocker()
     {
-        var process = Process
-            .Start(
+        var process = Process.Start(
                 new ProcessStartInfo(
                     "docker",
                     $"build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}"
                 )
             )
-            .ThrowIfNull();
+           .ThrowIfNull();
 
         process.WaitForExit();
 
@@ -119,14 +111,13 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
 
     public void PushDockerImage()
     {
-        var processTag = Process
-            .Start(
+        var processTag = Process.Start(
                 new ProcessStartInfo(
                     "docker",
                     $"tag {Options.GetProjectName().ToLower()}:{versionService.Version} 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"
                 )
             )
-            .ThrowIfNull();
+           .ThrowIfNull();
 
         processTag.WaitForExit();
 
@@ -135,14 +126,13 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
             throw new($"Tag ExitCode {processTag.ExitCode}");
         }
 
-        var processPush = Process
-            .Start(
+        var processPush = Process.Start(
                 new ProcessStartInfo(
                     "docker",
                     $"image push 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"
                 )
             )
-            .ThrowIfNull();
+           .ThrowIfNull();
 
         processPush.WaitForExit();
 
@@ -154,23 +144,23 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
 
     string GetDaemonConfig() =>
         $"""
-            [Unit]
-            Description={Options.GetProjectName()}
-            After=network.target
+        [Unit]
+        Description={Options.GetProjectName()}
+        After=network.target
 
-            [Service]
-            WorkingDirectory={Options.GetAppFolder()}
-            ExecStart=/usr/bin/dotnet {Options.GetAppDll()}
-            Restart=always
-            # Restart service after 10 seconds if the dotnet service crashes:
-            RestartSec=10
-            KillSignal=SIGINT
-            SyslogIdentifier={Options.GetServiceName().Replace(",", "-")}
-            User={Options.FtpUser}
-            Environment=ASPNETCORE_ENVIRONMENT=Production
-            Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+        [Service]
+        WorkingDirectory={Options.GetAppFolder()}
+        ExecStart=/usr/bin/dotnet {Options.GetAppDll()}
+        Restart=always
+        # Restart service after 10 seconds if the dotnet service crashes:
+        RestartSec=10
+        KillSignal=SIGINT
+        SyslogIdentifier={Options.GetServiceName().Replace(",", "-")}
+        User={Options.FtpUser}
+        Environment=ASPNETCORE_ENVIRONMENT=Production
+        Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
 
-            [Install]
-            WantedBy=multi-user.target
-            """;
+        [Install]
+        WantedBy=multi-user.target
+        """;
 }

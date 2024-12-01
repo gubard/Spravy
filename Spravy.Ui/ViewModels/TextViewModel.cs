@@ -3,24 +3,21 @@ namespace Spravy.Ui.ViewModels;
 public partial class TextViewModel : DialogableViewModelBase
 {
     [ObservableProperty]
+    private bool acceptsReturn;
+
+    [ObservableProperty]
     private bool isReadOnly;
+
+    [ObservableProperty]
+    private string label = string.Empty;
 
     [ObservableProperty]
     private string text = string.Empty;
 
     [ObservableProperty]
-    private bool acceptsReturn;
-
-    [ObservableProperty]
     private TextWrapping textWrapping;
 
-    [ObservableProperty]
-    private string label = string.Empty;
-
-    public override string ViewId
-    {
-        get => $"{TypeCache<TextViewModel>.Type}";
-    }
+    public override string ViewId => $"{TypeCache<TextViewModel>.Type}";
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

@@ -7,9 +7,9 @@ namespace Spavy.LocalStorage.Sqlite.Services;
 
 public class SqliteObjectStorage : IObjectStorage
 {
-    private readonly ISerializer serializer;
-    private readonly FileInfo file;
     private readonly string connectionString;
+    private readonly FileInfo file;
+    private readonly ISerializer serializer;
 
     public SqliteObjectStorage(ISerializer serializer, FileInfo file)
     {
@@ -17,6 +17,27 @@ public class SqliteObjectStorage : IObjectStorage
         this.file = file;
         connectionString = $"DataSource={file.FullName}";
         Init();
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id, CancellationToken ct)
+    {
+        return IsExistsCore(id, ct).ConfigureAwait(false);
+    }
+
+    public Cvtar DeleteAsync(string id, CancellationToken ct)
+    {
+        return DeleteCore(id, ct).ConfigureAwait(false);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id, CancellationToken ct)
+        where TObject : notnull
+    {
+        return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);
+    }
+
+    public Cvtar SaveObjectAsync(string id, object obj, CancellationToken ct)
+    {
+        return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }
 
     private void Init()
@@ -50,16 +71,6 @@ public class SqliteObjectStorage : IObjectStorage
 
             throw;
         }
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id, CancellationToken ct)
-    {
-        return IsExistsCore(id, ct).ConfigureAwait(false);
-    }
-
-    public Cvtar DeleteAsync(string id, CancellationToken ct)
-    {
-        return DeleteCore(id, ct).ConfigureAwait(false);
     }
 
     private async ValueTask<Result> DeleteCore(string id, CancellationToken ct)
@@ -113,20 +124,6 @@ public class SqliteObjectStorage : IObjectStorage
 
             throw;
         }
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(
-        string id,
-        CancellationToken ct
-    )
-        where TObject : notnull
-    {
-        return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);
-    }
-
-    public Cvtar SaveObjectAsync(string id, object obj, CancellationToken ct)
-    {
-        return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }
 
     public async ValueTask<Result> SaveObjectCore(string id, object obj, CancellationToken ct)

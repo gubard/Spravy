@@ -4,27 +4,27 @@ namespace Spravy.Ui.Controls;
 
 public class PathControl : TemplatedControl
 {
-    private static readonly FuncTemplate<Control?> defaultSeparator =
-        new(() => new Icon { Value = "mdi-chevron-right" });
+    private static readonly FuncTemplate<Control?> defaultSeparator = new(
+        () => new Icon
+        {
+            Value = "mdi-chevron-right",
+        }
+    );
 
     public static readonly StyledProperty<ITemplate<Control?>> SeparatorProperty =
-        AvaloniaProperty.Register<PathControl, ITemplate<Control?>>(
-            nameof(SeparatorPanel),
-            defaultSeparator
-        );
+        AvaloniaProperty.Register<PathControl, ITemplate<Control?>>(nameof(SeparatorPanel), defaultSeparator);
 
     public static readonly StyledProperty<IDataTemplate?> ItemTemplateProperty =
         ItemsControl.ItemTemplateProperty.AddOwner<PathControl>();
 
-    public static readonly StyledProperty<IEnumerable> SegmentsProperty = AvaloniaProperty.Register<
-        PathControl,
-        IEnumerable
-    >(nameof(Segments), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<IEnumerable> SegmentsProperty =
+        AvaloniaProperty.Register<PathControl, IEnumerable>(nameof(Segments), defaultBindingMode: BindingMode.TwoWay);
 
-    public static readonly StyledProperty<IEnumerable> ItemsProperty = AvaloniaProperty.Register<
-        PathControl,
-        IEnumerable
-    >(nameof(Items), defaultBindingMode: BindingMode.OneWayToSource);
+    public static readonly StyledProperty<IEnumerable> ItemsProperty =
+        AvaloniaProperty.Register<PathControl, IEnumerable>(
+            nameof(Items),
+            defaultBindingMode: BindingMode.OneWayToSource
+        );
 
     static PathControl()
     {

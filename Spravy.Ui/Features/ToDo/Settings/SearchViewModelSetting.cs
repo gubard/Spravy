@@ -2,6 +2,11 @@ namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
 {
+    static SearchViewModelSetting()
+    {
+        Default = new();
+    }
+
     public SearchViewModelSetting(SearchToDoItemsViewModel viewModel)
     {
         SearchText = viewModel.SearchText;
@@ -10,11 +15,8 @@ public class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
         SearchTexts.AddRange(searchTexts.DistinctIgnoreNullOrWhiteSpace());
     }
 
-    public SearchViewModelSetting() { }
-
-    static SearchViewModelSetting()
+    public SearchViewModelSetting()
     {
-        Default = new();
     }
 
     public string SearchText { get; set; } = string.Empty;

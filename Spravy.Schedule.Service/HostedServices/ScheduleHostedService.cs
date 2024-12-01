@@ -46,60 +46,46 @@ public class ScheduleHostedService : IHostedService
             {
                 try
                 {
-                    await spravyScheduleDbContextFactory
-                        .Create(file.ToSqliteConnectionString())
-                        .IfSuccessAsync(
-                            context =>
-                                context.AtomicExecuteAsync(
-                                    () =>
-                                        context
-                                            .Set<TimerEntity>()
-                                            .AsNoTracking()
-                                            .ToArrayEntitiesAsync(ct)
-                                            .IfSuccessAllInOrderAsync(
-                                                timers =>
+                    await spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString())
+                       .IfSuccessAsync(
+                            context => context.AtomicExecuteAsync(
+                                () => context.Set<TimerEntity>()
+                                   .AsNoTracking()
+                                   .ToArrayEntitiesAsync(ct)
+                                   .IfSuccessAllInOrderAsync(
+                                        timers =>
+                                        {
+                                            var list = new List<Func<Cvtar>>();
+
+                                            foreach (var timer in timers.Span)
+                                            {
+                                                if (timer.DueDateTime > DateTimeOffset.Now)
                                                 {
-                                                    var list = new List<Func<Cvtar>>();
+                                                    continue;
+                                                }
 
-                                                    foreach (var timer in timers.Span)
-                                                    {
-                                                        if (timer.DueDateTime > DateTimeOffset.Now)
-                                                        {
-                                                            continue;
-                                                        }
-
-                                                        list.Add(
-                                                            () =>
-                                                                eventBusServiceFactory
-                                                                    .Create(
-                                                                        file.GetFileNameWithoutExtension()
-                                                                    )
-                                                                    .IfSuccessAsync(
-                                                                        eventBusService =>
-                                                                            eventBusService
-                                                                                .PublishEventAsync(
-                                                                                    timer.EventId,
-                                                                                    timer.Content,
-                                                                                    ct
-                                                                                )
-                                                                                .IfSuccessAsync(
-                                                                                    () =>
-                                                                                        context.RemoveEntity(
-                                                                                            timer
-                                                                                        ),
-                                                                                    ct
-                                                                                ),
+                                                list.Add(
+                                                    () => eventBusServiceFactory
+                                                       .Create(file.GetFileNameWithoutExtension())
+                                                       .IfSuccessAsync(
+                                                            eventBusService =>
+                                                                eventBusService
+                                                                   .PublishEventAsync(timer.EventId, timer.Content, ct)
+                                                                   .IfSuccessAsync(
+                                                                        () => context.RemoveEntity(timer),
                                                                         ct
-                                                                    )
-                                                        );
-                                                    }
+                                                                    ),
+                                                            ct
+                                                        )
+                                                );
+                                            }
 
-                                                    return list.ToArray();
-                                                },
-                                                ct
-                                            ),
-                                    ct
-                                ),
+                                            return list.ToArray();
+                                        },
+                                        ct
+                                    ),
+                                ct
+                            ),
                             ct
                         );
                 }

@@ -9,11 +9,6 @@ public static partial class AuthenticationDbMapper
 {
     public static UserTokenClaims ToUserTokenClaims(this UserEntity entity)
     {
-        return new(
-            entity.Login ?? string.Empty,
-            entity.Id,
-            entity.Role,
-            entity.Email ?? string.Empty
-        );
+        return new(entity.Login ?? string.Empty, entity.Id, entity.Role, entity.Email ?? string.Empty);
     }
 }

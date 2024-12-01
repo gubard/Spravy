@@ -19,22 +19,21 @@ public class SpravyCommand
         ITaskProgressService taskProgressService
     )
     {
-        var work = TaskWork.Create(
-            errorHandler,
-            ct => taskProgressService.RunProgressAsync(func, ct)
-        );
+        var work = TaskWork.Create(errorHandler, ct => taskProgressService.RunProgressAsync(func, ct));
 
-        var command = new AsyncRelayCommand(async () =>
-        {
-            try
+        var command = new AsyncRelayCommand(
+            async () =>
             {
-                await work.RunAsync();
+                try
+                {
+                    await work.RunAsync();
+                }
+                catch (Exception e)
+                {
+                    await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
+                }
             }
-            catch (Exception e)
-            {
-                await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
-            }
-        });
+        );
 
         return new(work, command);
     }
@@ -50,17 +49,19 @@ public class SpravyCommand
             (param, ct) => taskProgressService.RunProgressAsync(func, param, ct)
         );
 
-        var command = new AsyncRelayCommand<TParam>(async p =>
-        {
-            try
+        var command = new AsyncRelayCommand<TParam>(
+            async p =>
             {
-                await work.RunAsync(p.ThrowIfNull());
+                try
+                {
+                    await work.RunAsync(p.ThrowIfNull());
+                }
+                catch (Exception e)
+                {
+                    await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
+                }
             }
-            catch (Exception e)
-            {
-                await errorHandler.ExceptionHandleAsync(e, CancellationToken.None);
-            }
-        });
+        );
 
         return new(work, command);
     }

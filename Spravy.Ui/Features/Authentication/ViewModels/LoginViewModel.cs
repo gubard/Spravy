@@ -9,26 +9,22 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
     private bool isBusy;
 
     [ObservableProperty]
+    private bool isRememberMe;
+
+    [ObservableProperty]
     private string login = string.Empty;
 
     [ObservableProperty]
     private string password = string.Empty;
 
-    [ObservableProperty]
-    private bool isRememberMe;
-
-    public LoginViewModel(IObjectStorage objectStorage, IPropertyValidator propertyValidator)
-        : base(true)
+    public LoginViewModel(IObjectStorage objectStorage, IPropertyValidator propertyValidator) : base(true)
     {
         isBusy = true;
         this.objectStorage = objectStorage;
         this.propertyValidator = propertyValidator;
     }
 
-    public override string ViewId
-    {
-        get => TypeCache<LoginViewModel>.Type.Name;
-    }
+    public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -79,11 +75,10 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
     {
         get
         {
-            var hasError =
-                propertyValidator.ValidLogin(Login, nameof(Login)) is not null
-                || propertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
-                || propertyValidator.ValidPassword(Password, nameof(Password)) is not null
-                || propertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null;
+            var hasError = propertyValidator.ValidLogin(Login, nameof(Login)) is not null
+             || propertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
+             || propertyValidator.ValidPassword(Password, nameof(Password)) is not null
+             || propertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null;
 
             return hasError;
         }
@@ -101,19 +96,17 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
-        return objectStorage
-            .GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(
-                setting =>
-                    this.PostUiBackground(
-                        () =>
-                        {
-                            Login = setting.Login;
+        return objectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(
+                setting => this.PostUiBackground(
+                    () =>
+                    {
+                        Login = setting.Login;
 
-                            return Result.Success;
-                        },
-                        ct
-                    ),
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }

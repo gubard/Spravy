@@ -2,10 +2,9 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class CloneViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
-    public override string ViewId => TypeCache<CloneViewModel>.Type.Name;
+    private readonly IToDoCache toDoCache;
 
     private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
 
     public CloneViewModel(
         Option<ToDoItemEntityNotify> editItem,
@@ -13,15 +12,32 @@ public class CloneViewModel : ToDoItemEditIdViewModel, IApplySettings
         ToDoItemSelectorViewModel toDoItemSelectorViewModel,
         IToDoService toDoService,
         IToDoCache toDoCache
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         ToDoItemSelectorViewModel = toDoItemSelectorViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
     }
 
+    public override string ViewId => TypeCache<CloneViewModel>.Type.Name;
+
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        if (ToDoItemSelectorViewModel.SelectedItem is null)
+        {
+            return toDoService.CloneToDoItemAsync(ResultIds, new(), ct).ToResultOnlyAsync();
+        }
+
+        return toDoService.CloneToDoItemAsync(ResultIds, new(ToDoItemSelectorViewModel.SelectedItem.Id), ct)
+           .ToResultOnlyAsync();
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
+    }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
@@ -36,22 +52,5 @@ public class CloneViewModel : ToDoItemEditIdViewModel, IApplySettings
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        if (ToDoItemSelectorViewModel.SelectedItem is null)
-        {
-            return toDoService.CloneToDoItemAsync(ResultIds, new(), ct).ToResultOnlyAsync();
-        }
-
-        return toDoService
-            .CloneToDoItemAsync(ResultIds, new(ToDoItemSelectorViewModel.SelectedItem.Id), ct)
-            .ToResultOnlyAsync();
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

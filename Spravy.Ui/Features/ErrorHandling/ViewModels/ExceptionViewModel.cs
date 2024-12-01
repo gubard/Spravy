@@ -13,8 +13,11 @@ public class ExceptionViewModel : DialogableViewModelBase
     {
         this.exception = exception;
 
-        CopyErrorCommand = SpravyCommand.Create(ct => clipboardService.SetTextAsync(Message, ct), errorHandler,
-            taskProgressService);
+        CopyErrorCommand = SpravyCommand.Create(
+            ct => clipboardService.SetTextAsync(Message, ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand CopyErrorCommand { get; }

@@ -10,11 +10,10 @@ public class TestAppBuilder
 
     static TestAppBuilder()
     {
-        Configuration = new ConfigurationBuilder()
-            .AddJsonFile("testsettings.json")
-            .AddEnvironmentVariables("Spravy_")
-            .AddCommandLine(Environment.GetCommandLineArgs())
-            .Build();
+        Configuration = new ConfigurationBuilder().AddJsonFile("testsettings.json")
+           .AddEnvironmentVariables("Spravy_")
+           .AddCommandLine(Environment.GetCommandLineArgs())
+           .Build();
     }
 
     public static AppBuilder BuildAvaloniaApp()
@@ -22,11 +21,15 @@ public class TestAppBuilder
         DiHelper.ServiceFactory = new TestServiceProvider();
         IconProvider.Current.Register<MaterialDesignIconProvider>();
 
-        return AppBuilder
-            .Configure<App>()
-            .UseSkia()
-            .UseHeadless(new() { UseHeadlessDrawing = false, })
-            .WithJetBrainsMonoFont()
-            .WithInterFont();
+        return AppBuilder.Configure<App>()
+           .UseSkia()
+           .UseHeadless(
+                new()
+                {
+                    UseHeadlessDrawing = false,
+                }
+            )
+           .WithJetBrainsMonoFont()
+           .WithInterFont();
     }
 }

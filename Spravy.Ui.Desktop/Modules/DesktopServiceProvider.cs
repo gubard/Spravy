@@ -25,7 +25,12 @@ namespace Spravy.Ui.Desktop.Modules;
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory
 {
-    static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
+    public T CreateService<T>() where T : notnull
+    {
+        return GetService<T>();
+    }
+
+    private static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
     {
         return new SqliteObjectStorage(serializer, "./storage/storage.db".ToFile());
     }
@@ -43,11 +48,5 @@ public partial class DesktopServiceProvider : IServiceFactory
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build();
-    }
-
-    public T CreateService<T>()
-        where T : notnull
-    {
-        return GetService<T>();
     }
 }

@@ -100,13 +100,9 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
 {
-    static AppOptions AppOptionsFactory(
-        ISerializer serializer,
-        IConfigurationLoader configurationLoader
-    )
+    static AppOptions AppOptionsFactory(ISerializer serializer, IConfigurationLoader configurationLoader)
     {
         using var stream = configurationLoader.GetStream();
-
         var configuration = serializer.Deserialize<AppOptionsConfiguration>(stream);
 
         return configuration.ThrowIfError().AppOptions.ThrowIfNull();
@@ -114,14 +110,18 @@ public interface IUiModule
 
     static IDesktopTopLevelControl DesktopTopLevelControlFactory(IRootViewFactory rootViewFactory)
     {
-        return new MainWindow { DataContext = rootViewFactory.CreateMainWindowModel() };
+        return new MainWindow
+        {
+            DataContext = rootViewFactory.CreateMainWindowModel(),
+        };
     }
 
-    static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(
-        IRootViewFactory rootViewFactory
-    )
+    static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(IRootViewFactory rootViewFactory)
     {
-        return new SingleView { DataContext = rootViewFactory.CreateSingleViewModel() };
+        return new SingleView
+        {
+            DataContext = rootViewFactory.CreateSingleViewModel(),
+        };
     }
 
     static IEnumerable<IDataTemplate> DataTemplatesFactory(
@@ -130,7 +130,10 @@ public interface IUiModule
         IViewFactory viewFactory
     )
     {
-        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory, viewFactory) };
+        return new[]
+        {
+            new ModuleDataTemplate(viewSelector, serviceFactory, viewFactory),
+        };
     }
 
     static Application ApplicationFactory()
@@ -138,10 +141,7 @@ public interface IUiModule
         return Application.Current.ThrowIfNull(nameof(Application));
     }
 
-    static IHttpHeaderFactory HttpHeaderFactoryFactory(
-        TokenHttpHeaderFactory token,
-        TimeZoneHttpHeaderFactory timeZone
-    )
+    static IHttpHeaderFactory HttpHeaderFactoryFactory(TokenHttpHeaderFactory token, TimeZoneHttpHeaderFactory timeZone)
     {
         return new CombineHttpHeaderFactory(token, timeZone);
     }

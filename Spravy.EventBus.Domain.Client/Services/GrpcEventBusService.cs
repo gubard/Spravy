@@ -1,9 +1,8 @@
 namespace Spravy.EventBus.Domain.Client.Services;
 
-public class GrpcEventBusService
-    : GrpcServiceBase<EventBusService.EventBusServiceClient>,
-        IEventBusService,
-        IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusService.EventBusServiceClient>
+public class GrpcEventBusService : GrpcServiceBase<EventBusService.EventBusServiceClient>,
+    IEventBusService,
+    IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusService.EventBusServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
 
@@ -13,8 +12,7 @@ public class GrpcEventBusService
         IMetadataFactory metadataFactory,
         IRpcExceptionHandler handler,
         IRetryService retryService
-    )
-        : base(grpcClientFactory, host, handler, retryService)
+    ) : base(grpcClientFactory, host, handler, retryService)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -22,25 +20,22 @@ public class GrpcEventBusService
     public Cvtar PublishEventAsync(Guid eventId, ReadOnlyMemory<byte> content, CancellationToken ct)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata =>
+                    {
+                        var request = new PublishEventRequest
                         {
-                            var request = new PublishEventRequest
-                            {
-                                EventId = eventId.ToByteString(),
-                                Content = content.ToByteString(),
-                            };
+                            EventId = eventId.ToByteString(),
+                            Content = content.ToByteString(),
+                        };
 
-                            return client
-                                .PublishEventAsync(request, metadata, cancellationToken: ct)
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false);
-                        },
-                        ct
-                    ),
+                        return client.PublishEventAsync(request, metadata, cancellationToken: ct)
+                           .ToValueTaskResultOnly()
+                           .ConfigureAwait(false);
+                    },
+                    ct
+                ),
             ct
         );
     }
@@ -51,26 +46,20 @@ public class GrpcEventBusService
     )
     {
         return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                        {
-                            var request = new GetEventsRequest();
-                            request.EventIds.AddRange(eventIds.ToByteString().ToArray());
+            client => metadataFactory.CreateAsync(ct)
+               .IfSuccessAsync(
+                    metadata =>
+                    {
+                        var request = new GetEventsRequest();
+                        request.EventIds.AddRange(eventIds.ToByteString().ToArray());
 
-                            return client
-                                .GetEventsAsync(request, metadata, cancellationToken: ct)
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    events => events.Events.ToEventValue().ToResult(),
-                                    ct
-                                );
-                        },
-                        ct
-                    ),
+                        return client.GetEventsAsync(request, metadata, cancellationToken: ct)
+                           .ToValueTaskResultValueOnly()
+                           .ConfigureAwait(false)
+                           .IfSuccessAsync(events => events.Events.ToEventValue().ToResult(), ct);
+                    },
+                    ct
+                ),
             ct
         );
     }
@@ -83,6 +72,12 @@ public class GrpcEventBusService
         IRetryService retryService
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, handler, retryService);
+        return new(
+            grpcClientFactory,
+            host,
+            metadataFactory,
+            handler,
+            retryService
+        );
     }
 }

@@ -3,19 +3,13 @@ namespace Spravy.Ui.Controls;
 public class IntegersSelectorControl : TemplatedControl
 {
     public static readonly StyledProperty<IEnumerable<int>?> SelectedIntegersProperty =
-        AvaloniaProperty.Register<IntegersSelectorControl, IEnumerable<int>?>(
-            nameof(SelectedIntegers)
-        );
+        AvaloniaProperty.Register<IntegersSelectorControl, IEnumerable<int>?>(nameof(SelectedIntegers));
 
-    public static readonly StyledProperty<int> MinProperty = AvaloniaProperty.Register<
-        IntegersSelectorControl,
-        int
-    >(nameof(Min));
+    public static readonly StyledProperty<int> MinProperty =
+        AvaloniaProperty.Register<IntegersSelectorControl, int>(nameof(Min));
 
-    public static readonly StyledProperty<int> MaxProperty = AvaloniaProperty.Register<
-        IntegersSelectorControl,
-        int
-    >(nameof(Max));
+    public static readonly StyledProperty<int> MaxProperty =
+        AvaloniaProperty.Register<IntegersSelectorControl, int>(nameof(Max));
 
     private readonly List<IntegerSelectorItemControl> integerControls = new();
     private ItemsControl? itemsControl;
@@ -23,12 +17,8 @@ public class IntegersSelectorControl : TemplatedControl
 
     static IntegersSelectorControl()
     {
-        MaxProperty.Changed.AddClassHandler<IntegersSelectorControl>(
-            (control, _) => control.UpdateIntegers()
-        );
-        MinProperty.Changed.AddClassHandler<IntegersSelectorControl>(
-            (control, _) => control.UpdateIntegers()
-        );
+        MaxProperty.Changed.AddClassHandler<IntegersSelectorControl>((control, _) => control.UpdateIntegers());
+        MinProperty.Changed.AddClassHandler<IntegersSelectorControl>((control, _) => control.UpdateIntegers());
 
         SelectedIntegersProperty.Changed.AddClassHandler<IntegersSelectorControl>(
             (control, _) => control.UpdateSelectedIntegers()
@@ -85,8 +75,7 @@ public class IntegersSelectorControl : TemplatedControl
             {
                 if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
                 {
-                    notifyCollectionChanged.CollectionChanged -=
-                        SelectedIntegersChangedEventHandler;
+                    notifyCollectionChanged.CollectionChanged -= SelectedIntegersChangedEventHandler;
                 }
 
                 selectedIntegers = SelectedIntegers;
@@ -109,10 +98,7 @@ public class IntegersSelectorControl : TemplatedControl
         }
     }
 
-    private void SelectedIntegersChangedEventHandler(
-        object? sender,
-        NotifyCollectionChangedEventArgs e
-    )
+    private void SelectedIntegersChangedEventHandler(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (sender is not IEnumerable<int> enumerable)
         {
@@ -172,7 +158,13 @@ public class IntegersSelectorControl : TemplatedControl
         }
 
         integerControls.AddRange(
-            Enumerable.Range(Min, Max).Select(x => new IntegerSelectorItemControl { Value = x })
+            Enumerable.Range(Min, Max)
+               .Select(
+                    x => new IntegerSelectorItemControl
+                    {
+                        Value = x,
+                    }
+                )
         );
 
         foreach (var integerControl in integerControls)

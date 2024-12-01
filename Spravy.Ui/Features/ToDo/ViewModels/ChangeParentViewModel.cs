@@ -9,8 +9,7 @@ public class ChangeParentViewModel : ToDoItemEditIdViewModel, IApplySettings
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService,
         ToDoItemSelectorViewModel toDoItemSelectorViewModel
-    )
-        : base(editItem, editItems)
+    ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
         ToDoItemSelectorViewModel = toDoItemSelectorViewModel;
@@ -18,6 +17,24 @@ public class ChangeParentViewModel : ToDoItemEditIdViewModel, IApplySettings
 
     public override string ViewId => TypeCache<ChangeParentViewModel>.Type.Name;
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
+
+    public Cvtar ApplySettingsAsync(CancellationToken ct)
+    {
+        if (ToDoItemSelectorViewModel.SelectedItem is null)
+        {
+            return toDoService.EditToDoItemsAsync(new EditToDoItems().SetIds(ResultIds).SetParentId(new(new())), ct);
+        }
+
+        return toDoService.EditToDoItemsAsync(
+            new EditToDoItems().SetIds(ResultIds).SetParentId(new(new(ToDoItemSelectorViewModel.SelectedItem.Id))),
+            ct
+        );
+    }
+
+    public Result UpdateItemUi()
+    {
+        return Result.Success;
+    }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
@@ -32,28 +49,5 @@ public class ChangeParentViewModel : ToDoItemEditIdViewModel, IApplySettings
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
-    }
-
-    public Cvtar ApplySettingsAsync(CancellationToken ct)
-    {
-        if (ToDoItemSelectorViewModel.SelectedItem is null)
-        {
-            return toDoService.EditToDoItemsAsync(
-                new EditToDoItems().SetIds(ResultIds).SetParentId(new(new())),
-                ct
-            );
-        }
-
-        return toDoService.EditToDoItemsAsync(
-            new EditToDoItems()
-                .SetIds(ResultIds)
-                .SetParentId(new(new(ToDoItemSelectorViewModel.SelectedItem.Id))),
-            ct
-        );
-    }
-
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
     }
 }

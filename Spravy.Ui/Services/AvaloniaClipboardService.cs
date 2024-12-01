@@ -11,10 +11,9 @@ public class AvaloniaClipboardService : IClipboardService
 
     public Cvtar SetTextAsync(string? text, CancellationToken ct)
     {
-        return application
-            .GetTopLevel()
-            .IfNotNull(nameof(TopLevel))
-            .IfSuccess(toplevel => toplevel.Clipboard.IfNotNull(nameof(toplevel.Clipboard)))
-            .IfSuccessAsync(clipboard => clipboard.SetTextAsync(text).Wrap(), ct);
+        return application.GetTopLevel()
+           .IfNotNull(nameof(TopLevel))
+           .IfSuccess(toplevel => toplevel.Clipboard.IfNotNull(nameof(toplevel.Clipboard)))
+           .IfSuccessAsync(clipboard => clipboard.SetTextAsync(text).Wrap(), ct);
     }
 }

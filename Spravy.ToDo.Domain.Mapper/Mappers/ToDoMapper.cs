@@ -1,5 +1,4 @@
 using Google.Protobuf.WellKnownTypes;
-using Microsoft.VisualBasic;
 using Spravy.Domain.Extensions;
 
 namespace Spravy.ToDo.Domain.Mapper.Mappers;
@@ -7,13 +6,9 @@ namespace Spravy.ToDo.Domain.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class ToDoMapper
 {
-    public static partial ResetToDoItemOptions ToResetToDoItemOptions(
-        this ResetToDoItemOptionsGrpc value
-    );
+    public static partial ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemOptionsGrpc value);
 
-    public static partial ResetToDoItemOptionsGrpc ToResetToDoItemOptionsGrpc(
-        this ResetToDoItemOptions value
-    );
+    public static partial ResetToDoItemOptionsGrpc ToResetToDoItemOptionsGrpc(this ResetToDoItemOptions value);
 
     public static DayOfWeek ToDayOfWeek(this DayOfWeekGrpc value)
     {
@@ -60,9 +55,7 @@ public static partial class ToDoMapper
         return (ToDoItemChildrenType)value;
     }
 
-    public static ToDoItemChildrenTypeGrpc ToToDoItemChildrenTypeGrpc(
-        this ToDoItemChildrenType value
-    )
+    public static ToDoItemChildrenTypeGrpc ToToDoItemChildrenTypeGrpc(this ToDoItemChildrenType value)
     {
         return (ToDoItemChildrenTypeGrpc)value;
     }
@@ -77,13 +70,9 @@ public static partial class ToDoMapper
         );
     }
 
-    public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(
-        this IEnumerable<FullToDoItemGrpc> value
-    );
+    public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(this IEnumerable<FullToDoItemGrpc> value);
 
-    public static partial ReadOnlyMemory<FullToDoItemGrpc> ToFullToDoItemGrpc(
-        this ReadOnlyMemory<FullToDoItem> value
-    );
+    public static partial ReadOnlyMemory<FullToDoItemGrpc> ToFullToDoItemGrpc(this ReadOnlyMemory<FullToDoItem> value);
 
     public static FullToDoItemGrpc ToFullToDoItemGrpc(this FullToDoItem value)
     {
@@ -92,7 +81,7 @@ public static partial class ToDoMapper
             Active = value.Active.ToToDoShortItemNullableGrpc(),
             Item = value.Item.ToToDoShortItemGrpc(),
             Status = value.Status.ToToDoItemStatusGrpc(),
-            IsCan = value.IsCan.ToToDoItemIsCanGrpc()
+            IsCan = value.IsCan.ToToDoItemIsCanGrpc(),
         };
     }
 
@@ -137,9 +126,7 @@ public static partial class ToDoMapper
         this ReadOnlyMemory<ToDoShortItem> value
     );
 
-    public static partial ReadOnlyMemory<ToDoShortItem> ToToDoShortItem(
-        this IEnumerable<ToDoShortItemGrpc> value
-    );
+    public static partial ReadOnlyMemory<ToDoShortItem> ToToDoShortItem(this IEnumerable<ToDoShortItemGrpc> value);
 
     public static AddToDoItemOptionsGrpc ToAddToDoItemOptionsGrpc(this AddToDoItemOptions value)
     {
@@ -215,13 +202,9 @@ public static partial class ToDoMapper
 
     public static partial ToDoItemIsCan ToToDoItemIsCan(this ToDoItemIsCanGrpc value);
 
-    public static partial ToDoItemToStringOptionsGrpc ToToDoItemToStringOptionsGrpc(
-        this ToDoItemToStringOptions value
-    );
+    public static partial ToDoItemToStringOptionsGrpc ToToDoItemToStringOptionsGrpc(this ToDoItemToStringOptions value);
 
-    public static partial ToDoItemToStringOptions ToToDoItemToStringOptions(
-        this ToDoItemToStringOptionsGrpc value
-    );
+    public static partial ToDoItemToStringOptions ToToDoItemToStringOptions(this ToDoItemToStringOptionsGrpc value);
 
     public static partial ToDoSelectorItemGrpc ToToDoSelectorItemGrpc(this ToDoSelectorItem value);
 
@@ -235,9 +218,7 @@ public static partial class ToDoMapper
         this IEnumerable<ToDoSelectorItemGrpc> value
     );
 
-    public static ToDoShortItemGrpc? ToToDoShortItemNullableGrpc(
-        this OptionStruct<ToDoShortItem> value
-    )
+    public static ToDoShortItemGrpc? ToToDoShortItemNullableGrpc(this OptionStruct<ToDoShortItem> value)
     {
         if (value.TryGetValue(out var item))
         {
@@ -275,33 +256,19 @@ public static partial class ToDoMapper
             value.Description.IsEdit ? new(value.Description.Value) : new(),
             value.Link.IsEdit ? new(value.Link.Value.ToOptionUri()) : new(),
             value.ParentId.IsEdit ? new(value.ParentId.Value.ToOptionGuid()) : new(),
-            value.DescriptionType.IsEdit
-                ? new(value.DescriptionType.Value.ToDescriptionType())
-                : new(),
+            value.DescriptionType.IsEdit ? new(value.DescriptionType.Value.ToDescriptionType()) : new(),
             value.ReferenceId.IsEdit ? new(value.ReferenceId.Value.ToOptionGuid()) : new(),
-            value.AnnuallyDays.IsEdit
-                ? new(value.AnnuallyDays.Value.Select(x => x.ToDayOfYear()).ToArray())
-                : new(),
-            value.MonthlyDays.IsEdit
-                ? new(value.MonthlyDays.Value.Select(x => (byte)x).ToArray())
-                : new(),
-            value.ChildrenType.IsEdit
-                ? new(value.ChildrenType.Value.ToToDoItemChildrenType())
-                : new(),
+            value.AnnuallyDays.IsEdit ? new(value.AnnuallyDays.Value.Select(x => x.ToDayOfYear()).ToArray()) : new(),
+            value.MonthlyDays.IsEdit ? new(value.MonthlyDays.Value.Select(x => (byte)x).ToArray()) : new(),
+            value.ChildrenType.IsEdit ? new(value.ChildrenType.Value.ToToDoItemChildrenType()) : new(),
             value.DueDate.IsEdit ? new(value.DueDate.Value.ToDateOnly()) : new(),
             value.DaysOffset.IsEdit ? new((ushort)value.DaysOffset.Value) : new(),
             value.MonthsOffset.IsEdit ? new((ushort)value.MonthsOffset.Value) : new(),
             value.WeeksOffset.IsEdit ? new((ushort)value.WeeksOffset.Value) : new(),
             value.YearsOffset.IsEdit ? new((ushort)value.YearsOffset.Value) : new(),
-            value.IsRequiredCompleteInDueDate.IsEdit
-                ? new(value.IsRequiredCompleteInDueDate.Value)
-                : new(),
-            value.TypeOfPeriodicity.IsEdit
-                ? new(value.TypeOfPeriodicity.Value.ToTypeOfPeriodicity())
-                : new(),
-            value.WeeklyDays.IsEdit
-                ? new(value.WeeklyDays.Value.Select(x => x.ToDayOfWeek()).ToArray())
-                : new(),
+            value.IsRequiredCompleteInDueDate.IsEdit ? new(value.IsRequiredCompleteInDueDate.Value) : new(),
+            value.TypeOfPeriodicity.IsEdit ? new(value.TypeOfPeriodicity.Value.ToTypeOfPeriodicity()) : new(),
+            value.WeeklyDays.IsEdit ? new(value.WeeklyDays.Value.Select(x => x.ToDayOfWeek()).ToArray()) : new(),
             value.IsBookmark.IsEdit ? new(value.IsBookmark.Value) : new(),
             value.Icon.IsEdit ? new(value.Icon.Value) : new(),
             value.Color.IsEdit ? new(value.Color.Value) : new(),
@@ -333,8 +300,7 @@ public static partial class ToDoMapper
             WeeklyDays = value.WeeklyDays.ToEditPropertyDaysOfWeekGrpc(),
             WeeksOffset = value.WeeksOffset.ToEditPropertyUInt32Grpc(),
             TypeOfPeriodicity = value.TypeOfPeriodicity.ToEditPropertyTypeOfPeriodicityGrpc(),
-            IsRequiredCompleteInDueDate =
-                value.IsRequiredCompleteInDueDate.ToEditPropertyBooleanGrpc(),
+            IsRequiredCompleteInDueDate = value.IsRequiredCompleteInDueDate.ToEditPropertyBooleanGrpc(),
             Color = value.Color.ToEditPropertyStringGrpc(),
             RemindDaysBefore = value.RemindDaysBefore.ToEditPropertyUInt32Grpc(),
         };
@@ -352,29 +318,31 @@ public static partial class ToDoMapper
         this EditPropertyValue<ReadOnlyMemory<DayOfWeek>> value
     );
 
-    public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(
-        this EditPropertyValue<uint> value
-    );
+    public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(this EditPropertyValue<uint> value);
 
-    public static EditPropertyTimestampGrpc ToEditPropertyTimestampGrpc(
-        this EditPropertyValue<DateOnly> value
-    )
+    public static EditPropertyTimestampGrpc ToEditPropertyTimestampGrpc(this EditPropertyValue<DateOnly> value)
     {
         if (value.IsEdit)
         {
-            return new() { IsEdit = true, Value = value.Value.ToTimestamp() };
+            return new()
+            {
+                IsEdit = true,
+                Value = value.Value.ToTimestamp(),
+            };
         }
 
-        return new() { IsEdit = false, Value = null };
+        return new()
+        {
+            IsEdit = false,
+            Value = null,
+        };
     }
 
     public static partial EditPropertyDescriptionTypeGrpc ToEditPropertyDescriptionTypeGrpc(
         this EditPropertyValue<DescriptionType> value
     );
 
-    public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(
-        this EditPropertyValue<ushort> value
-    );
+    public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(this EditPropertyValue<ushort> value);
 
     public static partial EditPropertyToDoItemChildrenTypeGrpc ToEditPropertyToDoItemChildrenTypeGrpc(
         this EditPropertyValue<ToDoItemChildrenType> value
@@ -384,20 +352,24 @@ public static partial class ToDoMapper
         this EditPropertyValue<ReadOnlyMemory<byte>> value
     );
 
-    public static partial EditPropertyBooleanGrpc ToEditPropertyBooleanGrpc(
-        this EditPropertyValue<bool> value
-    );
+    public static partial EditPropertyBooleanGrpc ToEditPropertyBooleanGrpc(this EditPropertyValue<bool> value);
 
-    public static EditPropertyBytesGrpc ToEditPropertyBytesGrpc(
-        this EditPropertyValue<OptionStruct<Guid>> value
-    )
+    public static EditPropertyBytesGrpc ToEditPropertyBytesGrpc(this EditPropertyValue<OptionStruct<Guid>> value)
     {
         if (!value.IsEdit)
         {
-            return new() { IsEdit = false, Value = ByteString.Empty, };
+            return new()
+            {
+                IsEdit = false,
+                Value = ByteString.Empty,
+            };
         }
 
-        return new() { IsEdit = true, Value = value.Value.ToByteString(), };
+        return new()
+        {
+            IsEdit = true,
+            Value = value.Value.ToByteString(),
+        };
     }
 
     public static partial EditPropertyDaysOfYearGrpc ToEditPropertyDaysOfYearGrpc(
@@ -408,33 +380,49 @@ public static partial class ToDoMapper
         this EditPropertyValue<ToDoItemType> value
     );
 
-    public static EditPropertyStringGrpc ToEditPropertyStringGrpc(
-        this EditPropertyValue<Option<Uri>> value
-    )
+    public static EditPropertyStringGrpc ToEditPropertyStringGrpc(this EditPropertyValue<Option<Uri>> value)
     {
         if (!value.IsEdit)
         {
-            return new() { IsEdit = false, Value = string.Empty, };
+            return new()
+            {
+                IsEdit = false,
+                Value = string.Empty,
+            };
         }
 
         if (value.Value.TryGetValue(out var link))
         {
-            return new() { IsEdit = false, Value = link.AbsoluteUri, };
+            return new()
+            {
+                IsEdit = false,
+                Value = link.AbsoluteUri,
+            };
         }
 
-        return new() { IsEdit = true, Value = string.Empty, };
+        return new()
+        {
+            IsEdit = true,
+            Value = string.Empty,
+        };
     }
 
-    public static EditPropertyStringGrpc ToEditPropertyStringGrpc(
-        this EditPropertyValue<string> value
-    )
+    public static EditPropertyStringGrpc ToEditPropertyStringGrpc(this EditPropertyValue<string> value)
     {
         if (value.IsEdit)
         {
-            return new() { IsEdit = true, Value = value.Value, };
+            return new()
+            {
+                IsEdit = true,
+                Value = value.Value,
+            };
         }
 
-        return new() { IsEdit = false, Value = string.Empty, };
+        return new()
+        {
+            IsEdit = false,
+            Value = string.Empty,
+        };
     }
 
     private static ByteString ToByteString(Guid id)

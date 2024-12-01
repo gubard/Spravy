@@ -1,9 +1,10 @@
 ﻿namespace Spravy.Ui.Controls;
 
-public abstract class MainUserControl<T> : UserControl
-    where T : ViewModelBase
+public abstract class MainUserControl<T> : UserControl where T : ViewModelBase
 {
     protected TextBox? DefaultFocusTextBox;
+
+    public T ViewModel => (DataContext as T).ThrowIfNull();
 
     protected override void OnInitialized()
     {
@@ -15,10 +16,5 @@ public abstract class MainUserControl<T> : UserControl
     {
         base.OnLoaded(e);
         DefaultFocusTextBox?.FocusTextBoxUi();
-    }
-
-    public T ViewModel
-    {
-        get => (DataContext as T).ThrowIfNull();
     }
 }

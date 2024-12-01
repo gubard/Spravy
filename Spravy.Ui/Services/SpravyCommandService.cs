@@ -1,4 +1,3 @@
-using Avalonia.Markup.Xaml.Styling;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;

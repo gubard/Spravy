@@ -37,9 +37,7 @@ public static partial class CoreMapper
                 TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)
             ),
             DateTimeKind.Utc => Timestamp.FromDateTime(value),
-            DateTimeKind.Local => Timestamp.FromDateTime(
-                TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)
-            ),
+            DateTimeKind.Local => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
             _ => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString()),
         };
     }

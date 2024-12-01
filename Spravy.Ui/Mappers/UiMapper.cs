@@ -22,7 +22,11 @@ public static partial class UiMapper
 
     public static TimerItemNotify ToTimerItemNotify(this TimerItem value)
     {
-        return new(value.Id) { Name = value.Name, DueDateTime = value.DueDateTime, };
+        return new(value.Id)
+        {
+            Name = value.Name,
+            DueDateTime = value.DueDateTime,
+        };
     }
 
     public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemViewModel value)

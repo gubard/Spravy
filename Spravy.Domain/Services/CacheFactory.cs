@@ -1,18 +1,14 @@
 namespace Spravy.Domain.Services;
 
 public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, TValue>
-    where TValue : notnull
-    where TKey : notnull
+    where TValue : notnull where TKey : notnull
 {
     private static readonly Dictionary<TKey, TValue> cache = new();
     private readonly ICacheValidator<TKey, TValue> cacheValidator;
 
     private readonly IFactory<TKey, TValue> factory;
 
-    public CacheFactory(
-        IFactory<TKey, TValue> factory,
-        ICacheValidator<TKey, TValue> cacheValidator
-    )
+    public CacheFactory(IFactory<TKey, TValue> factory, ICacheValidator<TKey, TValue> cacheValidator)
     {
         this.factory = factory;
         this.cacheValidator = cacheValidator;
@@ -42,13 +38,14 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
 
     private Result<TValue> CreateNewValue(TKey key)
     {
-        return factory
-            .Create(key)
-            .IfSuccess(value =>
-            {
-                cache.Add(key, value);
+        return factory.Create(key)
+           .IfSuccess(
+                value =>
+                {
+                    cache.Add(key, value);
 
-                return value.ToResult();
-            });
+                    return value.ToResult();
+                }
+            );
     }
 }

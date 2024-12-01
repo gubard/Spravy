@@ -9,14 +9,13 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication
-        .CreateBuilder(args)
-        .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(
+    WebApplication.CreateBuilder(args)
+       .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>),
             x => x.RegisterEventBus()
         )
-        .Run();
+       .Run();
 }
 catch (Exception ex)
 {

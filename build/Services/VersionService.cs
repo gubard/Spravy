@@ -21,10 +21,7 @@ public class VersionService
         version++;
     }
 
-    public void Save()
-    {
-        UpdateVersion();
-    }
+    public void Save() => UpdateVersion();
 
     void LoadVersion()
     {

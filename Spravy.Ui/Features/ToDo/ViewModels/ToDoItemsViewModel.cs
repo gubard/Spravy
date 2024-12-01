@@ -4,6 +4,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemsViewModel : ViewModelBase
 {
+    private readonly AvaloniaList<ToDoItemEntityNotify> toDoItems = new();
     private readonly ViewModelSortBy viewModelSortBy;
 
     [ObservableProperty]
@@ -11,8 +12,6 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     [ObservableProperty]
     private SortByToDoItem sortBy;
-
-    private readonly AvaloniaList<ToDoItemEntityNotify> toDoItems = new();
 
     public ToDoItemsViewModel(
         ViewModelSortBy viewModelSortBy,
@@ -24,27 +23,34 @@ public partial class ToDoItemsViewModel : ViewModelBase
         Header = header;
         this.viewModelSortBy = viewModelSortBy;
 
-        SwitchAllSelectionCommand = SpravyCommand.Create(ct => this.PostUiBackground(() =>
-            {
-                if (ToDoItems.All(x => x.IsSelected))
-                {
-                    foreach (var item in ToDoItems)
+        SwitchAllSelectionCommand = SpravyCommand.Create(
+            ct => this.PostUiBackground(
+                    () =>
                     {
-                        item.IsSelected = false;
-                    }
-                }
-                else
-                {
-                    foreach (var item in ToDoItems)
-                    {
-                        item.IsSelected = true;
-                    }
-                }
+                        if (ToDoItems.All(x => x.IsSelected))
+                        {
+                            foreach (var item in ToDoItems)
+                            {
+                                item.IsSelected = false;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in ToDoItems)
+                            {
+                                item.IsSelected = true;
+                            }
+                        }
 
-                return Result.Success;
-            }, ct)
-           .ToValueTaskResult()
-           .ConfigureAwait(false), errorHandler, taskProgressService);
+                        return Result.Success;
+                    },
+                    ct
+                )
+               .ToValueTaskResult()
+               .ConfigureAwait(false),
+            errorHandler,
+            taskProgressService
+        );
 
         PropertyChanged += (_, e) =>
         {
@@ -58,10 +64,7 @@ public partial class ToDoItemsViewModel : ViewModelBase
     public TextLocalization Header { get; }
     public SpravyCommand SwitchAllSelectionCommand { get; }
 
-    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> ToDoItems
-    {
-        get => toDoItems;
-    }
+    public IAvaloniaReadOnlyList<ToDoItemEntityNotify> ToDoItems => toDoItems;
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

@@ -20,9 +20,8 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService
-            .GetTodayToDoItemsAsync(context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetTodayToDoItemsAsync(context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 ids =>
                 {
@@ -40,9 +39,8 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService
-            .GetLeafToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetLeafToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 ids =>
                 {
@@ -60,9 +58,8 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService
-            .GetFavoriteToDoItemIdsAsync(context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 ids =>
                 {
@@ -80,9 +77,8 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService
-            .SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
-            .HandleAsync(
+        return toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 ids =>
                 {
@@ -103,13 +99,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = request.Ids.ToGuid();
 
-        await foreach (
-            var item in toDoService.GetToDoItemsAsync(
-                ids,
-                request.ChunkSize,
-                context.CancellationToken
-            )
-        )
+        await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
         {
             var reply = new GetToDoItemsReply();
             reply.Items.AddRange(item.ThrowIfError().ToFullToDoItemGrpc().ToArray());
@@ -117,18 +107,17 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         }
     }
 
-    public override Task<GetToDoItemReply> GetToDoItem(
-        GetToDoItemRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
     {
-        return toDoService
-            .GetToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 item =>
                 {
-                    var reply = new GetToDoItemReply { Item = item.ToFullToDoItemGrpc(), };
+                    var reply = new GetToDoItemReply
+                    {
+                        Item = item.ToFullToDoItemGrpc(),
+                    };
 
                     return reply;
                 },
@@ -136,14 +125,10 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
             );
     }
 
-    public override Task<GetParentsReply> GetParents(
-        GetParentsRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
     {
-        return toDoService
-            .GetParentsAsync(request.Id.ToGuid(), context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetParentsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 parents =>
                 {
@@ -161,9 +146,8 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService
-            .GetToDoSelectorItemsAsync(request.IgnoreIds.ToGuid(), context.CancellationToken)
-            .HandleAsync(
+        return toDoService.GetToDoSelectorItemsAsync(request.IgnoreIds.ToGuid(), context.CancellationToken)
+           .HandleAsync(
                 serializer,
                 items =>
                 {

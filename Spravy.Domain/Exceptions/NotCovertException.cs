@@ -2,8 +2,9 @@ namespace Spravy.Domain.Exceptions;
 
 public class NotCovertException : Exception
 {
-    public NotCovertException(Type currentType, Type expectedType)
-        : base($"Can't convert {currentType} to {expectedType}.")
+    public NotCovertException(Type currentType, Type expectedType) : base(
+        $"Can't convert {currentType} to {expectedType}."
+    )
     {
         CurrentType = currentType;
         ExpectedType = expectedType;

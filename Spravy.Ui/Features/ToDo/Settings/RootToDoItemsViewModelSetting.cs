@@ -4,7 +4,10 @@ public class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsView
 {
     static RootToDoItemsViewModelSetting()
     {
-        Default = new() { GroupBy = GroupBy.ByStatus };
+        Default = new()
+        {
+            GroupBy = GroupBy.ByStatus,
+        };
     }
 
     public RootToDoItemsViewModelSetting(RootToDoItemsViewModel viewModel)
@@ -13,7 +16,9 @@ public class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsView
         IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
     }
 
-    public RootToDoItemsViewModelSetting() { }
+    public RootToDoItemsViewModelSetting()
+    {
+    }
 
     public GroupBy GroupBy { get; set; }
     public bool IsMulti { get; set; }

@@ -11,10 +11,7 @@ public class EventStorage
     private readonly IFactory<SpravyDbEventBusDbContext> dbContextFactory;
     private readonly IFactory<FileInfo> fileFactory;
 
-    public EventStorage(
-        IFactory<SpravyDbEventBusDbContext> dbContextFactory,
-        IFactory<FileInfo> fileFactory
-    )
+    public EventStorage(IFactory<SpravyDbEventBusDbContext> dbContextFactory, IFactory<FileInfo> fileFactory)
     {
         this.dbContextFactory = dbContextFactory;
         this.fileFactory = fileFactory;
@@ -29,18 +26,12 @@ public class EventStorage
             Id = Guid.NewGuid(),
         };
 
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .Set<EventEntity>()
-                                .AddEntityAsync(newEvent, ct)
-                                .ToResultOnlyAsync(),
-                        ct
-                    ),
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.Set<EventEntity>().AddEntityAsync(newEvent, ct).ToResultOnlyAsync(),
+                    ct
+                ),
                 ct
             );
     }
@@ -50,31 +41,20 @@ public class EventStorage
         CancellationToken ct
     )
     {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .Set<EventEntity>()
-                                .AsNoTracking()
-                                .Where(x => eventIds.ToArray().Contains(x.EventId))
-                                .ToArrayEntitiesAsync(ct)
-                                .IfSuccessAsync(
-                                    y =>
-                                        y.IfSuccessForEach(x =>
-                                                new EventValue(x.EventId, x.Content).ToResult()
-                                            )
-                                            .IfSuccess(r =>
-                                                context
-                                                    .RemoveRangeEntities(y)
-                                                    .IfSuccess(() => r.ToResult())
-                                            ),
-                                    ct
-                                ),
-                        ct
-                    ),
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.Set<EventEntity>()
+                       .AsNoTracking()
+                       .Where(x => eventIds.ToArray().Contains(x.EventId))
+                       .ToArrayEntitiesAsync(ct)
+                       .IfSuccessAsync(
+                            y => y.IfSuccessForEach(x => new EventValue(x.EventId, x.Content).ToResult())
+                               .IfSuccess(r => context.RemoveRangeEntities(y).IfSuccess(() => r.ToResult())),
+                            ct
+                        ),
+                    ct
+                ),
                 ct
             );
     }

@@ -2,47 +2,34 @@ namespace Spravy.Ui.Controls;
 
 public class IconSelectorControl : TemplatedControl
 {
-    public static readonly StyledProperty<string?> SelectedIconProperty = AvaloniaProperty.Register<
-        IconSelectorControl,
-        string?
-    >(nameof(SelectedIcon), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<string?> SelectedIconProperty =
+        AvaloniaProperty.Register<IconSelectorControl, string?>(
+            nameof(SelectedIcon),
+            defaultBindingMode: BindingMode.TwoWay
+        );
 
     public static readonly StyledProperty<IEnumerable<string>?> ItemsSourceProperty =
         AvaloniaProperty.Register<IconSelectorControl, IEnumerable<string>?>(nameof(ItemsSource));
 
     public static readonly StyledProperty<IEnumerable<string>?> FavoriteItemsSourceProperty =
-        AvaloniaProperty.Register<IconSelectorControl, IEnumerable<string>?>(
-            nameof(FavoriteItemsSource)
-        );
+        AvaloniaProperty.Register<IconSelectorControl, IEnumerable<string>?>(nameof(FavoriteItemsSource));
 
-    public static readonly StyledProperty<string?> SearchTextProperty = AvaloniaProperty.Register<
-        IconSelectorControl,
-        string?
-    >(nameof(SearchText), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<string?> SearchTextProperty =
+        AvaloniaProperty.Register<IconSelectorControl, string?>(
+            nameof(SearchText),
+            defaultBindingMode: BindingMode.TwoWay
+        );
 
     public static readonly DirectProperty<IconSelectorControl, IEnumerable> ItemsProperty =
-        AvaloniaProperty.RegisterDirect<IconSelectorControl, IEnumerable>(
-            nameof(Items),
-            x => x.Items
-        );
+        AvaloniaProperty.RegisterDirect<IconSelectorControl, IEnumerable>(nameof(Items), x => x.Items);
 
-    private SelectingItemsControl? selectingItemsControl;
-    private SelectingItemsControl? favoriteSelectingItemsControl;
-    private TextBox? searchTextBox;
     private readonly AvaloniaList<string> items = new();
     private bool bockSelectedIcon;
     private bool bockSelectedItem;
+    private SelectingItemsControl? favoriteSelectingItemsControl;
+    private TextBox? searchTextBox;
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-        var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
-        var flb = e.NameScope.Find<SelectingItemsControl>("PART_FavoriteSelectingItemsControl");
-        var tb = e.NameScope.Find<TextBox>("PART_SearchTextBox");
-        UpdateSelectingItemsControl(ref selectingItemsControl, lb);
-        UpdateSelectingItemsControl(ref favoriteSelectingItemsControl, flb);
-        UpdateSearchTextBox(tb);
-    }
+    private SelectingItemsControl? selectingItemsControl;
 
     public IEnumerable Items => items;
 
@@ -68,6 +55,17 @@ public class IconSelectorControl : TemplatedControl
     {
         get => GetValue(FavoriteItemsSourceProperty);
         set => SetValue(FavoriteItemsSourceProperty, value);
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
+        var flb = e.NameScope.Find<SelectingItemsControl>("PART_FavoriteSelectingItemsControl");
+        var tb = e.NameScope.Find<TextBox>("PART_SearchTextBox");
+        UpdateSelectingItemsControl(ref selectingItemsControl, lb);
+        UpdateSelectingItemsControl(ref favoriteSelectingItemsControl, flb);
+        UpdateSearchTextBox(tb);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -162,10 +160,7 @@ public class IconSelectorControl : TemplatedControl
         SearchText = searchTextBox.Text;
     }
 
-    private void UpdateSelectingItemsControl(
-        ref SelectingItemsControl? itemsControl,
-        SelectingItemsControl? lb
-    )
+    private void UpdateSelectingItemsControl(ref SelectingItemsControl? itemsControl, SelectingItemsControl? lb)
     {
         if (itemsControl is not null)
         {
@@ -244,10 +239,7 @@ public class IconSelectorControl : TemplatedControl
         }
     }
 
-    private void SelectingItemsControlPropertyChanged(
-        object? sender,
-        AvaloniaPropertyChangedEventArgs e
-    )
+    private void SelectingItemsControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
         if (sender is not SelectingItemsControl itemsControl)
         {

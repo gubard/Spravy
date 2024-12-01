@@ -1,7 +1,6 @@
 namespace Spravy.Domain.Models;
 
-public readonly struct Option<TValue>
-    where TValue : class
+public readonly struct Option<TValue> where TValue : class
 {
     public static readonly Option<TValue> None = new();
 
@@ -50,8 +49,7 @@ public readonly struct Option<TValue>
         return false;
     }
 
-    public Option<TResult> Map<TResult>(Func<TValue, TResult?> func)
-        where TResult : class
+    public Option<TResult> Map<TResult>(Func<TValue, TResult?> func) where TResult : class
     {
         if (!TryGetValue(out var result))
         {

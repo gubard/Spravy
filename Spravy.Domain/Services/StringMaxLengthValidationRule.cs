@@ -18,11 +18,9 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
 
         if (value.Length > maxLength)
         {
-            return new Result(
-                new VariableStringMaxLengthError(maxLength, sourceName, (uint)value.Length)
-            )
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
+            return new Result(new VariableStringMaxLengthError(maxLength, sourceName, (uint)value.Length))
+               .ToValueTaskResult()
+               .ConfigureAwait(false);
         }
 
         return Result.AwaitableSuccess;

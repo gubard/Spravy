@@ -6,8 +6,7 @@ public class RetryService : IRetryService
 
     public ConfiguredValueTaskAwaitable<Result<TReturn>> TryAsync<TReturn>(
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func
-    )
-        where TReturn : notnull
+    ) where TReturn : notnull
     {
         return TryCore(func).ConfigureAwait(false);
     }
@@ -17,9 +16,7 @@ public class RetryService : IRetryService
         return TryCore(func).ConfigureAwait(false);
     }
 
-    private async ValueTask<Result<TReturn>> TryCore<TReturn>(
-        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func
-    )
+    private async ValueTask<Result<TReturn>> TryCore<TReturn>(Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func)
         where TReturn : notnull
     {
         for (var i = 1; i <= retryCount; i++)
@@ -54,8 +51,8 @@ public class RetryService : IRetryService
             {
                 return Result<TReturn>.CanceledByUserError;
             }
-            catch (GrpcException rpc)
-                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled } })
+            catch (GrpcException rpc) when (rpc is
+                { InnerException: RpcException { StatusCode: StatusCode.Cancelled, }, })
             {
                 return Result<TReturn>.CanceledByUserError;
             }
@@ -107,8 +104,8 @@ public class RetryService : IRetryService
             {
                 return Result.CanceledByUserError;
             }
-            catch (GrpcException rpc)
-                when (rpc is { InnerException: RpcException { StatusCode: StatusCode.Cancelled } })
+            catch (GrpcException rpc) when (rpc is
+                { InnerException: RpcException { StatusCode: StatusCode.Cancelled, }, })
             {
                 return Result.CanceledByUserError;
             }

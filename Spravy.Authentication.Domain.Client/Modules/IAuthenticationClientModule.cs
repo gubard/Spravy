@@ -3,14 +3,8 @@ using static Spravy.Authentication.Protos.AuthenticationService;
 namespace Spravy.Authentication.Domain.Client.Modules;
 
 [ServiceProviderModule]
-[Singleton(
-    typeof(GrpcAuthenticationServiceOptions),
-    Factory = nameof(GrpcAuthenticationServiceOptionsFactory)
-)]
-[Singleton(
-    typeof(IFactory<Uri, AuthenticationServiceClient>),
-    Factory = nameof(AuthenticationServiceClientsFactory)
-)]
+[Singleton(typeof(GrpcAuthenticationServiceOptions), Factory = nameof(GrpcAuthenticationServiceOptionsFactory))]
+[Singleton(typeof(IFactory<Uri, AuthenticationServiceClient>), Factory = nameof(AuthenticationServiceClientsFactory))]
 [Transient(typeof(IAuthenticationService), Factory = nameof(AuthenticationServiceFactory))]
 public interface IAuthenticationClientModule
 {
@@ -28,10 +22,7 @@ public interface IAuthenticationClientModule
     )
     {
         using var stream = configurationLoader.GetStream();
-
-        var configuration = serializer.Deserialize<GrpcAuthenticationServiceOptionsConfiguration>(
-            stream
-        );
+        var configuration = serializer.Deserialize<GrpcAuthenticationServiceOptionsConfiguration>(stream);
 
         return configuration.ThrowIfError().GrpcAuthenticationService.ThrowIfNull();
     }
@@ -44,18 +35,15 @@ public interface IAuthenticationClientModule
     {
         if (options.UseCache)
         {
-            return GrpcClientFactoryHelper.CreateCacheGrpcFactory<
-                GrpcAuthenticationService,
-                AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions
-            >(serviceOptions, cacheValidator);
+            return GrpcClientFactoryHelper
+               .CreateCacheGrpcFactory<GrpcAuthenticationService, AuthenticationServiceClient,
+                    GrpcAuthenticationServiceOptions>(serviceOptions, cacheValidator);
         }
 
-        return GrpcClientFactoryHelper.CreateGrpcFactory<
-            GrpcAuthenticationService,
-            AuthenticationServiceClient,
-            GrpcAuthenticationServiceOptions
-        >(serviceOptions);
+        return GrpcClientFactoryHelper
+           .CreateGrpcFactory<GrpcAuthenticationService, AuthenticationServiceClient, GrpcAuthenticationServiceOptions>(
+                serviceOptions
+            );
     }
 
     static IAuthenticationService AuthenticationServiceFactory(
@@ -65,10 +53,12 @@ public interface IAuthenticationClientModule
         IRetryService retryService
     )
     {
-        return GrpcClientFactoryHelper.CreateGrpcService<
-            GrpcAuthenticationService,
-            AuthenticationServiceClient,
-            GrpcAuthenticationServiceOptions
-        >(options, grpcClientFactory, handler, retryService);
+        return GrpcClientFactoryHelper
+           .CreateGrpcService<GrpcAuthenticationService, AuthenticationServiceClient, GrpcAuthenticationServiceOptions>(
+                options,
+                grpcClientFactory,
+                handler,
+                retryService
+            );
     }
 }

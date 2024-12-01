@@ -5,10 +5,7 @@ public class SqliteDbFileFactory : IFactory<FileInfo>
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly SqliteFolderOptions sqliteFolderOptions;
 
-    public SqliteDbFileFactory(
-        SqliteFolderOptions sqliteFolderOptions,
-        IHttpContextAccessor httpContextAccessor
-    )
+    public SqliteDbFileFactory(SqliteFolderOptions sqliteFolderOptions, IHttpContextAccessor httpContextAccessor)
     {
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.httpContextAccessor = httpContextAccessor;

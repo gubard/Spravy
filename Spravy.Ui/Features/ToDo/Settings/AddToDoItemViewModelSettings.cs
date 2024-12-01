@@ -2,8 +2,6 @@ namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class AddToDoItemViewModelSettings : IViewModelSetting<AddToDoItemViewModelSettings>
 {
-    public static AddToDoItemViewModelSettings Default { get; }
-
     static AddToDoItemViewModelSettings()
     {
         Default = new();
@@ -20,4 +18,5 @@ public class AddToDoItemViewModelSettings : IViewModelSetting<AddToDoItemViewMod
     }
 
     public EditToDoItemViewModelSettings EditToDoItemViewModelSettings { get; set; }
+    public static AddToDoItemViewModelSettings Default { get; }
 }

@@ -24,12 +24,7 @@ public class StringIsNullOrWhiteSpaceConverter : IValueConverter
         return str.IsNullOrWhiteSpace();
     }
 
-    public object ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        CultureInfo culture
-    )
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is null)
         {

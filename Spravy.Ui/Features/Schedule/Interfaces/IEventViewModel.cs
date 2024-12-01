@@ -4,7 +4,5 @@ public interface IEventViewModel : IStateHolder
 {
     Guid Id { get; }
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetContentAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetContentAsync(CancellationToken ct);
 }

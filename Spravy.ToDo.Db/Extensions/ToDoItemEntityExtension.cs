@@ -48,21 +48,20 @@ public static class ToDoItemEntityExtension
             return ReadOnlyMemory<DayOfYear>.Empty;
         }
 
-        return item
-            .DaysOfYear.Split(";")
-            .Select(x =>
-            {
-                var value = x.Split(".");
+        return item.DaysOfYear
+           .Split(";")
+           .Select(
+                x =>
+                {
+                    var value = x.Split(".");
 
-                return new DayOfYear(byte.Parse(value[1]), byte.Parse(value[0]));
-            })
-            .ToArray();
+                    return new DayOfYear(byte.Parse(value[1]), byte.Parse(value[0]));
+                }
+            )
+           .ToArray();
     }
 
-    public static void SetAnnuallyDays(
-        this ToDoItemEntity item,
-        ReadOnlyMemory<DayOfYear> daysOfYear
-    )
+    public static void SetAnnuallyDays(this ToDoItemEntity item, ReadOnlyMemory<DayOfYear> daysOfYear)
     {
         item.DaysOfYear = daysOfYear.Select(x => $"{x.Month}.{x.Day}").JoinString(";");
     }

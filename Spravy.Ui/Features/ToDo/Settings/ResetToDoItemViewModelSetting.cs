@@ -2,6 +2,14 @@ namespace Spravy.Ui.Features.ToDo.Settings;
 
 public class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemViewModelSetting>
 {
+    static ResetToDoItemViewModelSetting()
+    {
+        Default = new()
+        {
+            IsMoveCircleOrderIndex = true,
+        };
+    }
+
     public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
     {
         IsCompleteChildrenTask = viewModel.IsCompleteChildrenTask;
@@ -10,11 +18,8 @@ public class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemView
         IsCompleteCurrentTask = viewModel.IsCompleteCurrentTask;
     }
 
-    public ResetToDoItemViewModelSetting() { }
-
-    static ResetToDoItemViewModelSetting()
+    public ResetToDoItemViewModelSetting()
     {
-        Default = new() { IsMoveCircleOrderIndex = true };
     }
 
     public bool IsCompleteChildrenTask { get; set; }

@@ -8,14 +8,13 @@ public abstract class SpravyDbContext : DbContext
     {
         this.setup = setup;
 
-        if (setup is { AutoCreateDataBase: true, DataBaseCreated: false })
+        if (setup is { AutoCreateDataBase: true, DataBaseCreated: false, })
         {
             Database.EnsureCreated();
         }
     }
 
-    protected SpravyDbContext(DbContextOptions options, IDbContextSetup setup)
-        : base(options)
+    protected SpravyDbContext(DbContextOptions options, IDbContextSetup setup) : base(options)
     {
         this.setup = setup;
     }

@@ -32,12 +32,7 @@ public partial class InitializeUserSecretDbContext : Migration
         );
 
         migrationBuilder.CreateIndex("IX_PasswordItems_Key", "PasswordItems", "Key", unique: true);
-        migrationBuilder.CreateIndex(
-            "IX_PasswordItems_Name",
-            "PasswordItems",
-            "Name",
-            unique: true
-        );
+        migrationBuilder.CreateIndex("IX_PasswordItems_Name", "PasswordItems", "Name", unique: true);
     }
 
     /// <inheritdoc />

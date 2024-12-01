@@ -13,7 +13,10 @@ public class OpenerLink : IOpenerLink
         {
             var url = link.AbsoluteUri.Replace("&", "^&");
 
-            var info = new ProcessStartInfo(url) { UseShellExecute = true };
+            var info = new ProcessStartInfo(url)
+            {
+                UseShellExecute = true,
+            };
 
             Process.Start(info);
 

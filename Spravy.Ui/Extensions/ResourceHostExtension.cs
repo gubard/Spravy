@@ -2,11 +2,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class ResourceHostExtension
 {
-    public static bool TryGetStyle<T>(
-        this T resourceHost,
-        string resourceKey,
-        [MaybeNullWhen(false)] out IStyle style
-    )
+    public static bool TryGetStyle<T>(this T resourceHost, string resourceKey, [MaybeNullWhen(false)] out IStyle style)
         where T : IResourceHost
     {
         style = null;
@@ -30,8 +26,7 @@ public static class ResourceHostExtension
         this T resourceHost,
         string resourceKey,
         [MaybeNullWhen(false)] out IDataTemplate dataTemplate
-    )
-        where T : IResourceHost
+    ) where T : IResourceHost
     {
         dataTemplate = null;
 
@@ -54,8 +49,7 @@ public static class ResourceHostExtension
         this T resourceHost,
         string resourceKey,
         [MaybeNullWhen(false)] out ITemplate dataTemplate
-    )
-        where T : IResourceHost
+    ) where T : IResourceHost
     {
         dataTemplate = null;
 

@@ -11,10 +11,7 @@ public static class SshClientExtension
         using var runCommand = client.RunCommand(command);
         Log.Logger.Information("Run SSH command: {Command}", command);
 
-        if (
-            !string.IsNullOrWhiteSpace(runCommand.Error)
-            && !runCommand.Error.StartsWith("[sudo] password for")
-        )
+        if (!string.IsNullOrWhiteSpace(runCommand.Error) && !runCommand.Error.StartsWith("[sudo] password for"))
         {
             throw new(runCommand.Error);
         }
@@ -25,8 +22,6 @@ public static class SshClientExtension
         }
     }
 
-    public static void RunSudo(this SshClient client, ISshOptions options, string command)
-    {
+    public static void RunSudo(this SshClient client, ISshOptions options, string command) =>
         client.RunCommand($"echo {options.SshPassword} | sudo -S {command}");
-    }
 }

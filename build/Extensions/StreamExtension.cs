@@ -16,7 +16,10 @@ public static class StreamExtension
         string emailPassword
     )
     {
-        var jsonWriterOptions = new JsonWriterOptions { Indented = true };
+        var jsonWriterOptions = new JsonWriterOptions
+        {
+            Indented = true,
+        };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
         writer.WriteStartObject();
@@ -61,7 +64,10 @@ public static class StreamExtension
         IReadOnlyDictionary<string, ushort> hosts
     )
     {
-        var jsonWriterOptions = new JsonWriterOptions { Indented = true };
+        var jsonWriterOptions = new JsonWriterOptions
+        {
+            Indented = true,
+        };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
         writer.WriteStartObject();

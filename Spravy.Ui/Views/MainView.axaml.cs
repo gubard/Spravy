@@ -2,11 +2,9 @@ namespace Spravy.Ui.Views;
 
 public partial class MainView : UserControl
 {
-    private readonly IServiceFactory serviceFactory =
-        DiHelper.ServiceFactory.CreateService<IServiceFactory>();
+    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory.CreateService<IServiceFactory>();
 
-    private readonly IToDoService toDoService =
-        DiHelper.ServiceFactory.CreateService<IToDoService>();
+    private readonly IToDoService toDoService = DiHelper.ServiceFactory.CreateService<IToDoService>();
 
     private readonly IUiApplicationService uiApplicationService =
         DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
@@ -30,6 +28,7 @@ public partial class MainView : UserControl
                 PseudoClasses.Set(":medium", false);
                 PseudoClasses.Set(":large", false);
                 PseudoClasses.Set(":extra-large", false);
+
                 break;
             case MaterialDesignSizeType.Small:
                 PseudoClasses.Set(":extra-small", false);
@@ -37,6 +36,7 @@ public partial class MainView : UserControl
                 PseudoClasses.Set(":medium", false);
                 PseudoClasses.Set(":large", false);
                 PseudoClasses.Set(":extra-large", false);
+
                 break;
             case MaterialDesignSizeType.Medium:
                 PseudoClasses.Set(":extra-small", false);
@@ -44,6 +44,7 @@ public partial class MainView : UserControl
                 PseudoClasses.Set(":medium", true);
                 PseudoClasses.Set(":large", false);
                 PseudoClasses.Set(":extra-large", false);
+
                 break;
             case MaterialDesignSizeType.Large:
                 PseudoClasses.Set(":extra-small", false);
@@ -51,6 +52,7 @@ public partial class MainView : UserControl
                 PseudoClasses.Set(":medium", false);
                 PseudoClasses.Set(":large", true);
                 PseudoClasses.Set(":extra-large", false);
+
                 break;
             case MaterialDesignSizeType.ExtraLarge:
                 PseudoClasses.Set(":extra-small", true);
@@ -58,6 +60,7 @@ public partial class MainView : UserControl
                 PseudoClasses.Set(":medium", false);
                 PseudoClasses.Set(":large", false);
                 PseudoClasses.Set(":extra-large", true);
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(sizeType), sizeType, null);
@@ -127,10 +130,9 @@ public partial class MainView : UserControl
 
         var pointerPosition = e.GetPosition(button);
 
-        var options =
-            pointerPosition.Y > button.Bounds.Height / 2
-                ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
-                : new(dataItem.Id, sourceItem.Id, false);
+        var options = pointerPosition.Y > button.Bounds.Height / 2
+            ? new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true)
+            : new(dataItem.Id, sourceItem.Id, false);
 
         if (UiHelper.DragControl is null)
         {

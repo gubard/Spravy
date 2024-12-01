@@ -14,11 +14,29 @@ public static class DateOnlyExtension
 
     public static DateTime ToDateTime(this DateOnly date, DateTimeKind kind)
     {
-        return new(date.Year, date.Month, date.Day, 0, 0, 0, 0, 0, kind);
+        return new(
+            date.Year,
+            date.Month,
+            date.Day,
+            0,
+            0,
+            0,
+            0,
+            0,
+            kind
+        );
     }
 
     public static DateTimeOffset ToDateTimeOffset(this DateOnly date)
     {
-        return new(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeOffset.Now.Offset);
+        return new(
+            date.Year,
+            date.Month,
+            date.Day,
+            0,
+            0,
+            0,
+            DateTimeOffset.Now.Offset
+        );
     }
 }

@@ -4,14 +4,13 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication
-        .CreateBuilder(args)
-        .BuildSpravy<GrpcScheduleService, SpravyScheduleServiceMark>(
+    WebApplication.CreateBuilder(args)
+       .BuildSpravy<GrpcScheduleService, SpravyScheduleServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbScheduleDbContext>),
             x => x.RegisterSchedule()
         )
-        .Run();
+       .Run();
 }
 catch (Exception ex)
 {

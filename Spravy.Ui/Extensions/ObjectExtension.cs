@@ -9,11 +9,7 @@ public static class ObjectExtension
         return Result.Success;
     }
 
-    public static Result PostUiBackground<TObject>(
-        this TObject _,
-        Func<Result> func,
-        CancellationToken ct
-    )
+    public static Result PostUiBackground<TObject>(this TObject _, Func<Result> func, CancellationToken ct)
     {
         Dispatcher.UIThread.Post(
             () =>
@@ -41,10 +37,7 @@ public static class ObjectExtension
         return _.InvokeUiCore(callback).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result> InvokeUiCore<TObject>(
-        this TObject _,
-        Func<Result> callback
-    )
+    private static async ValueTask<Result> InvokeUiCore<TObject>(this TObject _, Func<Result> callback)
     {
         var result = await Dispatcher.UIThread.InvokeAsync(callback);
 
@@ -56,21 +49,17 @@ public static class ObjectExtension
         return _.InvokeUiBackgroundCore(callback).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result> InvokeUiBackgroundCore<TObject>(
-        this TObject _,
-        Func<Result> callback
-    )
+    private static async ValueTask<Result> InvokeUiBackgroundCore<TObject>(this TObject _, Func<Result> callback)
     {
         var result = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
 
         return result;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result<TResult>> InvokeUiBackgroundAsync<
-        TObject,
-        TResult
-    >(this TObject _, Func<Result<TResult>> callback)
-        where TResult : notnull
+    public static ConfiguredValueTaskAwaitable<Result<TResult>> InvokeUiBackgroundAsync<TObject, TResult>(
+        this TObject _,
+        Func<Result<TResult>> callback
+    ) where TResult : notnull
     {
         return _.InvokeUiBackgroundCore(callback).ConfigureAwait(false);
     }
@@ -78,8 +67,7 @@ public static class ObjectExtension
     private static async ValueTask<Result<TResult>> InvokeUiBackgroundCore<TObject, TResult>(
         this TObject _,
         Func<Result<TResult>> callback
-    )
-        where TResult : notnull
+    ) where TResult : notnull
     {
         var result = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
 
@@ -89,8 +77,7 @@ public static class ObjectExtension
     public static ConfiguredValueTaskAwaitable<Result<TResult>> InvokeUiAsync<TObject, TResult>(
         this TObject _,
         Func<Result<TResult>> callback
-    )
-        where TResult : notnull
+    ) where TResult : notnull
     {
         return _.InvokeUiCore(callback).ConfigureAwait(false);
     }
@@ -98,8 +85,7 @@ public static class ObjectExtension
     private static async ValueTask<Result<TResult>> InvokeUiCore<TObject, TResult>(
         this TObject _,
         Func<Result<TResult>> callback
-    )
-        where TResult : notnull
+    ) where TResult : notnull
     {
         var result = await Dispatcher.UIThread.InvokeAsync(callback);
 

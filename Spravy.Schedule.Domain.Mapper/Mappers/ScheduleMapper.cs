@@ -11,17 +11,11 @@ public static partial class ScheduleMapper
 
     public static partial AddTimerParameters ToAddTimerParameters(this AddTimerParametersGrpc grpc);
 
-    public static partial AddTimerParametersGrpc ToAddTimerRequestGrpc(
-        this AddTimerParameters grpc
-    );
+    public static partial AddTimerParametersGrpc ToAddTimerRequestGrpc(this AddTimerParameters grpc);
 
-    public static partial ReadOnlyMemory<TimerItem> ToTimerItem(
-        this IEnumerable<TimerItemGrpc> grpc
-    );
+    public static partial ReadOnlyMemory<TimerItem> ToTimerItem(this IEnumerable<TimerItemGrpc> grpc);
 
-    public static partial ReadOnlyMemory<TimerItemGrpc> ToTimerItemGrpc(
-        this ReadOnlyMemory<TimerItem> grpc
-    );
+    public static partial ReadOnlyMemory<TimerItemGrpc> ToTimerItemGrpc(this ReadOnlyMemory<TimerItem> grpc);
 
     public static Timestamp ToTimestamp(DateTime dateTime)
     {

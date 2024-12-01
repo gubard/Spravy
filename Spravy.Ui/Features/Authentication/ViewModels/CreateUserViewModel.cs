@@ -5,10 +5,10 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
     private readonly IPropertyValidator propertyValidator;
 
     [ObservableProperty]
-    private bool isBusy;
+    private string email = string.Empty;
 
     [ObservableProperty]
-    private string email = string.Empty;
+    private bool isBusy;
 
     [ObservableProperty]
     private string login = string.Empty;
@@ -19,16 +19,12 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
     [ObservableProperty]
     private string repeatPassword = string.Empty;
 
-    public CreateUserViewModel(IPropertyValidator propertyValidator)
-        : base(true)
+    public CreateUserViewModel(IPropertyValidator propertyValidator) : base(true)
     {
         this.propertyValidator = propertyValidator;
     }
 
-    public override string ViewId
-    {
-        get => TypeCache<CreateUserViewModel>.Type.Name;
-    }
+    public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -38,24 +34,20 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
     {
         get
         {
-            var hasError =
-                propertyValidator.ValidLogin(Login, nameof(Login)) is not null
-                || propertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
-                || propertyValidator.ValidEmail(Email, nameof(Email)) is not null
-                || propertyValidator.ValidLength(Email, 6, 50, nameof(Email)) is not null
-                || propertyValidator.ValidPassword(Password, nameof(Password)) is not null
-                || propertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null
-                || propertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword))
-                    is not null
-                || propertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword))
-                    is not null
-                || propertyValidator.ValidEquals(
+            var hasError = propertyValidator.ValidLogin(Login, nameof(Login)) is not null
+             || propertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
+             || propertyValidator.ValidEmail(Email, nameof(Email)) is not null
+             || propertyValidator.ValidLength(Email, 6, 50, nameof(Email)) is not null
+             || propertyValidator.ValidPassword(Password, nameof(Password)) is not null
+             || propertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null
+             || propertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword)) is not null
+             || propertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword)) is not null
+             || propertyValidator.ValidEquals(
                     Password,
                     RepeatPassword,
                     nameof(Password),
                     nameof(RepeatPassword)
-                )
-                    is not null;
+                ) is not null;
 
             return hasError;
         }
@@ -119,12 +111,7 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
             case nameof(RepeatPassword):
             {
                 var valid = propertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword));
-                var validLength = propertyValidator.ValidLength(
-                    RepeatPassword,
-                    8,
-                    512,
-                    nameof(RepeatPassword)
-                );
+                var validLength = propertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword));
 
                 var validEquals = propertyValidator.ValidEquals(
                     Password,

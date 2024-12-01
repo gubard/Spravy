@@ -21,10 +21,9 @@ public class Program
         DiHelper.ServiceFactory = new DesktopServiceProvider();
         IconProvider.Current.Register<MaterialDesignIconProvider>();
 
-        return AppBuilder
-            .Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
-            .UsePlatformDetect()
-            .WithInterFont()
-            .WithJetBrainsMonoFont();
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
+           .UsePlatformDetect()
+           .WithInterFont()
+           .WithJetBrainsMonoFont();
     }
 }

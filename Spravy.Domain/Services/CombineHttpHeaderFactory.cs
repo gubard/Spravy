@@ -9,16 +9,14 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         this.factories = factories;
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<ReadOnlyMemory<HttpHeaderItem>>
-    > CreateHeaderItemsAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+        CancellationToken ct
+    )
     {
         return CreateHeaderItemsCore(ct).ConfigureAwait(false);
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsCore(
-        CancellationToken ct
-    )
+    public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsCore(CancellationToken ct)
     {
         var result = new List<HttpHeaderItem>();
 

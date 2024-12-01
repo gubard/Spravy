@@ -1,10 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.Models;
 
-public partial class ToDoItemEntityNotify
-    : NotifyBase,
-        IEquatable<ToDoItemEntityNotify>,
-        IObjectParameters,
-        IToDoItemEditId
+public partial class ToDoItemEntityNotify : NotifyBase,
+    IEquatable<ToDoItemEntityNotify>,
+    IObjectParameters,
+    IToDoItemEditId
 {
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
@@ -12,67 +11,85 @@ public partial class ToDoItemEntityNotify
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     [ObservableProperty]
-    private object[] path;
-
-    [ObservableProperty]
     private ToDoItemEntityNotify? active;
-
-    [ObservableProperty]
-    private bool isSelected;
-
-    [ObservableProperty]
-    private bool isExpanded;
-
-    [ObservableProperty]
-    private bool isIgnore;
-
-    [ObservableProperty]
-    private bool isFavorite;
-
-    [ObservableProperty]
-    private bool isBookmark;
-
-    [ObservableProperty]
-    private string description;
-
-    [ObservableProperty]
-    private uint orderIndex;
-
-    [ObservableProperty]
-    private ToDoItemStatus status;
-
-    [ObservableProperty]
-    private ToDoItemIsCan isCan;
-
-    [ObservableProperty]
-    private string name;
-
-    [ObservableProperty]
-    private ToDoItemEntityNotify? parent;
-
-    [ObservableProperty]
-    private ToDoItemEntityNotify? reference;
-
-    [ObservableProperty]
-    private DescriptionType descriptionType;
-
-    [ObservableProperty]
-    private string link;
-
-    [ObservableProperty]
-    private ToDoItemType type;
 
     [ObservableProperty]
     private ToDoItemChildrenType childrenType;
 
     [ObservableProperty]
-    private DateOnly dueDate;
+    private Color color;
 
     [ObservableProperty]
     private ushort daysOffset;
 
     [ObservableProperty]
+    private string description;
+
+    [ObservableProperty]
+    private DescriptionType descriptionType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private string icon;
+
+    [ObservableProperty]
+    private bool isBookmark;
+
+    [ObservableProperty]
+    private ToDoItemIsCan isCan;
+
+    [ObservableProperty]
+    private bool isExpanded;
+
+    [ObservableProperty]
+    private bool isFavorite;
+
+    [ObservableProperty]
+    private bool isIgnore;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private bool isSelected;
+
+    [ObservableProperty]
+    private string link;
+
+    [ObservableProperty]
+    private ushort loadedIndex;
+
+    [ObservableProperty]
     private ushort monthsOffset;
+
+    [ObservableProperty]
+    private string name;
+
+    [ObservableProperty]
+    private uint orderIndex;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? parent;
+
+    [ObservableProperty]
+    private object[] path;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? reference;
+
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
+    [ObservableProperty]
+    private ToDoItemStatus status;
+
+    [ObservableProperty]
+    private ToDoItemType type;
+
+    [ObservableProperty]
+    private TypeOfPeriodicity typeOfPeriodicity;
 
     [ObservableProperty]
     private ushort weeksOffset;
@@ -80,28 +97,10 @@ public partial class ToDoItemEntityNotify
     [ObservableProperty]
     private ushort yearsOffset;
 
-    [ObservableProperty]
-    private bool isRequiredCompleteInDueDate;
-
-    [ObservableProperty]
-    private TypeOfPeriodicity typeOfPeriodicity;
-
-    [ObservableProperty]
-    private ushort loadedIndex;
-
-    [ObservableProperty]
-    private string icon;
-
-    [ObservableProperty]
-    private Color color;
-
-    [ObservableProperty]
-    private uint remindDaysBefore;
-
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
-        path = [RootItem.Default, this];
+        path = [RootItem.Default, this,];
         Id = id;
         description = "Loading...";
         name = "Loading...";
@@ -117,7 +116,6 @@ public partial class ToDoItemEntityNotify
         AnnuallyDays = new();
         color = Colors.Transparent;
         icon = string.Empty;
-
         PropertyChanged += OnPropertyChanged;
     }
 
@@ -128,27 +126,21 @@ public partial class ToDoItemEntityNotify
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYear> AnnuallyDays { get; }
 
-    public DateOnly? ActualDueDate
-    {
-        get =>
-            Type switch
-            {
-                ToDoItemType.Value => null,
-                ToDoItemType.Group => null,
-                ToDoItemType.Planned => DueDate,
-                ToDoItemType.Periodicity => DueDate,
-                ToDoItemType.PeriodicityOffset => DueDate,
-                ToDoItemType.Circle => null,
-                ToDoItemType.Step => null,
-                ToDoItemType.Reference => null,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-    }
+    public DateOnly? ActualDueDate =>
+        Type switch
+        {
+            ToDoItemType.Value => null,
+            ToDoItemType.Group => null,
+            ToDoItemType.Planned => DueDate,
+            ToDoItemType.Periodicity => DueDate,
+            ToDoItemType.PeriodicityOffset => DueDate,
+            ToDoItemType.Circle => null,
+            ToDoItemType.Step => null,
+            ToDoItemType.Reference => null,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
 
-    public Guid CurrentId
-    {
-        get => Reference?.Id ?? Id;
-    }
+    public Guid CurrentId => Reference?.Id ?? Id;
 
     public bool Equals(ToDoItemEntityNotify? other)
     {
@@ -163,6 +155,31 @@ public partial class ToDoItemEntityNotify
         }
 
         return Id.Equals(other.Id);
+    }
+
+    public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
+    {
+        if (idParameterName.Span.AreEquals(parameterName))
+        {
+            return Id.ToString().ToResult();
+        }
+
+        if (nameParameterName.Span.AreEquals(parameterName))
+        {
+            return Name.ToResult();
+        }
+
+        return new(new NotFoundNamedError(parameterName.ToString()));
+    }
+
+    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
+    {
+        return new(new NotImplementedError(nameof(SetParameter)));
+    }
+
+    public Result<ToDoItemEditId> GetToDoItemEditId()
+    {
+        return new ToDoItemEditId(this.ToOption(), ReadOnlyMemory<ToDoItemEntityNotify>.Empty).ToResult();
     }
 
     public override bool Equals(object? obj)
@@ -190,29 +207,6 @@ public partial class ToDoItemEntityNotify
         return Id.GetHashCode();
     }
 
-    public Result<ToDoItemEditId> GetToDoItemEditId()
-    {
-        return new ToDoItemEditId(
-            this.ToOption(),
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty
-        ).ToResult();
-    }
-
-    public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
-    {
-        if (idParameterName.Span.AreEquals(parameterName))
-        {
-            return Id.ToString().ToResult();
-        }
-
-        if (nameParameterName.Span.AreEquals(parameterName))
-        {
-            return Name.ToResult();
-        }
-
-        return new(new NotFoundNamedError(parameterName.ToString()));
-    }
-
     public Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {
         Commands.Clear();
@@ -235,9 +229,7 @@ public partial class ToDoItemEntityNotify
         );
 
         Commands.Add(
-            IsBookmark
-                ? spravyCommandNotifyService.RemoveFromBookmark
-                : spravyCommandNotifyService.AddToBookmark
+            IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark : spravyCommandNotifyService.AddToBookmark
         );
 
         if (!Link.IsNullOrWhiteSpace())
@@ -246,9 +238,7 @@ public partial class ToDoItemEntityNotify
         }
 
         Commands.Add(
-            IsFavorite
-                ? spravyCommandNotifyService.RemoveFromFavorite
-                : spravyCommandNotifyService.AddToFavorite
+            IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite : spravyCommandNotifyService.AddToFavorite
         );
 
         if (IsCan != ToDoItemIsCan.None)
@@ -257,11 +247,6 @@ public partial class ToDoItemEntityNotify
         }
 
         return this.ToResult();
-    }
-
-    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
-    {
-        return new(new NotImplementedError(nameof(SetParameter)));
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

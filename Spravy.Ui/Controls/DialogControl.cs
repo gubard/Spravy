@@ -2,37 +2,23 @@ namespace Spravy.Ui.Controls;
 
 public class DialogControl : ContentControl
 {
-    public static readonly StyledProperty<bool> IsOpenProperty = AvaloniaProperty.Register<
-        DialogControl,
-        bool
-    >(nameof(IsOpen), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<bool> IsOpenProperty =
+        AvaloniaProperty.Register<DialogControl, bool>(nameof(IsOpen), defaultBindingMode: BindingMode.TwoWay);
 
-    public static readonly StyledProperty<object?> DialogProperty = AvaloniaProperty.Register<
-        DialogControl,
-        object?
-    >(nameof(Dialog), defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<object?> DialogProperty =
+        AvaloniaProperty.Register<DialogControl, object?>(nameof(Dialog), defaultBindingMode: BindingMode.TwoWay);
 
-    public static readonly StyledProperty<double> WidthDialogProperty = AvaloniaProperty.Register<
-        DialogControl,
-        double
-    >(nameof(WidthDialog), double.NaN);
+    public static readonly StyledProperty<double> WidthDialogProperty =
+        AvaloniaProperty.Register<DialogControl, double>(nameof(WidthDialog), double.NaN);
 
-    public static readonly StyledProperty<double> HeightDialogProperty = AvaloniaProperty.Register<
-        DialogControl,
-        double
-    >(nameof(HeightDialog), double.NaN);
+    public static readonly StyledProperty<double> HeightDialogProperty =
+        AvaloniaProperty.Register<DialogControl, double>(nameof(HeightDialog), double.NaN);
 
     public static readonly StyledProperty<double> MaxWidthDialogProperty =
-        AvaloniaProperty.Register<DialogControl, double>(
-            nameof(MaxWidthDialog),
-            double.PositiveInfinity
-        );
+        AvaloniaProperty.Register<DialogControl, double>(nameof(MaxWidthDialog), double.PositiveInfinity);
 
     public static readonly StyledProperty<double> MaxHeightDialogProperty =
-        AvaloniaProperty.Register<DialogControl, double>(
-            nameof(MaxHeightDialog),
-            double.PositiveInfinity
-        );
+        AvaloniaProperty.Register<DialogControl, double>(nameof(MaxHeightDialog), double.PositiveInfinity);
 
     static DialogControl()
     {

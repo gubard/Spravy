@@ -18,15 +18,11 @@ public class PasswordDbContextFactory : IFactory<string, PasswordDbContext>
 
     public Result<PasswordDbContext> Create(string key)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(
+        var options = new DbContextOptionsBuilder().UseSqlite(
                 key,
-                b =>
-                    b.MigrationsAssembly(
-                        SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName
-                    )
+                b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName)
             )
-            .Options;
+           .Options;
 
         return new PasswordDbContext(options, dbContextSetup).ToResult();
     }

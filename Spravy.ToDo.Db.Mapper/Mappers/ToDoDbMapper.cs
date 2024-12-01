@@ -43,9 +43,7 @@ public static partial class ToDoDbMapper
         );
     }
 
-    public static partial ReadOnlyMemory<ToDoShortItem> ToToDoShortItem(
-        this ReadOnlyMemory<ToDoItemEntity> entity
-    );
+    public static partial ReadOnlyMemory<ToDoShortItem> ToToDoShortItem(this ReadOnlyMemory<ToDoItemEntity> entity);
 
     public static ToDoItemEntity ToToDoItemEntity(this AddToDoItemOptions value)
     {
@@ -111,16 +109,8 @@ public static partial class ToDoDbMapper
         return value.ToOptionGuid();
     }
 
-    public static FullToDoItem ToFullToDoItem(
-        this ToDoItemEntity entity,
-        ToDoItemParameters parameters
-    )
+    public static FullToDoItem ToFullToDoItem(this ToDoItemEntity entity, ToDoItemParameters parameters)
     {
-        return new(
-            entity.ToToDoShortItem(),
-            parameters.Status,
-            parameters.ActiveItem,
-            parameters.IsCan
-        );
+        return new(entity.ToToDoShortItem(), parameters.Status, parameters.ActiveItem, parameters.IsCan);
     }
 }

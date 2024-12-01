@@ -2,9 +2,7 @@
 
 public static class TreeNodeExtension
 {
-    public static IEnumerable<TreeNode<TKey, TValue>> GetEnds<TKey, TValue>(
-        this TreeNode<TKey, TValue> root
-    )
+    public static IEnumerable<TreeNode<TKey, TValue>> GetEnds<TKey, TValue>(this TreeNode<TKey, TValue> root)
         where TKey : notnull
     {
         if (root.Nodes.IsEmpty())

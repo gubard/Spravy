@@ -5,8 +5,7 @@ namespace Spravy.EventBus.Db.Sqlite.Migrator;
 
 public readonly struct SpravyEventBusDbSqliteMigratorMark : IAssemblyMark
 {
-    public static AssemblyName AssemblyName { get; } =
-        typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName();
+    public static AssemblyName AssemblyName { get; } = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName();
 
     public static string AssemblyFullName { get; } =
         typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName().FullName;

@@ -2,10 +2,7 @@ namespace Spravy.Ui.Features.ToDo.Models;
 
 public readonly struct ToDoItemEditId
 {
-    public ToDoItemEditId(
-        Option<ToDoItemEntityNotify> item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
-    )
+    public ToDoItemEditId(Option<ToDoItemEntityNotify> item, ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         Item = item;
         Items = items;
@@ -29,7 +26,10 @@ public readonly struct ToDoItemEditId
 
         if (Items.IsEmpty)
         {
-            return new[] { item };
+            return new[]
+            {
+                item,
+            };
         }
 
         return Items;

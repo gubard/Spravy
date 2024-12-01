@@ -9,10 +9,7 @@ public class PasswordItemSettingsViewModel : DialogableViewModelBase
 
     public PasswordItemEntityNotify Item { get; }
 
-    public override string ViewId
-    {
-        get => $"{TypeCache<PasswordItemSettingsViewModel>.Type}";
-    }
+    public override string ViewId => $"{TypeCache<PasswordItemSettingsViewModel>.Type}";
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
