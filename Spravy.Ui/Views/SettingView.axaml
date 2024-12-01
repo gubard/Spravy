@@ -27,7 +27,7 @@
 
             <ScrollViewer Grid.Row="1" Classes="vertical">
                 <StackPanel>
-                    <c:GroupBoxControl Header="{StaticResource Lang.AccountSetting}" Margin="5">
+                    <c:GroupBoxControl Header="{DynamicResource Lang.AccountSetting}" Margin="5">
                         <StackPanel>
                             <TextBlock Classes="field"
                                        Text="{DynamicResource Lang.Login}" />
@@ -52,7 +52,7 @@
                         </StackPanel>
                     </c:GroupBoxControl>
 
-                    <c:GroupBoxControl Header="{StaticResource Lang.ApplicationInfo}" Margin="5">
+                    <c:GroupBoxControl Header="{DynamicResource Lang.ApplicationInfo}" Margin="5">
                         <StackPanel>
                             <TextBlock Classes="field"
                                        Text="{StaticResource Lang.BaseTheme}" />
@@ -72,7 +72,7 @@
                         </StackPanel>
                     </c:GroupBoxControl>
 
-                    <c:GroupBoxControl Header="{StaticResource Lang.Language}" Margin="5">
+                    <c:GroupBoxControl Header="{DynamicResource Lang.Language}" Margin="5">
                         <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" />
                     </c:GroupBoxControl>
                 </StackPanel>
