@@ -33,7 +33,7 @@
                                        Text="{DynamicResource Lang.Login}" />
 
                             <StackPanel Classes="horizontal">
-                                <TextBlock Text="{Binding AccountNotify.Login}" />
+                                <TextBlock Classes="alignment-center" Text="{Binding AccountNotify.Login}" />
 
                                 <Button Command="{x:Static h:UiHelper.CopyToClipboard}"
                                         CommandParameter="{Binding AccountNotify.Login}">
