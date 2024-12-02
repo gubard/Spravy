@@ -22,7 +22,7 @@
         </StackPanel.Styles>
 
         <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Classes="alignment-left" Margin="5,0,0,0" Text="{Binding Account.Login}" />
+            <TextBlock Classes="alignment-left vertical-alignment-center" Margin="5,0,0,0" Text="{Binding Account.Login}" />
 
             <Button Grid.Column="1"
                     Classes="label alignment-top alignment-right"
