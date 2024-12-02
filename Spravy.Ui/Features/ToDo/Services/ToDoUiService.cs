@@ -261,12 +261,7 @@ public class ToDoUiService : IToDoUiService
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
-            () => UpdateItemAsync(item, ct),
-            () => toDoItemsView.RefreshAsync(ct)
-               .IfSuccessAsync(
-                    () => toDoService.GetChildrenToDoItemIdsAsync(item.Id.ToOption(), ReadOnlyMemory<Guid>.Empty, ct),
-                    ct
-                )
+            () => toDoService.GetChildrenToDoItemIdsAsync(item.Id.ToOption(), ReadOnlyMemory<Guid>.Empty, ct)
                .IfSuccessAsync(
                     ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
                        .IfSuccess(
@@ -292,7 +287,9 @@ public class ToDoUiService : IToDoUiService
                             ct
                         ),
                     ct
-                )
+                ),
+            () => UpdateItemAsync(item, ct),
+            () => toDoItemsView.RefreshAsync(ct)
         );
     }
 
