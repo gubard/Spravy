@@ -3,7 +3,7 @@
                     xmlns:s="clr-namespace:System;assembly=System.Runtime">
     <s:String x:Key="Lang.CultureName">uk-UA</s:String>
     <s:String x:Key="Lang.Color">Колір</s:String>
-    <s:String x:Key="Lang.CreateTimer">Створити таймер</s:String>
+    <s:String x:Key="Lang.CreateTimer">Створити таймер </s:String>
     <s:String x:Key="Lang.CopyToClipboard">Скопіювати в буфер обміну</s:String>
     <s:String x:Key="Lang.UpdateSchedule">Обновився графік</s:String>
     <s:String x:Key="Lang.UpdateToDoEvents">Обновилася справа</s:String>
