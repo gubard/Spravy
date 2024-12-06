@@ -167,6 +167,7 @@ public class EfToDoService : IToDoService
 
                         return context.Set<ToDoItemEntity>()
                            .Where(x => ids.Contains(x.Id))
+                           .Include(x => x.Reference)
                            .ToArrayEntitiesAsync(ct)
                            .IfSuccessForEachAsync(
                                 item =>
@@ -193,9 +194,21 @@ public class EfToDoService : IToDoService
 
                                     if (options.Link.IsEdit)
                                     {
-                                        item.Link = options.Link.Value.TryGetValue(out var link)
-                                            ? link.AbsoluteUri
-                                            : string.Empty;
+                                        if (item.Type == ToDoItemType.Reference)
+                                        {
+                                            if (item.Reference is not null)
+                                            {
+                                                item.Reference.Link = options.Link.Value.TryGetValue(out var link)
+                                                    ? link.AbsoluteUri
+                                                    : string.Empty;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            item.Link = options.Link.Value.TryGetValue(out var link)
+                                                ? link.AbsoluteUri
+                                                : string.Empty;
+                                        }
                                     }
 
                                     if (options.ParentId.IsEdit)
