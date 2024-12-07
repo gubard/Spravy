@@ -3,7 +3,6 @@ namespace Spravy.Ui.Features.ToDo.Interfaces;
 public interface IToDoUiService
 {
     Cvtar UpdateItemAsync(ToDoItemEntityNotify item, CancellationToken ct);
-    Cvtar UpdateItemsAsync(ReadOnlyMemory<ToDoItemEntityNotify> items, CancellationToken ct);
     Cvtar UpdateRootItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct);
     Cvtar UpdateTodayItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct);
     Cvtar UpdateBookmarkItemsAsync(IBookmarksToDoItemsView bookmarksToDoItemsView, CancellationToken ct);

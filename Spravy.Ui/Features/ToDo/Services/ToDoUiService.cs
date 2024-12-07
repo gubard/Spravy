@@ -38,22 +38,6 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public Cvtar UpdateItemsAsync(ReadOnlyMemory<ToDoItemEntityNotify> items, CancellationToken ct)
-    {
-        return taskProgressService.RunProgressAsync(
-            (ushort)items.Length,
-            item => toDoService.GetToDoItemsAsync(items.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
-               .IfSuccessForEachAsync(
-                    x => x.IfSuccessForEach(
-                        i => this.PostUiBackground(() => toDoCache.UpdateUi(i).IfSuccess(_ => item.IncreaseUi()), ct),
-                        ct
-                    ),
-                    ct
-                ),
-            ct
-        );
-    }
-
     public Cvtar UpdateBookmarkItemsAsync(IBookmarksToDoItemsView bookmarksToDoItemsView, CancellationToken ct)
     {
         return toDoService.GetBookmarkToDoItemIdsAsync(ct)
