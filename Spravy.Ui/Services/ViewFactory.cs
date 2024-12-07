@@ -165,7 +165,7 @@ public class ViewFactory : IViewFactory
 
     public PasswordGeneratorViewModel CreatePasswordGeneratorViewModel()
     {
-        return new(passwordService, passwordItemCache);
+        return new(passwordService, passwordItemCache, appOptions);
     }
 
     public SettingViewModel CreateSettingViewModel()

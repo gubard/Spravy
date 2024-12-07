@@ -37,15 +37,6 @@ public class GrpcPasswordService : PasswordServiceBase
             );
     }
 
-    public override Task<GetPasswordItemReply> GetPasswordItem(
-        GetPasswordItemRequest request,
-        ServerCallContext context
-    )
-    {
-        return passwordService.GetPasswordItemAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, value => value.ToGetPasswordItemReply(), context.CancellationToken);
-    }
-
     public override Task<AddPasswordItemReply> AddPasswordItem(
         AddPasswordItemRequest request,
         ServerCallContext context
@@ -55,25 +46,6 @@ public class GrpcPasswordService : PasswordServiceBase
            .HandleAsync<AddPasswordItemReply>(serializer, context.CancellationToken);
     }
 
-    public override Task<GetPasswordItemsReply> GetPasswordItems(
-        GetPasswordItemsRequest request,
-        ServerCallContext context
-    )
-    {
-        return passwordService.GetPasswordItemsAsync(context.CancellationToken)
-           .HandleAsync(
-                serializer,
-                value =>
-                {
-                    var reply = new GetPasswordItemsReply();
-                    reply.Items.AddRange(value.ToPasswordItemGrpc().ToArray());
-
-                    return reply;
-                },
-                context.CancellationToken
-            );
-    }
-
     public override Task<DeletePasswordItemReply> DeletePasswordItem(
         DeletePasswordItemRequest request,
         ServerCallContext context
@@ -81,5 +53,44 @@ public class GrpcPasswordService : PasswordServiceBase
     {
         return passwordService.DeletePasswordItemAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<DeletePasswordItemReply>(serializer, context.CancellationToken);
+    }
+
+    public override async Task GetPasswordItems(
+        GetPasswordItemsRequest request,
+        IServerStreamWriter<GetPasswordItemsReply> responseStream,
+        ServerCallContext context
+    )
+    {
+        var ids = request.Ids.ToGuid();
+
+        await foreach (var item in passwordService.GetPasswordItemsAsync(
+                ids,
+                request.ChunkSize,
+                context.CancellationToken
+            ))
+        {
+            var reply = new GetPasswordItemsReply();
+            reply.Items.AddRange(item.ThrowIfNull().ThrowIfError().ToPasswordItemGrpc().ToArray());
+            await responseStream.WriteAsync(reply);
+        }
+    }
+
+    public override Task<GetChildrenPasswordItemIdsReply> GetChildrenPasswordItemIds(
+        GetChildrenPasswordItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        return passwordService.GetChildrenPasswordItemIdsAsync(request.Id.ToOptionGuid(), context.CancellationToken)
+           .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetChildrenPasswordItemIdsReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
+
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 }

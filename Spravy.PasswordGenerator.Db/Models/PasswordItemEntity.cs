@@ -1,3 +1,5 @@
+using Spravy.PasswordGenerator.Domain.Enums;
+
 namespace Spravy.PasswordGenerator.Db.Models;
 
 public class PasswordItemEntity
@@ -13,4 +15,9 @@ public class PasswordItemEntity
     public string CustomAvailableCharacters { get; set; } = string.Empty;
     public ushort Length { get; set; }
     public string Regex { get; set; } = string.Empty;
+    public PasswordItemType Type { get; set; }
+    public uint OrderIndex { get; set; }
+
+    public Guid? ParentId { get; set; }
+    public PasswordItemEntity? Parent { get; set; }
 }

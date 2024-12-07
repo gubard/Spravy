@@ -9,6 +9,17 @@ namespace Spravy.PasswordGenerator.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class SpravyPasswordGeneratorDbMapper
 {
+    public static partial ReadOnlyMemory<PasswordItem> ToPasswordItem(this ReadOnlyMemory<PasswordItemEntity> options);
+
+    public static GeneratePasswordOptions ToGeneratePasswordOptions(this PasswordItemEntity entity)
+    {
+        return new(
+            $"{entity.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{entity.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{entity.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{entity.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{entity.CustomAvailableCharacters}",
+            entity.Length,
+            entity.Regex
+        );
+    }
+
     public static PasswordItemEntity ToPasswordItemEntity(this AddPasswordOptions options)
     {
         return new()
@@ -26,16 +37,22 @@ public static partial class SpravyPasswordGeneratorDbMapper
         };
     }
 
-    public static partial PasswordItem ToPasswordItem(this PasswordItemEntity options);
-
-    public static partial ReadOnlyMemory<PasswordItem> ToPasswordItem(this ReadOnlyMemory<PasswordItemEntity> options);
-
-    public static GeneratePasswordOptions ToGeneratePasswordOptions(this PasswordItemEntity entity)
+    public static PasswordItem ToPasswordItem(this PasswordItemEntity options)
     {
         return new(
-            $"{entity.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{entity.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{entity.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{entity.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{entity.CustomAvailableCharacters}",
-            entity.Length,
-            entity.Regex
+            options.Id,
+            options.Name,
+            options.Key,
+            options.Length,
+            options.Regex,
+            options.IsAvailableUpperLatin,
+            options.IsAvailableLowerLatin,
+            options.IsAvailableSpecialSymbols,
+            options.IsAvailableNumber,
+            options.CustomAvailableCharacters,
+            options.Login,
+            options.Type,
+            options.OrderIndex
         );
     }
 }

@@ -168,6 +168,21 @@ public static class ResultExtension
         return span.ToReadOnlyMemory().ToResult();
     }
 
+    public static Result IfSuccessForEach<TValue>(this ReadOnlyMemory<TValue> values, Func<TValue, Result> func)
+    {
+        for (var index = 0; index < values.Length; index++)
+        {
+            var result = func.Invoke(values.Span[index]);
+
+            if (result.IsHasError)
+            {
+                return result;
+            }
+        }
+
+        return Result.Success;
+    }
+
     public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
         this Result<ReadOnlyMemory<TValue>> values,
         Func<TValue, Result<TReturn>> func

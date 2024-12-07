@@ -46,6 +46,8 @@ public class PasswordItemCache : IPasswordItemCache
                     item.CustomAvailableCharacters = passwordItem.CustomAvailableCharacters;
                     item.IsAvailableSpecialSymbols = passwordItem.IsAvailableSpecialSymbols;
                     item.Login = passwordItem.Login;
+                    item.Type = passwordItem.Type;
+                    item.OrderIndex = passwordItem.OrderIndex;
 
                     return Result.Success;
                 }

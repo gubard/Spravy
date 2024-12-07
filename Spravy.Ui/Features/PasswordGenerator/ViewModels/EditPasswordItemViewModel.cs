@@ -1,3 +1,5 @@
+using Spravy.PasswordGenerator.Domain.Enums;
+
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public partial class EditPasswordItemViewModel : ViewModelBase
@@ -62,6 +64,12 @@ public partial class EditPasswordItemViewModel : ViewModelBase
     [ObservableProperty]
     private bool isEditRegex;
 
+    [ObservableProperty]
+    private PasswordItemType type;
+
+    [ObservableProperty]
+    private bool isEditType;
+
     public EditPasswordItemViewModel(bool isEditShow)
     {
         IsEditShow = isEditShow;
@@ -123,6 +131,11 @@ public partial class EditPasswordItemViewModel : ViewModelBase
         {
             result = result.SetRegex(new(Regex));
         }
+        
+        if (IsEditType)
+        {
+            result = result.SetType(new(Type));
+        }
 
         return result;
     }
@@ -139,7 +152,8 @@ public partial class EditPasswordItemViewModel : ViewModelBase
             IsAvailableNumber,
             IsAvailableSpecialSymbols,
             CustomAvailableCharacters,
-            Login
+            Login,
+            Type
         );
     }
 
@@ -155,6 +169,7 @@ public partial class EditPasswordItemViewModel : ViewModelBase
         IsEditLogin = false;
         IsEditName = false;
         IsEditRegex = false;
+        IsEditType = false;
 
         return Result.Success;
     }
@@ -171,6 +186,7 @@ public partial class EditPasswordItemViewModel : ViewModelBase
         Login = notify.Login;
         Name = notify.Name;
         Regex = notify.Regex;
+        Type = notify.Type;
 
         return Result.Success;
     }
@@ -236,6 +252,12 @@ public partial class EditPasswordItemViewModel : ViewModelBase
             case nameof(Regex):
             {
                 IsEditRegex = true;
+
+                break;
+            }
+            case nameof(Type):
+            {
+                IsEditType = true;
 
                 break;
             }

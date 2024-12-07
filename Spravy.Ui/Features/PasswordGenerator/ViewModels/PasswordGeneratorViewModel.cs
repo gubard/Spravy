@@ -4,13 +4,17 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly IPasswordItemCache passwordItemCache;
     private readonly IPasswordService passwordService;
+    private readonly AppOptions appOptions;
 
-    public PasswordGeneratorViewModel(IPasswordService passwordService, IPasswordItemCache passwordItemCache) : base(
-        true
-    )
+    public PasswordGeneratorViewModel(
+        IPasswordService passwordService,
+        IPasswordItemCache passwordItemCache,
+        AppOptions appOptions
+    ) : base(true)
     {
         this.passwordService = passwordService;
         this.passwordItemCache = passwordItemCache;
+        this.appOptions = appOptions;
     }
 
     public override string ViewId => TypeCache<PasswordGeneratorViewModel>.Type.Name;
@@ -19,21 +23,18 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
-        Items.Clear();
-
-        return passwordService.GetPasswordItemsAsync(ct)
-           .IfSuccessForEachAsync(
-                item => passwordItemCache.GetPasswordItem(item.Id)
+        return passwordService.GetChildrenPasswordItemIdsAsync(OptionStruct<Guid>.Default, ct)
+           .IfSuccessAsync(
+                ids => ids.IfSuccessForEach(id => passwordItemCache.GetPasswordItem(id))
+                   .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => Items.UpdateUi(items)), ct)
                    .IfSuccessAsync(
-                        i => this.InvokeUiBackgroundAsync(
-                            () =>
-                            {
-                                Items.Add(i);
-                                passwordItemCache.UpdateUi(item);
-
-                                return Result.Success;
-                            }
-                        ),
+                        () => passwordService.GetPasswordItemsAsync(ids, appOptions.PasswordItemsChunkSize, ct)
+                           .IfSuccessForEachAsync(
+                                passwordItems => this.InvokeUiBackgroundAsync(
+                                    () => passwordItems.IfSuccessForEach(i => passwordItemCache.UpdateUi(i))
+                                ),
+                                ct
+                            ),
                         ct
                     ),
                 ct

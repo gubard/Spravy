@@ -1,3 +1,5 @@
+using Spravy.PasswordGenerator.Domain.Enums;
+
 namespace Spravy.PasswordGenerator.Domain.Models;
 
 public readonly struct PasswordItem
@@ -13,7 +15,9 @@ public readonly struct PasswordItem
         bool isAvailableSpecialSymbols,
         bool isAvailableNumber,
         string customAvailableCharacters,
-        string login
+        string login,
+        PasswordItemType type,
+        uint orderIndex
     )
     {
         Id = id;
@@ -27,6 +31,8 @@ public readonly struct PasswordItem
         IsAvailableNumber = isAvailableNumber;
         CustomAvailableCharacters = customAvailableCharacters;
         Login = login;
+        Type = type;
+        OrderIndex = orderIndex;
     }
 
     public Guid Id { get; }
@@ -40,4 +46,6 @@ public readonly struct PasswordItem
     public ushort Length { get; }
     public string Regex { get; }
     public string Login { get; }
+    public PasswordItemType Type { get; }
+    public uint OrderIndex { get; }
 }

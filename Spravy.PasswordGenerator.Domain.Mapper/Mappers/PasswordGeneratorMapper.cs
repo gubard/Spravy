@@ -2,6 +2,7 @@ using Google.Protobuf;
 using Riok.Mapperly.Abstractions;
 using Spravy.Core.Mappers;
 using Spravy.Domain.Models;
+using Spravy.PasswordGenerator.Domain.Enums;
 using Spravy.PasswordGenerator.Domain.Models;
 using Spravy.PasswordGenerator.Protos;
 
@@ -10,12 +11,6 @@ namespace Spravy.PasswordGenerator.Domain.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class PasswordGeneratorMapper
 {
-    public static partial AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemRequest request);
-    public static partial AddPasswordItemRequest ToAddPasswordItemRequest(this AddPasswordOptions request);
-    public static partial PasswordItem ToPasswordItem(this PasswordItemGrpc request);
-    public static partial PasswordItemGrpc ToPasswordItemGrpc(this PasswordItem request);
-    public static partial PasswordItem ToPasswordItem(this GetPasswordItemReply request);
-    public static partial GetPasswordItemReply ToGetPasswordItemReply(this PasswordItem request);
     public static partial ReadOnlyMemory<PasswordItem> ToPasswordItem(this IEnumerable<PasswordItemGrpc> request);
     public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(this EditPropertyValue<ushort> value);
     public static partial EditPropertyBooleanGrpc ToEditPropertyBooleanGrpc(this EditPropertyValue<bool> value);
@@ -23,6 +18,91 @@ public static partial class PasswordGeneratorMapper
     public static partial ReadOnlyMemory<PasswordItemGrpc> ToPasswordItemGrpc(
         this ReadOnlyMemory<PasswordItem> request
     );
+    
+    public static EditPropertyPasswordItemTypeGrpc ToEditPropertyPasswordItemTypeGrpc(
+        this EditPropertyValue<PasswordItemType> value
+    )
+    {
+        return new()
+        {
+            IsEdit = value.IsEdit,
+            Value = (PasswordItemTypeGrpc)value.Value,
+        };
+    }
+
+    public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemRequest request)
+    {
+        return new(
+            request.Name,
+            request.Key,
+            (ushort)request.Length,
+            request.Regex,
+            request.IsAvailableLowerLatin,
+            request.IsAvailableUpperLatin,
+            request.IsAvailableNumber,
+            request.IsAvailableSpecialSymbols,
+            request.CustomAvailableCharacters,
+            request.Login,
+            (PasswordItemType)request.Type
+        );
+    }
+
+    public static AddPasswordItemRequest ToAddPasswordItemRequest(this AddPasswordOptions value)
+    {
+        return new()
+        {
+            IsAvailableLowerLatin = value.IsAvailableLowerLatin,
+            IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols,
+            IsAvailableUpperLatin = value.IsAvailableUpperLatin,
+            CustomAvailableCharacters = value.CustomAvailableCharacters,
+            IsAvailableNumber = value.IsAvailableNumber,
+            Key = value.Key,
+            Length = value.Length,
+            Login = value.Login,
+            Name = value.Name,
+            Regex = value.Regex,
+            Type = (PasswordItemTypeGrpc)value.Type,
+        };
+    }
+
+    public static PasswordItem ToPasswordItem(this PasswordItemGrpc request)
+    {
+        return new(
+            request.Id.ToGuid(),
+            request.Name,
+            request.Key,
+            (ushort)request.Length,
+            request.Regex,
+            request.IsAvailableUpperLatin,
+            request.IsAvailableLowerLatin,
+            request.IsAvailableSpecialSymbols,
+            request.IsAvailableNumber,
+            request.CustomAvailableCharacters,
+            request.Login,
+            (PasswordItemType)request.Type,
+            request.OrderIndex
+        );
+    }
+
+    public static PasswordItemGrpc ToPasswordItemGrpc(this PasswordItem value)
+    {
+        return new()
+        {
+            Type = (PasswordItemTypeGrpc)value.Type,
+            CustomAvailableCharacters = value.CustomAvailableCharacters,
+            IsAvailableNumber = value.IsAvailableNumber,
+            IsAvailableLowerLatin = value.IsAvailableLowerLatin,
+            IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols,
+            IsAvailableUpperLatin = value.IsAvailableUpperLatin,
+            Length = value.Length,
+            Regex = value.Regex,
+            Key = value.Key,
+            Name = value.Name,
+            Login = value.Login,
+            Id = value.Id.ToByteString(),
+            OrderIndex = value.OrderIndex,
+        };
+    }
 
     public static EditPasswordItemsGrpc ToEditPasswordItemsGrpc(this EditPasswordItems options)
     {
@@ -38,6 +118,7 @@ public static partial class PasswordGeneratorMapper
             IsAvailableLowerLatin = options.IsAvailableLowerLatin.ToEditPropertyBooleanGrpc(),
             IsAvailableSpecialSymbols = options.IsAvailableSpecialSymbols.ToEditPropertyBooleanGrpc(),
             IsAvailableUpperLatin = options.IsAvailableUpperLatin.ToEditPropertyBooleanGrpc(),
+            Type = options.Type.ToEditPropertyPasswordItemTypeGrpc(),
         };
 
         result.Ids.AddRange(options.Ids.ToByteString().ToArray());
@@ -62,6 +143,9 @@ public static partial class PasswordGeneratorMapper
             value.IsAvailableNumber.IsEdit ? new EditPropertyValue<bool>(value.IsAvailableNumber.Value) : new(),
             value.IsAvailableSpecialSymbols.IsEdit
                 ? new EditPropertyValue<bool>(value.IsAvailableSpecialSymbols.Value)
+                : new(),
+            value.Type.IsEdit
+                ? new EditPropertyValue<PasswordItemType>((PasswordItemType)value.Type.Value)
                 : new()
         );
     }

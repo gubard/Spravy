@@ -1,3 +1,5 @@
+using Spravy.PasswordGenerator.Domain.Enums;
+
 namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
@@ -182,6 +184,13 @@ public static class UiHelper
             TypeOfPeriodicity.Annually,
         ]
     );
+    
+    public static ReadOnlyMemory<PasswordItemType> PasswordItemTypes = new(
+        [
+            PasswordItemType.Value,
+            PasswordItemType.Group,
+        ]
+    );
 
     public static ReadOnlyMemory<ThemeType> ThemeTypes = new([ThemeType.Default, ThemeType.Light, ThemeType.Dark,]);
 
@@ -342,6 +351,11 @@ public static class UiHelper
         if (typeof(SortByToDoItem) == type)
         {
             return new(SortByToDoItems.ToArray().OfType<object>().ToArray());
+        }
+
+        if (typeof(PasswordItemType) == type)
+        {
+            return new(PasswordItemTypes.ToArray().OfType<object>().ToArray());
         }
 
         throw new ArgumentOutOfRangeException(type.ToString());

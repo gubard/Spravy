@@ -41,7 +41,8 @@ public static partial class UiMapper
             value.IsAvailableNumber,
             value.IsAvailableSpecialSymbols,
             value.CustomAvailableCharacters,
-            value.Login
+            value.Login,
+            value.Type
         );
     }
 

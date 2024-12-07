@@ -1,3 +1,5 @@
+using Spravy.PasswordGenerator.Domain.Enums;
+
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
 public partial class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, IObjectParameters
@@ -37,6 +39,12 @@ public partial class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdPr
 
     [ObservableProperty]
     private string regex = string.Empty;
+
+    [ObservableProperty]
+    private PasswordItemType type;
+
+    [ObservableProperty]
+    private uint orderIndex;
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {

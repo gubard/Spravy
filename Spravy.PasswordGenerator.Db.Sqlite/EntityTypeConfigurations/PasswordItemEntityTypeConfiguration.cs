@@ -12,5 +12,6 @@ public class PasswordItemEntityTypeConfiguration : IEntityTypeConfiguration<Pass
         builder.HasKey(x => x.Id);
         builder.HasIndex(x => x.Name).IsUnique();
         builder.HasIndex(x => x.Key).IsUnique();
+        builder.HasOne(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);
     }
 }
