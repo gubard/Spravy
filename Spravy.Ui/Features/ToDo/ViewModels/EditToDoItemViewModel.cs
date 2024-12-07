@@ -370,11 +370,6 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         return result;
     }
 
-    public Result UpdateItemUi()
-    {
-        return Result.Success;
-    }
-
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)

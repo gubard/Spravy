@@ -124,7 +124,7 @@ public class ViewFactory : IViewFactory
 
     public AddPasswordItemViewModel CreateAddPasswordItemViewModel()
     {
-        return new();
+        return new(CreateEditPasswordItemViewModel(false));
     }
 
     public LoginViewModel CreateLoginViewModel()
@@ -321,12 +321,17 @@ public class ViewFactory : IViewFactory
 
     public PasswordItemSettingsViewModel CreatePasswordItemSettingsViewModel(PasswordItemEntityNotify item)
     {
-        return new(item);
+        return new(item, CreateEditPasswordItemViewModel(false), passwordService);
     }
 
     public DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item)
     {
         return new(item);
+    }
+
+    public EditPasswordItemViewModel CreateEditPasswordItemViewModel(bool isEditShow)
+    {
+        return new(isEditShow);
     }
 
     public AddTimerViewModel CreateAddTimerViewModel()

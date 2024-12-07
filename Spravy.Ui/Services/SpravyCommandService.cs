@@ -236,8 +236,7 @@ public class SpravyCommandService
         );
 
         AddChild = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -266,8 +265,8 @@ public class SpravyCommandService
         );
 
         Delete = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                    
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -317,8 +316,8 @@ public class SpravyCommandService
         );
 
         ShowSetting = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                    
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -361,8 +360,8 @@ public class SpravyCommandService
         );
 
         ChangeParent = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                    
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -391,8 +390,8 @@ public class SpravyCommandService
         );
 
         ToDoItemCopyToClipboard = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                    
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -421,8 +420,8 @@ public class SpravyCommandService
         );
 
         RandomizeChildrenOrder = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) =>  toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                   
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -451,8 +450,7 @@ public class SpravyCommandService
         );
 
         ChangeOrder = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -491,8 +489,7 @@ public class SpravyCommandService
         );
 
         Reset = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -521,8 +518,7 @@ public class SpravyCommandService
         );
 
         AddToFavorite = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => toDoService
                    .EditToDoItemsAsync(new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(true)), ct)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
@@ -533,8 +529,7 @@ public class SpravyCommandService
         );
 
         RemoveFromFavorite = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => toDoService
                    .EditToDoItemsAsync(
                         new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(false)),
@@ -548,8 +543,7 @@ public class SpravyCommandService
         );
 
         OpenLink = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => editId.ResultItems
                    .Select(x => x.Link)
                    .Where(x => !x.IsNullOrWhiteSpace())
@@ -562,8 +556,7 @@ public class SpravyCommandService
         );
 
         Clone = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -592,8 +585,7 @@ public class SpravyCommandService
         );
 
         CreateReference = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -710,7 +702,13 @@ public class SpravyCommandService
                 DialogViewLayer.Content,
                 viewFactory.CreateAddPasswordItemViewModel(),
                 vm => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct)
-                   .IfSuccessAsync(() => passwordService.AddPasswordItemAsync(vm.ToAddPasswordOptions(), ct), ct)
+                   .IfSuccessAsync(
+                        () => passwordService.AddPasswordItemAsync(
+                            vm.EditPasswordItemViewModel.ToAddPasswordOptions(),
+                            ct
+                        ),
+                        ct
+                    )
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
                 ct
             ),
@@ -723,57 +721,8 @@ public class SpravyCommandService
                 viewFactory,
                 DialogViewLayer.Content,
                 viewFactory.CreatePasswordItemSettingsViewModel(item),
-                _ => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct)
-                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemKeyAsync(item.Id, item.Key, ct), ct)
-                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemLengthAsync(item.Id, item.Length, ct), ct)
-                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemNameAsync(item.Id, item.Name, ct), ct)
-                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemRegexAsync(item.Id, item.Regex, ct), ct)
-                   .IfSuccessAsync(
-                        () =>
-                            passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
-                                item.Id,
-                                item.CustomAvailableCharacters,
-                                ct
-                            ),
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        () =>
-                            passwordService.UpdatePasswordItemIsAvailableNumberAsync(
-                                item.Id,
-                                item.IsAvailableNumber,
-                                ct
-                            ),
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        () =>
-                            passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
-                                item.Id,
-                                item.IsAvailableLowerLatin,
-                                ct
-                            ),
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        () =>
-                            passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
-                                item.Id,
-                                item.IsAvailableSpecialSymbols,
-                                ct
-                            ),
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        () =>
-                            passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
-                                item.Id,
-                                item.IsAvailableUpperLatin,
-                                ct
-                            ),
-                        ct
-                    )
-                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemLoginAsync(item.Id, item.Login, ct), ct)
+                vm => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct)
+                   .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
                 ct
             ),

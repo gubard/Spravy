@@ -164,6 +164,11 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<TodayToDoItemsView>());
         }
 
+        if (typeof(EditPasswordItemViewModel) == viewModelType)
+        {
+            return new(serviceFactory.CreateService<EditPasswordItemView>());
+        }
+
         if (typeof(AddPasswordItemViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<AddPasswordItemView>());

@@ -29,7 +29,7 @@ public static partial class UiMapper
         };
     }
 
-    public static AddPasswordOptions ToAddPasswordOptions(this AddPasswordItemViewModel value)
+    public static AddPasswordOptions ToAddPasswordOptions(this EditPasswordItemViewModel value)
     {
         return new(
             value.Name,

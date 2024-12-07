@@ -1,38 +1,15 @@
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public partial class AddPasswordItemViewModel : DialogableViewModelBase
+public class AddPasswordItemViewModel : DialogableViewModelBase
 {
-    [ObservableProperty]
-    private string customAvailableCharacters = string.Empty;
+    public override string ViewId => TypeCache<AddPasswordItemViewModel>.Type.Name;
 
-    [ObservableProperty]
-    private bool isAvailableLowerLatin = true;
+    public AddPasswordItemViewModel(EditPasswordItemViewModel editPasswordItemViewModel)
+    {
+        EditPasswordItemViewModel = editPasswordItemViewModel;
+    }
 
-    [ObservableProperty]
-    private bool isAvailableNumber = true;
-
-    [ObservableProperty]
-    private bool isAvailableSpecialSymbols = true;
-
-    [ObservableProperty]
-    private bool isAvailableUpperLatin = true;
-
-    [ObservableProperty]
-    private string key = string.Empty;
-
-    [ObservableProperty]
-    private ushort length = 512;
-
-    [ObservableProperty]
-    private string login = string.Empty;
-
-    [ObservableProperty]
-    private string name = string.Empty;
-
-    [ObservableProperty]
-    private string regex = string.Empty;
-
-    public override string ViewId => $"{TypeCache<AddPasswordItemViewModel>.Type}";
+    public EditPasswordItemViewModel EditPasswordItemViewModel { get; }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

@@ -35,6 +35,82 @@ public class EfPasswordService : IPasswordService
             );
     }
 
+    public Cvtar EditPasswordItemsAsync(EditPasswordItems options, CancellationToken ct)
+    {
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () =>
+                    {
+                        var ids = options.Ids.ToArray();
+
+                        return context.Set<PasswordItemEntity>()
+                           .Where(x => ids.Contains(x.Id))
+                           .ToArrayEntitiesAsync(ct)
+                           .IfSuccessForEachAsync(
+                                item =>
+                                {
+                                    if (options.Name.IsEdit)
+                                    {
+                                        item.Name = options.Name.Value;
+                                    }
+
+                                    if (options.Key.IsEdit)
+                                    {
+                                        item.Key = options.Key.Value;
+                                    }
+
+                                    if (options.IsAvailableSpecialSymbols.IsEdit)
+                                    {
+                                        item.IsAvailableSpecialSymbols = options.IsAvailableSpecialSymbols.Value;
+                                    }
+
+                                    if (options.Length.IsEdit)
+                                    {
+                                        item.Length = options.Length.Value;
+                                    }
+
+                                    if (options.Login.IsEdit)
+                                    {
+                                        item.Login = options.Login.Value;
+                                    }
+
+                                    if (options.Regex.IsEdit)
+                                    {
+                                        item.Regex = options.Regex.Value;
+                                    }
+
+                                    if (options.CustomAvailableCharacters.IsEdit)
+                                    {
+                                        item.CustomAvailableCharacters = options.CustomAvailableCharacters.Value;
+                                    }
+
+                                    if (options.IsAvailableNumber.IsEdit)
+                                    {
+                                        item.IsAvailableNumber = options.IsAvailableNumber.Value;
+                                    }
+
+                                    if (options.IsAvailableLowerLatin.IsEdit)
+                                    {
+                                        item.IsAvailableLowerLatin = options.IsAvailableLowerLatin.Value;
+                                    }
+
+                                    if (options.IsAvailableUpperLatin.IsEdit)
+                                    {
+                                        item.IsAvailableUpperLatin = options.IsAvailableUpperLatin.Value;
+                                    }
+
+                                    return Result.AwaitableSuccess;
+                                },
+                                ct
+                            );
+                    },
+                    ct
+                ),
+                ct
+            );
+    }
+
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
         CancellationToken ct
     )
@@ -87,221 +163,6 @@ public class EfPasswordService : IPasswordService
                             ),
                         ct
                     ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.Name = name;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.Key = key;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.Length = length;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.Regex = regex;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemIsAvailableNumberAsync(Guid id, bool isAvailableNumber, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.IsAvailableNumber = isAvailableNumber;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemIsAvailableLowerLatinAsync(Guid id, bool isAvailableLowerLatin, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.GetEntityAsync<PasswordItemEntity>(id)
-                   .IfSuccessAsync(
-                        item =>
-                        {
-                            item.IsAvailableLowerLatin = isAvailableLowerLatin;
-
-                            return Result.Success;
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
-        Guid id,
-        bool isAvailableSpecialSymbols,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemCustomAvailableCharactersAsync(
-        Guid id,
-        string customAvailableCharacters,
-        CancellationToken ct
-    )
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.CustomAvailableCharacters = customAvailableCharacters;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemIsAvailableUpperLatinAsync(Guid id, bool isAvailableUpperLatin, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.IsAvailableUpperLatin = isAvailableUpperLatin;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
-    }
-
-    public Cvtar UpdatePasswordItemLoginAsync(Guid id, string login, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.GetEntityAsync<PasswordItemEntity>(id)
-                       .IfSuccessAsync(
-                            item =>
-                            {
-                                item.Login = login;
-
-                                return Result.Success;
-                            },
-                            ct
-                        ),
-                    ct
-                ),
                 ct
             );
     }

@@ -2,6 +2,7 @@ namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
 {
+    EditPasswordItemViewModel CreateEditPasswordItemViewModel(bool isEditShow);
     AddTimerViewModel CreateAddTimerViewModel();
     DeleteTimerViewModel CreateDeleteTimerViewModel(TimerItemNotify item);
     TextViewModel CreateTextViewModel();
