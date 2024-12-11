@@ -166,8 +166,7 @@ public class SpravyCommandService
                                                             return Result.Success;
                                                         case ToDoItemIsCan.CanComplete:
                                                         {
-                                                            item.IsCan = ToDoItemIsCan.None;
-                                                            item.Status = ToDoItemStatus.ComingSoon;
+                                                            item.IsUpdated = false;
 
                                                             return remove.RemoveUi(
                                                                 new[]
@@ -178,8 +177,7 @@ public class SpravyCommandService
                                                         }
                                                         case ToDoItemIsCan.CanIncomplete:
                                                         {
-                                                            item.IsCan = ToDoItemIsCan.None;
-                                                            item.Status = ToDoItemStatus.ComingSoon;
+                                                            item.IsUpdated = false;
 
                                                             return remove.RemoveUi(
                                                                 new[]

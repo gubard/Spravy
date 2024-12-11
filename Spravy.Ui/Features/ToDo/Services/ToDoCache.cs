@@ -59,6 +59,7 @@ public class ToDoCache : IToDoCache
                     item.IsBookmark = toDoItem.Item.IsBookmark;
                     item.Icon = toDoItem.Item.Icon;
                     item.IsIgnore = item.Type == ToDoItemType.Reference;
+                    item.IsUpdated = true;
 
                     item.Color = toDoItem.Item.Color.IsNullOrWhiteSpace()
                         ? Colors.Transparent
@@ -267,6 +268,7 @@ public class ToDoCache : IToDoCache
                     item.RemindDaysBefore = shortItem.RemindDaysBefore;
                     item.IsIgnore = item.Type == ToDoItemType.Reference;
                     item.Link = shortItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
+                    item.IsUpdated = true;
 
                     item.Color = shortItem.Color.IsNullOrWhiteSpace()
                         ? Colors.Transparent

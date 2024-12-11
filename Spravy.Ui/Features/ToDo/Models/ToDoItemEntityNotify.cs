@@ -96,6 +96,9 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     [ObservableProperty]
     private ushort yearsOffset;
+    
+    [ObservableProperty]
+    private bool isUpdated;
 
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
@@ -125,6 +128,62 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYear> AnnuallyDays { get; }
+    public Guid CurrentId => Reference?.Id ?? Id;
+
+    public ToDoItemEntityNotifyIconType IconType
+    {
+        get
+        {
+            return Type switch
+            {
+                ToDoItemType.Value => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.Group => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                ToDoItemType.Planned => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.Periodicity => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.PeriodicityOffset => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.Circle => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.Step => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
+                ToDoItemType.Reference => Reference?.IconType ?? ToDoItemEntityNotifyIconType.Empty,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+        }
+    }
 
     public DateOnly? ActualDueDate =>
         Type switch
@@ -139,8 +198,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
             ToDoItemType.Reference => null,
             _ => throw new ArgumentOutOfRangeException(),
         };
-
-    public Guid CurrentId => Reference?.Id ?? Id;
 
     public bool Equals(ToDoItemEntityNotify? other)
     {

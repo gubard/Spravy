@@ -49,30 +49,43 @@
 
                         <Grid ColumnDefinitions="*,Auto">
                             <Grid ColumnDefinitions="Auto,*">
-                                <Panel>
-                                    <ToggleButton BorderThickness="1"
-                                                  BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
-                                                  Width="50"
-                                                  Height="50"
-                                                  Margin="0,0,5,5"
-                                                  Command="{x:Static h:UiHelper.Complete}"
-                                                  CommandParameter="{Binding}"
-                                                  IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                                  IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
-                                        <Panel>
-                                            <i:Icon Value="mdi-check" Classes="h1"
-                                                    IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}" />
-                                        </Panel>
-                                    </ToggleButton>
+                                <c:ViewSelectorControl State="{Binding IconType}">
+                                    <c:ViewSelectorItemControl State="{x:Static te:ToDoItemEntityNotifyIconType.Empty}" />
 
-                                    <Border Width="50"
-                                            Height="50"
-                                            
-                                            IsVisible="{Binding Icon, Mode=OneWay, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}">
+                                    <c:ViewSelectorItemControl
+                                        State="{x:Static te:ToDoItemEntityNotifyIconType.Checked}">
+                                        <ToggleButton BorderThickness="1"
+                                                      BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                                      Width="50"
+                                                      Height="50"
+                                                      Margin="0,0,5,5"
+                                                      Command="{x:Static h:UiHelper.Complete}"
+                                                      CommandParameter="{Binding}"
+                                                      IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
+                                            <i:Icon Value="mdi-check" Classes="h1" />
+                                        </ToggleButton>
+                                    </c:ViewSelectorItemControl>
+
+                                    <c:ViewSelectorItemControl State="{x:Static te:ToDoItemEntityNotifyIconType.Icon}">
                                         <i:Icon Classes="h2"
                                                 Value="{Binding Icon}" />
-                                    </Border>
-                                </Panel>
+                                    </c:ViewSelectorItemControl>
+
+                                    <c:ViewSelectorItemControl
+                                        State="{x:Static te:ToDoItemEntityNotifyIconType.UncheckedIcon}">
+                                        <ToggleButton BorderThickness="1"
+                                                      BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                                      Width="50"
+                                                      Height="50"
+                                                      Margin="0,0,5,5"
+                                                      Command="{x:Static h:UiHelper.Complete}"
+                                                      CommandParameter="{Binding}"
+                                                      IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
+                                            <i:Icon Classes="h2"
+                                                    Value="{Binding Icon}" />
+                                        </ToggleButton>
+                                    </c:ViewSelectorItemControl>
+                                </c:ViewSelectorControl>
 
                                 <StackPanel Grid.Column="1" Classes="alignment-left vertical-alignment-center">
                                     <TextBlock Margin="5"

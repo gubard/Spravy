@@ -3,20 +3,17 @@ namespace Spravy.Ui.Features.ToDo.Services;
 public class ToDoUiService : IToDoUiService
 {
     private readonly AppOptions appOptions;
-    private readonly ITaskProgressService taskProgressService;
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
 
     public ToDoUiService(
         IToDoService toDoService,
         IToDoCache toDoCache,
-        ITaskProgressService taskProgressService,
         AppOptions appOptions
     )
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
-        this.taskProgressService = taskProgressService;
         this.appOptions = appOptions;
     }
 
@@ -24,17 +21,11 @@ public class ToDoUiService : IToDoUiService
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
-            () => taskProgressService.RunProgressAsync(
-                _ => toDoService.GetToDoItemAsync(item.Id, ct)
-                   .IfSuccessAsync(x => this.InvokeUiAsync(() => toDoCache.UpdateUi(x)), ct)
-                   .ToResultOnlyAsync(),
-                ct
-            ),
-            () => taskProgressService.RunProgressAsync(
-                _ => toDoService.GetParentsAsync(item.Id, ct)
-                   .IfSuccessAsync(x => this.PostUiBackground(() => toDoCache.UpdateParentsUi(item.Id, x), ct), ct),
-                ct
-            )
+            () => toDoService.GetToDoItemAsync(item.Id, ct)
+               .IfSuccessAsync(x => this.InvokeUiAsync(() => toDoCache.UpdateUi(x)), ct)
+               .ToResultOnlyAsync(),
+            () => toDoService.GetParentsAsync(item.Id, ct)
+               .IfSuccessAsync(x => this.PostUiBackground(() => toDoCache.UpdateParentsUi(item.Id, x), ct), ct)
         );
     }
 

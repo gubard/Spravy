@@ -63,12 +63,11 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     public TextLocalization Header { get; }
     public SpravyCommand SwitchAllSelectionCommand { get; }
-
     public IAvaloniaReadOnlyList<ToDoItemEntityNotify> ToDoItems => toDoItems;
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        var removeItems = ToDoItems.Where(x => !items.Span.Contains(x)).ToArray();
+        var removeItems = ToDoItems.Where(x => !items.Span.Contains(x) || !x.IsUpdated).ToArray();
         toDoItems.RemoveAll(removeItems);
         AddOrUpdateUi(items);
 
@@ -77,7 +76,7 @@ public partial class ToDoItemsViewModel : ViewModelBase
 
     public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        var notContains = items.Where(x => !ToDoItems.Contains(x));
+        var notContains = items.Where(x => x.IsUpdated && !ToDoItems.Contains(x));
         toDoItems.AddRange(notContains.ToArray());
 
         return Sort();
