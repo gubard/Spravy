@@ -6,4 +6,5 @@ public enum ToDoItemEntityNotifyIconType
     Checked,
     Icon,
     UncheckedIcon,
+    Unchecked,
 }

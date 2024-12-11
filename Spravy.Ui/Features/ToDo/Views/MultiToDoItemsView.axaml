@@ -85,6 +85,18 @@
                                                     Value="{Binding Icon}" />
                                         </ToggleButton>
                                     </c:ViewSelectorItemControl>
+
+                                    <c:ViewSelectorItemControl
+                                        State="{x:Static te:ToDoItemEntityNotifyIconType.Unchecked}">
+                                        <ToggleButton BorderThickness="1"
+                                                      BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                                      Width="50"
+                                                      Height="50"
+                                                      Margin="0,0,5,5"
+                                                      Command="{x:Static h:UiHelper.Complete}"
+                                                      CommandParameter="{Binding}"
+                                                      IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}" />
+                                    </c:ViewSelectorItemControl>
                                 </c:ViewSelectorControl>
 
                                 <StackPanel Grid.Column="1" Classes="alignment-left vertical-alignment-center">

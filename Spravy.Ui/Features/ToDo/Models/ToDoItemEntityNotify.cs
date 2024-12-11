@@ -139,7 +139,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
                 ToDoItemType.Value => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
@@ -147,35 +147,35 @@ public partial class ToDoItemEntityNotify : NotifyBase,
                 ToDoItemType.Planned => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
                 ToDoItemType.Periodicity => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
                 ToDoItemType.PeriodicityOffset => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
                 ToDoItemType.Circle => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
                 ToDoItemType.Step => IsCan switch
                 {
                     ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
-                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
@@ -316,6 +316,12 @@ public partial class ToDoItemEntityNotify : NotifyBase,
                 break;
             case nameof(DueDate):
                 OnPropertyChanged(nameof(ActualDueDate));
+
+                break;
+            case nameof(Type):
+            case nameof(IsCan):
+            case nameof(Icon):
+                OnPropertyChanged(nameof(IconType));
 
                 break;
         }
