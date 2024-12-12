@@ -6,11 +6,7 @@ public class ToDoUiService : IToDoUiService
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
 
-    public ToDoUiService(
-        IToDoService toDoService,
-        IToDoCache toDoCache,
-        AppOptions appOptions
-    )
+    public ToDoUiService(IToDoService toDoService, IToDoCache toDoCache, AppOptions appOptions)
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
@@ -84,18 +80,15 @@ public class ToDoUiService : IToDoUiService
 
                 return Result.AwaitableSuccess;
             },
-            () => toDoItemsView.RefreshAsync(ct)
-               .IfSuccessAsync(
-                    () => toDoService.GetChildrenToDoItemIdsAsync(
-                        (item.GetNullable()?.Parent?.Id).ToOption(),
-                        ignoreItems.IsEmpty && item.TryGetValue(out var i)
-                            ? new[]
-                            {
-                                i.Id,
-                            }
-                            : ignoreItems.Select(x => x.Id),
-                        ct
-                    ),
+            () => toDoItemsView.RefreshAsync(ct),
+            () => toDoService.GetChildrenToDoItemIdsAsync(
+                    (item.GetNullable()?.Parent?.Id).ToOption(),
+                    ignoreItems.IsEmpty && item.TryGetValue(out var i)
+                        ? new[]
+                        {
+                            i.Id,
+                        }
+                        : ignoreItems.Select(x => x.Id),
                     ct
                 )
                .IfSuccessAsync(ids => toDoService.GetShortToDoItemsAsync(ids, ct), ct)
@@ -114,8 +107,8 @@ public class ToDoUiService : IToDoUiService
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
             () => UpdateItemAsync(item, ct),
-            () => toDoItemsView.RefreshAsync(ct)
-               .IfSuccessAsync(() => toDoService.GetLeafToDoItemIdsAsync(item.Id, ct), ct)
+            () => toDoItemsView.RefreshAsync(ct),
+            () => toDoService.GetLeafToDoItemIdsAsync(item.Id, ct)
                .IfSuccessAsync(
                     ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
                        .IfSuccess(x => this.PostUiBackground(() => toDoItemsView.SetItemsUi(x), ct))
@@ -155,88 +148,95 @@ public class ToDoUiService : IToDoUiService
 
     public Cvtar UpdateRootItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct)
     {
-        return toDoItemsView.RefreshAsync(ct)
-           .IfSuccessAsync(
-                () =>
-                    toDoCache.GetRootItems()
-                       .IfSuccess(items => this.PostUiBackground(() => toDoItemsView.SetItemsUi(items), ct)),
-                ct
-            )
-           .IfSuccessAsync(
-                () =>
-                    toDoService.GetChildrenToDoItemIdsAsync(OptionStruct<Guid>.Default, ReadOnlyMemory<Guid>.Empty, ct),
-                ct
-            )
-           .IfSuccessAsync(
-                ids =>
-                    toDoCache.UpdateRootItems(ids)
-                       .IfSuccess(items => this.PostUiBackground(() => toDoItemsView.SetItemsUi(items), ct))
-                       .IfSuccess(() => ids.ToResult()),
-                ct
-            )
-           .IfSuccessAsync(
-                ids => toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
-                   .IfSuccessForEachAsync(
-                        x => this.PostUiBackground(
-                            () => x.IfSuccessForEach(i => toDoCache.UpdateUi(i)).IfSuccess(toDoItemsView.AddOrUpdateUi),
+        return Result.AwaitableSuccess.IfSuccessAllAsync(
+            ct,
+            () => toDoItemsView.RefreshAsync(ct),
+            () => toDoCache.GetRootItems()
+               .IfSuccess(items => this.PostUiBackground(() => toDoItemsView.SetItemsUi(items), ct))
+               .IfSuccessAsync(
+                    () =>
+                        toDoService.GetChildrenToDoItemIdsAsync(
+                            OptionStruct<Guid>.Default,
+                            ReadOnlyMemory<Guid>.Empty,
                             ct
                         ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public Cvtar UpdateSearchToDoItemsAsync(string searchText, IToDoItemsView toDoItemsView, CancellationToken ct)
-    {
-        return toDoItemsView.RefreshAsync(ct)
-           .IfSuccessAsync(
-                () => searchText.IsNullOrWhiteSpace()
-                    ? ReadOnlyMemory<Guid>.Empty.ToResult().ToValueTaskResult().ConfigureAwait(false)
-                    : toDoService.SearchToDoItemIdsAsync(searchText, ct),
-                ct
-            )
-           .IfSuccessAsync(
-                ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
-                   .IfSuccess(x => this.PostUiBackground(() => toDoItemsView.SetItemsUi(x), ct))
-                   .IfSuccess(() => ids.ToResult()),
-                ct
-            )
-           .IfSuccessAsync(
-                ids =>
-                {
-                    ushort loadedIndex = 0;
-
-                    return toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
+                    ct
+                )
+               .IfSuccessAsync(
+                    ids =>
+                        toDoCache.UpdateRootItems(ids)
+                           .IfSuccess(items => this.PostUiBackground(() => toDoItemsView.SetItemsUi(items), ct))
+                           .IfSuccess(() => ids.ToResult()),
+                    ct
+                )
+               .IfSuccessAsync(
+                    ids => toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
                        .IfSuccessForEachAsync(
                             x => this.PostUiBackground(
-                                () => x.IfSuccessForEach(
-                                        i => toDoCache.UpdateUi(i)
-                                           .IfSuccess(
-                                                notify =>
-                                                {
-                                                    notify.LoadedIndex = loadedIndex;
-                                                    loadedIndex++;
-
-                                                    return notify.ToResult();
-                                                }
-                                            )
-                                    )
+                                () => x.IfSuccessForEach(i => toDoCache.UpdateUi(i))
                                    .IfSuccess(toDoItemsView.AddOrUpdateUi),
                                 ct
                             ),
                             ct
-                        );
-                },
-                ct
-            );
+                        ),
+                    ct
+                )
+        );
+    }
+
+    public Cvtar UpdateSearchToDoItemsAsync(string searchText, IToDoItemsView toDoItemsView, CancellationToken ct)
+    {
+        return Result.AwaitableSuccess.IfSuccessAllAsync(
+            ct,
+            () => toDoItemsView.RefreshAsync(ct),
+            () => (searchText.IsNullOrWhiteSpace()
+                    ? ReadOnlyMemory<Guid>.Empty.ToResult().ToValueTaskResult().ConfigureAwait(false)
+                    : toDoService.SearchToDoItemIdsAsync(searchText, ct)).IfSuccessAsync(
+                    ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
+                       .IfSuccess(x => this.PostUiBackground(() => toDoItemsView.SetItemsUi(x), ct))
+                       .IfSuccess(() => ids.ToResult()),
+                    ct
+                )
+               .IfSuccessAsync(
+                    ids =>
+                    {
+                        ushort loadedIndex = 0;
+
+                        return toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
+                           .IfSuccessForEachAsync(
+                                x => this.PostUiBackground(
+                                    () => x.IfSuccessForEach(
+                                            i => toDoCache.UpdateUi(i)
+                                               .IfSuccess(
+                                                    notify =>
+                                                    {
+                                                        notify.LoadedIndex = loadedIndex;
+                                                        loadedIndex++;
+
+                                                        return notify.ToResult();
+                                                    }
+                                                )
+                                        )
+                                       .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                    ct
+                                ),
+                                ct
+                            );
+                    },
+                    ct
+                )
+        );
     }
 
     public Cvtar UpdateItemChildrenAsync(ToDoItemEntityNotify item, IToDoItemsView toDoItemsView, CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessAllAsync(
             ct,
-            () => toDoService.GetChildrenToDoItemIdsAsync(item.Id.ToOption(), ReadOnlyMemory<Guid>.Empty, ct)
+            () => this.PostUiBackground(() => toDoItemsView.SetItemsUi(item.Children.ToArray()), ct)
+               .IfSuccessAsync(
+                    () => toDoService.GetChildrenToDoItemIdsAsync(item.Id.ToOption(), ReadOnlyMemory<Guid>.Empty, ct),
+                    ct
+                )
                .IfSuccessAsync(
                     ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
                        .IfSuccess(
@@ -270,41 +270,44 @@ public class ToDoUiService : IToDoUiService
 
     public Cvtar UpdateTodayItemsAsync(IToDoItemsView toDoItemsView, CancellationToken ct)
     {
-        return toDoItemsView.RefreshAsync(ct)
-           .IfSuccessAsync(() => toDoService.GetTodayToDoItemsAsync(ct), ct)
-           .IfSuccessAsync(
-                ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
-                   .IfSuccess(x => this.PostUiBackground(() => toDoItemsView.SetItemsUi(x), ct))
-                   .IfSuccess(() => ids.ToResult()),
-                ct
-            )
-           .IfSuccessAsync(
-                ids =>
-                {
-                    ushort loadedIndex = 0;
+        return Result.AwaitableSuccess.IfSuccessAllAsync(
+            ct,
+            () => toDoItemsView.RefreshAsync(ct),
+            () => toDoService.GetTodayToDoItemsAsync(ct)
+               .IfSuccessAsync(
+                    ids => ids.IfSuccessForEach(id => toDoCache.GetToDoItem(id))
+                       .IfSuccess(x => this.PostUiBackground(() => toDoItemsView.SetItemsUi(x), ct))
+                       .IfSuccess(() => ids.ToResult()),
+                    ct
+                )
+               .IfSuccessAsync(
+                    ids =>
+                    {
+                        ushort loadedIndex = 0;
 
-                    return toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
-                       .IfSuccessForEachAsync(
-                            x => this.PostUiBackground(
-                                () => x.IfSuccessForEach(
-                                        i => toDoCache.UpdateUi(i)
-                                           .IfSuccess(
-                                                notify =>
-                                                {
-                                                    notify.LoadedIndex = loadedIndex;
-                                                    loadedIndex++;
+                        return toDoService.GetToDoItemsAsync(ids, appOptions.ToDoItemsChunkSize, ct)
+                           .IfSuccessForEachAsync(
+                                x => this.PostUiBackground(
+                                    () => x.IfSuccessForEach(
+                                            i => toDoCache.UpdateUi(i)
+                                               .IfSuccess(
+                                                    notify =>
+                                                    {
+                                                        notify.LoadedIndex = loadedIndex;
+                                                        loadedIndex++;
 
-                                                    return notify.ToResult();
-                                                }
-                                            )
-                                    )
-                                   .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                                        return notify.ToResult();
+                                                    }
+                                                )
+                                        )
+                                       .IfSuccess(toDoItemsView.AddOrUpdateUi),
+                                    ct
+                                ),
                                 ct
-                            ),
-                            ct
-                        );
-                },
-                ct
-            );
+                            );
+                    },
+                    ct
+                )
+        );
     }
 }
