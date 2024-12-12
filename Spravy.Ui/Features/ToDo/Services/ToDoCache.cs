@@ -240,6 +240,11 @@ public class ToDoCache : IToDoCache
             );
     }
 
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetFavoriteItems()
+    {
+        return cache.Values.Where(x => x.IsFavorite).OrderBy(x => x.OrderIndex).ToArray().ToReadOnlyMemory().ToResult();
+    }
+
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoShortItem shortItem)
     {
         return GetToDoItem(shortItem.Id)

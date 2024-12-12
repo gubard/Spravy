@@ -1,14 +1,25 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoSubItemsViewModel
-(
-    IToDoService toDoService,
-    IToDoCache toDoCache,
-    MultiToDoItemsViewModel list,
-    ITaskProgressService taskProgressService,
-    AppOptions appOptions) : ViewModelBase, IToDoItemsView
+public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
-    public MultiToDoItemsViewModel List { get; } = list;
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
+    private readonly AppOptions appOptions;
+
+    public ToDoSubItemsViewModel(
+        IToDoService toDoService,
+        IToDoCache toDoCache,
+        MultiToDoItemsViewModel list,
+        AppOptions appOptions
+    )
+    {
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
+        this.appOptions = appOptions;
+        List = list;
+    }
+
+    public MultiToDoItemsViewModel List { get; }
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
@@ -27,36 +38,29 @@ public class ToDoSubItemsViewModel
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetFavoriteToDoItemIdsAsync(ct)
+        return toDoCache.GetFavoriteItems()
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)), ct)
+           .IfSuccessAsync(() => toDoService.GetFavoriteToDoItemIdsAsync(ct), ct)
            .IfSuccessAsync(
-                items => taskProgressService.RunProgressAsync(
-                    (ushort)items.Length,
-                    item => items.ToResult()
-                       .IfSuccessForEach(toDoCache.GetToDoItem)
-                       .IfSuccessAsync(
-                            itemsNotify => List.SetFavoriteItemsUi(itemsNotify)
-                               .IfSuccessAsync(
-                                    () => toDoService
-                                       .GetToDoItemsAsync(
-                                            itemsNotify.Select(x => x.Id),
-                                            appOptions.ToDoItemsChunkSize,
-                                            ct
-                                        )
-                                       .IfSuccessForEachAsync(
-                                            fullItems =>
-                                                this.InvokeUiBackgroundAsync(
-                                                    () => fullItems
-                                                       .IfSuccessForEach(updatedItem => toDoCache.UpdateUi(updatedItem))
-                                                       .IfSuccess(i => List.AddOrUpdateFavoriteUi(i))
-                                                ),
-                                            ct
+                items => items.ToResult()
+                   .IfSuccessForEach(toDoCache.GetToDoItem)
+                   .IfSuccessAsync(
+                        itemsNotify => List.SetFavoriteItemsUi(itemsNotify)
+                           .IfSuccessAsync(
+                                () => toDoService
+                                   .GetToDoItemsAsync(itemsNotify.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
+                                   .IfSuccessForEachAsync(
+                                        fullItems => this.InvokeUiBackgroundAsync(
+                                            () => fullItems
+                                               .IfSuccessForEach(updatedItem => toDoCache.UpdateUi(updatedItem))
+                                               .IfSuccess(i => List.AddOrUpdateFavoriteUi(i))
                                         ),
-                                    ct
-                                ),
-                            ct
-                        ),
-                    ct
-                ),
+                                        ct
+                                    ),
+                                ct
+                            ),
+                        ct
+                    ),
                 ct
             );
     }

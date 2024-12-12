@@ -476,7 +476,6 @@ public class ViewFactory : IViewFactory
             toDoService,
             toDoCache,
             CreateMultiToDoItemsViewModel(viewModelSortBy),
-            taskProgressService,
             appOptions
         );
     }
