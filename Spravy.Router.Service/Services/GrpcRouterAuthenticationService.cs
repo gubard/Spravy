@@ -11,6 +11,20 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         this.serializer = serializer;
     }
 
+    public override async Task<DeleteUserByLoginReply> DeleteUserByLogin(DeleteUserByLoginRequest request, ServerCallContext context)
+    {
+        await authenticationService.DeleteUserByLoginAsync(request.Login, request.VerificationCode, context.CancellationToken);
+
+        return new();
+    }
+
+    public override async Task<DeleteUserByEmailReply> DeleteUserByEmail(DeleteUserByEmailRequest request, ServerCallContext context)
+    {
+        await authenticationService.DeleteUserByEmailAsync(request.Email, request.VerificationCode, context.CancellationToken);
+
+        return new();
+    }
+
     public override async Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
         UpdateEmailNotVerifiedUserByLoginRequest request,
         ServerCallContext context

@@ -158,11 +158,11 @@ message GetToDoSelectorItemsReply {
   repeated ToDoSelectorItemGrpc items = 1;
 }
 
-message DeleteToDoItemRequest {
+message DeleteToDoItemsRequest {
   repeated bytes ids = 1;
 }
 
-message DeleteToDoItemReply {
+message DeleteToDoItemsReply {
 }
 
 message AddToDoItemRequest {

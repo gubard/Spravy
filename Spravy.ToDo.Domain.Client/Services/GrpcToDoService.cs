@@ -452,10 +452,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
                .IfSuccessAsync(
                     metadata =>
                     {
-                        var request = new DeleteToDoItemRequest();
+                        var request = new DeleteToDoItemsRequest();
                         request.Ids.AddRange(ids.Select(x => x.ToByteString()).ToArray());
 
-                        return client.DeleteToDoItemAsync(request, metadata, DateTime.UtcNow.Add(Timeout), ct)
+                        return client.DeleteToDoItemsAsync(request, metadata, DateTime.UtcNow.Add(Timeout), ct)
                            .ToValueTaskResultOnly()
                            .ConfigureAwait(false);
                     },

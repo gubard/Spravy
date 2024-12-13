@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using Spravy.Schedule.Domain.Mapper.Mappers;
 using Spravy.Schedule.Protos;
 
@@ -15,10 +16,27 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         this.serializer = serializer;
     }
 
+    public override Task<UpdateEventsReply> UpdateEvents(UpdateEventsRequest request, ServerCallContext context)
+    {
+        return scheduleService.UpdateEventsAsync(context.CancellationToken)
+           .HandleAsync(
+                serializer,
+                value => new UpdateEventsReply
+                {
+                    IsUpdated = value,
+                },
+                context.CancellationToken
+            );
+    }
+
+    public override Task<AddTimerReply> AddTimer(AddTimerRequest request, ServerCallContext context)
+    {
+        return scheduleService.AddTimerAsync(request.Items.Select(x => x.ToAddTimerParameters()).ToArray(), context.CancellationToken).HandleAsync<AddTimerReply>(serializer, context.CancellationToken);
+    }
+
     public override async Task<RemoveTimerReply> RemoveTimer(RemoveTimerRequest request, ServerCallContext context)
     {
-        var id = request.Id.ToGuid();
-        await scheduleService.RemoveTimerAsync(id, context.CancellationToken);
+        await scheduleService.RemoveTimerAsync(request.Id.ToGuid(), context.CancellationToken);
 
         return new();
     }

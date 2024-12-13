@@ -9,7 +9,7 @@ import "Protos/to_do_messages.proto";
 service ToDoService {
   rpc CloneToDoItem (CloneToDoItemRequest) returns (CloneToDoItemReply);
   rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
-  rpc DeleteToDoItem (DeleteToDoItemRequest) returns (DeleteToDoItemReply);
+  rpc DeleteToDoItems (DeleteToDoItemsRequest) returns (DeleteToDoItemsReply);
   rpc GetToDoSelectorItems (GetToDoSelectorItemsRequest) returns (GetToDoSelectorItemsReply);
   rpc ToDoItemToString (ToDoItemToStringRequest) returns (ToDoItemToStringReply);
   rpc GetCurrentActiveToDoItem (GetCurrentActiveToDoItemRequest) returns (GetCurrentActiveToDoItemReply);

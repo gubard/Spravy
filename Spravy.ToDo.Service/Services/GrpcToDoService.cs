@@ -333,10 +333,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             );
     }
 
-    public override Task<DeleteToDoItemReply> DeleteToDoItem(DeleteToDoItemRequest request, ServerCallContext context)
+    public override Task<DeleteToDoItemsReply> DeleteToDoItems(DeleteToDoItemsRequest request, ServerCallContext context)
     {
         return toDoService.DeleteToDoItemsAsync(request.Ids.ToGuid(), context.CancellationToken)
-           .HandleAsync<DeleteToDoItemReply>(serializer, context.CancellationToken);
+           .HandleAsync<DeleteToDoItemsReply>(serializer, context.CancellationToken);
     }
 
     public override Task<GetToDoSelectorItemsReply> GetToDoSelectorItems(
