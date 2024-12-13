@@ -146,8 +146,7 @@ public class SpravyCommandService
             {
                 uiApplicationService.StopCurrentView();
 
-                ResultExtension.IfSuccessAsync(
-                        toDoItemEditId.GetToDoItemEditId(),
+                toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                         editId =>
                         {
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
@@ -345,8 +344,7 @@ public class SpravyCommandService
         );
 
         OpenLeaf = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => navigator.NavigateToAsync(
                     viewFactory.CreateLeafToDoItemsViewModel(editId.Item, editId.Items),
                     ct
@@ -665,8 +663,7 @@ public class SpravyCommandService
         );
 
         SetToDoItemDescription = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -1139,8 +1136,7 @@ public class SpravyCommandService
         );
 
         CreateTimer = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                    toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                     editId =>
                     {
                         if (editId.Item.TryGetValue(out var item))
@@ -1208,8 +1204,7 @@ public class SpravyCommandService
         );
 
         AddToBookmark = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => toDoService
                    .EditToDoItemsAsync(new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(true)), ct)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
@@ -1220,8 +1215,7 @@ public class SpravyCommandService
         );
 
         RemoveFromBookmark = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => ResultExtension.IfSuccessAsync(
-                toDoItemEditId.GetToDoItemEditId(),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
                 editId => toDoService
                    .EditToDoItemsAsync(
                         new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(false)),
