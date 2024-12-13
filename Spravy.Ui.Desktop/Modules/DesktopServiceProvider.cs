@@ -1,6 +1,8 @@
 using Jab;
 using Microsoft.Extensions.Configuration;
 using Spavy.LocalStorage.Sqlite.Services;
+using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
@@ -21,6 +23,7 @@ namespace Spravy.Ui.Desktop.Modules;
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Transient(typeof(ISoundPlayer), typeof(SoundPlayer))]
+[Transient(typeof(IHashService), typeof(Md5HashService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class DesktopServiceProvider : IServiceFactory

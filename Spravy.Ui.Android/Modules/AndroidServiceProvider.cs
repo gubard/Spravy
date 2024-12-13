@@ -1,3 +1,4 @@
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Services;
 
 namespace Spravy.Ui.Android.Modules;
@@ -9,20 +10,16 @@ namespace Spravy.Ui.Android.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Singleton(typeof(ISoundPlayer), Factory = nameof(SoundPlayerFactory))]
+[Singleton(typeof(ISoundPlayer), typeof(SoundPlayer))]
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 [Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
+[Transient(typeof(IHashService), typeof(Md5HashService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 public partial class AndroidServiceProvider : IServiceFactory
 {
     public T CreateService<T>() where T : notnull
     {
         return GetService<T>();
-    }
-
-    private static ISoundPlayer SoundPlayerFactory()
-    {
-        return new SoundPlayer(new Md5HashService());
     }
 
     private static IObjectStorage SqliteObjectStorageFactory(ISerializer serializer)
