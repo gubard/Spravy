@@ -179,7 +179,13 @@ public partial class ToDoItemEntityNotify : NotifyBase,
                     ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
                     _ => throw new ArgumentOutOfRangeException(),
                 },
-                ToDoItemType.Reference => Reference?.IconType ?? ToDoItemEntityNotifyIconType.Empty,
+                ToDoItemType.Reference => IsCan switch
+                {
+                    ToDoItemIsCan.None => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Empty : ToDoItemEntityNotifyIconType.Icon,
+                    ToDoItemIsCan.CanComplete => Icon.IsNullOrWhiteSpace() ? ToDoItemEntityNotifyIconType.Unchecked : ToDoItemEntityNotifyIconType.UncheckedIcon,
+                    ToDoItemIsCan.CanIncomplete => ToDoItemEntityNotifyIconType.Checked,
+                    _ => throw new ArgumentOutOfRangeException(),
+                },
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }
