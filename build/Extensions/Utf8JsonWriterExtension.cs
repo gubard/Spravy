@@ -188,7 +188,13 @@ public static class Utf8JsonWriterExtension
                             () =>
                             {
                                 writer.AddStringValue("Default", "Information");
-                                writer.AddObject("Override", () => writer.AddStringValue("Microsoft", "Information"));
+
+                                writer.AddObject("Override", () =>
+                                    {
+                                        writer.AddStringValue("Microsoft", "Warning");
+                                        writer.AddStringValue("Serilog", "Warning");
+                                    }
+                                );
                             }
                         );
 
