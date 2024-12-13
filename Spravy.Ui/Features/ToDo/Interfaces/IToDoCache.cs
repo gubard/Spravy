@@ -14,4 +14,5 @@ public interface IToDoCache
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateUi(ReadOnlyMemory<ToDoSelectorItem> items);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItemsUi(Guid id, ReadOnlyMemory<Guid> items);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetFavoriteItems();
+    Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetBookmarkItems();
 }

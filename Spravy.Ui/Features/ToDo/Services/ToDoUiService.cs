@@ -27,7 +27,12 @@ public class ToDoUiService : IToDoUiService
 
     public Cvtar UpdateBookmarkItemsAsync(IBookmarksToDoItemsView bookmarksToDoItemsView, CancellationToken ct)
     {
-        return toDoService.GetBookmarkToDoItemIdsAsync(ct)
+        return toDoCache.GetBookmarkItems()
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(() => bookmarksToDoItemsView.ClearBookmarksExceptUi(items)),
+                ct
+            )
+           .IfSuccessAsync(() => toDoService.GetBookmarkToDoItemIdsAsync(ct), ct)
            .IfSuccessAsync(
                 ids => this.PostUiBackground(
                     () => ids.IfSuccessForEach(i => toDoCache.GetToDoItem(i))
