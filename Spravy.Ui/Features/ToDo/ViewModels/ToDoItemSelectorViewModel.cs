@@ -66,7 +66,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand SearchCommand { get; }
 
-    public override string ViewId => $"{TypeCache<ToDoItemSelectorViewModel>.Type}";
+    public override string ViewId => TypeCache<ToDoItemSelectorViewModel>.Name;
 
     public Result<ToDoItemEntityNotify> GetSelectedItem()
     {

@@ -78,7 +78,7 @@ public partial class AddTimerViewModel : DialogableViewModelBase, IApplySettings
         return Result.Success;
     }
 
-    public override string ViewId => $"{TypeCache<AddTimerViewModel>.Type}";
+    public override string ViewId => TypeCache<AddTimerViewModel>.Name;
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

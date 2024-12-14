@@ -15,7 +15,7 @@ public class CreateReferenceViewModel : ToDoItemEditIdViewModel, IApplySettings
         this.toDoService = toDoService;
     }
 
-    public override string ViewId => TypeCache<CreateReferenceViewModel>.Type.Name;
+    public override string ViewId => TypeCache<CreateReferenceViewModel>.Name;
 
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
 

@@ -54,7 +54,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SaveCommand { get; }
     public AvaloniaList<string> Languages { get; }
-    public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
+    public override string ViewId => TypeCache<SettingViewModel>.Name;
     public string Version => AppConst.VersionString;
 
     private Cvtar DeleteAccountAsync(CancellationToken ct)

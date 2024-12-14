@@ -185,7 +185,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     public AvaloniaList<DayOfYearSelectItem> AnnuallyDays { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
 
-    public override string ViewId => $"{TypeCache<ToDoItemToStringSettingsViewModel>.Type}";
+    public override string ViewId => TypeCache<ToDoItemToStringSettingsViewModel>.Name;
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

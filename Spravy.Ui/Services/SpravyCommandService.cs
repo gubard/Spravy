@@ -1168,7 +1168,7 @@ public class SpravyCommandService
         MainViewInitialized = SpravyCommand.Create(
             ct =>
             {
-                var key = TypeCache<SettingViewModel>.Type.Name;
+                var key = TypeCache<SettingViewModel>.Name;
 
                 return objectStorage.IsExistsAsync(key, ct)
                    .IfSuccessAsync(

@@ -32,7 +32,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<string> SearchTexts { get; }
 
-    public override string ViewId => TypeCache<SearchToDoItemsViewModel>.Type.Name;
+    public override string ViewId => TypeCache<SearchToDoItemsViewModel>.Name;
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

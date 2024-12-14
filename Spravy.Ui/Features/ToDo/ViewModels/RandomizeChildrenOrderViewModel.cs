@@ -13,7 +13,7 @@ public class RandomizeChildrenOrderViewModel : ToDoItemEditIdViewModel, IApplySe
         this.toDoService = toDoService;
     }
 
-    public override string ViewId => $"{TypeCache<RandomizeChildrenOrderViewModel>.Type}";
+    public override string ViewId => TypeCache<RandomizeChildrenOrderViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

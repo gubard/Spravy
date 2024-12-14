@@ -21,7 +21,7 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
 
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
 
-    public override string ViewId => $"{TypeCache<DialogableViewModelBase>.Type}";
+    public override string ViewId => TypeCache<DialogableViewModelBase>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

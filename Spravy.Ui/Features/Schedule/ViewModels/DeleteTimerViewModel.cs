@@ -9,7 +9,7 @@ public class DeleteTimerViewModel : DialogableViewModelBase
 
     public TimerItemNotify Item { get; }
 
-    public override string ViewId => $"{TypeCache<DeleteTimerViewModel>.Type}";
+    public override string ViewId => TypeCache<DeleteTimerViewModel>.Name;
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

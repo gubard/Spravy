@@ -11,7 +11,7 @@ public class TimersViewModel : NavigatableViewModelBase, IRefresh
 
     public AvaloniaList<TimerItemNotify> Timers { get; } = new();
 
-    public override string ViewId => $"{TypeCache<TimersViewModel>.Type}";
+    public override string ViewId => TypeCache<TimersViewModel>.Name;
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {

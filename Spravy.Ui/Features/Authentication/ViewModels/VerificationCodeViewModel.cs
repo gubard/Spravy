@@ -11,7 +11,7 @@ public partial class VerificationCodeViewModel : NavigatableViewModelBase, IVeri
         IdentifierType = identifierType;
     }
 
-    public override string ViewId => TypeCache<VerificationCodeViewModel>.Type.Name;
+    public override string ViewId => TypeCache<VerificationCodeViewModel>.Name;
 
     public string EmailOrLogin { get; }
     public UserIdentifierType IdentifierType { get; }

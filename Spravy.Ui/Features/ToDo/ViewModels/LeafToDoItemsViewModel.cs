@@ -50,7 +50,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
         }
     }
 
-    public override string ViewId => TypeCache<LeafToDoItemsViewModel>.Type.Name;
+    public override string ViewId => TypeCache<LeafToDoItemsViewModel>.Name;
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {

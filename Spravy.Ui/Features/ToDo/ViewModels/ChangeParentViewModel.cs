@@ -15,7 +15,7 @@ public class ChangeParentViewModel : ToDoItemEditIdViewModel, IApplySettings
         ToDoItemSelectorViewModel = toDoItemSelectorViewModel;
     }
 
-    public override string ViewId => TypeCache<ChangeParentViewModel>.Type.Name;
+    public override string ViewId => TypeCache<ChangeParentViewModel>.Name;
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)

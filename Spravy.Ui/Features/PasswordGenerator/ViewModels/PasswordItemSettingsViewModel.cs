@@ -19,7 +19,7 @@ public class PasswordItemSettingsViewModel : DialogableViewModelBase, IApplySett
 
     public PasswordItemEntityNotify Item { get; }
     public EditPasswordItemViewModel EditPasswordItemViewModel { get; }
-    public override string ViewId => $"{TypeCache<PasswordItemSettingsViewModel>.Type}";
+    public override string ViewId => TypeCache<PasswordItemSettingsViewModel>.Name;
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

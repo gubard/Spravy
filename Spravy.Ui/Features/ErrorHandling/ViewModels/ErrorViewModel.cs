@@ -23,7 +23,7 @@ public class ErrorViewModel : DialogableViewModelBase
         );
     }
 
-    public override string ViewId => TypeCache<ErrorViewModel>.Type.Name;
+    public override string ViewId => TypeCache<ErrorViewModel>.Name;
     public SpravyCommand CopyErrorCommand { get; }
     public IEnumerable<Error> Errors => errors;
 

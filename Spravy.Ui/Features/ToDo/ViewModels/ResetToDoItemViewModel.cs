@@ -30,8 +30,8 @@ public partial class ResetToDoItemViewModel : ToDoItemEditIdViewModel, IApplySet
 
     public override string ViewId =>
         EditItem.TryGetValue(out var editItem)
-            ? $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{editItem.Id}"
-            : $"{TypeCache<ResetToDoItemViewModel>.Type.Name}";
+            ? $"{TypeCache<ResetToDoItemViewModel>.Name}:{editItem.Id}"
+            : TypeCache<ResetToDoItemViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

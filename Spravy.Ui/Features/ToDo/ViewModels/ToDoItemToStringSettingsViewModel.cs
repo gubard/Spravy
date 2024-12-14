@@ -31,7 +31,7 @@ public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApply
 
     public IEnumerable<CheckedItem<ToDoItemStatus>> Statuses => statuses;
 
-    public override string ViewId => $"{TypeCache<ToDoItemToStringSettingsViewModel>.Type}";
+    public override string ViewId => TypeCache<ToDoItemToStringSettingsViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

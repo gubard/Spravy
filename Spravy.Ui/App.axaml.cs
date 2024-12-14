@@ -18,7 +18,7 @@ public class App : Application
 
     static App()
     {
-        ViewId = TypeCache<App>.Type.Name;
+        ViewId = TypeCache<App>.Name;
 
         Layoutable.WidthProperty.Changed.AddClassHandler<TopLevel>(
             (topLevel, _) =>
@@ -69,7 +69,7 @@ public class App : Application
             var objectStorage = serviceFactory.CreateService<IObjectStorage>();
 
             var settings = objectStorage
-               .GetObjectOrDefaultAsync<WindowSetting>(TypeCache<WindowSetting>.Type.Name, CancellationToken.None)
+               .GetObjectOrDefaultAsync<WindowSetting>(TypeCache<WindowSetting>.Name, CancellationToken.None)
                .GetAwaiter()
                .GetResult();
 
@@ -93,7 +93,7 @@ public class App : Application
                     Y = window.Position.Y,
                 };
 
-                objectStorage.SaveObjectAsync(TypeCache<WindowSetting>.Type.Name, windowSetting, CancellationToken.None)
+                objectStorage.SaveObjectAsync(TypeCache<WindowSetting>.Name, windowSetting, CancellationToken.None)
                    .GetAwaiter()
                    .GetResult();
             };

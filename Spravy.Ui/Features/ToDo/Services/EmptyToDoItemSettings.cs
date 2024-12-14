@@ -4,7 +4,7 @@ public class EmptyToDoItemSettings : IToDoItemSettings
 {
     public static readonly EmptyToDoItemSettings Default = new();
 
-    public string ViewId => TypeCache<EmptyToDoItemSettings>.Type.Name;
+    public string ViewId => TypeCache<EmptyToDoItemSettings>.Name;
 
     public EditToDoItems GetEditToDoItems()
     {

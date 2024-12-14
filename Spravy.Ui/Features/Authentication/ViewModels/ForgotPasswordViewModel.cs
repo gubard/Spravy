@@ -23,7 +23,7 @@ public partial class ForgotPasswordViewModel : NavigatableViewModelBase, IVerifi
         this.identifierType = identifierType;
     }
 
-    public override string ViewId => TypeCache<ForgotPasswordViewModel>.Type.Name;
+    public override string ViewId => TypeCache<ForgotPasswordViewModel>.Name;
 
     public override Result Stop()
     {

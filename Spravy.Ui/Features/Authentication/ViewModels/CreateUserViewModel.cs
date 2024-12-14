@@ -24,7 +24,7 @@ public partial class CreateUserViewModel : NavigatableViewModelBase, INotifyData
         this.propertyValidator = propertyValidator;
     }
 
-    public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
+    public override string ViewId => TypeCache<CreateUserViewModel>.Name;
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;

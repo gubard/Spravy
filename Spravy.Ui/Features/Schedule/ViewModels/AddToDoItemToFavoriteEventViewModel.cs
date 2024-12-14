@@ -23,7 +23,7 @@ public class AddToDoItemToFavoriteEventViewModel : ViewModelBase, IEventViewMode
 
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
 
-    public string ViewId => TypeCache<AddToDoItemToFavoriteEventViewModel>.Type.Name;
+    public string ViewId => TypeCache<AddToDoItemToFavoriteEventViewModel>.Name;
     public Guid Id => AddToDoItemToFavoriteEventOptions.EventId;
 
     public Cvtar LoadStateAsync(CancellationToken ct)

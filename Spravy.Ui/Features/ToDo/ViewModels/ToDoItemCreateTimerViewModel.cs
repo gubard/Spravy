@@ -57,8 +57,8 @@ public partial class ToDoItemCreateTimerViewModel : ToDoItemEditIdViewModel, IAp
 
     public override string ViewId =>
         EditItem.TryGetValue(out var editItem)
-            ? $"{TypeCache<ToDoItemCreateTimerViewModel>.Type.Name}:{editItem.Id}"
-            : $"{TypeCache<ToDoItemCreateTimerViewModel>.Type.Name}";
+            ? $"{TypeCache<ToDoItemCreateTimerViewModel>.Name}:{editItem.Id}"
+            : TypeCache<ToDoItemCreateTimerViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

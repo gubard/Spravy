@@ -17,7 +17,7 @@ public class PolicyViewModel : NavigatableViewModelBase
     }
 
     public SpravyCommand CopyPolicyCommand { get; }
-    public override string ViewId => $"{TypeCache<PolicyViewModel>.Type}";
+    public override string ViewId => TypeCache<PolicyViewModel>.Name;
 
     public override Result Stop()
     {

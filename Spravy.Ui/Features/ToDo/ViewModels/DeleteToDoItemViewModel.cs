@@ -18,8 +18,8 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
 
     public override string ViewId =>
         EditItem.TryGetValue(out var editItem)
-            ? $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{editItem.Id}"
-            : $"{TypeCache<AddToDoItemViewModel>.Type.Name}";
+            ? $"{TypeCache<AddToDoItemViewModel>.Name}:{editItem.Id}"
+            : TypeCache<AddToDoItemViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

@@ -4,7 +4,7 @@ public class EmptyNavigatable : INavigatable
 {
     public bool IsPooled => false;
 
-    public string ViewId => TypeCache<EmptyNavigatable>.Type.Name;
+    public string ViewId => TypeCache<EmptyNavigatable>.Name;
 
     public Cvtar SaveStateAsync(CancellationToken ct)
     {

@@ -38,7 +38,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
-    public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Item.Id}";
+    public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Name}:{Item.Id}";
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

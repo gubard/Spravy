@@ -24,7 +24,7 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
         this.propertyValidator = propertyValidator;
     }
 
-    public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
+    public override string ViewId => TypeCache<LoginViewModel>.Name;
 
 #pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;

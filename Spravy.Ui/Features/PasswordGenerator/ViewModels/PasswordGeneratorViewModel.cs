@@ -17,7 +17,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         this.appOptions = appOptions;
     }
 
-    public override string ViewId => TypeCache<PasswordGeneratorViewModel>.Type.Name;
+    public override string ViewId => TypeCache<PasswordGeneratorViewModel>.Name;
 
     public AvaloniaList<PasswordItemEntityNotify> Items { get; } = new();
 

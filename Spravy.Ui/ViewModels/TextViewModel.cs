@@ -17,7 +17,7 @@ public partial class TextViewModel : DialogableViewModelBase
     [ObservableProperty]
     private TextWrapping textWrapping;
 
-    public override string ViewId => $"{TypeCache<TextViewModel>.Type}";
+    public override string ViewId => TypeCache<TextViewModel>.Name;
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {

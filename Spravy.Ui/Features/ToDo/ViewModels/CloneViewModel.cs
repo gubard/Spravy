@@ -19,7 +19,7 @@ public class CloneViewModel : ToDoItemEditIdViewModel, IApplySettings
         this.toDoCache = toDoCache;
     }
 
-    public override string ViewId => TypeCache<CloneViewModel>.Type.Name;
+    public override string ViewId => TypeCache<CloneViewModel>.Name;
 
     public ToDoItemSelectorViewModel ToDoItemSelectorViewModel { get; }
 

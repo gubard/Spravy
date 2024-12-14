@@ -27,7 +27,7 @@ public partial class EditDescriptionViewModel : ToDoItemEditIdViewModel, IApplyS
         description = item.Description;
     }
 
-    public override string ViewId => $"{TypeCache<EditDescriptionViewModel>.Type}";
+    public override string ViewId => TypeCache<EditDescriptionViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {

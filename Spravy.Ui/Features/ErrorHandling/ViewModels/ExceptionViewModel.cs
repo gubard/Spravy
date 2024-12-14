@@ -22,7 +22,7 @@ public class ExceptionViewModel : DialogableViewModelBase
 
     public SpravyCommand CopyErrorCommand { get; }
     public string Message => $"{exception.GetType()}{Environment.NewLine}{exception.Message}";
-    public override string ViewId => $"{TypeCache<ExceptionViewModel>.Type}";
+    public override string ViewId => TypeCache<ExceptionViewModel>.Name;
 
     public override string ToString()
     {

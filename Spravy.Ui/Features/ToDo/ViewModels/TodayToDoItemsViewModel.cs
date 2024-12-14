@@ -22,7 +22,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
-    public override string ViewId => TypeCache<TodayToDoItemsViewModel>.Type.Name;
+    public override string ViewId => TypeCache<TodayToDoItemsViewModel>.Name;
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
