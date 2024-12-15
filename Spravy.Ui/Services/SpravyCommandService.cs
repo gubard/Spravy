@@ -194,6 +194,13 @@ public class SpravyCommandService
                                     CancellationToken.None
                                 )
                                .IfSuccessAsync(
+                                    () => toDoService.SwitchCompleteAsync(
+                                        editId.ResultCurrentIds,
+                                        CancellationToken.None
+                                    ),
+                                    CancellationToken.None
+                                )  
+                               .IfSuccessAsync(
                                     () =>
                                     {
                                         if (playComplete)
@@ -203,13 +210,6 @@ public class SpravyCommandService
 
                                         return Result.AwaitableSuccess;
                                     },
-                                    CancellationToken.None
-                                )
-                               .IfSuccessAsync(
-                                    () => toDoService.SwitchCompleteAsync(
-                                        editId.ResultCurrentIds,
-                                        CancellationToken.None
-                                    ),
                                     CancellationToken.None
                                 );
                         },
