@@ -5,8 +5,8 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
              xmlns:c="clr-namespace:Spravy.Ui.Controls"
-             xmlns:e="clr-namespace:Spravy.Ui.Enums"
-             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:de="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
+             xmlns:dh="clr-namespace:Spravy.Domain.Helpers;assembly=Spravy.Domain"
              mc:Ignorable="d"
              d:DesignWidth="425"
              d:DesignHeight="700"
@@ -260,8 +260,8 @@
         <ContentControl Content="{Binding MainProgressBar}"
                         VerticalAlignment="Top" />
         <Grid RowDefinitions="Auto,*,Auto">
-            <c:ViewSelectorControl State="{x:Static h:UiHelper.Os}">
-                <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
+            <c:ViewSelectorControl State="{x:Static dh:OsHelper.Os}">
+                <c:ViewSelectorItemControl State="{x:Static de:Os.Android}">
                     <Rectangle Height="40" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
@@ -290,8 +290,8 @@
                 </c:DialogControl>
             </c:DialogControl>
 
-            <c:ViewSelectorControl Grid.Row="2" State="{x:Static h:UiHelper.Os}">
-                <c:ViewSelectorItemControl State="{x:Static e:Os.Android}">
+            <c:ViewSelectorControl Grid.Row="2" State="{x:Static dh:OsHelper.Os}">
+                <c:ViewSelectorItemControl State="{x:Static de:Os.Android}">
                     <Rectangle Height="45" Fill="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>

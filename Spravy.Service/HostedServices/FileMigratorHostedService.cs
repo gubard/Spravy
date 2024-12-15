@@ -5,21 +5,24 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
     private readonly ILogger<FileMigratorHostedService<TDbContext>> logger;
     private readonly IFactory<string, TDbContext> spravyAuthenticationDbContextFactory;
     private readonly SqliteFileOptions sqliteFileOptions;
+    private readonly IDbFileSystem dbFileSystem;
 
     public FileMigratorHostedService(
         SqliteFileOptions sqliteFileOptions,
         IFactory<string, TDbContext> spravyAuthenticationDbContextFactory,
-        ILogger<FileMigratorHostedService<TDbContext>> logger
+        ILogger<FileMigratorHostedService<TDbContext>> logger,
+        IDbFileSystem dbFileSystem
     )
     {
         this.sqliteFileOptions = sqliteFileOptions;
         this.spravyAuthenticationDbContextFactory = spravyAuthenticationDbContextFactory;
         this.logger = logger;
+        this.dbFileSystem = dbFileSystem;
     }
 
     public async Task StartAsync(CancellationToken ct)
     {
-        var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
+        var dataBaseFile = dbFileSystem.GetDbFile(sqliteFileOptions.DataBaseFile.ThrowIfNullOrWhiteSpace());
         logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
 
         await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString())

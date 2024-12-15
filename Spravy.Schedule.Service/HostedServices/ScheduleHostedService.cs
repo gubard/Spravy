@@ -7,25 +7,28 @@ public class ScheduleHostedService : IHostedService
     private readonly IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly Dictionary<string, Task> tasks = new();
+    private readonly IDbFileSystem dbFileSystem;
 
     public ScheduleHostedService(
         IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory,
         SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, IEventBusService> eventBusServiceFactory,
-        ILogger<ScheduleHostedService> logger
+        ILogger<ScheduleHostedService> logger,
+        IDbFileSystem dbFileSystem
     )
     {
         this.spravyScheduleDbContextFactory = spravyScheduleDbContextFactory;
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.eventBusServiceFactory = eventBusServiceFactory;
         this.logger = logger;
+        this.dbFileSystem = dbFileSystem;
     }
 
     public Task StartAsync(CancellationToken ct)
     {
-        var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
+        var dataBaseFiles = dbFileSystem.GetDbFiles(sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace());
 
-        foreach (var dataBaseFile in dataBaseFiles)
+        foreach (var dataBaseFile in dataBaseFiles.Span)
         {
             tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile, ct));
         }

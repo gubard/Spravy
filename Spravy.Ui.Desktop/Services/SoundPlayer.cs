@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Desktop.Services;
 
@@ -8,7 +8,7 @@ public class SoundPlayer : ISoundPlayer
 {
     private readonly ISoundPlayer soundPlayer;
 
-    public SoundPlayer()
+    public SoundPlayer(IHashService hashService)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -26,7 +26,7 @@ public class SoundPlayer : ISoundPlayer
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            soundPlayer = new EmptySoundPlayer();
+            soundPlayer = new OsxSoundPlayer(hashService);
 
             return;
         }

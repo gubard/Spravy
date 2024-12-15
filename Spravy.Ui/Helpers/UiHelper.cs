@@ -243,69 +243,6 @@ public static class UiHelper
         RemoveFromBookmark = commandsNotify.RemoveFromBookmark;
     }
 
-    public static Os Os
-    {
-        get
-        {
-            if (OperatingSystem.IsAndroid())
-            {
-                return Os.Android;
-            }
-
-            if (OperatingSystem.IsBrowser())
-            {
-                return Os.Browser;
-            }
-
-            if (OperatingSystem.IsLinux())
-            {
-                return Os.Linux;
-            }
-
-            if (OperatingSystem.IsWasi())
-            {
-                return Os.Wasi;
-            }
-
-            if (OperatingSystem.IsWindows())
-            {
-                return Os.Windows;
-            }
-
-            if (OperatingSystem.IsMacCatalyst())
-            {
-                return Os.MacCatalyst;
-            }
-
-            if (OperatingSystem.IsIOS())
-            {
-                return Os.Ios;
-            }
-
-            if (OperatingSystem.IsMacOS())
-            {
-                return Os.MacOs;
-            }
-
-            if (OperatingSystem.IsTvOS())
-            {
-                return Os.TvOs;
-            }
-
-            if (OperatingSystem.IsWatchOS())
-            {
-                return Os.WatchOs;
-            }
-
-            if (OperatingSystem.IsFreeBSD())
-            {
-                return Os.FreeBsd;
-            }
-
-            throw new ArgumentOutOfRangeException();
-        }
-    }
-
     public static ReadOnlyMemory<object> GetEnumValues(Type type)
     {
         if (typeof(ToDoItemStatus) == type)

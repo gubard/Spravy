@@ -4,11 +4,12 @@ public static class DbContextOptionsBuilderExtension
 {
     public static DbContextOptionsBuilder UseSqliteFile<TAssemblyMark>(
         this DbContextOptionsBuilder optionsBuilder,
-        SqliteFileOptions options
+        SqliteFileOptions options,
+        IDbFileSystem dbFileSystem
     ) where TAssemblyMark : IAssemblyMark
     {
         optionsBuilder.UseSqlite(
-            options.ToSqliteConnectionString(),
+            dbFileSystem.GetDbFile(options.DataBaseFile.ThrowIfNullOrWhiteSpace()).ToSqliteConnectionString(),
             b => b.MigrationsAssembly(TAssemblyMark.AssemblyFullName)
         );
 
@@ -20,7 +21,7 @@ public static class DbContextOptionsBuilderExtension
         IServiceProvider serviceProvider
     ) where TAssemblyMark : IAssemblyMark
     {
-        optionsBuilder.UseSqliteFile<TAssemblyMark>(serviceProvider.GetRequiredService<SqliteFileOptions>());
+        optionsBuilder.UseSqliteFile<TAssemblyMark>(serviceProvider.GetRequiredService<SqliteFileOptions>(), serviceProvider.GetRequiredService<IDbFileSystem>());
 
         return optionsBuilder;
     }

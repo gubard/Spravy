@@ -68,6 +68,8 @@ public static class ServiceCollectionExtension
            .CreateIfNotExists();
 
         serviceCollection.AddDataProtection().PersistKeysToFileSystem(persistKeysDirectory);
+        serviceCollection.AddSingleton<IDbFileSystem, DbFileSystem>();
+        serviceCollection.AddSingleton<ISpravyFileSystem, SpravyFileSystem>();
 
         return serviceCollection;
     }

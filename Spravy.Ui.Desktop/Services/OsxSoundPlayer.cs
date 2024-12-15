@@ -25,28 +25,35 @@ public class OsxSoundPlayer : ISoundPlayer
 
         var urlBytes = Encoding.UTF8.GetBytes(path);
 
-        var cfUrl = CFURLCreateWithBytes(
-            nint.Zero,
-            urlBytes,
-            urlBytes.Length,
-            0x08000100,
-            nint.Zero
-        );
-
-        if (cfUrl == nint.Zero)
+        try
         {
-            return;
+            var cfUrl = CFURLCreateWithBytes(
+                nint.Zero,
+                urlBytes,
+                urlBytes.Length,
+                0x08000100,
+                nint.Zero
+            );
+
+            if (cfUrl == nint.Zero)
+            {
+                return;
+            }
+
+            var player = AVAudioPlayer_initWithContentsOfURL(cfUrl, out var error);
+
+            if (player == nint.Zero || error != nint.Zero)
+            {
+                return;
+            }
+
+            AVAudioPlayer_play(player);
+            AVAudioPlayer_stop(player);
         }
-
-        var player = AVAudioPlayer_initWithContentsOfURL(cfUrl, out var error);
-
-        if (player == nint.Zero || error != nint.Zero)
+        catch (Exception e)
         {
-            return;
+            Console.WriteLine(e);
         }
-
-        AVAudioPlayer_play(player);
-        AVAudioPlayer_stop(player);
     }
 
     private static readonly string audioDirectoryPath = "storagery/audio/";

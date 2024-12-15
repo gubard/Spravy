@@ -1,4 +1,4 @@
-namespace Spravy.Ui.Enums;
+namespace Spravy.Domain.Enums;
 
 public enum Os
 {
@@ -8,7 +8,7 @@ public enum Os
     Wasi,
     Windows,
     MacCatalyst,
-    Ios,
+    IOs,
     MacOs,
     TvOs,
     WatchOs,

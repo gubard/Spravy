@@ -6,24 +6,25 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
     private readonly IFactory<string, TDbContext> dbContextFactory;
     private readonly ILogger<FolderMigratorHostedService<TDbContext>> logger;
     private readonly SqliteFolderOptions sqliteFolderOptions;
+    private readonly IDbFileSystem dbFileSystem;
 
     public FolderMigratorHostedService(
         SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, TDbContext> dbContextFactory,
-        ILogger<FolderMigratorHostedService<TDbContext>> logger
+        ILogger<FolderMigratorHostedService<TDbContext>> logger,
+        IDbFileSystem dbFileSystem
     )
     {
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.dbContextFactory = dbContextFactory;
         this.logger = logger;
+        this.dbFileSystem = dbFileSystem;
     }
 
     public async Task StartAsync(CancellationToken ct)
     {
-        var migrationFile = sqliteFolderOptions.DataBasesFolder
-           .ThrowIfNullOrWhiteSpace()
-           .ToDirectory()
-           .ToFile(MigrationFileName);
+        var dbDirectory = dbFileSystem.GetDbDirectory(sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace());
+        var migrationFile = dbDirectory.ToFile(MigrationFileName);
 
         var migrationId = GetMigrationId();
         logger.LogInformation("Start migration to {MigrationId}", migrationId);
@@ -35,16 +36,14 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
             return;
         }
 
-        var dataBasesFolder = sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace().ToDirectory();
-
-        if (!dataBasesFolder.Exists)
+        if (!dbDirectory.Exists)
         {
-            dataBasesFolder.Create();
+            dbDirectory.Create();
         }
 
-        var dataBaseFiles = dataBasesFolder.GetFiles("*.db");
+        var dataBaseFiles = dbFileSystem.GetDbFiles(sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace());
 
-        foreach (var dataBaseFile in dataBaseFiles)
+        foreach (var dataBaseFile in dataBaseFiles.ToArray())
         {
             logger.LogInformation("Start migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
             await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}").ThrowIfError();
