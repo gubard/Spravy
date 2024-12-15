@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0-ios</TargetFramework>
+        <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia.iOS" Version="$(AvaloniaVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Spavy.LocalStorage.Sqlite\Spavy.LocalStorage.Sqlite.csproj" />
+      <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+</Project>
