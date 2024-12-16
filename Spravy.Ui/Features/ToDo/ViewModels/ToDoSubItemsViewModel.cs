@@ -45,20 +45,29 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
                 items => items.ToResult()
                    .IfSuccessForEach(toDoCache.GetToDoItem)
                    .IfSuccessAsync(
-                        itemsNotify => List.SetFavoriteItemsUi(itemsNotify)
-                           .IfSuccessAsync(
-                                () => toDoService
-                                   .GetToDoItemsAsync(itemsNotify.Select(x => x.Id), appOptions.ToDoItemsChunkSize, ct)
-                                   .IfSuccessForEachAsync(
-                                        fullItems => this.InvokeUiBackgroundAsync(
-                                            () => fullItems
-                                               .IfSuccessForEach(updatedItem => toDoCache.UpdateUi(updatedItem))
-                                               .IfSuccess(i => List.AddOrUpdateFavoriteUi(i))
+                        itemsNotify =>
+                            this.InvokeUiBackgroundAsync(
+                                    () =>
+                                        List.SetFavoriteItemsUi(itemsNotify)
+                                           .IfSuccess(() => toDoCache.SetFavoriteItems(itemsNotify.Select(x => x.Id)))
+                                )
+                               .IfSuccessAsync(
+                                    () => toDoService
+                                       .GetToDoItemsAsync(
+                                            itemsNotify.Select(x => x.Id),
+                                            appOptions.ToDoItemsChunkSize,
+                                            ct
+                                        )
+                                       .IfSuccessForEachAsync(
+                                            fullItems => this.InvokeUiBackgroundAsync(
+                                                () => fullItems
+                                                   .IfSuccessForEach(updatedItem => toDoCache.UpdateUi(updatedItem))
+                                                   .IfSuccess(i => List.AddOrUpdateFavoriteUi(i))
+                                            ),
+                                            ct
                                         ),
-                                        ct
-                                    ),
-                                ct
-                            ),
+                                    ct
+                                ),
                         ct
                     ),
                 ct
