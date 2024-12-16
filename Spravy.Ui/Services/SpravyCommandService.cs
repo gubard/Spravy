@@ -146,7 +146,8 @@ public class SpravyCommandService
             {
                 uiApplicationService.StopCurrentView();
 
-                toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
+                toDoItemEditId.GetToDoItemEditId()
+                   .IfSuccessAsync(
                         editId =>
                         {
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
@@ -164,16 +165,6 @@ public class SpravyCommandService
                                                         case ToDoItemIsCan.None:
                                                             return Result.Success;
                                                         case ToDoItemIsCan.CanComplete:
-                                                        {
-                                                            item.IsUpdated = false;
-
-                                                            return remove.RemoveUi(
-                                                                new[]
-                                                                {
-                                                                    item,
-                                                                }
-                                                            );
-                                                        }
                                                         case ToDoItemIsCan.CanIncomplete:
                                                         {
                                                             item.IsUpdated = false;
@@ -199,7 +190,8 @@ public class SpravyCommandService
                                         CancellationToken.None
                                     ),
                                     CancellationToken.None
-                                )  
+                                )
+                               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
                                .IfSuccessAsync(
                                     () =>
                                     {
@@ -211,19 +203,18 @@ public class SpravyCommandService
                                         return Result.AwaitableSuccess;
                                     },
                                     CancellationToken.None
+                                )
+                               .IfErrorsAsync(
+                                    errors => dialogViewer.ShowInfoDialogAsync(
+                                        viewFactory,
+                                        DialogViewLayer.Error,
+                                        viewFactory.CreateErrorViewModel(errors),
+                                        ct
+                                    ),
+                                    ct
                                 );
                         },
                         CancellationToken.None
-                    )
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
-                   .IfErrorsAsync(
-                        errors => dialogViewer.ShowInfoDialogAsync(
-                            viewFactory,
-                            DialogViewLayer.Error,
-                            viewFactory.CreateErrorViewModel(errors),
-                            ct
-                        ),
-                        ct
                     );
 
                 return Result.AwaitableSuccess;
