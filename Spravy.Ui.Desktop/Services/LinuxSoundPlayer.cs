@@ -11,36 +11,40 @@ public class LinuxSoundPlayer : ISoundPlayer
 
     public Task PlayAsync(ReadOnlyMemory<byte> soundData, CancellationToken ct)
     {
-        if (snd_pcm_open(out var pcm, "default", SND_PCM_STREAM_PLAYBACK, 0) < 0)
-        {
-            throw new("Failed to open PCM device.");
-        }
-
-        try
-        {
-            if (snd_pcm_set_params(
-                    pcm,
-                    SND_PCM_FORMAT_S16_LE,
-                    SND_PCM_ACCESS_RW_INTERLEAVED,
-                    2,
-                    44100,
-                    1,
-                    500000
-                )
-              < 0)
+        return Task.Run(
+            () =>
             {
-                throw new("Failed to set PCM parameters.");
-            }
+                if (snd_pcm_open(out var pcm, "default", SND_PCM_STREAM_PLAYBACK, 0) < 0)
+                {
+                    throw new("Failed to open PCM device.");
+                }
 
-            snd_pcm_writei(pcm, soundData.ToArray(), soundData.Length / 4);
-            snd_pcm_drain(pcm);
+                try
+                {
+                    if (snd_pcm_set_params(
+                            pcm,
+                            SND_PCM_FORMAT_S16_LE,
+                            SND_PCM_ACCESS_RW_INTERLEAVED,
+                            2,
+                            44100,
+                            1,
+                            500000
+                        )
+                      < 0)
+                    {
+                        throw new("Failed to set PCM parameters.");
+                    }
 
-            return Task.CompletedTask;
-        }
-        finally
-        {
-            snd_pcm_close(pcm);
-        }
+                    snd_pcm_writei(pcm, soundData.ToArray(), soundData.Length / 4);
+                    snd_pcm_drain(pcm);
+                }
+                finally
+                {
+                    snd_pcm_close(pcm);
+                }
+            },
+            ct
+        );
     }
 
     [DllImport("libasound.so")]

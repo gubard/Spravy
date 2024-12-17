@@ -152,11 +152,6 @@ public class SpravyCommandService
                         {
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
 
-                            if (playComplete)
-                            {
-                                audioService.PlayCompleteAsync(CancellationToken.None);
-                            }
-
                             return uiApplicationService.GetCurrentView<IRemove>()
                                .IfSuccessAsync(
                                     remove => this.InvokeUiBackgroundAsync(
@@ -197,6 +192,18 @@ public class SpravyCommandService
                                     CancellationToken.None
                                 )
                                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
+                               .IfSuccessAsync(
+                                    () =>
+                                    {
+                                        if (playComplete)
+                                        { 
+                                            return audioService.PlayCompleteAsync(CancellationToken.None);
+                                        }
+                                        
+                                        return Result.AwaitableSuccess;
+                                    },
+                                    ct
+                                )
                                .IfErrorsAsync(
                                     errors => dialogViewer.ShowInfoDialogAsync(
                                         viewFactory,
