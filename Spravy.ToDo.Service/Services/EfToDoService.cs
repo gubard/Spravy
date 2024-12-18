@@ -213,9 +213,7 @@ public class EfToDoService : IToDoService
 
                                     if (options.ParentId.IsEdit)
                                     {
-                                        item.ParentId = options.ParentId.Value.TryGetValue(out var parentId)
-                                            ? parentId
-                                            : null;
+                                        item.ParentId = options.ParentId.Value.GetValueOrNull();
                                     }
 
                                     if (options.DescriptionType.IsEdit)
@@ -225,9 +223,7 @@ public class EfToDoService : IToDoService
 
                                     if (options.ReferenceId.IsEdit)
                                     {
-                                        item.ReferenceId = options.ReferenceId.Value.TryGetValue(out var referenceId)
-                                            ? referenceId
-                                            : null;
+                                        item.ReferenceId = options.ReferenceId.Value.GetValueOrNull();
                                     }
 
                                     if (options.AnnuallyDays.IsEdit)

@@ -5,16 +5,19 @@ public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbCont
     private readonly RequestDelegate next;
     private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
+    private readonly IDbFileSystem dbFileSystem;
 
     public DataBaseSetupSqliteMiddleware(
         RequestDelegate next,
         SqliteFolderOptions sqliteFolderOptions,
-        IFactory<string, TDbContext> spravyToDoDbContextFactory
+        IFactory<string, TDbContext> spravyToDoDbContextFactory,
+        IDbFileSystem dbFileSystem
     )
     {
         this.next = next;
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.spravyToDoDbContextFactory = spravyToDoDbContextFactory;
+        this.dbFileSystem = dbFileSystem;
     }
 
     public async Task Invoke(HttpContext context)
@@ -26,10 +29,8 @@ public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbCont
 
     private async Task SetupDataBaseAsync(string userId)
     {
-        var dataBaseFile = sqliteFolderOptions.DataBasesFolder
-           .ThrowIfNullOrWhiteSpace()
-           .ToDirectory()
-           .ToFile($"{userId}.db");
+        var dataBasesFolderPath = sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace();
+        var dataBaseFile = dbFileSystem.GetDbFile(Path.Combine(dataBasesFolderPath, $"{userId}.db"));
 
         if (dataBaseFile.Exists)
         {
