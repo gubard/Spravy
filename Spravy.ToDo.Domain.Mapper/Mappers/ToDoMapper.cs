@@ -395,7 +395,7 @@ public static partial class ToDoMapper
         {
             return new()
             {
-                IsEdit = false,
+                IsEdit = true,
                 Value = link.AbsoluteUri,
             };
         }
