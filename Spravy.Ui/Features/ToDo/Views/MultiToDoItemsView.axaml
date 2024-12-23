@@ -59,7 +59,7 @@
                                                       BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                                                       Width="50"
                                                       Height="50"
-                                                      Margin="0,5,5,0"
+                                                      Margin="0,2,5,0"
                                                       Command="{x:Static h:UiHelper.Complete}"
                                                       CommandParameter="{Binding}"
                                                       IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
@@ -79,7 +79,7 @@
                                                       BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                                                       Width="50"
                                                       Height="50"
-                                                      Margin="0,5,5,0"
+                                                      Margin="0,2,5,0"
                                                       Command="{x:Static h:UiHelper.Complete}"
                                                       CommandParameter="{Binding}"
                                                       IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}">
@@ -95,7 +95,7 @@
                                                       BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                                                       Width="50"
                                                       Height="50"
-                                                      Margin="0,5,5,0"
+                                                      Margin="0,2,5,0"
                                                       Command="{x:Static h:UiHelper.Complete}"
                                                       CommandParameter="{Binding}"
                                                       IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanReverseConverter}}" />
