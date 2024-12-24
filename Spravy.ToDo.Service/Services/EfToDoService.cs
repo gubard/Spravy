@@ -598,6 +598,7 @@ public class EfToDoService : IToDoService
                 context => context.Set<ToDoItemEntity>()
                    .AsNoTracking()
                    .OrderBy(x => x.OrderIndex)
+                   .ThenBy(x => x.Name)
                    .Where(x => x.IsFavorite)
                    .Select(x => x.Id)
                    .ToArrayEntitiesAsync(ct),
