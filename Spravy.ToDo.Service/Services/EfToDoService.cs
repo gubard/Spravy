@@ -371,6 +371,7 @@ public class EfToDoService : IToDoService
                 context => context.Set<ToDoItemEntity>()
                    .AsNoTracking()
                    .OrderBy(x => x.OrderIndex)
+                   .ThenBy(x => x.NormalizeName)
                    .Where(x => x.IsBookmark)
                    .Select(x => x.Id)
                    .ToArrayEntitiesAsync(ct),
@@ -598,7 +599,7 @@ public class EfToDoService : IToDoService
                 context => context.Set<ToDoItemEntity>()
                    .AsNoTracking()
                    .OrderBy(x => x.OrderIndex)
-                   .ThenBy(x => x.Name)
+                   .ThenBy(x => x.NormalizeName)
                    .Where(x => x.IsFavorite)
                    .Select(x => x.Id)
                    .ToArrayEntitiesAsync(ct),
