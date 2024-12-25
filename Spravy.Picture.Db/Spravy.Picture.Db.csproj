@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+        <ProjectReference Include="..\Spravy.Db\Spravy.Db.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain\Spravy.Picture.Domain.csproj" />
+    </ItemGroup>
+</Project>

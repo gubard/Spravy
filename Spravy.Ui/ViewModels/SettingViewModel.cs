@@ -27,7 +27,8 @@ public partial class SettingViewModel : NavigatableViewModelBase
         ITaskProgressService taskProgressService,
         Application application,
         IObjectStorage objectStorage,
-        IViewFactory viewFactory
+        IViewFactory viewFactory,
+        SoundSettingsNotify soundSettingsNotify
     ) : base(true)
     {
         this.application = application;
@@ -35,6 +36,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
         AccountNotify = accountNotify;
         this.objectStorage = objectStorage;
         this.viewFactory = viewFactory;
+        SoundSettingsNotify = soundSettingsNotify;
         SaveCommand = SpravyCommand.Create(SaveStateAsync, errorHandler, taskProgressService);
         ChangePasswordCommand = SpravyCommand.Create(ChangePasswordAsync, errorHandler, taskProgressService);
         DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
@@ -50,6 +52,7 @@ public partial class SettingViewModel : NavigatableViewModelBase
     }
 
     public AccountNotify AccountNotify { get; }
+    public SoundSettingsNotify SoundSettingsNotify { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SaveCommand { get; }
@@ -109,15 +112,20 @@ public partial class SettingViewModel : NavigatableViewModelBase
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SelectedTheme))
+        switch (e.PropertyName)
         {
-            application.RequestedThemeVariant = SelectedTheme.ToThemeVariant();
-        }
-        else if (e.PropertyName == nameof(Language))
-        {
-            var lang = application.GetLang(Language);
-            application.Resources.MergedDictionaries.Remove(lang);
-            application.Resources.MergedDictionaries.Add(lang);
+            case nameof(SelectedTheme):
+                application.RequestedThemeVariant = SelectedTheme.ToThemeVariant();
+
+                break;
+            case nameof(Language):
+            {
+                var lang = application.GetLang(Language);
+                application.Resources.MergedDictionaries.Remove(lang);
+                application.Resources.MergedDictionaries.Add(lang);
+
+                break;
+            }
         }
     }
 }

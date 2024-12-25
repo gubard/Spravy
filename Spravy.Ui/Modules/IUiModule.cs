@@ -15,6 +15,7 @@ namespace Spravy.Ui.Modules;
 [Import(typeof(IPasswordGeneratorClientModule))]
 [Import(typeof(IScheduleClientModule))]
 [Singleton(typeof(AccountNotify))]
+[Singleton(typeof(SoundSettingsNotify))]
 [Singleton(typeof(App))]
 [Singleton(typeof(SpravyCommandService))]
 [Singleton(typeof(SpravyCommandNotifyService))]

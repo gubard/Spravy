@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Picture.Protos";
+
+package spravy.picture;
+
+import "Protos/picture_messages.proto";
+
+service PictureService {
+  rpc AddPictures (AddPicturesRequest) returns (AddPicturesReply);
+  rpc DeletePictures (DeletePicturesRequest) returns (DeletePicturesReply);
+  rpc GetPictures (GetPicturesRequest) returns (GetPicturesReply);
+}

@@ -75,6 +75,13 @@
                     <c:GroupBoxControl Header="{DynamicResource Lang.Language}" Margin="5">
                         <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" />
                     </c:GroupBoxControl>
+
+                    <c:GroupBoxControl Header="{DynamicResource Lang.SoundSetting}" Margin="5">
+                        <StackPanel>
+                            <TextBlock Classes="field" Text="{DynamicResource Lang.Mute}" />
+                            <CheckBox IsChecked="{Binding SoundSettingsNotify.IsMute}" />
+                        </StackPanel>
+                    </c:GroupBoxControl>
                 </StackPanel>
             </ScrollViewer>
 

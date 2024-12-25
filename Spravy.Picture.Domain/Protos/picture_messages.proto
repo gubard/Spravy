@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Picture.Protos";
+
+package spravy.picture;
+
+message AddPicturesRequest {
+}
+
+message AddPicturesReply {
+}
+
+message DeletePicturesRequest {
+}
+
+message DeletePicturesReply {
+}
+
+message GetPicturesRequest {
+}
+
+message GetPicturesReply {
+}

@@ -20,6 +20,7 @@ public class ViewFactory : IViewFactory
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
     private readonly IToDoUiService toDoUiService;
+    private readonly SoundSettingsNotify soundSettingsNotify;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -39,7 +40,8 @@ public class ViewFactory : IViewFactory
         IServiceFactory serviceFactory,
         IScheduleService scheduleService,
         ISerializer serializer,
-        IClipboardService clipboardService
+        IClipboardService clipboardService,
+        SoundSettingsNotify soundSettingsNotify
     )
     {
         this.toDoService = toDoService;
@@ -60,6 +62,7 @@ public class ViewFactory : IViewFactory
         this.scheduleService = scheduleService;
         this.serializer = serializer;
         this.clipboardService = clipboardService;
+        this.soundSettingsNotify = soundSettingsNotify;
     }
 
     public EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow)
@@ -177,7 +180,8 @@ public class ViewFactory : IViewFactory
             taskProgressService,
             application,
             objectStorage,
-            this
+            this,
+            soundSettingsNotify
         );
     }
 

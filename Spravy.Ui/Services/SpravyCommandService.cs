@@ -29,7 +29,8 @@ public class SpravyCommandService
         IScheduleService scheduleService,
         IEventUpdater eventUpdater,
         IAudioService audioService,
-        Application application
+        Application application,
+        SoundSettingsNotify soundSettingsNotify
     )
     {
         this.navigator = navigator;
@@ -1172,6 +1173,7 @@ public class SpravyCommandService
                                         setting => setting.PostUiBackground(
                                             () =>
                                             {
+                                                soundSettingsNotify.IsMute = setting.IsMute;
                                                 application.RequestedThemeVariant = setting.Theme.ToThemeVariant();
                                                 var lang = application.GetLang(setting.Language);
                                                 application.Resources.MergedDictionaries.Remove(lang);

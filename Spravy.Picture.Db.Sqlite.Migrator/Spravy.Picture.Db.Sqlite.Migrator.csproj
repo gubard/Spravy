@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.ToDo.Db.Sqlite\Spravy.ToDo.Db.Sqlite.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Db.Sqlite\Spravy.Picture.Db.Sqlite.csproj" />
     </ItemGroup>
 
     <ItemGroup>

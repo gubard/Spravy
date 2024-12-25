@@ -104,6 +104,8 @@
     <s:String x:Key="Lang.ApplicationInfo">Application Info</s:String>
     <s:String x:Key="Lang.AccountSetting">Account Setting</s:String>
     <s:String x:Key="Lang.Language">Language</s:String>
+    <s:String x:Key="Lang.SoundSetting">Sound setting</s:String>
+    <s:String x:Key="Lang.Mute">Mute</s:String>
     <s:String x:Key="Lang.Before">Before</s:String>
     <s:String x:Key="Lang.After">After</s:String>
     <s:String x:Key="Lang.ChangOrder">Change order</s:String>

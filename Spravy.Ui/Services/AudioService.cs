@@ -11,6 +11,7 @@ public class AudioService : IAudioService
     private static readonly ReadOnlyMemory<byte> notificationSoundData;
 
     private readonly ISoundPlayer soundPlayer;
+    private readonly SoundSettingsNotify soundSettingsNotify;
 
     static AudioService()
     {
@@ -18,9 +19,10 @@ public class AudioService : IAudioService
         notificationSoundData = audioFileNotificationUri.GetAssetBytes();
     }
 
-    public AudioService(ISoundPlayer soundPlayer)
+    public AudioService(ISoundPlayer soundPlayer, SoundSettingsNotify soundSettingsNotify)
     {
         this.soundPlayer = soundPlayer;
+        this.soundSettingsNotify = soundSettingsNotify;
     }
 
     public Cvtar PlayCompleteAsync(CancellationToken ct)
@@ -35,6 +37,11 @@ public class AudioService : IAudioService
 
     private async ValueTask<Result> PlayCore(ReadOnlyMemory<byte> data, CancellationToken ct)
     {
+        if (soundSettingsNotify.IsMute)
+        {
+            return Result.Success;
+        }
+
         await soundPlayer.PlayAsync(data, ct);
 
         return Result.Success;
