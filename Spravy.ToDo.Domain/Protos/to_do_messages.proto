@@ -6,19 +6,73 @@ package spravy.to_do;
 
 import "google/protobuf/timestamp.proto";
 
+message GetRequest {
+  bool is_selector_items = 1;
+  repeated GetToStringItemGrpc to_string_items = 2;
+  bool is_current_active_Item = 3;
+  repeated bytes active_items = 4;
+  bool is_favorite_items = 5;
+  bool is_bookmark_items = 6;
+  repeated bytes children_items = 7;
+  repeated bytes leaf_items = 8;
+  string search_text = 9;
+  repeated bytes parent_items = 10;
+  bool is_today_items = 11;
+  bool is_root_items = 12;
+  repeated bytes items = 13;
+}
+
+message GetReply {
+  repeated ToDoSelectorItemGrpc selector_items = 1;
+  repeated ToStringItemGrpc to_string_items = 2;
+  ToDoShortItemGrpc current_active = 3;
+  repeated ActiveItemGrpc active_items = 4;
+  repeated FullToDoItemGrpc favorite_items = 5;
+  repeated ToDoShortItemGrpc bookmark_items = 6;
+  repeated ChildrenItemGrpc children_items = 7;
+  repeated LeafItemGrpc leaf_items = 8;
+  repeated FullToDoItemGrpc search_items = 9;
+  repeated ParentItemGrpc parent_items = 10;
+  repeated FullToDoItemGrpc today_items = 11;
+  repeated FullToDoItemGrpc root_items = 12;
+  repeated FullToDoItemGrpc items = 13;
+}
+
+message ParentItemGrpc {
+  bytes id = 1;
+  repeated ToDoShortItemGrpc parents = 2;
+}
+
+message LeafItemGrpc {
+  bytes id = 1;
+  repeated FullToDoItemGrpc leafs = 2;
+}
+
+message ChildrenItemGrpc {
+  bytes id = 1;
+  repeated FullToDoItemGrpc children = 2;
+}
+
+message ActiveItemGrpc {
+  bytes id = 1;
+  ToDoShortItemGrpc item = 2;
+}
+
+message ToStringItemGrpc {
+  bytes id = 1;
+  string text = 2;
+}
+
+message GetToStringItemGrpc {
+  repeated bytes ids = 1;
+  repeated ToDoItemStatusGrpc statuses = 2;
+}
+
 message SwitchCompleteRequest {
   repeated bytes ids = 1;
 }
 
 message SwitchCompleteReply {
-}
-
-message GetShortToDoItemsRequest {
-  repeated bytes ids = 1;
-}
-
-message GetShortToDoItemsReply {
-  repeated ToDoShortItemGrpc items = 1;
 }
 
 message UpdateToDoItemOrderIndexRequest {
@@ -35,13 +89,6 @@ message EditToDoItemsRequest {
 message EditToDoItemsReply {
 }
 
-message GetBookmarkToDoItemIdsRequest {
-}
-
-message GetBookmarkToDoItemIdsRequestReply {
-  repeated bytes ids = 1;
-}
-
 message UpdateEventsRequest {
 }
 
@@ -56,90 +103,11 @@ message ResetToDoItemRequest {
 message ResetToDoItemReply {
 }
 
-message GetTodayToDoItemsRequest {
-}
-
-message GetTodayToDoItemsReply {
-  repeated bytes ids = 1;
-}
-
 message RandomizeChildrenOrderIndexRequest {
   repeated bytes ids = 1;
 }
 
 message RandomizeChildrenOrderIndexReply {
-}
-
-message GetParentsRequest {
-  bytes id = 1;
-}
-
-message GetParentsReply {
-  repeated ToDoShortItemGrpc parents = 1;
-}
-
-message SearchToDoItemIdsRequest {
-  string search_text = 1;
-}
-
-message SearchToDoItemIdsReply {
-  repeated bytes ids = 1;
-}
-
-message GetLeafToDoItemIdsRequest {
-  bytes id = 1;
-}
-
-message GetLeafToDoItemIdsReply {
-  repeated bytes ids = 1;
-}
-
-message GetToDoItemsRequest {
-  repeated bytes ids = 1;
-  uint32 chunk_size = 2;
-}
-
-message GetToDoItemsReply {
-  repeated FullToDoItemGrpc items = 1;
-}
-
-message GetToDoItemRequest {
-  bytes id = 1;
-}
-
-message GetToDoItemReply {
-  FullToDoItemGrpc item = 1;
-}
-
-message GetChildrenToDoItemIdsRequest {
-  bytes id = 1;
-  repeated bytes ignore_ids = 2;
-}
-
-message GetChildrenToDoItemIdsReply {
-  repeated bytes ids = 1;
-}
-
-message GetFavoriteToDoItemIdsRequest {
-}
-
-message GetFavoriteToDoItemIdsRequestReply {
-  repeated bytes ids = 1;
-}
-
-message GetActiveToDoItemRequest {
-  bytes id = 1;
-}
-
-message GetActiveToDoItemReply {
-  ToDoShortItemGrpc item = 1;
-}
-
-message GetCurrentActiveToDoItemRequest {
-}
-
-message GetCurrentActiveToDoItemReply {
-  ToDoShortItemGrpc item = 1;
 }
 
 message ToDoItemToStringRequest {

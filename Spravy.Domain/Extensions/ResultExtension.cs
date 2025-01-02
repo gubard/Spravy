@@ -2,6 +2,44 @@ namespace Spravy.Domain.Extensions;
 
 public static class ResultExtension
 {
+    public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, Result<TReturn>> func,
+        CancellationToken ct
+    ) where TReturn : notnull
+    {
+        var result = new Memory<TReturn>(new TReturn[values.Length]);
+
+        for (var index = 0; index < values.Span.Length; index++)
+        {
+            var value = values.Span[index];
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
+            var v = func.Invoke(value);
+
+            if (v.TryGetValue(out var rv))
+            {
+                result.Span[index] = rv;
+            }
+            else
+            {
+                return new(v.Errors);
+            }
+          
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
+
+        return result.ToReadOnlyMemory().ToResult();
+    }
+    
     public static Result IfSuccessForEach<TValue>(
         this ReadOnlyMemory<TValue> values,
         Func<TValue, Result> func,

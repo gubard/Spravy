@@ -2,6 +2,18 @@
 
 public static class MemoryExtension
 {
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this ReadOnlyMemory<TValue> values, Func<TValue, TKey> keySelector) where TKey : notnull
+    {
+        var dictionary = new Dictionary<TKey, TValue>(values.Length);
+
+        foreach (var value in values.Span)
+        {
+            dictionary.Add(keySelector.Invoke(value), value);
+        }
+
+        return dictionary;
+    }
+
     public static bool Contains<TSource>(this ReadOnlyMemory<TSource> source, TSource item) where TSource : notnull
     {
         if (source.IsEmpty)
@@ -33,10 +45,7 @@ public static class MemoryExtension
         return true;
     }
 
-    public static ReadOnlyMemory<TSource> OrderByDefault<TSource, TValue>(
-        this ReadOnlyMemory<TSource> source,
-        Func<TSource, TValue> keySelector
-    )
+    public static ReadOnlyMemory<TSource> OrderByDefault<TSource, TValue>(this ReadOnlyMemory<TSource> source, Func<TSource, TValue> keySelector)
     {
         var result = new Memory<TSource>(new TSource[source.Length]);
         source.CopyTo(result);
@@ -64,10 +73,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static ReadOnlyMemory<TResult> Select<TSource, TResult>(
-        this ReadOnlyMemory<TSource> memory,
-        Func<TSource, TResult> selector
-    )
+    public static ReadOnlyMemory<TResult> Select<TSource, TResult>(this ReadOnlyMemory<TSource> memory, Func<TSource, TResult> selector)
     {
         if (memory.IsEmpty)
         {
@@ -102,10 +108,7 @@ public static class MemoryExtension
         return false;
     }
 
-    public static ReadOnlyMemory<TSource> OrderBy<TSource>(
-        this ReadOnlyMemory<TSource> source,
-        Func<TSource, uint> keySelector
-    )
+    public static ReadOnlyMemory<TSource> OrderBy<TSource>(this ReadOnlyMemory<TSource> source, Func<TSource, uint> keySelector)
     {
         var result = new Memory<TSource>(new TSource[source.Length]);
         source.CopyTo(result);
@@ -114,10 +117,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static ReadOnlyMemory<TSource> OrderBy<TSource, TValue>(
-        this ReadOnlyMemory<TSource> source,
-        Func<TSource, TValue> keySelector
-    ) where TValue : IComparable<TValue>
+    public static ReadOnlyMemory<TSource> OrderBy<TSource, TValue>(this ReadOnlyMemory<TSource> source, Func<TSource, TValue> keySelector) where TValue : IComparable<TValue>
     {
         var result = new Memory<TSource>(new TSource[source.Length]);
         source.CopyTo(result);
@@ -126,10 +126,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static ReadOnlyMemory<TSource> Where<TSource>(
-        this ReadOnlyMemory<TSource> memory,
-        Func<TSource, bool> predicate
-    )
+    public static ReadOnlyMemory<TSource> Where<TSource>(this ReadOnlyMemory<TSource> memory, Func<TSource, bool> predicate)
     {
         if (memory.IsEmpty)
         {
@@ -173,11 +170,7 @@ public static class MemoryExtension
         return new(new MultiValuesArrayError(arrayName, (ulong)memory.Length));
     }
 
-    public static Result<TSource> First<TSource>(
-        this ReadOnlyMemory<TSource> memory,
-        string arrayName,
-        Func<TSource, bool> predicate
-    ) where TSource : notnull
+    public static Result<TSource> First<TSource>(this ReadOnlyMemory<TSource> memory, string arrayName, Func<TSource, bool> predicate) where TSource : notnull
     {
         if (memory.IsEmpty)
         {

@@ -1,3 +1,4 @@
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 
 namespace Spravy.Core.Mappers;
@@ -6,8 +7,7 @@ namespace Spravy.Core.Mappers;
 public static partial class CoreMapper
 {
     public static partial ReadOnlyMemory<ByteString> ToByteString(this ReadOnlyMemory<Guid> value);
-
-    public static partial ReadOnlyMemory<Guid> ToGuid(this IEnumerable<ByteString> value);
+    public static partial ReadOnlyMemory<Guid> ToGuid(this RepeatedField<ByteString> value);
 
     public static DateTime ToDateTime(this DateOnly value)
     {

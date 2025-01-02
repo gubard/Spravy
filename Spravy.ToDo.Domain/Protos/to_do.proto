@@ -7,27 +7,14 @@ package spravy.to_do;
 import "Protos/to_do_messages.proto";
 
 service ToDoService {
+  rpc Get (GetRequest) returns (GetReply);
   rpc CloneToDoItem (CloneToDoItemRequest) returns (CloneToDoItemReply);
   rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
   rpc DeleteToDoItems (DeleteToDoItemsRequest) returns (DeleteToDoItemsReply);
-  rpc GetToDoSelectorItems (GetToDoSelectorItemsRequest) returns (GetToDoSelectorItemsReply);
-  rpc ToDoItemToString (ToDoItemToStringRequest) returns (ToDoItemToStringReply);
-  rpc GetCurrentActiveToDoItem (GetCurrentActiveToDoItemRequest) returns (GetCurrentActiveToDoItemReply);
-  rpc GetActiveToDoItem (GetActiveToDoItemRequest) returns (GetActiveToDoItemReply);
-  rpc GetFavoriteToDoItemIds (GetFavoriteToDoItemIdsRequest) returns (GetFavoriteToDoItemIdsRequestReply);
-  rpc GetChildrenToDoItemIds (GetChildrenToDoItemIdsRequest) returns (GetChildrenToDoItemIdsReply);
-  rpc GetToDoItem (GetToDoItemRequest) returns (GetToDoItemReply);
-  rpc GetToDoItems (GetToDoItemsRequest) returns (stream GetToDoItemsReply);
-  rpc GetLeafToDoItemIds (GetLeafToDoItemIdsRequest) returns (GetLeafToDoItemIdsReply);
-  rpc SearchToDoItemIds (SearchToDoItemIdsRequest) returns (SearchToDoItemIdsReply);
-  rpc GetParents (GetParentsRequest) returns (GetParentsReply);
   rpc RandomizeChildrenOrderIndex (RandomizeChildrenOrderIndexRequest) returns (RandomizeChildrenOrderIndexReply);
-  rpc GetTodayToDoItems (GetTodayToDoItemsRequest) returns (GetTodayToDoItemsReply);
   rpc ResetToDoItem (ResetToDoItemRequest) returns (ResetToDoItemReply);
   rpc UpdateEvents (UpdateEventsRequest) returns (UpdateEventsReply);
-  rpc GetBookmarkToDoItemIds (GetBookmarkToDoItemIdsRequest) returns (GetBookmarkToDoItemIdsRequestReply);
   rpc EditToDoItems (EditToDoItemsRequest) returns (EditToDoItemsReply);
   rpc UpdateToDoItemOrderIndex (UpdateToDoItemOrderIndexRequest) returns (UpdateToDoItemOrderIndexReply);
-  rpc GetShortToDoItems (GetShortToDoItemsRequest) returns (GetShortToDoItemsReply);
   rpc SwitchComplete (SwitchCompleteRequest) returns (SwitchCompleteReply);
 }
