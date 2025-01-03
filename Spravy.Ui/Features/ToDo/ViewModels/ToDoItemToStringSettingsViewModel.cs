@@ -4,17 +4,17 @@ public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApply
 {
     private readonly IClipboardService clipboardService;
     private readonly AvaloniaList<CheckedItem<ToDoItemStatus>> statuses = new();
-    private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     public ToDoItemToStringSettingsViewModel(
         Option<ToDoItemEntityNotify> item,
         ReadOnlyMemory<ToDoItemEntityNotify> items,
-        IToDoService toDoService,
-        IClipboardService clipboardService
+        IClipboardService clipboardService,
+        IToDoUiService toDoUiService
     ) : base(item, items)
     {
-        this.toDoService = toDoService;
         this.clipboardService = clipboardService;
+        this.toDoUiService = toDoUiService;
 
         var select = UiHelper.ToDoItemStatuses
            .ToArray()
@@ -37,13 +37,20 @@ public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApply
     {
         var status = Statuses.Where(x => x.IsChecked).Select(x => x.Item).ToArray();
 
-        return ResultItems.ToResult()
-           .IfSuccessForEach(x => new ToDoItemToStringOptions(status, x.CurrentId).ToResult())
-           .IfSuccessAsync(
-                options => toDoService.ToDoItemToStringAsync(options, ct)
-                   .IfSuccessAsync(text => clipboardService.SetTextAsync(text, ct), ct),
+        return toDoUiService.GetRequest(
+                GetToDo.WithDefaultItems.SetToStringItems(
+                    new GetToStringItem[]
+                    {
+                        new(ResultIds, status),
+                    }
+                ),
                 ct
-            );
+            )
+           .IfSuccessAsync(
+                response => response.ToStringItems.Select(x => x.Text).JoinString(Environment.NewLine).ToResult(),
+                ct
+            )
+           .IfSuccessAsync(text => clipboardService.SetTextAsync(text, ct), ct);
     }
 
     public Result UpdateItemUi()

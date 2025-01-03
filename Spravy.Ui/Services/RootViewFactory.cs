@@ -9,9 +9,9 @@ public class RootViewFactory : IRootViewFactory
     private readonly PaneViewModel paneViewModel;
     private readonly SingleViewModel singleViewModel;
 
-    public RootViewFactory(AccountNotify account)
+    public RootViewFactory(AccountNotify account, IToDoUiService toDoUiService, IToDoCache toDoCache)
     {
-        paneViewModel = new(account);
+        paneViewModel = new(account, toDoUiService, toDoCache);
         mainProgressBarViewModel = new();
         mainSplitViewModel = new(paneViewModel);
         mainViewModel = new(mainProgressBarViewModel, mainSplitViewModel);

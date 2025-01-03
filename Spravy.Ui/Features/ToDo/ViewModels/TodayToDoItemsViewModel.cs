@@ -4,21 +4,23 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 {
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
     private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     public TodayToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         SpravyCommandNotifyService spravyCommandNotifyService,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(true)
     {
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
 
-    public ToDoItemEntityNotify? Item => null;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
@@ -42,7 +44,17 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
-        return toDoUiService.UpdateTodayItemsAsync(ToDoSubItemsViewModel, ct);
+        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsTodayItems(true), ct)
+           .IfSuccessAsync(
+                response => response.TodayItems
+                   .Select(x => x.Item.Id)
+                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                   .IfSuccessAsync(
+                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
+                        ct
+                    ),
+                ct
+            );
     }
 
     public override Result Stop()

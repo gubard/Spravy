@@ -81,9 +81,9 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     private Cvtar Refresh(CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
-            () => toDoUiService.UpdateSelectorItemsAsync(Item.GetNullable()?.Id, ignoreItems.Select(x => x.Id), ct)
+            () => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct)
                .IfSuccessAsync(
-                    () =>
+                    _ =>
                     {
                         if (!Item.TryGetValue(out var i))
                         {

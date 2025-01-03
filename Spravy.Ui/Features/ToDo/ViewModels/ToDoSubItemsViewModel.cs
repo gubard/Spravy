@@ -2,21 +2,27 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
-    private readonly IToDoService toDoService;
-    private readonly IToDoCache toDoCache;
-    private readonly AppOptions appOptions;
-
     public ToDoSubItemsViewModel(
-        IToDoService toDoService,
         IToDoCache toDoCache,
         MultiToDoItemsViewModel list,
-        AppOptions appOptions
+        IToDoUiService toDoUiService
     )
     {
-        this.toDoService = toDoService;
-        this.toDoCache = toDoCache;
-        this.appOptions = appOptions;
         List = list;
+
+        toDoCache.GetFavoriteItems()
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
+                CancellationToken.None
+            );
+
+        toDoUiService.Response += response => response.FavoriteItems
+           .Select(x => x.Item.Id)
+           .IfSuccessForEach(toDoCache.GetToDoItem)
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
+                CancellationToken.None
+            );
     }
 
     public MultiToDoItemsViewModel List { get; }
@@ -38,40 +44,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
-        return toDoCache.GetFavoriteItems()
-           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)), ct)
-           .IfSuccessAsync(() => toDoService.GetFavoriteToDoItemIdsAsync(ct), ct)
-           .IfSuccessAsync(
-                items => items.ToResult()
-                   .IfSuccessForEach(toDoCache.GetToDoItem)
-                   .IfSuccessAsync(
-                        itemsNotify =>
-                            this.InvokeUiBackgroundAsync(
-                                    () =>
-                                        List.SetFavoriteItemsUi(itemsNotify)
-                                           .IfSuccess(() => toDoCache.SetFavoriteItems(itemsNotify.Select(x => x.Id)))
-                                )
-                               .IfSuccessAsync(
-                                    () => toDoService
-                                       .GetToDoItemsAsync(
-                                            itemsNotify.Select(x => x.Id),
-                                            appOptions.ToDoItemsChunkSize,
-                                            ct
-                                        )
-                                       .IfSuccessForEachAsync(
-                                            fullItems => this.InvokeUiBackgroundAsync(
-                                                () => fullItems
-                                                   .IfSuccessForEach(updatedItem => toDoCache.UpdateUi(updatedItem))
-                                                   .IfSuccess(i => List.AddOrUpdateFavoriteUi(i))
-                                            ),
-                                            ct
-                                        ),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
+        return Result.AwaitableSuccess;
     }
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()

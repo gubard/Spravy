@@ -3,6 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
 
     [ObservableProperty]
     private string childrenText = string.Empty;
@@ -10,10 +11,12 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
     public DeleteToDoItemViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
-        IToDoService toDoService
+        IToDoService toDoService,
+        IToDoUiService toDoUiService
     ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
+        this.toDoUiService = toDoUiService;
     }
 
     public override string ViewId =>
@@ -45,38 +48,27 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
     {
         var statuses = UiHelper.ToDoItemStatuses;
 
-        return ResultItems.ToResult()
-           .IfSuccessForEachAsync(
-                id => toDoService.ToDoItemToStringAsync(
-                        new ToDoItemToStringOptions[]
+        return toDoUiService.GetRequest(
+                GetToDo.WithDefaultItems
+                   .SetIsBookmarkItems(true)
+                   .SetIsFavoriteItems(true)
+                   .SetToStringItems(
+                        new GetToStringItem[]
                         {
-                            new(statuses, id.Id),
-                        },
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        str =>
-                            $"{id.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}"
-                               .ToResult(),
-                        ct
+                            new(ResultIds, statuses),
+                        }
                     ),
                 ct
             )
            .IfSuccessAsync(
-                values =>
-                {
-                    var text = string.Join(Environment.NewLine, values.ToArray());
+                response => this.InvokeUiBackgroundAsync(
+                    () =>
+                    {
+                        ChildrenText = response.ToStringItems.Select(x => x.Text).JoinString(Environment.NewLine);
 
-                    return this.PostUiBackground(
-                        () =>
-                        {
-                            ChildrenText = text;
-
-                            return Result.Success;
-                        },
-                        ct
-                    );
-                },
+                        return Result.Success;
+                    }
+                ),
                 ct
             );
     }

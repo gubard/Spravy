@@ -1,4 +1,3 @@
-using Spravy.Core.Mappers;
 using Spravy.ToDo.Domain.Mapper.Mappers;
 using Spravy.ToDo.Domain.Models;
 
@@ -203,7 +202,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
             ct
         );
     }
-    
+
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(
         ReadOnlyMemory<AddToDoItemOptions> options,
         CancellationToken ct
@@ -233,7 +232,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
         return CallClientAsync(
             client => metadataFactory.CreateAsync(ct)
                .IfSuccessAsync(
-                    metadata =>client.GetAsync(get.ToGetRequest(), metadata, DateTime.UtcNow.Add(Timeout), ct)
+                    metadata => client.GetAsync(get.ToGetRequest(), metadata, DateTime.UtcNow.Add(Timeout), ct)
                        .ToValueTaskResultValueOnly()
                        .ConfigureAwait(false)
                        .IfSuccessAsync(reply => reply.ToToDoResponse().ToResult(), ct),

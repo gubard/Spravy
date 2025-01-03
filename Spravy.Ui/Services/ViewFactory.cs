@@ -110,7 +110,8 @@ public class ViewFactory : IViewFactory
             CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
             errorHandler,
             objectStorage,
-            toDoUiService
+            toDoUiService,
+            toDoCache
         );
     }
 
@@ -121,7 +122,8 @@ public class ViewFactory : IViewFactory
             objectStorage,
             CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
             errorHandler,
-            toDoUiService
+            toDoUiService,
+            toDoCache
         );
     }
 
@@ -142,7 +144,8 @@ public class ViewFactory : IViewFactory
             CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
             objectStorage,
             errorHandler,
-            toDoUiService
+            toDoUiService,
+            toDoCache
         );
     }
 
@@ -151,7 +154,8 @@ public class ViewFactory : IViewFactory
         return new(
             CreateToDoSubItemsViewModel(ViewModelSortBy.LoadedIndex),
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
-            toDoUiService
+            toDoUiService,
+            toDoCache
         );
     }
 
@@ -162,7 +166,8 @@ public class ViewFactory : IViewFactory
             serviceFactory.CreateService<SpravyCommandNotifyService>(),
             errorHandler,
             objectStorage,
-            toDoUiService
+            toDoUiService,
+            toDoCache
         );
     }
 
@@ -421,7 +426,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService, clipboardService);
+        return new(item, items, clipboardService, toDoUiService);
     }
 
     public ChangeToDoItemOrderIndexViewModel CreateChangeToDoItemOrderIndexViewModel(
@@ -452,7 +457,7 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService);
+        return new(item, items, toDoService, toDoUiService);
     }
 
     public AddToDoItemViewModel CreateAddToDoItemViewModel(
@@ -476,12 +481,7 @@ public class ViewFactory : IViewFactory
 
     public ToDoSubItemsViewModel CreateToDoSubItemsViewModel(ViewModelSortBy viewModelSortBy)
     {
-        return new(
-            toDoService,
-            toDoCache,
-            CreateMultiToDoItemsViewModel(viewModelSortBy),
-            appOptions
-        );
+        return new(toDoCache, CreateMultiToDoItemsViewModel(viewModelSortBy), toDoUiService);
     }
 
     public ToDoItemsViewModel CreateToDoItemsViewModel(ViewModelSortBy viewModelSortBy, TextLocalization header)

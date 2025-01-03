@@ -48,11 +48,11 @@ public class SpravyCommandService
         );
 
         NavigateToCurrentToDoItem = SpravyCommand.Create(
-            ct => toDoService.GetCurrentActiveToDoItemAsync(ct)
+            ct => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsCurrentActiveItem(true), ct)
                .IfSuccessAsync(
-                    activeToDoItem =>
+                    response =>
                     {
-                        if (!activeToDoItem.TryGetValue(out var value))
+                        if (!response.CurrentActive.TryGetValue(out var value))
                         {
                             return navigator.NavigateToAsync(viewFactory.CreateRootToDoItemsViewModel(), ct);
                         }
@@ -197,10 +197,10 @@ public class SpravyCommandService
                                     () =>
                                     {
                                         if (playComplete)
-                                        { 
+                                        {
                                             return audioService.PlayCompleteAsync(CancellationToken.None);
                                         }
-                                        
+
                                         return Result.AwaitableSuccess;
                                     },
                                     ct
@@ -225,18 +225,7 @@ public class SpravyCommandService
         );
 
         AddChild = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -254,19 +243,7 @@ public class SpravyCommandService
         );
 
         Delete = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -305,19 +282,7 @@ public class SpravyCommandService
         );
 
         ShowSetting = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -336,31 +301,21 @@ public class SpravyCommandService
         );
 
         OpenLeaf = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => navigator.NavigateToAsync(
-                    viewFactory.CreateLeafToDoItemsViewModel(editId.Item, editId.Items),
-                    ct
-                ),
-                ct
-            ),
+            (toDoItemEditId, ct) =>
+                toDoItemEditId.GetToDoItemEditId()
+                   .IfSuccessAsync(
+                        editId => navigator.NavigateToAsync(
+                            viewFactory.CreateLeafToDoItemsViewModel(editId.Item, editId.Items),
+                            ct
+                        ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
 
         ChangeParent = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -378,19 +333,7 @@ public class SpravyCommandService
         );
 
         ToDoItemCopyToClipboard = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -408,19 +351,7 @@ public class SpravyCommandService
         );
 
         RandomizeChildrenOrder = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) =>  toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                   
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -438,25 +369,38 @@ public class SpravyCommandService
         );
 
         ChangeOrder = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId =>
                     {
                         var viewModel = viewFactory.CreateChangeToDoItemOrderIndexViewModel(editId.Item, editId.Items);
                         var parent = editId.Items.IsEmpty ? editId.Item : editId.Items.Span[0].ToOption();
 
-                        return toDoUiService.UpdateSiblingsAsync(parent, editId.Items, viewModel, ct)
+                        return toDoUiService.GetRequest(
+                                parent.TryGetValue(out var result)
+                                    ? GetToDo.WithDefaultItems.SetChildrenItems(
+                                        new[]
+                                        {
+                                            result.Id,
+                                        }
+                                    )
+                                    : GetToDo.WithDefaultItems.SetIsRootItems(true),
+                                ct
+                            )
+                           .IfSuccessAsync(
+                                response =>
+                                    parent.IsHasValue
+                                        ? response.ChildrenItems
+                                           .Select(x => x.Children)
+                                           .SelectMany()
+                                           .Select(x => x.Item.Id)
+                                           .IfSuccessForEach(toDoCache.GetToDoItem)
+                                        : response.RootItems
+                                           .Select(x => x.Item.Id)
+                                           .IfSuccessForEach(toDoCache.GetToDoItem),
+                                ct
+                            )
+                           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => viewModel.SetItemsUi(items)), ct)
                            .IfSuccessAsync(
                                 () => dialogViewer.ShowConfirmDialogAsync(
                                     viewFactory,
@@ -477,18 +421,7 @@ public class SpravyCommandService
         );
 
         Reset = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -506,56 +439,51 @@ public class SpravyCommandService
         );
 
         AddToFavorite = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => toDoService
-                   .EditToDoItemsAsync(new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(true)), ct)
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-                ct
-            ),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
+               .IfSuccessAsync(
+                    editId => toDoService
+                       .EditToDoItemsAsync(
+                            new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(true)),
+                            ct
+                        )
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
 
         RemoveFromFavorite = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => toDoService
-                   .EditToDoItemsAsync(
-                        new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(false)),
-                        ct
-                    )
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-                ct
-            ),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
+               .IfSuccessAsync(
+                    editId => toDoService
+                       .EditToDoItemsAsync(
+                            new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsFavorite(new(false)),
+                            ct
+                        )
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
 
         OpenLink = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => editId.ResultItems
-                   .Select(x => x.Link)
-                   .Where(x => !x.IsNullOrWhiteSpace())
-                   .ToResult()
-                   .IfSuccessForEachAsync(link => openerLink.OpenLinkAsync(link.ToUri(), ct), ct),
-                ct
-            ),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
+               .IfSuccessAsync(
+                    editId => editId.ResultItems
+                       .Select(x => x.Link)
+                       .Where(x => !x.IsNullOrWhiteSpace())
+                       .ToResult()
+                       .IfSuccessForEachAsync(link => openerLink.OpenLinkAsync(link.ToUri(), ct), ct),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
 
         Clone = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -573,18 +501,7 @@ public class SpravyCommandService
         );
 
         CreateReference = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -655,18 +572,7 @@ public class SpravyCommandService
         );
 
         SetToDoItemDescription = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -718,11 +624,19 @@ public class SpravyCommandService
         );
 
         NavigateToActiveToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
-            (item, ct) => toDoService.GetActiveToDoItemAsync(item.Id, ct)
+            (item, ct) => toDoUiService.GetRequest(
+                    GetToDo.WithDefaultItems.SetActiveItems(
+                        new[]
+                        {
+                            item.Id,
+                        }
+                    ),
+                    ct
+                )
                .IfSuccessAsync(
-                    active =>
+                    response =>
                     {
-                        if (active.TryGetValue(out var value))
+                        if (response.ActiveItems.Span[0].Item.TryGetValue(out var value))
                         {
                             if (value.ParentId.TryGetValue(out var parentId))
                             {
@@ -861,15 +775,14 @@ public class SpravyCommandService
 
                                             return tokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), ct)
                                                .IfSuccessAsync(
-                                                    () => toDoUiService.UpdateSelectorItemsAsync(
-                                                        null,
-                                                        ReadOnlyMemory<Guid>.Empty,
+                                                    () => toDoUiService.GetRequest(
+                                                        GetToDo.WithDefaultItems.SetIsSelectorItems(true),
                                                         ct
                                                     ),
                                                     ct
                                                 )
                                                .IfSuccessAsync(
-                                                    () => navigator.NavigateToAsync(
+                                                    _ => navigator.NavigateToAsync(
                                                         viewFactory.CreateRootToDoItemsViewModel(),
                                                         ct
                                                     ),
@@ -1128,18 +1041,7 @@ public class SpravyCommandService
         );
 
         CreateTimer = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                    editId =>
-                    {
-                        if (editId.Item.TryGetValue(out var item))
-                        {
-                            return toDoUiService.UpdateItemAsync(item, ct).IfSuccessAsync(() => editId.ToResult(), ct);
-                        }
-
-                        return editId.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    },
-                    ct
-                )
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
                     editId => dialogViewer.ShowConfirmDialogAsync(
                         viewFactory,
@@ -1197,26 +1099,31 @@ public class SpravyCommandService
         );
 
         AddToBookmark = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => toDoService
-                   .EditToDoItemsAsync(new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(true)), ct)
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-                ct
-            ),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
+               .IfSuccessAsync(
+                    editId => toDoService
+                       .EditToDoItemsAsync(
+                            new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(true)),
+                            ct
+                        )
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
 
         RemoveFromBookmark = SpravyCommand.Create<IToDoItemEditId>(
-            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId().IfSuccessAsync(
-                editId => toDoService
-                   .EditToDoItemsAsync(
-                        new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(false)),
-                        ct
-                    )
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-                ct
-            ),
+            (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
+               .IfSuccessAsync(
+                    editId => toDoService
+                       .EditToDoItemsAsync(
+                            new EditToDoItems().SetIds(editId.ResultCurrentIds).SetIsBookmark(new(false)),
+                            ct
+                        )
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                    ct
+                ),
             errorHandler,
             taskProgressService
         );
@@ -1382,14 +1289,13 @@ public class SpravyCommandService
                                             ct
                                         )
                                        .IfSuccessAsync(
-                                            () => toDoUiService.UpdateSelectorItemsAsync(
-                                                null,
-                                                ReadOnlyMemory<Guid>.Empty,
+                                            () => toDoUiService.GetRequest(
+                                                GetToDo.WithDefaultItems.SetIsSelectorItems(true),
                                                 ct
                                             ),
                                             ct
                                         )
-                                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
+                                       .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
                                        .IfSuccessAsync(
                                             () => navigator.NavigateToAsync(
                                                 viewFactory.CreateRootToDoItemsViewModel(),

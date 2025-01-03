@@ -7,6 +7,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
 
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     public LeafToDoItemsViewModel(
         Option<ToDoItemEntityNotify> item,
@@ -14,12 +15,14 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(true)
     {
         Item = item;
         Items = items;
         this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.objectStorage = objectStorage;
@@ -97,16 +100,29 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
+        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetLeafItems(GetIds()), ct)
+           .IfSuccessAsync(
+                response => response.LeafItems
+                   .Select(x => x.Leafs)
+                   .SelectMany()
+                   .Select(x => x.Item.Id)
+                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x)),
+                ct
+            )
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)), ct);
+    }
+
+    private ReadOnlyMemory<Guid> GetIds()
+    {
         if (Items.IsEmpty)
         {
-            return Item.GetValue()
-               .IfSuccessAsync(i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct), ct);
+            return new[]
+            {
+                Item.GetValue().ThrowIfError().Id
+            };
         }
 
-        return Items.ToArray()
-           .ToReadOnlyMemory()
-           .ToResult()
-           .IfSuccessForEachAllAsync(i => toDoUiService.UpdateLeafToDoItemsAsync(i, ToDoSubItemsViewModel, ct), ct);
+        return Items.Select(x => x.Id);
     }
 
     public override Result Stop()

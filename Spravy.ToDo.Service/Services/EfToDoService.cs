@@ -719,7 +719,7 @@ public class EfToDoService : IToDoService
                                 {
                                     if (rootsFullItem.Status == ToDoItemStatus.Miss)
                                     {
-                                        currentActive = rootsFullItem.Item.ToOption();
+                                        currentActive = rootsFullItem.Active;
                                         
                                         break;
                                     }
@@ -729,7 +729,7 @@ public class EfToDoService : IToDoService
                                         case ToDoItemStatus.ReadyForComplete:
                                             if (!currentActive.IsHasValue)
                                             {
-                                                currentActive = rootsFullItem.Item.ToOption();
+                                                currentActive = rootsFullItem.Active;
                                             }
 
                                             break;

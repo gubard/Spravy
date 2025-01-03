@@ -2,5 +2,5 @@
 
 public interface IBookmarksToDoItemsView
 {
-    Result ClearBookmarksExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items);
+    Result SetBookmarksUi(ReadOnlyMemory<ToDoItemEntityNotify> items);
 }

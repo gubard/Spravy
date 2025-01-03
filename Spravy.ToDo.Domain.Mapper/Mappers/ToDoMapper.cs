@@ -9,7 +9,6 @@ public static partial class ToDoMapper
 {
     public static partial ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemOptionsGrpc value);
     public static partial ResetToDoItemOptionsGrpc ToResetToDoItemOptionsGrpc(this ResetToDoItemOptions value);
-    public static partial GetRequest ToGetRequest(this GetToDo value);
     public static partial GetToStringItemGrpc ToGetToStringItemGrpc(this GetToStringItem value);
     public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(this IEnumerable<FullToDoItemGrpc> value);
     public static partial EditPropertyDaysOfYearGrpc ToEditPropertyDaysOfYearGrpc(this EditPropertyValue<ReadOnlyMemory<DayOfYear>> value);
@@ -49,6 +48,29 @@ public static partial class ToDoMapper
     public static partial ParentItem ToParentItem(this ParentItemGrpc value);
     public static partial ParentItemGrpc ToParentItemGrpc(this ParentItem value);
     private static partial ReadOnlyMemory<Guid> ToGuid(RepeatedField<ByteString> value);
+    
+    public static GetRequest ToGetRequest(this GetToDo value)
+    {
+        var result = new GetRequest
+        {
+            SearchText = value.SearchText,
+            IsBookmarkItems = value.IsBookmarkItems,
+            IsFavoriteItems = value.IsFavoriteItems,
+            IsRootItems = value.IsRootItems,
+            IsSelectorItems = value.IsSelectorItems,
+            IsTodayItems = value.IsTodayItems,
+            IsCurrentActiveItem = value.IsCurrentActiveItem,
+        };
+        
+        result.Items.AddRange(value.Items.ToByteString().ToArray());
+        result.ActiveItems.AddRange(value.ActiveItems.ToByteString().ToArray());
+        result.ChildrenItems.AddRange(value.ChildrenItems.ToByteString().ToArray());
+        result.LeafItems.AddRange(value.LeafItems.ToByteString().ToArray());
+        result.ParentItems.AddRange(value.ParentItems.ToByteString().ToArray());
+        result.ToStringItems.AddRange(value.ToStringItems.ToGetToStringItemGrpc());
+
+        return result;
+    }
 
     public static GetToDo ToGetToDo(this GetRequest value)
     {

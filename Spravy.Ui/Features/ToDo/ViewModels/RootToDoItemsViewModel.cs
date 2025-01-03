@@ -6,6 +6,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     private readonly TaskWork refreshWork;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
     private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
     private bool isMulti;
@@ -15,7 +16,8 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IObjectStorage objectStorage,
         IErrorHandler errorHandler,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(true)
     {
         Commands = new();
@@ -23,6 +25,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.objectStorage = objectStorage;
         this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
 
         PropertyChanged += (_, e) =>
@@ -60,16 +63,19 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         return RefreshCore().ConfigureAwait(false);
     }
 
-    public async ValueTask<Result> RefreshCore()
-    {
-        await refreshWork.RunAsync();
-
-        return Result.Success;
-    }
-
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.UpdateRootItemsAsync(ToDoSubItemsViewModel, ct);
+        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct)
+           .IfSuccessAsync(
+                response => response.RootItems
+                   .Select(x => x.Item.Id)
+                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                   .IfSuccessAsync(
+                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
+                        ct
+                    ),
+                ct
+            );
     }
 
     public override Result Stop()
@@ -100,6 +106,13 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                 ),
                 ct
             );
+    }
+
+    private async ValueTask<Result> RefreshCore()
+    {
+        await refreshWork.RunAsync();
+
+        return Result.Success;
     }
 
     private void UpdateCommands()

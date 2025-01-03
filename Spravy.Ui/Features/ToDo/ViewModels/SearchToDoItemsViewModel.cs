@@ -6,6 +6,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     private readonly TaskWork refreshWork;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
     private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -15,13 +16,15 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         SpravyCommandNotifyService spravyCommandNotifyService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(true)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.objectStorage = objectStorage;
         this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
         SearchTexts = new();
         Commands = new();
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
@@ -57,7 +60,17 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.UpdateSearchToDoItemsAsync(SearchText, ToDoSubItemsViewModel, ct);
+        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetSearchText(SearchText), ct)
+           .IfSuccessAsync(
+                response => response.SearchItems
+                   .Select(x => x.Item.Id)
+                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                   .IfSuccessAsync(
+                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
+                        ct
+                    ),
+                ct
+            );
     }
 
     public override Result Stop()

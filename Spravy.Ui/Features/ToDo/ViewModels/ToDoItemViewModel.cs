@@ -5,6 +5,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     private readonly IObjectStorage objectStorage;
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
     private bool isMulti;
@@ -14,12 +15,14 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
         IObjectStorage objectStorage,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(true)
     {
         this.objectStorage = objectStorage;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
         Item = item;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
@@ -70,7 +73,27 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.UpdateItemChildrenAsync(Item, ToDoSubItemsViewModel, ct)
+        return toDoUiService.GetRequest(
+                GetToDo.WithDefaultItems.SetChildrenItems(
+                    new[]
+                    {
+                        Item.Id,
+                    }
+                ),
+                ct
+            )
+           .IfSuccessAsync(
+                response => response.ChildrenItems
+                   .Select(x => x.Children)
+                   .SelectMany()
+                   .Select(x => x.Item.Id)
+                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
+                   .IfSuccessAsync(
+                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
+                        ct
+                    ),
+                ct
+            )
            .IfSuccessAsync(
                 () =>
                 {
