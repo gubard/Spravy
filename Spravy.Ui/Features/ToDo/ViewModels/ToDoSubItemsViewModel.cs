@@ -2,6 +2,9 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
+    private readonly IToDoCache toDoCache;
+    private readonly IToDoUiService toDoUiService;
+    
     public ToDoSubItemsViewModel(
         IToDoCache toDoCache,
         MultiToDoItemsViewModel list,
@@ -9,6 +12,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
     )
     {
         List = list;
+        this.toDoCache = toDoCache;
+        this.toDoUiService = toDoUiService;
 
         toDoCache.GetFavoriteItems()
            .IfSuccessAsync(
@@ -16,13 +21,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
                 CancellationToken.None
             );
 
-        toDoUiService.Response += response => response.FavoriteItems
-           .Select(x => x.Item.Id)
-           .IfSuccessForEach(toDoCache.GetToDoItem)
-           .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
-                CancellationToken.None
-            );
+        toDoUiService.Requested += Requested;
     }
 
     public MultiToDoItemsViewModel List { get; }
@@ -44,7 +43,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
+        toDoUiService.Requested -= Requested;
+        toDoUiService.Requested += Requested;
+
         return Result.AwaitableSuccess;
+    }
+    
+    public Result Stop()
+    {
+        toDoUiService.Requested -= Requested;
+
+        return Result.Success;
     }
 
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
@@ -57,5 +66,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
         }
 
         return new(selected);
+    }
+
+    private Cvtar Requested(ToDoResponse response)
+    {
+        return response.FavoriteItems
+           .Select(x => x.Item.Id)
+           .IfSuccessForEach(toDoCache.GetToDoItem)
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
+                CancellationToken.None
+            );
     }
 }

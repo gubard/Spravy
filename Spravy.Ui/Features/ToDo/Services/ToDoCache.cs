@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
+
 namespace Spravy.Ui.Features.ToDo.Services;
 
 public class ToDoCache : IToDoCache
 {
-    private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
+    private readonly ConcurrentDictionary<Guid, ToDoItemEntityNotify> cache;
     private readonly IServiceFactory serviceFactory;
 
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;

@@ -82,7 +82,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     {
         refreshWork.Cancel();
 
-        return Result.Success;
+        return ToDoSubItemsViewModel.Stop();
     }
 
     public override Cvtar SaveStateAsync(CancellationToken ct)

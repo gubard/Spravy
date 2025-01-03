@@ -59,7 +59,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 
     public override Result Stop()
     {
-        return Result.Success;
+        return ToDoSubItemsViewModel.Stop();
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

@@ -77,7 +77,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     {
         refreshWork.Cancel();
 
-        return Result.Success;
+        return ToDoSubItemsViewModel.Stop();
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

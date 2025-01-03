@@ -41,29 +41,4 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
     {
         return Task.CompletedTask;
     }
-
-    private string GetMigrationId()
-    {
-        return AppDomain.CurrentDomain
-           .GetAssemblies()
-           .SelectMany(x => x.GetTypes())
-           .Where(
-                x =>
-                {
-                    var dbContextAttribute = x.GetCustomAttribute<DbContextAttribute>();
-
-                    if (dbContextAttribute is null)
-                    {
-                        return false;
-                    }
-
-                    return dbContextAttribute.ContextType == typeof(TDbContext);
-                }
-            )
-           .Select(x => x.GetCustomAttribute<MigrationAttribute>())
-           .Where(x => x is not null)
-           .Select(x => x.ThrowIfNull().Id)
-           .OrderByDescending(x => x)
-           .First();
-    }
 }

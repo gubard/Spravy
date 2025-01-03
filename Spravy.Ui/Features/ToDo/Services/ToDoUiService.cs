@@ -8,7 +8,7 @@ public class ToDoUiService : IToDoUiService
     {
         this.toDoService = toDoService;
 
-        Response += response => this.InvokeUiBackgroundAsync(
+        Requested += response => this.InvokeUiBackgroundAsync(
             () => response.ActiveItems
                .Select(x => x.Item.GetValueOrNull())
                .Where(x => x.HasValue)
@@ -17,6 +17,7 @@ public class ToDoUiService : IToDoUiService
                .ToReadOnlyMemory()
                .IfSuccessForEach(toDoCache.UpdateUi)
                .IfSuccess(_ => response.BookmarkItems.IfSuccessForEach(toDoCache.UpdateUi))
+               .IfSuccess(_ => response.Items.IfSuccessForEach(toDoCache.UpdateUi))
                .IfSuccess(_ => toDoCache.UpdateUi(response.SelectorItems))
                .IfSuccess(
                     _ =>
@@ -47,15 +48,15 @@ public class ToDoUiService : IToDoUiService
         );
     }
 
-    public event Func<ToDoResponse, Cvtar>? Response;
+    public event Func<ToDoResponse, Cvtar>? Requested;
 
     public ConfiguredValueTaskAwaitable<Result<ToDoResponse>> GetRequest(GetToDo get, CancellationToken ct)
     {
         return toDoService.GetAsync(get, ct)
            .IfSuccessAsync(
-                response => Response is null
+                response => Requested is null
                     ? response.ToResult().ToValueTaskResult().ConfigureAwait(false)
-                    : Response.Invoke(response).IfSuccessAsync(() => response.ToResult(), ct),
+                    : Requested.Invoke(response).IfSuccessAsync(() => response.ToResult(), ct),
                 ct
             );
     }

@@ -129,7 +129,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
     {
         refreshWork.Cancel();
 
-        return Result.Success;
+        return ToDoSubItemsViewModel.Stop();
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

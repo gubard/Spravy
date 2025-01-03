@@ -8,7 +8,7 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
         Bookmarks = new();
         Account.PropertyChanged += OnPropertyChanged;
 
-        toDoUiService.Response += response => response.BookmarkItems
+        toDoUiService.Requested += response => response.BookmarkItems
            .Select(x => x.Id)
            .IfSuccessForEach(toDoCache.GetToDoItem)
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => SetBookmarksUi(items)), CancellationToken.None);
