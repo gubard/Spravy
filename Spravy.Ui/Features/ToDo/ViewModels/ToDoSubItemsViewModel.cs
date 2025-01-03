@@ -70,7 +70,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     private Cvtar Requested(ToDoResponse response)
     {
-        return response.FavoriteItems
+        return response.FavoriteItems.Items
            .Select(x => x.Item.Id)
            .IfSuccessForEach(toDoCache.GetToDoItem)
            .IfSuccessAsync(

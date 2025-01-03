@@ -16,11 +16,10 @@ public class ToDoUiService : IToDoUiService
                .ToArray()
                .ToReadOnlyMemory()
                .IfSuccessForEach(toDoCache.UpdateUi)
-               .IfSuccess(_ => response.BookmarkItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => response.Items.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => toDoCache.UpdateUi(response.SelectorItems))
+               .IfSuccess(_ => response.Items.IsResponse?response.Items.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => response.SelectorItems.IsResponse? toDoCache.UpdateUi(response.SelectorItems.Items).ToResultOnly():Result.Success)
                .IfSuccess(
-                    _ =>
+                    () =>
                     {
                         if (response.CurrentActive.TryGetValue(out var currentActive))
                         {
@@ -30,16 +29,16 @@ public class ToDoUiService : IToDoUiService
                         return Result.Success;
                     }
                 )
-               .IfSuccess(() => response.FavoriteItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => toDoCache.SetFavoriteItems(response.FavoriteItems.Select(x => x.Item.Id)))
-               .IfSuccess(() => response.BookmarkItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => response.SearchItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => response.ParentItems.IfSuccessForEach(x => toDoCache.UpdateParentsUi(x.Id, x.Parents)))
-               .IfSuccess(() => response.TodayItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => response.RootItems.IfSuccessForEach(toDoCache.UpdateUi))
-               .IfSuccess(_ => toDoCache.UpdateRootItems(response.RootItems.Select(x => x.Item.Id)))
+               .IfSuccess(() =>response.FavoriteItems.IsResponse? response.FavoriteItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => toDoCache.SetFavoriteItems(response.FavoriteItems.Items.Select(x => x.Item.Id)))
+               .IfSuccess(() => response.BookmarkItems.IsResponse?response.BookmarkItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => response.SearchItems.IsResponse?response.SearchItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => response.ParentItems.IfSuccessForEach(x => toDoCache.UpdateParentsUi(x.Id, x.Parents)))
+               .IfSuccess(() =>response.TodayItems.IsResponse? response.TodayItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => response.RootItems.IsResponse?response.RootItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly():Result.Success)
+               .IfSuccess(() => response.RootItems.IsResponse?toDoCache.UpdateRootItems(response.RootItems.Items.Select(x => x.Item.Id)).ToResultOnly():Result.Success)
                .IfSuccess(
-                    _ => response.ChildrenItems.IfSuccessForEach(
+                        () => response.ChildrenItems.IfSuccessForEach(
                         x => toDoCache.UpdateChildrenItemsUi(x.Id, x.Children.Select(y => y.Item.Id))
                            .IfSuccess(_ => x.Children.IfSuccessForEach(toDoCache.UpdateUi))
                     )

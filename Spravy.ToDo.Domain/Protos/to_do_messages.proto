@@ -23,19 +23,34 @@ message GetRequest {
 }
 
 message GetReply {
-  repeated ToDoSelectorItemGrpc selector_items = 1;
+  ToDoSelectorItemsResponseGrpc selector_items = 1;
   repeated ToStringItemGrpc to_string_items = 2;
   ToDoShortItemGrpc current_active = 3;
   repeated ActiveItemGrpc active_items = 4;
-  repeated FullToDoItemGrpc favorite_items = 5;
-  repeated ToDoShortItemGrpc bookmark_items = 6;
+  ToDoFullItemsResponseGrpc favorite_items = 5;
+  ToDoShortItemsResponseGrpc bookmark_items = 6;
   repeated ChildrenItemGrpc children_items = 7;
   repeated LeafItemGrpc leaf_items = 8;
-  repeated FullToDoItemGrpc search_items = 9;
+  ToDoFullItemsResponseGrpc search_items = 9;
   repeated ParentItemGrpc parent_items = 10;
-  repeated FullToDoItemGrpc today_items = 11;
-  repeated FullToDoItemGrpc root_items = 12;
-  repeated FullToDoItemGrpc items = 13;
+  ToDoFullItemsResponseGrpc today_items = 11;
+  ToDoFullItemsResponseGrpc root_items = 12;
+  ToDoFullItemsResponseGrpc items = 13;
+}
+
+message ToDoShortItemsResponseGrpc {
+  bool is_response = 1;
+  repeated ToDoShortItemGrpc items = 2;
+}
+
+message ToDoFullItemsResponseGrpc {
+  bool is_response = 1;
+  repeated FullToDoItemGrpc items = 2;
+}
+
+message ToDoSelectorItemsResponseGrpc {
+  bool is_response = 1;
+  repeated ToDoSelectorItemGrpc items = 2;
 }
 
 message ParentItemGrpc {

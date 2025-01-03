@@ -5,19 +5,19 @@ namespace Spravy.ToDo.Domain.Models;
 public readonly struct ToDoResponse
 {
     public ToDoResponse(
-        ReadOnlyMemory<ToDoSelectorItem> selectorItems,
+        ToDoSelectorItemsResponse selectorItems,
         ReadOnlyMemory<ToStringItem> toStringItems,
         OptionStruct<ToDoShortItem> currentActive,
         ReadOnlyMemory<ActiveItem> activeItems,
-        ReadOnlyMemory<FullToDoItem> favoriteItems,
-        ReadOnlyMemory<ToDoShortItem> bookmarkItems,
+        ToDoFullItemsResponse favoriteItems,
+        ToDoShortItemsResponse bookmarkItems,
         ReadOnlyMemory<ChildrenItem> childrenItems,
         ReadOnlyMemory<LeafItem> leafItems,
-        ReadOnlyMemory<FullToDoItem> searchItems,
+        ToDoFullItemsResponse searchItems,
         ReadOnlyMemory<ParentItem> parentItems,
-        ReadOnlyMemory<FullToDoItem> todayItems,
-        ReadOnlyMemory<FullToDoItem> rootItems,
-        ReadOnlyMemory<FullToDoItem> items
+        ToDoFullItemsResponse todayItems,
+        ToDoFullItemsResponse rootItems,
+        ToDoFullItemsResponse items
     )
     {
         SelectorItems = selectorItems;
@@ -35,17 +35,17 @@ public readonly struct ToDoResponse
         Items = items;
     }
 
-    public readonly ReadOnlyMemory<ToDoSelectorItem> SelectorItems;
+    public readonly ToDoSelectorItemsResponse SelectorItems;
     public readonly ReadOnlyMemory<ToStringItem> ToStringItems;
     public readonly OptionStruct<ToDoShortItem> CurrentActive;
     public readonly ReadOnlyMemory<ActiveItem> ActiveItems;
-    public readonly ReadOnlyMemory<FullToDoItem> FavoriteItems;
-    public readonly ReadOnlyMemory<ToDoShortItem> BookmarkItems;
+    public readonly ToDoFullItemsResponse FavoriteItems;
+    public readonly ToDoShortItemsResponse BookmarkItems;
     public readonly ReadOnlyMemory<ChildrenItem> ChildrenItems;
     public readonly ReadOnlyMemory<LeafItem> LeafItems;
-    public readonly ReadOnlyMemory<FullToDoItem> SearchItems;
+    public readonly ToDoFullItemsResponse SearchItems;
     public readonly ReadOnlyMemory<ParentItem> ParentItems;
-    public readonly ReadOnlyMemory<FullToDoItem> TodayItems;
-    public readonly ReadOnlyMemory<FullToDoItem> RootItems;
-    public readonly ReadOnlyMemory<FullToDoItem> Items;
+    public readonly ToDoFullItemsResponse TodayItems;
+    public readonly ToDoFullItemsResponse RootItems;
+    public readonly ToDoFullItemsResponse Items;
 }

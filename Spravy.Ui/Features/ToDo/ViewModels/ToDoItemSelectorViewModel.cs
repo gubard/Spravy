@@ -65,7 +65,6 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand SearchCommand { get; }
-
     public override string ViewId => TypeCache<ToDoItemSelectorViewModel>.Name;
 
     public Result<ToDoItemEntityNotify> GetSelectedItem()
@@ -81,9 +80,10 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     private Cvtar Refresh(CancellationToken ct)
     {
         return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
-            () => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct)
+            () => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsSelectorItems(true), ct)
+               .IfSuccessAsync(_ => this.InvokeUiBackgroundAsync(() => toDoCache.SetIgnoreItemsUi(ignoreItems.Select(x => x.Id))), ct)
                .IfSuccessAsync(
-                    _ =>
+                    () =>
                     {
                         if (!Item.TryGetValue(out var i))
                         {
@@ -108,7 +108,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
                 {
                     IsBusy = false;
 
-                    return Result.Success;
+                     return Result.Success;
                 },
                 ct
             ),

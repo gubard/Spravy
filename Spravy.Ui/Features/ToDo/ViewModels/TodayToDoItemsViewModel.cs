@@ -46,7 +46,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
     {
         return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsTodayItems(true), ct)
            .IfSuccessAsync(
-                response => response.TodayItems
+                response => response.TodayItems.Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
                    .IfSuccessAsync(

@@ -41,13 +41,25 @@ public static partial class ToDoMapper
     public static partial RepeatedField<GetToStringItemGrpc> ToGetToStringItemGrpc(this ReadOnlyMemory<GetToStringItem> value);
     public static partial ReadOnlyMemory<GetToStringItem> ToGetToStringItem(this RepeatedField<GetToStringItemGrpc> value);
     public static partial ReadOnlyMemory<ToDoItemStatus> ToToDoItemStatus(this RepeatedField<ToDoItemStatusGrpc> value);
-    public static partial GetReply ToGetReply(this ToDoResponse value);
-    public static partial ToDoResponse ToToDoResponse(this GetReply value);
     public static partial LeafItem ToLeafItem(this LeafItemGrpc value);
     public static partial LeafItemGrpc ToLeafItemGrpc(this LeafItem value);
     public static partial ParentItem ToParentItem(this ParentItemGrpc value);
     public static partial ParentItemGrpc ToParentItemGrpc(this ParentItem value);
     private static partial ReadOnlyMemory<Guid> ToGuid(RepeatedField<ByteString> value);
+    public static partial ToDoSelectorItemsResponse ToToDoSelectorItemsResponse(this ToDoSelectorItemsResponseGrpc value);
+    public static partial ToDoSelectorItemsResponseGrpc ToToDoSelectorItemsResponseGrpc(this ToDoSelectorItemsResponse value);
+    public static partial ToDoFullItemsResponse ToToDoFullItemsResponse(this ToDoFullItemsResponseGrpc value);
+    public static partial ToDoFullItemsResponseGrpc ToToDoFullItemsResponseGrpc(this ToDoFullItemsResponse value);
+    public static partial ToStringItemGrpc ToToStringItemGrpc(this ToStringItem value);
+    public static partial ToStringItem ToToStringItem(this ToStringItemGrpc value);
+    public static partial ActiveItemGrpc ToActiveItemGrpc(this ActiveItem value);
+    public static partial ActiveItem ToActiveItem(this ActiveItemGrpc value);
+    public static partial ReadOnlyMemory<ToStringItem> ToToStringItem(this RepeatedField<ToStringItemGrpc> value);
+    public static partial ReadOnlyMemory<ActiveItem> ToActiveItem(this RepeatedField<ActiveItemGrpc> value);
+    public static partial GetReply ToGetReply(this ToDoResponse value);
+    public static partial ToDoResponse ToToDoResponse(this GetReply value);
+    public static partial ToDoShortItemsResponseGrpc ToToDoShortItemsResponseGrpc(this ToDoShortItemsResponse value);
+    public static partial ToDoShortItemsResponse ToToDoShortItemsResponse(this ToDoShortItemsResponseGrpc value);
     
     public static GetRequest ToGetRequest(this GetToDo value)
     {

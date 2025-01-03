@@ -396,6 +396,7 @@ public class SpravyCommandService
                                            .Select(x => x.Item.Id)
                                            .IfSuccessForEach(toDoCache.GetToDoItem)
                                         : response.RootItems
+                                           .Items
                                            .Select(x => x.Item.Id)
                                            .IfSuccessForEach(toDoCache.GetToDoItem),
                                 ct

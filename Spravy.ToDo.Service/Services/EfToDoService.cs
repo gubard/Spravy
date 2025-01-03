@@ -32,11 +32,7 @@ public class EfToDoService : IToDoService
         this.serializer = serializer;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> CloneToDoItemAsync(
-        ReadOnlyMemory<Guid> cloneIds,
-        OptionStruct<Guid> parentId,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> CloneToDoItemAsync(ReadOnlyMemory<Guid> cloneIds, OptionStruct<Guid> parentId, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
@@ -45,13 +41,7 @@ public class EfToDoService : IToDoService
                     {
                         var ids = cloneIds.ToArray();
 
-                        return context.Set<ToDoItemEntity>()
-                           .Where(x => ids.Contains(x.Id))
-                           .ToArrayEntitiesAsync(ct)
-                           .IfSuccessForEachAsync(
-                                clone => AddCloneAsync(context, clone, parentId, ct).ConfigureAwait(false),
-                                ct
-                            );
+                        return context.Set<ToDoItemEntity>().Where(x => ids.Contains(x.Id)).ToArrayEntitiesAsync(ct).IfSuccessForEachAsync(clone => AddCloneAsync(context, clone, parentId, ct).ConfigureAwait(false), ct);
                     },
                     ct
                 ),
@@ -102,15 +92,7 @@ public class EfToDoService : IToDoService
                                                             o.IsOnlyCompletedTasks,
                                                             ct
                                                         )
-                                                       .IfSuccessAsync(
-                                                            () => StepCompletionAsync(
-                                                                items,
-                                                                item,
-                                                                o.IsCompleteChildrenTask,
-                                                                ct
-                                                            ),
-                                                            ct
-                                                        ),
+                                                       .IfSuccessAsync(() => StepCompletionAsync(items, item, o.IsCompleteChildrenTask, ct), ct),
                                                     ct
                                                 ),
                                             ct
@@ -168,16 +150,12 @@ public class EfToDoService : IToDoService
                                         {
                                             if (item.Reference is not null)
                                             {
-                                                item.Reference.Link = options.Link.Value.TryGetValue(out var link)
-                                                    ? link.AbsoluteUri
-                                                    : string.Empty;
+                                                item.Reference.Link = options.Link.Value.TryGetValue(out var link) ? link.AbsoluteUri : string.Empty;
                                             }
                                         }
                                         else
                                         {
-                                            item.Link = options.Link.Value.TryGetValue(out var link)
-                                                ? link.AbsoluteUri
-                                                : string.Empty;
+                                            item.Link = options.Link.Value.TryGetValue(out var link) ? link.AbsoluteUri : string.Empty;
                                         }
                                     }
 
@@ -301,11 +279,9 @@ public class EfToDoService : IToDoService
                                     {
                                         if (e.Id == AddToDoItemToFavoriteEventOptions.EventId)
                                         {
-                                            return serializer
-                                               .DeserializeAsync<AddToDoItemToFavoriteEventOptions>(e.Content, ct)
+                                            return serializer.DeserializeAsync<AddToDoItemToFavoriteEventOptions>(e.Content, ct)
                                                .IfSuccessAsync(
-                                                    options => context
-                                                       .GetEntityAsync<ToDoItemEntity>(options.ToDoItemId)
+                                                    options => context.GetEntityAsync<ToDoItemEntity>(options.ToDoItemId)
                                                        .IfSuccessAsync(
                                                             x =>
                                                             {
@@ -319,8 +295,7 @@ public class EfToDoService : IToDoService
                                                 );
                                         }
 
-                                        return new Result(new NotFoundEventError(e.Id)).ToValueTaskResult()
-                                           .ConfigureAwait(false);
+                                        return new Result(new NotFoundEventError(e.Id)).ToValueTaskResult().ConfigureAwait(false);
                                     },
                                     ct
                                 ),
@@ -336,17 +311,7 @@ public class EfToDoService : IToDoService
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetBookmarkToDoItemIdsAsync(CancellationToken ct)
     {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .OrderBy(x => x.OrderIndex)
-                   .ThenBy(x => x.NormalizeName)
-                   .Where(x => x.IsBookmark)
-                   .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(ct),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().OrderBy(x => x.OrderIndex).ThenBy(x => x.NormalizeName).Where(x => x.IsBookmark).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
     }
 
     public Cvtar RandomizeChildrenOrderIndexAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
@@ -381,10 +346,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
-        Guid id,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
@@ -415,29 +377,14 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
-        string searchText,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(string searchText, CancellationToken ct)
     {
         var normalizeSearchText = searchText.ToUpperInvariant();
 
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => x.Name.Contains(searchText) || x.NormalizeName.Contains(normalizeSearchText))
-                   .OrderBy(x => x.OrderIndex)
-                   .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(ct),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.Name.Contains(searchText) || x.NormalizeName.Contains(normalizeSearchText)).OrderBy(x => x.OrderIndex).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
-        Guid id,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
@@ -479,46 +426,20 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
-        OptionStruct<Guid> id,
-        ReadOnlyMemory<Guid> ignoreIds,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(OptionStruct<Guid> id, ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct)
     {
         var ignoreIdsArray = ignoreIds.ToArray();
         var i = id.GetValueOrNull();
 
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => x.ParentId == i && !ignoreIdsArray.Contains(x.Id))
-                   .OrderBy(x => x.OrderIndex)
-                   .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(ct),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == i && !ignoreIdsArray.Contains(x.Id)).OrderBy(x => x.OrderIndex).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(CancellationToken ct)
     {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .OrderBy(x => x.OrderIndex)
-                   .ThenBy(x => x.NormalizeName)
-                   .Where(x => x.IsFavorite)
-                   .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(ct),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().OrderBy(x => x.OrderIndex).ThenBy(x => x.NormalizeName).Where(x => x.IsFavorite).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(
-        ReadOnlyMemory<AddToDoItemOptions> o,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(ReadOnlyMemory<AddToDoItemOptions> o, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
@@ -541,8 +462,7 @@ public class EfToDoService : IToDoService
                                         toDoItem.Id = id;
                                         toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-                                        return context.AddEntityAsync(toDoItem, ct)
-                                           .IfSuccessAsync(_ => id.ToResult(), ct);
+                                        return context.AddEntityAsync(toDoItem, ct).IfSuccessAsync(_ => id.ToResult(), ct);
                                     },
                                     ct
                                 );
@@ -572,18 +492,13 @@ public class EfToDoService : IToDoService
 
                                     if (!item.IsCompleted)
                                     {
-                                        return getterToDoItemParametersService
-                                           .GetToDoItemParameters(items, new(), item, offset)
+                                        return getterToDoItemParametersService.GetToDoItemParameters(items, new(), item, offset)
                                            .IfSuccessAsync(
                                                 parameters =>
                                                 {
                                                     if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
                                                     {
-                                                        return new Result(
-                                                                new ToDoItemAlreadyCompleteError(item.Id, item.Name)
-                                                            )
-                                                           .ToValueTaskResult()
-                                                           .ConfigureAwait(false);
+                                                        return new Result(new ToDoItemAlreadyCompleteError(item.Id, item.Name)).ToValueTaskResult().ConfigureAwait(false);
                                                     }
 
                                                     switch (item.Type)
@@ -613,11 +528,7 @@ public class EfToDoService : IToDoService
                                                         case ToDoItemType.Reference:
                                                             break;
                                                         default:
-                                                            return new Result(
-                                                                    new ToDoItemTypeOutOfRangeError(item.Type)
-                                                                )
-                                                               .ToValueTaskResult()
-                                                               .ConfigureAwait(false);
+                                                            return new Result(new ToDoItemTypeOutOfRangeError(item.Type)).ToValueTaskResult().ConfigureAwait(false);
                                                     }
 
                                                     return MoveNextDueDateAsync(context, item, offset, ct)
@@ -634,15 +545,7 @@ public class EfToDoService : IToDoService
                                                                         false,
                                                                         ct
                                                                     )
-                                                                   .IfSuccessAsync(
-                                                                        () => StepCompletionAsync(
-                                                                            items,
-                                                                            item,
-                                                                            false,
-                                                                            ct
-                                                                        ),
-                                                                        ct
-                                                                    );
+                                                                   .IfSuccessAsync(() => StepCompletionAsync(items, item, false, ct), ct);
                                                             },
                                                             ct
                                                         );
@@ -665,23 +568,11 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetShortToDoItemsAsync(
-        ReadOnlyMemory<Guid> ids,
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetShortToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
     {
         var idsArray = ids.ToArray();
 
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => idsArray.Contains(x.Id))
-                   .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(ct)
-                   .IfSuccessForEachAsync(x => x.ToToDoShortItem().ToResult(), ct),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => idsArray.Contains(x.Id)).OrderBy(x => x.OrderIndex).ToArrayEntitiesAsync(ct).IfSuccessForEachAsync(x => x.ToToDoShortItem().ToResult(), ct), ct);
     }
 
     public Cvtar UpdateToDoItemOrderIndexAsync(ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> o, CancellationToken ct)
@@ -696,16 +587,10 @@ public class EfToDoService : IToDoService
                                    .IfSuccessAsync(
                                         targetItem =>
                                         {
-                                            var orderIndex = options.IsAfter
-                                                ? targetItem.OrderIndex + 1
-                                                : targetItem.OrderIndex;
+                                            var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
                                             return context.Set<ToDoItemEntity>()
-                                               .Where(
-                                                    x => x.ParentId == item.ParentId
-                                                     && x.Id != item.Id
-                                                     && x.OrderIndex >= orderIndex
-                                                )
+                                               .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
                                                .ToArrayEntitiesAsync(ct)
                                                .IfSuccessAsync(
                                                     items =>
@@ -717,11 +602,7 @@ public class EfToDoService : IToDoService
 
                                                         item.OrderIndex = orderIndex;
 
-                                                        return NormalizeOrderIndexAsync(
-                                                            context,
-                                                            item.ParentId.ToOption(),
-                                                            ct
-                                                        );
+                                                        return NormalizeOrderIndexAsync(context, item.ParentId.ToOption(), ct);
                                                     },
                                                     ct
                                                 );
@@ -747,12 +628,7 @@ public class EfToDoService : IToDoService
            .IfSuccessDisposeAsync(
                 context => context.Set<ToDoItemEntity>()
                    .AsNoTracking()
-                   .Where(
-                        x => !x.IsCompleted
-                         && (x.Type == ToDoItemType.Periodicity
-                             || x.Type == ToDoItemType.PeriodicityOffset
-                             || x.Type == ToDoItemType.Planned)
-                    )
+                   .Where(x => !x.IsCompleted && (x.Type == ToDoItemType.Periodicity || x.Type == ToDoItemType.PeriodicityOffset || x.Type == ToDoItemType.Planned))
                    .Select(
                         x => new
                         {
@@ -762,18 +638,7 @@ public class EfToDoService : IToDoService
                         }
                     )
                    .ToArrayEntitiesAsync(ct)
-                   .IfSuccessAsync(
-                        items => items.ToArray()
-                           .Where(
-                                x => x.DueDate <= today
-                                 || x.RemindDaysBefore != 0 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)
-                            )
-                           .Select(x => x.Id)
-                           .ToArray()
-                           .ToReadOnlyMemory()
-                           .ToResult(),
-                        ct
-                    ),
+                   .IfSuccessAsync(items => items.ToArray().Where(x => x.DueDate <= today || x.RemindDaysBefore != 0 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)).Select(x => x.Id).ToArray().ToReadOnlyMemory().ToResult(), ct),
                 ct
             );
     }
@@ -782,24 +647,7 @@ public class EfToDoService : IToDoService
     {
         var idsArray = ids.Span.ToArray();
 
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.Set<ToDoItemEntity>()
-                       .Where(x => idsArray.Contains(x.Id))
-                       .ToArrayEntitiesAsync(ct)
-                       .IfSuccessForEachAsync(
-                            item => DeleteToDoItemAsync(item.Id, context, ct)
-                               .IfSuccessAsync(
-                                    () => NormalizeOrderIndexAsync(context, item.ParentId.ToOption(), ct),
-                                    ct
-                                ),
-                            ct
-                        ),
-                    ct
-                ),
-                ct
-            );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context.Set<ToDoItemEntity>().Where(x => idsArray.Contains(x.Id)).ToArrayEntitiesAsync(ct).IfSuccessForEachAsync(item => DeleteToDoItemAsync(item.Id, context, ct).IfSuccessAsync(() => NormalizeOrderIndexAsync(context, item.ParentId.ToOption(), ct), ct), ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ToDoResponse>> GetAsync(GetToDo get, CancellationToken ct)
@@ -816,31 +664,24 @@ public class EfToDoService : IToDoService
                         {
                             var dictionary = items.ToDictionary(x => x.Id).ToFrozenDictionary();
                             var fullDictionary = new Dictionary<Guid, FullToDoItem>();
-                            var selectorItems = ReadOnlyMemory<ToDoSelectorItem>.Empty;
+                            var selectorItems = new ToDoSelectorItemsResponse(false, ReadOnlyMemory<ToDoSelectorItem>.Empty);
                             var toStringItems = ReadOnlyMemory<ToStringItem>.Empty;
                             var roots = dictionary.Values.Where(x => x.ParentId is null).ToArray().ToReadOnlyMemory();
                             var currentActive = OptionStruct<ToDoShortItem>.Default;
                             var activeItems = ReadOnlyMemory<ActiveItem>.Empty;
-                            var favoriteItems = ReadOnlyMemory<FullToDoItem>.Empty;
-                            var bookmarkItems = ReadOnlyMemory<ToDoShortItem>.Empty;
+                            var favoriteItems = new ToDoFullItemsResponse(false, ReadOnlyMemory<FullToDoItem>.Empty);
+                            var bookmarkItems = new ToDoShortItemsResponse(false, ReadOnlyMemory<ToDoShortItem>.Empty);
                             var childrenItems = ReadOnlyMemory<ChildrenItem>.Empty;
                             var leafItems = ReadOnlyMemory<LeafItem>.Empty;
-                            var searchItems = ReadOnlyMemory<FullToDoItem>.Empty;
+                            var searchItems = new ToDoFullItemsResponse(false, ReadOnlyMemory<FullToDoItem>.Empty);
                             var parentItems = ReadOnlyMemory<ParentItem>.Empty;
-                            var todayItems = ReadOnlyMemory<FullToDoItem>.Empty;
-                            var rootItems = ReadOnlyMemory<FullToDoItem>.Empty;
-                            var fullItems = ReadOnlyMemory<FullToDoItem>.Empty;
+                            var todayItems = new ToDoFullItemsResponse(false, ReadOnlyMemory<FullToDoItem>.Empty);
+                            var rootItems = new ToDoFullItemsResponse(false, ReadOnlyMemory<FullToDoItem>.Empty);
+                            var fullItems = new ToDoFullItemsResponse(false, ReadOnlyMemory<FullToDoItem>.Empty);
 
                             if (get.IsSelectorItems)
                             {
-                                selectorItems = roots.IfSuccessForEach(
-                                        x => GetToDoSelectorItems(items, x.Id)
-                                           .IfSuccess(
-                                                children =>
-                                                    new ToDoSelectorItem(x.ToToDoShortItem(), children).ToResult()
-                                            )
-                                    )
-                                   .ThrowIfError();
+                                selectorItems = new(true, roots.IfSuccessForEach(x => GetToDoSelectorItems(items, x.Id).IfSuccess(children => new ToDoSelectorItem(x.ToToDoShortItem(), children).ToResult())).ThrowIfError());
                             }
 
                             if (!get.ToStringItems.IsEmpty)
@@ -860,9 +701,7 @@ public class EfToDoService : IToDoService
                                                         builder,
                                                         offset
                                                     )
-                                                   .IfSuccess(
-                                                        () => new ToStringItem(x, builder.ToString().Trim()).ToResult()
-                                                    );
+                                                   .IfSuccess(() => new ToStringItem(x, builder.ToString().Trim()).ToResult());
                                             },
                                             ct
                                         )
@@ -873,10 +712,7 @@ public class EfToDoService : IToDoService
 
                             if (get.IsCurrentActiveItem)
                             {
-                                var rootsFullItems = roots
-                                   .IfSuccessForEach(i => GetFullItem(dictionary, fullDictionary, i, offset))
-                                   .ThrowIfError()
-                                   .OrderBy(x => x.Item.OrderIndex);
+                                var rootsFullItems = roots.IfSuccessForEach(i => GetFullItem(dictionary, fullDictionary, i, offset)).ThrowIfError().OrderBy(x => x.Item.OrderIndex);
 
                                 foreach (var rootsFullItem in rootsFullItems.Span)
                                 {
@@ -910,48 +746,22 @@ public class EfToDoService : IToDoService
 
                             if (!get.ActiveItems.IsEmpty)
                             {
-                                activeItems = get.ActiveItems
-                                   .IfSuccessForEach(
-                                        x => GetFullItem(dictionary, fullDictionary, dictionary[x], offset)
-                                    )
-                                   .IfSuccessForEach(x => new ActiveItem(x.Item.Id, x.Active).ToResult())
-                                   .ThrowIfError();
+                                activeItems = get.ActiveItems.IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, dictionary[x], offset)).IfSuccessForEach(x => new ActiveItem(x.Item.Id, x.Active).ToResult()).ThrowIfError();
                             }
 
                             if (get.IsFavoriteItems)
                             {
-                                favoriteItems = dictionary.Where(x => x.Value.IsFavorite)
-                                   .ToArray()
-                                   .ToReadOnlyMemory()
-                                   .IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x.Value, offset))
-                                   .ThrowIfError();
+                                favoriteItems = new(true, dictionary.Where(x => x.Value.IsFavorite).ToArray().ToReadOnlyMemory().IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x.Value, offset)).ThrowIfError());
                             }
 
                             if (get.IsBookmarkItems)
                             {
-                                bookmarkItems = dictionary.Where(x => x.Value.IsBookmark)
-                                   .Select(x => x.Value.ToToDoShortItem())
-                                   .ToArray()
-                                   .ToReadOnlyMemory();
+                                bookmarkItems = new(true, dictionary.Where(x => x.Value.IsBookmark).Select(x => x.Value.ToToDoShortItem()).ToArray().ToReadOnlyMemory());
                             }
 
                             if (!get.ChildrenItems.IsEmpty)
                             {
-                                childrenItems = get.ChildrenItems
-                                   .IfSuccessForEach(
-                                        id => new ChildrenItem(
-                                            id,
-                                            dictionary.Values
-                                               .Where(x => x.ParentId == id)
-                                               .ToArray()
-                                               .ToReadOnlyMemory()
-                                               .IfSuccessForEach(
-                                                    item => GetFullItem(dictionary, fullDictionary, item, offset)
-                                                )
-                                               .ThrowIfError()
-                                        ).ToResult()
-                                    )
-                                   .ThrowIfError();
+                                childrenItems = get.ChildrenItems.IfSuccessForEach(id => new ChildrenItem(id, dictionary.Values.Where(x => x.ParentId == id).ToArray().ToReadOnlyMemory().IfSuccessForEach(item => GetFullItem(dictionary, fullDictionary, item, offset)).ThrowIfError()).ToResult()).ThrowIfError();
                             }
 
                             if (!get.LeafItems.IsEmpty)
@@ -975,64 +785,28 @@ public class EfToDoService : IToDoService
 
                             if (!get.SearchText.IsNullOrWhiteSpace())
                             {
-                                searchItems = dictionary.Values
-                                   .Where(
-                                        x => x.Name.Contains(
-                                            get.SearchText,
-                                            StringComparison.InvariantCultureIgnoreCase
-                                        )
-                                    )
-                                   .ToArray()
-                                   .ToReadOnlyMemory()
-                                   .IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset))
-                                   .ThrowIfError();
+                                searchItems = new(true, dictionary.Values.Where(x => x.Name.Contains(get.SearchText, StringComparison.InvariantCultureIgnoreCase)).ToArray().ToReadOnlyMemory().IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset)).ThrowIfError());
                             }
 
                             if (!get.ParentItems.IsEmpty)
                             {
-                                parentItems = get.ParentItems
-                                   .IfSuccessForEach(
-                                        x => new ParentItem(x, GetParents(dictionary, x).Reverse().ToArray()).ToResult()
-                                    )
-                                   .ThrowIfError();
+                                parentItems = get.ParentItems.IfSuccessForEach(x => new ParentItem(x, GetParents(dictionary, x).Reverse().ToArray()).ToResult()).ThrowIfError();
                             }
 
                             if (get.IsTodayItems)
                             {
                                 var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
-
-                                todayItems = dictionary.Values
-                                   .Where(
-                                        x => !x.IsCompleted
-                                         && (x.Type == ToDoItemType.Periodicity
-                                             || x.Type == ToDoItemType.PeriodicityOffset
-                                             || x.Type == ToDoItemType.Planned)
-                                    )
-                                   .Where(
-                                        x => x.DueDate <= today
-                                         || x.RemindDaysBefore != 0
-                                         && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)
-                                    )
-                                   .ToArray()
-                                   .ToReadOnlyMemory()
-                                   .IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset))
-                                   .ThrowIfError();
+                                todayItems = new(true, dictionary.Values.Where(x => !x.IsCompleted && (x.Type == ToDoItemType.Periodicity || x.Type == ToDoItemType.PeriodicityOffset || x.Type == ToDoItemType.Planned)).Where(x => x.DueDate <= today || x.RemindDaysBefore != 0 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)).ToArray().ToReadOnlyMemory().IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset)).ThrowIfError());
                             }
 
                             if (get.IsRootItems)
                             {
-                                rootItems = roots
-                                   .IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset))
-                                   .ThrowIfError();
+                                rootItems = new(true, roots.IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, x, offset)).ThrowIfError());
                             }
 
                             if (!get.Items.IsEmpty)
                             {
-                                fullItems = get.Items
-                                   .IfSuccessForEach(
-                                        x => GetFullItem(dictionary, fullDictionary, dictionary[x], offset)
-                                    )
-                                   .ThrowIfError();
+                                fullItems = new(true, get.Items.IfSuccessForEach(x => GetFullItem(dictionary, fullDictionary, dictionary[x], offset)).ThrowIfError());
                             }
 
                             return new ToDoResponse(
@@ -1057,10 +831,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(
-        SpravyDbToDoDbContext context,
-        CancellationToken ct
-    )
+    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(SpravyDbToDoDbContext context, CancellationToken ct)
     {
         return context.Set<ToDoItemEntity>()
            .AsNoTracking()
@@ -1089,12 +860,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async ValueTask<Result<Guid>> AddCloneAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity clone,
-        OptionStruct<Guid> parentId,
-        CancellationToken ct
-    )
+    private async ValueTask<Result<Guid>> AddCloneAsync(SpravyDbToDoDbContext context, ToDoItemEntity clone, OptionStruct<Guid> parentId, CancellationToken ct)
     {
         var id = clone.Id;
         clone.Id = Guid.NewGuid();
@@ -1139,12 +905,7 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private Cvtar StepCompletionAsync(
-        FrozenDictionary<Guid, ToDoItemEntity> items,
-        ToDoItemEntity item,
-        bool completeTask,
-        CancellationToken ct
-    )
+    private Cvtar StepCompletionAsync(FrozenDictionary<Guid, ToDoItemEntity> items, ToDoItemEntity item, bool completeTask, CancellationToken ct)
     {
         return items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Step)
            .Select(x => x.Value)
@@ -1159,21 +920,12 @@ public class EfToDoService : IToDoService
                         step.IsCompleted = completeTask;
                     }
 
-                    return items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Group)
-                       .Select(x => x.Value)
-                       .ToArray()
-                       .ToReadOnlyMemory()
-                       .IfSuccessForEachAsync(group => StepCompletionAsync(items, group, completeTask, ct), ct);
+                    return items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Group).Select(x => x.Value).ToArray().ToReadOnlyMemory().IfSuccessForEachAsync(group => StepCompletionAsync(items, group, completeTask, ct), ct);
                 },
                 ct
             )
            .IfSuccessAsync(
-                () => items
-                   .Where(
-                        x => x.Value.ParentId == item.Id
-                         && x.Value.Type == ToDoItemType.Reference
-                         && x.Value.ReferenceId.HasValue
-                    )
+                () => items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Reference && x.Value.ReferenceId.HasValue)
                    .Select(x => x.Value.ReferenceId.ThrowIfNullStruct())
                    .ToArray()
                    .ToReadOnlyMemory()
@@ -1190,12 +942,9 @@ public class EfToDoService : IToDoService
                                 ToDoItemType.Periodicity => Result.AwaitableSuccess,
                                 ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
                                 ToDoItemType.Circle => Result.AwaitableSuccess,
-                                ToDoItemType.Step => Result.Execute(() => reference.IsCompleted = completeTask)
-                                   .ToValueTaskResult()
-                                   .ConfigureAwait(false),
+                                ToDoItemType.Step => Result.Execute(() => reference.IsCompleted = completeTask).ToValueTaskResult().ConfigureAwait(false),
                                 ToDoItemType.Reference => Result.AwaitableSuccess,
-                                _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type)).ToValueTaskResult()
-                                   .ConfigureAwait(false),
+                                _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type)).ToValueTaskResult().ConfigureAwait(false),
                             };
                         },
                         ct
@@ -1230,10 +979,7 @@ public class EfToDoService : IToDoService
 
                             if (moveCircleOrderIndex)
                             {
-                                var next = circleChildren.Span.FirstOrDefault(
-                                    x => x.OrderIndex > item.CurrentCircleOrderIndex
-                                );
-
+                                var next = circleChildren.Span.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
                                 nextOrderIndex = next?.OrderIndex ?? circleChildren.Span[0].OrderIndex;
                                 item.CurrentCircleOrderIndex = nextOrderIndex;
                             }
@@ -1253,30 +999,25 @@ public class EfToDoService : IToDoService
                     }
 
                     return items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Group)
-                       .Select(x => x.Value)
-                       .ToArray()
-                       .ToReadOnlyMemory()
-                       .IfSuccessForEachAsync(
-                            group => CircleCompletionAsync(
-                                items,
-                                group,
-                                moveCircleOrderIndex,
-                                completeTask,
-                                onlyCompletedTasks,
-                                ct
-                            ),
+                   .Select(x => x.Value)
+                   .ToArray()
+                   .ToReadOnlyMemory()
+                   .IfSuccessForEachAsync(
+                        group => CircleCompletionAsync(
+                            items,
+                            group,
+                            moveCircleOrderIndex,
+                            completeTask,
+                            onlyCompletedTasks,
                             ct
-                        );
+                        ),
+                        ct
+                    );
                 },
                 ct
             )
            .IfSuccessAsync(
-                () => items
-                   .Where(
-                        x => x.Value.ParentId == item.Id
-                         && x.Value.Type == ToDoItemType.Reference
-                         && x.Value.ReferenceId.HasValue
-                    )
+                () => items.Where(x => x.Value.ParentId == item.Id && x.Value.Type == ToDoItemType.Reference && x.Value.ReferenceId.HasValue)
                    .Select(x => x.Value.ReferenceId.ThrowIfNullStruct())
                    .ToArray()
                    .ToReadOnlyMemory()
@@ -1302,8 +1043,7 @@ public class EfToDoService : IToDoService
                                 ToDoItemType.Circle => Result.AwaitableSuccess,
                                 ToDoItemType.Step => Result.AwaitableSuccess,
                                 ToDoItemType.Reference => Result.AwaitableSuccess,
-                                _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type)).ToValueTaskResult()
-                                   .ConfigureAwait(false),
+                                _ => new Result(new ToDoItemTypeOutOfRangeError(reference.Type)).ToValueTaskResult().ConfigureAwait(false),
                             };
                         },
                         ct
@@ -1354,38 +1094,22 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private Result<FullToDoItem> GetFullItem(
-        FrozenDictionary<Guid, ToDoItemEntity> allItems,
-        Dictionary<Guid, FullToDoItem> fullToDoItems,
-        ToDoItemEntity entity,
-        TimeSpan offset
-    )
+    private Result<FullToDoItem> GetFullItem(FrozenDictionary<Guid, ToDoItemEntity> allItems, Dictionary<Guid, FullToDoItem> fullToDoItems, ToDoItemEntity entity, TimeSpan offset)
     {
         if (fullToDoItems.TryGetValue(entity.Id, out var value))
         {
             return value.ToResult();
         }
 
-        return getterToDoItemParametersService.GetToDoItemParameters(allItems, fullToDoItems, entity, offset)
-           .IfSuccess(p => entity.ToFullToDoItem(p).ToResult());
+        return getterToDoItemParametersService.GetToDoItemParameters(allItems, fullToDoItems, entity, offset).IfSuccess(p => entity.ToFullToDoItem(p).ToResult());
     }
 
     private Result<ReadOnlyMemory<ToDoSelectorItem>> GetToDoSelectorItems(ReadOnlyMemory<ToDoItemEntity> items, Guid id)
     {
-        return items.Where(x => x.ParentId == id)
-           .OrderBy(x => x.OrderIndex)
-           .IfSuccessForEach(
-                item => GetToDoSelectorItems(items, item.Id)
-                   .IfSuccess(children => new ToDoSelectorItem(item.ToToDoShortItem(), children).ToResult())
-            );
+        return items.Where(x => x.ParentId == id).OrderBy(x => x.OrderIndex).IfSuccessForEach(item => GetToDoSelectorItems(items, item.Id).IfSuccess(children => new ToDoSelectorItem(item.ToToDoShortItem(), children).ToResult()));
     }
 
-    private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity itemEntity,
-        List<Guid> ignoreIds,
-        [EnumeratorCancellation] CancellationToken ct
-    )
+    private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(SpravyDbToDoDbContext context, ToDoItemEntity itemEntity, List<Guid> ignoreIds, [EnumeratorCancellation] CancellationToken ct)
     {
         if (ignoreIds.Contains(itemEntity.Id))
         {
@@ -1420,11 +1144,7 @@ public class EfToDoService : IToDoService
             yield break;
         }
 
-        var entities = await context.Set<ToDoItemEntity>()
-           .AsNoTracking()
-           .Where(x => x.ParentId == itemEntity.Id)
-           .OrderBy(x => x.OrderIndex)
-           .ToArrayAsync(ct);
+        var entities = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == itemEntity.Id).OrderBy(x => x.OrderIndex).ToArrayAsync(ct);
 
         if (entities.IsEmpty())
         {
@@ -1469,12 +1189,12 @@ public class EfToDoService : IToDoService
             var reference = allItems[entity.ReferenceId.Value];
 
             foreach (var item in GetLeafToDoItems(
-                    allItems,
-                    fullToDoItems,
-                    reference,
-                    ignoreIds,
-                    offset
-                ))
+                allItems,
+                fullToDoItems,
+                reference,
+                ignoreIds,
+                offset
+            ))
             {
                 yield return item;
             }
@@ -1494,23 +1214,19 @@ public class EfToDoService : IToDoService
         foreach (var e in entities)
         {
             foreach (var item in GetLeafToDoItems(
-                    allItems,
-                    fullToDoItems,
-                    e,
-                    ignoreIds,
-                    offset
-                ))
+                allItems,
+                fullToDoItems,
+                e,
+                ignoreIds,
+                offset
+            ))
             {
                 yield return item;
             }
         }
     }
 
-    private Cvtar NormalizeOrderIndexAsync(
-        SpravyDbToDoDbContext context,
-        OptionStruct<Guid> parentId,
-        CancellationToken ct
-    )
+    private Cvtar NormalizeOrderIndexAsync(SpravyDbToDoDbContext context, OptionStruct<Guid> parentId, CancellationToken ct)
     {
         var pi = parentId.TryGetValue(out var value) ? (Guid?)value : null;
 
@@ -1533,17 +1249,9 @@ public class EfToDoService : IToDoService
             );
     }
 
-    private async ValueTask<Result> GetParentsAsync(
-        SpravyDbToDoDbContext context,
-        Guid id,
-        List<ToDoShortItem> parents,
-        CancellationToken ct
-    )
+    private async ValueTask<Result> GetParentsAsync(SpravyDbToDoDbContext context, Guid id, List<ToDoShortItem> parents, CancellationToken ct)
     {
-        var parent = await context.Set<ToDoItemEntity>()
-           .AsNoTracking()
-           .Include(x => x.Parent)
-           .SingleAsync(x => x.Id == id, ct);
+        var parent = await context.Set<ToDoItemEntity>().AsNoTracking().Include(x => x.Parent).SingleAsync(x => x.Id == id, ct);
 
         if (parent.Parent is null)
         {
@@ -1572,12 +1280,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private Cvtar MoveNextDueDateAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        TimeSpan offset,
-        CancellationToken ct
-    )
+    private Cvtar MoveNextDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity item, TimeSpan offset, CancellationToken ct)
     {
         switch (item.Type)
         {
@@ -1601,8 +1304,7 @@ public class EfToDoService : IToDoService
                     return Result.AwaitableSuccess;
                 }
 
-                return context.GetEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)
-                   .IfSuccessAsync(i => MoveNextDueDateAsync(context, i, offset, ct), ct);
+                return context.GetEntityAsync<ToDoItemEntity>(item.ReferenceId.Value).IfSuccessAsync(i => MoveNextDueDateAsync(context, i, offset, ct), ct);
             default:
                 return new Result(new ToDoItemTypeOutOfRangeError(item.Type)).ToValueTaskResult().ConfigureAwait(false);
         }
@@ -1617,20 +1319,11 @@ public class EfToDoService : IToDoService
 
         if (item.IsRequiredCompleteInDueDate)
         {
-            item.DueDate = item.DueDate
-               .AddDays(item.DaysOffset + item.WeeksOffset * 7)
-               .AddMonths(item.MonthsOffset)
-               .AddYears(item.YearsOffset);
+            item.DueDate = item.DueDate.AddDays(item.DaysOffset + item.WeeksOffset * 7).AddMonths(item.MonthsOffset).AddYears(item.YearsOffset);
         }
         else
         {
-            item.DueDate = DateTimeOffset.UtcNow
-               .Add(offset)
-               .Date
-               .ToDateOnly()
-               .AddDays(item.DaysOffset + item.WeeksOffset * 7)
-               .AddMonths(item.MonthsOffset)
-               .AddYears(item.YearsOffset);
+            item.DueDate = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly().AddDays(item.DaysOffset + item.WeeksOffset * 7).AddMonths(item.MonthsOffset).AddYears(item.YearsOffset);
         }
 
         return Result.Success;
@@ -1643,9 +1336,7 @@ public class EfToDoService : IToDoService
             return Result.CanceledByUserError;
         }
 
-        var currentDueDate = item.IsRequiredCompleteInDueDate
-            ? item.DueDate
-            : DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+        var currentDueDate = item.IsRequiredCompleteInDueDate ? item.DueDate : DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
 
         switch (item.TypeOfPeriodicity)
         {
@@ -1658,67 +1349,27 @@ public class EfToDoService : IToDoService
                 var dayOfWeek = currentDueDate.DayOfWeek;
                 var daysOfWeek = item.GetDaysOfWeek().OrderByDefault(x => x).Select(x => (DayOfWeek?)x).ToArray();
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
-
-                item.DueDate = nextDay is not null
-                    ? currentDueDate.AddDays((int)nextDay - (int)dayOfWeek)
-                    : currentDueDate.AddDays(7 - (int)dayOfWeek + (int)daysOfWeek.First().ThrowIfNullStruct());
+                item.DueDate = nextDay is not null ? currentDueDate.AddDays((int)nextDay - (int)dayOfWeek) : currentDueDate.AddDays(7 - (int)dayOfWeek + (int)daysOfWeek.First().ThrowIfNullStruct());
 
                 break;
             }
             case TypeOfPeriodicity.Monthly:
             {
                 var dayOfMonth = currentDueDate.Day;
-
-                var daysOfMonth = item.GetDaysOfMonth()
-                   .ToArray()
-                   .Order()
-                   .Select(x => (byte?)x)
-                   .ThrowIfEmpty()
-                   .ToArray();
-
+                var daysOfMonth = item.GetDaysOfMonth().ToArray().Order().Select(x => (byte?)x).ThrowIfEmpty().ToArray();
                 var nextDay = daysOfMonth.FirstOrDefault(x => x > dayOfMonth);
                 var daysInCurrentMonth = DateTime.DaysInMonth(currentDueDate.Year, currentDueDate.Month);
-
-                var daysInNextMonth = DateTime.DaysInMonth(
-                    currentDueDate.AddMonths(1).Year,
-                    currentDueDate.AddMonths(1).Month
-                );
-
-                item.DueDate = nextDay is not null
-                    ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth))
-                    : item.DueDate
-                       .AddMonths(1)
-                       .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
+                var daysInNextMonth = DateTime.DaysInMonth(currentDueDate.AddMonths(1).Year, currentDueDate.AddMonths(1).Month);
+                item.DueDate = nextDay is not null ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth)) : item.DueDate.AddMonths(1).WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
 
                 break;
             }
             case TypeOfPeriodicity.Annually:
             {
                 var daysOfYear = item.GetDaysOfYear().OrderBy(x => x).Select(x => (DayOfYear?)x).ToArray();
-
-                var nextDay = daysOfYear.FirstOrDefault(
-                    x => x.ThrowIfNullStruct().Month >= (Month)currentDueDate.Month
-                     && x.ThrowIfNullStruct().Day > currentDueDate.Day
-                );
-
-                var daysInNextMonth = DateTime.DaysInMonth(
-                    currentDueDate.Year + 1,
-                    (byte)daysOfYear.First().ThrowIfNullStruct().Month
-                );
-
-                item.DueDate = nextDay is not null
-                    ? item.DueDate
-                       .WithMonth((byte)nextDay.Value.Month)
-                       .WithDay(
-                            Math.Min(
-                                DateTime.DaysInMonth(currentDueDate.Year, (byte)nextDay.Value.Month),
-                                nextDay.Value.Day
-                            )
-                        )
-                    : item.DueDate
-                       .AddYears(1)
-                       .WithMonth((byte)daysOfYear.First().ThrowIfNullStruct().Month)
-                       .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
+                var nextDay = daysOfYear.FirstOrDefault(x => x.ThrowIfNullStruct().Month >= (Month)currentDueDate.Month && x.ThrowIfNullStruct().Day > currentDueDate.Day);
+                var daysInNextMonth = DateTime.DaysInMonth(currentDueDate.Year + 1, (byte)daysOfYear.First().ThrowIfNullStruct().Month);
+                item.DueDate = nextDay is not null ? item.DueDate.WithMonth((byte)nextDay.Value.Month).WithDay(Math.Min(DateTime.DaysInMonth(currentDueDate.Year, (byte)nextDay.Value.Month), nextDay.Value.Day)) : item.DueDate.AddYears(1).WithMonth((byte)daysOfYear.First().ThrowIfNullStruct().Month).WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
 
                 break;
             }
@@ -1729,12 +1380,7 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(
-        SpravyDbToDoDbContext context,
-        ReadOnlyMemory<Guid> ids,
-        bool tracking,
-        CancellationToken ct
-    )
+    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(SpravyDbToDoDbContext context, ReadOnlyMemory<Guid> ids, bool tracking, CancellationToken ct)
     {
         var parameters = CreateSqlRawParametersForAllChildren(ids);
         var query = context.Set<ToDoItemEntity>().FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray());

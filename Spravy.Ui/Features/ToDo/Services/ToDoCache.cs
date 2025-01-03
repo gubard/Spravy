@@ -167,14 +167,11 @@ public class ToDoCache : IToDoCache
         return Result.Success;
     }
 
-    public Result IgnoreItemsUi(ReadOnlyMemory<Guid> ids)
+    public Result SetIgnoreItemsUi(ReadOnlyMemory<Guid> ids)
     {
         foreach (var value in cache.Values)
         {
-            if (ids.Contains(value.Id))
-            {
-                value.IsIgnore = true;
-            }
+            value.IsIgnore = ids.Contains(value.Id);
         }
 
         return Result.Success;

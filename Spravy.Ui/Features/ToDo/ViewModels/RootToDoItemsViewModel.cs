@@ -67,7 +67,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     {
         return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct)
            .IfSuccessAsync(
-                response => response.RootItems
+                response => response.RootItems.Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
                    .IfSuccessAsync(
