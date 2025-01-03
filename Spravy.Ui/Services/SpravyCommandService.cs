@@ -371,63 +371,15 @@ public class SpravyCommandService
         ChangeOrder = SpravyCommand.Create<IToDoItemEditId>(
             (toDoItemEditId, ct) => toDoItemEditId.GetToDoItemEditId()
                .IfSuccessAsync(
-                    editId =>
-                    {
-                        var viewModel = viewFactory.CreateChangeToDoItemOrderIndexViewModel(editId.Item, editId.Items);
-                        var parent = editId.Items.IsEmpty ? (editId.Item.GetNullable()?.Parent).ToOption() : editId.Items.Span[0].Parent.ToOption();
-
-                        return toDoUiService.GetRequest(
-                                parent.TryGetValue(out var result)
-                                    ? GetToDo.WithDefaultItems.SetChildrenItems(
-                                        new[]
-                                        {
-                                            result.Id,
-                                        }
-                                    )
-                                    : GetToDo.WithDefaultItems.SetIsRootItems(true),
-                                ct
-                            )
-                           .IfSuccessAsync(
-                                response =>
-                                    parent.IsHasValue
-                                        ? response.ChildrenItems
-                                           .Select(x => x.Children)
-                                           .SelectMany()
-                                           .Select(x => x.Item.Id)
-                                           .IfSuccessForEach(toDoCache.GetToDoItem)
-                                        : response.RootItems
-                                           .Items
-                                           .Select(x => x.Item.Id)
-                                           .IfSuccessForEach(toDoCache.GetToDoItem),
-                                ct
-                            )
-                           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => viewModel.SetItemsUi(items.OrderBy(x => x.OrderIndex)).IfSuccess(()=>items.IfSuccessForEach(x=>
-                                {
-                                     x.IsIgnore = false;
-
-                                     return Result.Success;
-                                }
-                            ))
-                               .IfSuccess(() => editId.ResultItems.IfSuccessForEach(x=>
-                                {
-                                    x.IsIgnore = true;
-
-                                    return Result.Success;
-                                }
-                            ))), ct)
-                           .IfSuccessAsync(
-                                () => dialogViewer.ShowConfirmDialogAsync(
-                                    viewFactory,
-                                    DialogViewLayer.Content,
-                                    viewModel,
-                                    vm => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct)
-                                       .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
-                                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
-                                    ct
-                                ),
-                                ct
-                            );
-                    },
+                    editId => dialogViewer.ShowConfirmDialogAsync(
+                        viewFactory,
+                        DialogViewLayer.Content,
+                        viewFactory.CreateChangeToDoItemOrderIndexViewModel(editId.Item, editId.Items),
+                        vm => dialogViewer.CloseDialogAsync(DialogViewLayer.Content, ct)
+                           .IfSuccessAsync(() => vm.ApplySettingsAsync(ct), ct)
+                           .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
+                        ct
+                    ),
                     ct
                 ),
             errorHandler,
@@ -639,11 +591,8 @@ public class SpravyCommandService
 
         NavigateToActiveToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) => toDoUiService.GetRequest(
-                    GetToDo.WithDefaultItems.SetActiveItems(
-                        new[]
-                        {
-                            item.Id,
-                        }
+                    GetToDo.WithDefaultItems.SetActiveItem(
+                        item.Id
                     ),
                     ct
                 )

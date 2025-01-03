@@ -38,11 +38,8 @@ public class ToDoItemToStringSettingsViewModel : ToDoItemEditIdViewModel, IApply
         var status = Statuses.Where(x => x.IsChecked).Select(x => x.Item).ToArray();
 
         return toDoUiService.GetRequest(
-                GetToDo.WithDefaultItems.SetToStringItems(
-                    new GetToStringItem[]
-                    {
-                        new(ResultIds, status),
-                    }
+                GetToDo.WithDefaultItems.SetToStringItem(
+                    new(ResultIds, status)
                 ),
                 ct
             )

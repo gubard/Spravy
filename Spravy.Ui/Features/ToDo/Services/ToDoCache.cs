@@ -60,7 +60,6 @@ public class ToDoCache : IToDoCache
                     item.OrderIndex = toDoItem.Item.OrderIndex;
                     item.IsBookmark = toDoItem.Item.IsBookmark;
                     item.Icon = toDoItem.Item.Icon;
-                    item.IsIgnore = item.Type == ToDoItemType.Reference;
                     item.IsUpdated = true;
 
                     item.Color = toDoItem.Item.Color.IsNullOrWhiteSpace()
@@ -156,22 +155,11 @@ public class ToDoCache : IToDoCache
            .IfSuccess(_ => items.ToResult().IfSuccessForEach(UpdateUi));
     }
 
-    public Result ResetItemsUi()
-    {
-        foreach (var value in cache.Values)
-        {
-            value.IsExpanded = false;
-            value.IsIgnore = value.Type == ToDoItemType.Reference;
-        }
-
-        return Result.Success;
-    }
-
     public Result SetIgnoreItemsUi(ReadOnlyMemory<Guid> ids)
     {
         foreach (var value in cache.Values)
         {
-            value.IsIgnore = ids.Contains(value.Id);
+            value.IsIgnore = value.Type == ToDoItemType.Reference || ids.Contains(value.Id);
         }
 
         return Result.Success;
@@ -285,7 +273,6 @@ public class ToDoCache : IToDoCache
                     item.IsBookmark = shortItem.IsBookmark;
                     item.Icon = shortItem.Icon;
                     item.RemindDaysBefore = shortItem.RemindDaysBefore;
-                    item.IsIgnore = item.Type == ToDoItemType.Reference;
                     item.Link = shortItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
                     item.IsUpdated = true;
 

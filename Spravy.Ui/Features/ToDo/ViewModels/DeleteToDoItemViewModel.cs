@@ -52,11 +52,8 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
                 GetToDo.WithDefaultItems
                    .SetIsBookmarkItems(true)
                    .SetIsFavoriteItems(true)
-                   .SetToStringItems(
-                        new GetToStringItem[]
-                        {
-                            new(ResultIds, statuses),
-                        }
+                   .SetToStringItem(
+                        new(ResultIds, statuses)
                     ),
                 ct
             )

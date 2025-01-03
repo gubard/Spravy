@@ -49,7 +49,7 @@ public readonly struct GetToDo
     public readonly bool IsTodayItems;
     public readonly bool IsRootItems;
     public readonly ReadOnlyMemory<Guid> Items;
-    
+
     public GetToDo SetActiveItems(ReadOnlyMemory<Guid> value)
     {
         return new(
@@ -68,7 +68,17 @@ public readonly struct GetToDo
             Items
         );
     }
-    
+
+    public GetToDo SetActiveItem(Guid value)
+    {
+        return SetActiveItems(
+            new[]
+            {
+                value,
+            }
+        );
+    }
+
     public GetToDo SetIsCurrentActiveItem(bool value)
     {
         return new(
@@ -104,6 +114,16 @@ public readonly struct GetToDo
             IsTodayItems,
             IsRootItems,
             Items
+        );
+    }
+
+    public GetToDo SetChildrenItem(Guid value)
+    {
+        return SetChildrenItems(
+            new[]
+            {
+                value,
+            }
         );
     }
 
@@ -259,6 +279,16 @@ public readonly struct GetToDo
         );
     }
 
+    public GetToDo SetToStringItem(GetToStringItem value)
+    {
+        return SetToStringItems(
+            new[]
+            {
+                value,
+            }
+        );
+    }
+
     public GetToDo SetItems(ReadOnlyMemory<Guid> value)
     {
         return new(
@@ -277,7 +307,17 @@ public readonly struct GetToDo
             value
         );
     }
-    
+
+    public GetToDo SetItem(Guid value)
+    {
+        return SetItems(
+            new[]
+            {
+                value,
+            }
+        );
+    }
+
     public GetToDo SetParentItems(ReadOnlyMemory<Guid> value)
     {
         return new(
@@ -294,6 +334,16 @@ public readonly struct GetToDo
             IsTodayItems,
             IsRootItems,
             Items
+        );
+    }
+
+    public GetToDo SetParentItem(Guid value)
+    {
+        return SetParentItems(
+            new[]
+            {
+                value,
+            }
         );
     }
 }

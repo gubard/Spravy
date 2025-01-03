@@ -3,6 +3,8 @@
 public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel, IToDoItemsView, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IToDoUiService toDoUiService;
+    private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
     private bool isAfter = true;
@@ -13,10 +15,14 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
     public ChangeToDoItemOrderIndexViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
-        IToDoService toDoService
+        IToDoService toDoService,
+        IToDoUiService toDoUiService,
+        IToDoCache toDoCache
     ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
+        this.toDoUiService = toDoUiService;
+        this.toDoCache = toDoCache;
     }
 
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
@@ -41,7 +47,68 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess;
+        var parent = ResultItems.Span[0].Parent;
+
+        return Result.Success
+           .IfSuccess(
+                () => parent is not null ? parent.Children.ToArray().ToReadOnlyMemory().ToResult()
+                    : toDoCache.GetRootItems()
+            )
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(
+                    () => SetItemsUi(items.OrderBy(x => x.OrderIndex))
+                       .IfSuccess(
+                            () => items.IfSuccessForEach(
+                                x =>
+                                {
+                                    x.IsIgnore = false;
+
+                                    return Result.Success;
+                                }
+                            )
+                        )
+                       .IfSuccess(
+                            () => ResultItems.IfSuccessForEach(
+                                x =>
+                                {
+                                    x.IsIgnore = true;
+
+                                    return Result.Success;
+                                }
+                            )
+                        )
+                ),
+                ct
+            )
+           .IfSuccessAsync(
+                () => toDoUiService.GetRequest(
+                    parent is not null
+                        ? GetToDo.WithDefaultItems.SetChildrenItem(parent.Id)
+                        : GetToDo.WithDefaultItems.SetIsRootItems(true),
+                    ct
+                ),
+                ct
+            )
+           .IfSuccessAsync(
+                response =>
+                    parent is not null
+                        ? response.ChildrenItems
+                           .Select(x => x.Children)
+                           .SelectMany()
+                           .Select(x => x.Item.Id)
+                           .IfSuccessForEach(toDoCache.GetToDoItem)
+                        : response.RootItems
+                           .Items
+                           .Select(x => x.Item.Id)
+                           .IfSuccessForEach(toDoCache.GetToDoItem),
+                ct
+            )
+           .IfSuccessAsync(
+                items => this.InvokeUiBackgroundAsync(
+                    () => SetItemsUi(items.OrderBy(x => x.OrderIndex))
+                ),
+                ct
+            );
     }
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)

@@ -434,7 +434,13 @@ public class ViewFactory : IViewFactory
         ReadOnlyMemory<ToDoItemEntityNotify> items
     )
     {
-        return new(item, items, toDoService);
+        return new(
+            item,
+            items,
+            toDoService,
+            toDoUiService,
+            toDoCache
+        );
     }
 
     public TextViewModel CreateTextViewModel()
