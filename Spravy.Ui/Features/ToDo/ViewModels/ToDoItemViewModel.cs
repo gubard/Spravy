@@ -75,6 +75,12 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     {
         return toDoUiService.GetRequest(
                 GetToDo.WithDefaultItems
+                   .SetParentItems(
+                        new[]
+                        {
+                            Item.Id,
+                        }
+                    )
                    .SetChildrenItems(
                         new[]
                         {

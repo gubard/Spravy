@@ -44,7 +44,7 @@ public readonly struct GetToDo
     public readonly bool IsBookmarkItems;
     public readonly ReadOnlyMemory<Guid> ChildrenItems;
     public readonly ReadOnlyMemory<Guid> LeafItems;
-    public readonly string SearchText = string.Empty;
+    public readonly string SearchText;
     public readonly ReadOnlyMemory<Guid> ParentItems;
     public readonly bool IsTodayItems;
     public readonly bool IsRootItems;
@@ -275,6 +275,25 @@ public readonly struct GetToDo
             IsTodayItems,
             IsRootItems,
             value
+        );
+    }
+    
+    public GetToDo SetParentItems(ReadOnlyMemory<Guid> value)
+    {
+        return new(
+            IsSelectorItems,
+            ToStringItems,
+            IsCurrentActiveItem,
+            ActiveItems,
+            IsFavoriteItems,
+            IsBookmarkItems,
+            ChildrenItems,
+            LeafItems,
+            SearchText,
+            value,
+            IsTodayItems,
+            IsRootItems,
+            Items
         );
     }
 }

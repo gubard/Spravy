@@ -777,7 +777,7 @@ public class EfToDoService : IToDoService
 
                             if (!get.ParentItems.IsEmpty)
                             {
-                                parentItems = get.ParentItems.IfSuccessForEach(x => new ParentItem(x, GetParents(dictionary, x).ToArray()).ToResult()).ThrowIfError();
+                                parentItems = get.ParentItems.IfSuccessForEach(x => new ParentItem(x, GetParents(dictionary, x).Reverse().ToArray()).ToResult()).ThrowIfError();
                             }
 
                             if (get.IsTodayItems)
@@ -1222,6 +1222,7 @@ public class EfToDoService : IToDoService
     private IEnumerable<ToDoShortItem> GetParents(FrozenDictionary<Guid, ToDoItemEntity> allItems, Guid id)
     {
         var parent = allItems[id];
+        yield return parent.ToToDoShortItem();
 
         if (parent.ParentId is null)
         {
