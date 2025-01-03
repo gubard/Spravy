@@ -26,12 +26,21 @@
                     <TextBlock Text="{DynamicResource Lang.After}" Classes="alignment-center" />
                 </StackPanel>
 
-
                 <ListBox ItemsSource="{Binding Items}"
                          SelectionMode="Single"
                          SelectedItem="{Binding SelectedItem}">
+                    <ListBox.Styles>
+                        <Style x:DataType="tm:ToDoItemEntityNotify" Selector="ListBoxItem">
+                            <Setter Property="IsEnabled" Value="{Binding !IsMarked}" />
+                        </Style>
+
+                        <Style x:DataType="tm:ToDoItemEntityNotify" Selector="ListBoxItem:disabled">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Style>
+                    </ListBox.Styles>
+
                     <ListBox.DataTemplates>
-                        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                        <DataTemplate x:DataType="tm:ToDoItemEntityNotify">
                             <StackPanel Classes="horizontal">
                                 <i:Icon Margin="0,0,4,0" Value="{Binding Icon}"
                                         IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}"

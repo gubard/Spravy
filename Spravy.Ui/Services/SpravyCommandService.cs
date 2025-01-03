@@ -374,7 +374,7 @@ public class SpravyCommandService
                     editId =>
                     {
                         var viewModel = viewFactory.CreateChangeToDoItemOrderIndexViewModel(editId.Item, editId.Items);
-                        var parent = editId.Items.IsEmpty ? editId.Item : editId.Items.Span[0].ToOption();
+                        var parent = editId.Items.IsEmpty ? (editId.Item.GetNullable()?.Parent).ToOption() : editId.Items.Span[0].Parent.ToOption();
 
                         return toDoUiService.GetRequest(
                                 parent.TryGetValue(out var result)
@@ -400,7 +400,20 @@ public class SpravyCommandService
                                            .IfSuccessForEach(toDoCache.GetToDoItem),
                                 ct
                             )
-                           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => viewModel.SetItemsUi(items)), ct)
+                           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => viewModel.SetItemsUi(items.OrderBy(x => x.OrderIndex)).IfSuccess(()=>items.IfSuccessForEach(x=>
+                                {
+                                     x.IsMarked = false;
+
+                                     return Result.Success;
+                                }
+                            ))
+                               .IfSuccess(() => editId.ResultItems.IfSuccessForEach(x=>
+                                {
+                                    x.IsMarked = true;
+
+                                    return Result.Success;
+                                }
+                            ))), ct)
                            .IfSuccessAsync(
                                 () => dialogViewer.ShowConfirmDialogAsync(
                                     viewFactory,
