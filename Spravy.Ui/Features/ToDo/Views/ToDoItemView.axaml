@@ -132,7 +132,7 @@
                         </c:ViewSelectorItemControl>
 
                         <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
-                            <mdxaml:MarkdownScrollViewer Markdown="{Binding Item.Description}" />
+                            <!--<mdxaml:MarkdownScrollViewer Markdown="{Binding Item.Description}" />-->
                         </c:ViewSelectorItemControl>
                     </c:ViewSelectorControl>
                 </Expander>

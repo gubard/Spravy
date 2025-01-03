@@ -42,7 +42,7 @@
                                 </c:ViewSelectorItemControl>
 
                                 <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
-                                    <mdxaml:MarkdownScrollViewer MinWidth="320" Markdown="{Binding Description}" />
+                                    <!--<mdxaml:MarkdownScrollViewer MinWidth="320" Markdown="{Binding Description}" />-->
                                 </c:ViewSelectorItemControl>
                             </c:ViewSelectorControl>
                         </ToolTip.Tip>
