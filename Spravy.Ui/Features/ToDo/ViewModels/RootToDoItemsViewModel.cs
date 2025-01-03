@@ -65,9 +65,12 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct)
+        return toDoCache.GetRootItems()
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)), ct)
+           .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
            .IfSuccessAsync(
-                response => response.RootItems.Items
+                response => response.RootItems
+                   .Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
                    .IfSuccessAsync(
