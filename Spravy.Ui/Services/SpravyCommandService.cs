@@ -403,14 +403,14 @@ public class SpravyCommandService
                             )
                            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => viewModel.SetItemsUi(items.OrderBy(x => x.OrderIndex)).IfSuccess(()=>items.IfSuccessForEach(x=>
                                 {
-                                     x.IsMarked = false;
+                                     x.IsIgnore = false;
 
                                      return Result.Success;
                                 }
                             ))
                                .IfSuccess(() => editId.ResultItems.IfSuccessForEach(x=>
                                 {
-                                    x.IsMarked = true;
+                                    x.IsIgnore = true;
 
                                     return Result.Success;
                                 }

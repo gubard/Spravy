@@ -100,9 +100,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     [ObservableProperty]
     private bool isUpdated;
 
-    [ObservableProperty]
-    private bool isMarked;
-
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
