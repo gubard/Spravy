@@ -60,7 +60,7 @@ public static partial class ToDoMapper
     public static partial ToDoResponse ToToDoResponse(this GetReply value);
     public static partial ToDoShortItemsResponseGrpc ToToDoShortItemsResponseGrpc(this ToDoShortItemsResponse value);
     public static partial ToDoShortItemsResponse ToToDoShortItemsResponse(this ToDoShortItemsResponseGrpc value);
-    
+
     public static GetRequest ToGetRequest(this GetToDo value)
     {
         var result = new GetRequest
@@ -73,7 +73,7 @@ public static partial class ToDoMapper
             IsTodayItems = value.IsTodayItems,
             IsCurrentActiveItem = value.IsCurrentActiveItem,
         };
-        
+
         result.Items.AddRange(value.Items.ToByteString().ToArray());
         result.ActiveItems.AddRange(value.ActiveItems.ToByteString().ToArray());
         result.ChildrenItems.AddRange(value.ChildrenItems.ToByteString().ToArray());
