@@ -26,12 +26,12 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return passwordService.GetChildrenPasswordItemIdsAsync(OptionStruct<Guid>.Default, ct)
            .IfSuccessAsync(
                 ids => ids.IfSuccessForEach(id => passwordItemCache.GetPasswordItem(id))
-                   .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => Items.UpdateUi(items)), ct)
+                   .IfSuccess(items => this.PostUiBackground(() => Items.UpdateUi(items), ct))
                    .IfSuccessAsync(
                         () => passwordService.GetPasswordItemsAsync(ids, appOptions.PasswordItemsChunkSize, ct)
                            .IfSuccessForEachAsync(
-                                passwordItems => this.InvokeUiBackgroundAsync(
-                                    () => passwordItems.IfSuccessForEach(i => passwordItemCache.UpdateUi(i))
+                                passwordItems => this.PostUiBackground(
+                                    () => passwordItems.IfSuccessForEach(i => passwordItemCache.UpdateUi(i)), ct
                                 ),
                                 ct
                             ),

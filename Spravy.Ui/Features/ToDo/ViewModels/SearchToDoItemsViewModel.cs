@@ -62,12 +62,12 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     {
         return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetSearchText(SearchText), ct)
            .IfSuccessAsync(
-                response => response.SearchItems.Items
+                response => response.SearchItems
+                   .Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                   .IfSuccessAsync(
-                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
-                        ct
+                   .IfSuccess(
+                        items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
                     ),
                 ct
             );

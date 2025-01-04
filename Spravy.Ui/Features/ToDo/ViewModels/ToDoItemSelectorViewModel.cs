@@ -81,7 +81,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     {
         return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
             () => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsSelectorItems(true), ct)
-               .IfSuccessAsync(_ => this.InvokeUiBackgroundAsync(() => toDoCache.SetIgnoreItemsUi(ignoreItems.Select(x => x.Id))), ct)
+               .IfSuccessAsync(_ => this.PostUiBackground(() => toDoCache.SetIgnoreItemsUi(ignoreItems.Select(x => x.Id)), ct), ct)
                .IfSuccessAsync(
                     () =>
                     {

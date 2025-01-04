@@ -54,8 +54,8 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
                 () => parent is not null ? parent.Children.ToArray().ToReadOnlyMemory().ToResult()
                     : toDoCache.GetRootItems()
             )
-           .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(
+           .IfSuccess(
+                items => this.PostUiBackground(
                     () => SetItemsUi(items.OrderBy(x => x.OrderIndex))
                        .IfSuccess(
                             () => items.IfSuccessForEach(
@@ -76,9 +76,9 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
                                     return Result.Success;
                                 }
                             )
-                        )
-                ),
-                ct
+                        ),
+                    ct
+                )
             )
            .IfSuccessAsync(
                 () => toDoUiService.GetRequest(
@@ -104,8 +104,9 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
                 ct
             )
            .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(
-                    () => SetItemsUi(items.OrderBy(x => x.OrderIndex))
+                items => this.PostUiBackground(
+                    () => SetItemsUi(items.OrderBy(x => x.OrderIndex)),
+                    ct
                 ),
                 ct
             );

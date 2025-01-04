@@ -29,7 +29,6 @@ public static class ResultExtension
             {
                 return new(v.Errors);
             }
-          
         }
 
         if (ct.IsCancellationRequested)
@@ -39,7 +38,7 @@ public static class ResultExtension
 
         return result.ToReadOnlyMemory().ToResult();
     }
-    
+
     public static Result IfSuccessForEach<TValue>(
         this ReadOnlyMemory<TValue> values,
         Func<TValue, Result> func,
@@ -1942,6 +1941,43 @@ public static class ResultExtension
         finally
         {
             funcFinally.Invoke(rv);
+        }
+    }
+
+    public static Cvtar IfSuccessTryFinallyAsync(
+        this Result task,
+        Func<Cvtar> funcTry,
+        Action funcFinally,
+        CancellationToken ct
+    )
+    {
+        return IfSuccessTryFinallyCore(task, funcTry, funcFinally, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessTryFinallyCore(
+        this Result result,
+        Func<Cvtar> funcTry,
+        Action funcFinally,
+        CancellationToken ct
+    )
+    {
+        if (result.IsHasError)
+        {
+            return new(result.Errors);
+        }
+
+        try
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            return await funcTry.Invoke();
+        }
+        finally
+        {
+            funcFinally.Invoke();
         }
     }
 

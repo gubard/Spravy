@@ -46,12 +46,12 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
     {
         return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsTodayItems(true), ct)
            .IfSuccessAsync(
-                response => response.TodayItems.Items
+                response => response.TodayItems
+                   .Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                   .IfSuccessAsync(
-                        items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.SetItemsUi(items)),
-                        ct
+                   .IfSuccess(
+                        items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
                     ),
                 ct
             );

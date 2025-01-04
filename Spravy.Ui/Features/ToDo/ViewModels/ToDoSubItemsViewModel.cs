@@ -4,7 +4,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
     private readonly IToDoCache toDoCache;
     private readonly IToDoUiService toDoUiService;
-    
+
     public ToDoSubItemsViewModel(
         IToDoCache toDoCache,
         MultiToDoItemsViewModel list,
@@ -16,9 +16,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
         this.toDoUiService = toDoUiService;
 
         toDoCache.GetFavoriteItems()
-           .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
-                CancellationToken.None
+           .IfSuccess(
+                items => this.PostUiBackground(() => List.SetFavoriteItemsUi(items), CancellationToken.None)
             );
 
         toDoUiService.Requested += Requested;
@@ -48,7 +47,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
         return Result.AwaitableSuccess;
     }
-    
+
     public Result Stop()
     {
         toDoUiService.Requested -= Requested;
@@ -70,12 +69,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     private Cvtar Requested(ToDoResponse response)
     {
-        return response.FavoriteItems.Items
+        return response.FavoriteItems
+           .Items
            .Select(x => x.Item.Id)
            .IfSuccessForEach(toDoCache.GetToDoItem)
-           .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(() => List.SetFavoriteItemsUi(items)),
-                CancellationToken.None
-            );
+           .IfSuccess(
+                items => this.PostUiBackground(() => List.SetFavoriteItemsUi(items), CancellationToken.None)
+            )
+           .ToValueTaskResult()
+           .ConfigureAwait(false);
     }
 }

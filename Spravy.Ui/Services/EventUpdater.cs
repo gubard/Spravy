@@ -53,7 +53,7 @@ public class EventUpdater : IEventUpdater
                                 return Result.AwaitableSuccess;
                             }
 
-                            return spravyNotificationManager.ShowAsync(new TextLocalization("Lang.UpdateSchedule"), ct)
+                            return spravyNotificationManager.Show(new TextLocalization("Lang.UpdateSchedule"))
                                .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
                                .IfSuccessAsync(() => toDoService.UpdateEventsAsync(ct), ct)
                                .IfSuccessAsync(
@@ -65,7 +65,7 @@ public class EventUpdater : IEventUpdater
                                         }
 
                                         return spravyNotificationManager
-                                           .ShowAsync(new TextLocalization("lang.UpdateToDoEvents"), ct)
+                                           .Show(new TextLocalization("lang.UpdateToDoEvents"))
                                            .IfSuccessAsync(() => audioService.PlayNotificationAsync(ct), ct)
                                            .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
                                     },
@@ -75,17 +75,16 @@ public class EventUpdater : IEventUpdater
                         ct
                     )
                    .IfErrorsAsync(
-                        errors => spravyNotificationManager.ShowAsync(
+                        errors => spravyNotificationManager.Show(
                             errors.Select(x => $"{x.Id}{Environment.NewLine}{x.Message}")
-                               .JoinString(Environment.NewLine),
-                            ct
+                               .JoinString(Environment.NewLine)
                         ),
                         ct
                     );
             }
             catch (Exception e)
             {
-                await spravyNotificationManager.ShowAsync(e.Message, ct);
+                spravyNotificationManager.Show(e.Message);
             }
 
             await Task.Delay(TimeSpan.FromMinutes(1), ct);

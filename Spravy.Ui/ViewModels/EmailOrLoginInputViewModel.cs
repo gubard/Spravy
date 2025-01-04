@@ -38,13 +38,14 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     private Cvtar ForgotPasswordAsync(CancellationToken ct)
     {
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
                 () =>
                 {
                     IsBusy = true;
 
                     return Result.Success;
-                }
+                },
+                ct
             )
            .IfSuccessTryFinallyAsync(
                 () =>
@@ -101,16 +102,16 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
                             ct
                         );
                 },
-                () => this.InvokeUiBackgroundAsync(
+                () => this.PostUiBackground(
                         () =>
                         {
                             IsBusy = false;
 
                             return Result.Success;
-                        }
+                        },
+                        ct
                     )
-                   .ToValueTask()
-                   .ConfigureAwait(false),
+                   .GetAwaitable(),
                 ct
             );
     }

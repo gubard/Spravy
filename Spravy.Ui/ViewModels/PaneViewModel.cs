@@ -12,7 +12,8 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
            .Items
            .Select(x => x.Id)
            .IfSuccessForEach(toDoCache.GetToDoItem)
-           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => SetBookmarksUi(items)), CancellationToken.None);
+           .IfSuccess(items => this.PostUiBackground(() => SetBookmarksUi(items), CancellationToken.None))
+           .GetAwaitable();
     }
 
     public AccountNotify Account { get; }

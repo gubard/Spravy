@@ -104,9 +104,8 @@ public class SpravyCommandService
             (passwordItem, ct) => passwordService.GeneratePasswordAsync(passwordItem.Id, ct)
                .IfSuccessAsync(text => clipboardService.SetTextAsync(text, ct), ct)
                .IfSuccessAsync(
-                    () => spravyNotificationManager.ShowAsync(
-                        new TextLocalization("Lang.CopiedPassword", passwordItem),
-                        ct
+                    () => spravyNotificationManager.Show(
+                        new TextLocalization("Lang.CopiedPassword", passwordItem)
                     ),
                     ct
                 ),
@@ -118,9 +117,8 @@ public class SpravyCommandService
             (passwordItem, ct) =>
                 clipboardService.SetTextAsync(passwordItem.Login, ct)
                    .IfSuccessAsync(
-                        () => spravyNotificationManager.ShowAsync(
-                            new TextLocalization("Lang.CopiedLogin", passwordItem),
-                            ct
+                        () => spravyNotificationManager.Show(
+                            new TextLocalization("Lang.CopiedLogin", passwordItem)
                         ),
                         ct
                     ),
@@ -154,8 +152,8 @@ public class SpravyCommandService
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
 
                             return uiApplicationService.GetCurrentView<IRemove>()
-                               .IfSuccessAsync(
-                                    remove => this.InvokeUiBackgroundAsync(
+                               .IfSuccess(
+                                    remove => this.PostUiBackground(
                                         () => editId.ResultItems
                                            .ToResult()
                                            .IfSuccessForEach(
@@ -181,9 +179,9 @@ public class SpravyCommandService
                                                             return new(new ToDoItemIsCanOutOfRangeError(item.IsCan));
                                                     }
                                                 }
-                                            )
-                                    ),
-                                    CancellationToken.None
+                                            ),
+                                        CancellationToken.None
+                                    )
                                 )
                                .IfSuccessAsync(
                                     () => toDoService.SwitchCompleteAsync(
@@ -485,16 +483,18 @@ public class SpravyCommandService
         );
 
         SwitchPane = SpravyCommand.Create(
-            ct => ct.InvokeUiBackgroundAsync(
-                () =>
-                {
-                    rootViewFactory.CreateMainSplitViewModel().IsPaneOpen = !rootViewFactory
-                       .CreateMainSplitViewModel()
-                       .IsPaneOpen;
+            ct => ct.PostUiBackground(
+                    () =>
+                    {
+                        rootViewFactory.CreateMainSplitViewModel().IsPaneOpen = !rootViewFactory
+                           .CreateMainSplitViewModel()
+                           .IsPaneOpen;
 
-                    return Result.Success;
-                }
-            ),
+                        return Result.Success;
+                    },
+                    ct
+                )
+               .GetAwaitable(),
             errorHandler,
             taskProgressService
         );
@@ -517,13 +517,14 @@ public class SpravyCommandService
                 )
                .IfSuccessAsync(() => navigator.NavigateToAsync(viewFactory.CreateLoginViewModel(), ct), ct)
                .IfSuccessAsync(
-                    () => ct.InvokeUiBackgroundAsync(
+                    () => ct.PostUiBackground(
                         () =>
                         {
                             rootViewFactory.CreateMainSplitViewModel().IsPaneOpen = false;
 
                             return Result.Success;
-                        }
+                        },
+                        ct
                     ),
                     ct
                 ),
@@ -766,16 +767,16 @@ public class SpravyCommandService
                             },
                             ct
                         ),
-                    () => this.InvokeUiBackgroundAsync(
+                    () => this.PostUiBackground(
                             () =>
                             {
                                 view.ViewModel.IsBusy = false;
 
                                 return Result.Success;
-                            }
+                            },
+                            ct
                         )
-                       .ToValueTask()
-                       .ConfigureAwait(false),
+                       .GetAwaitable(),
                     ct
                 );
             },
@@ -856,7 +857,7 @@ public class SpravyCommandService
             (str, ct) =>
                 clipboardService.SetTextAsync(str, ct)
                    .IfSuccessAsync(
-                        () => spravyNotificationManager.ShowAsync(new TextLocalization("Lang.CopyToClipboard"), ct),
+                        () => spravyNotificationManager.Show(new TextLocalization("Lang.CopyToClipboard")),
                         ct
                     ),
             errorHandler,
@@ -1166,13 +1167,14 @@ public class SpravyCommandService
             return Result.AwaitableSuccess;
         }
 
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
                 () =>
                 {
                     viewModel.IsBusy = true;
 
                     return Result.Success;
-                }
+                },
+                ct
             )
            .IfSuccessTryFinallyAsync(
                 () => authenticationService.CreateUserAsync(viewModel.ToCreateUserOptions(), ct)
@@ -1183,16 +1185,16 @@ public class SpravyCommandService
                         ),
                         ct
                     ),
-                () => this.InvokeUiBackgroundAsync(
+                () => this.PostUiBackground(
                         () =>
                         {
                             viewModel.IsBusy = false;
 
                             return Result.Success;
-                        }
+                        },
+                        ct
                     )
-                   .ToValueTask()
-                   .ConfigureAwait(false),
+                   .GetAwaitable(),
                 ct
             );
     }
@@ -1213,13 +1215,14 @@ public class SpravyCommandService
             return Result.AwaitableSuccess;
         }
 
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
                 () =>
                 {
                     viewModel.IsBusy = true;
 
                     return Result.Success;
-                }
+                },
+                ct
             )
            .IfSuccessTryFinallyAsync(
                 () => authenticationService.IsVerifiedByLoginAsync(viewModel.Login, ct)
@@ -1239,13 +1242,14 @@ public class SpravyCommandService
 
                             return tokenService.LoginAsync(viewModel.ToUser(), ct)
                                .IfSuccessAsync(
-                                    () => this.InvokeUiBackgroundAsync(
+                                    () => this.PostUiBackground(
                                             () =>
                                             {
                                                 accountNotify.Login = viewModel.Login;
 
                                                 return Result.Success;
-                                            }
+                                            },
+                                            ct
                                         )
                                        .IfSuccessAsync(
                                             () => RememberMeAsync(viewModel, tokenService, objectStorage, ct),
@@ -1271,16 +1275,16 @@ public class SpravyCommandService
                         },
                         ct
                     ),
-                () => this.InvokeUiBackgroundAsync(
+                () => this.PostUiBackground(
                         () =>
                         {
                             viewModel.IsBusy = false;
 
                             return Result.Success;
-                        }
+                        },
+                        ct
                     )
-                   .ToValueTask()
-                   .ConfigureAwait(false),
+                   .GetAwaitable(),
                 ct
             );
     }

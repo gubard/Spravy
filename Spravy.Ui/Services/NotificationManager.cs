@@ -11,29 +11,31 @@ public class NotificationManager : ISpravyNotificationManager
         this.serviceFactory = serviceFactory;
     }
 
-    public Cvtar ShowAsync<TView>(CancellationToken ct) where TView : notnull
+    public Result Show<TView>() where TView : notnull
     {
         var view = serviceFactory.CreateService<TView>();
 
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
             () =>
             {
                 managedNotificationManager.Show(view);
 
                 return Result.Success;
-            }
+            },
+            CancellationToken.None
         );
     }
 
-    public Cvtar ShowAsync(object view, CancellationToken ct)
+    public Result Show(object view)
     {
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
             () =>
             {
                 managedNotificationManager.Show(view);
 
                 return Result.Success;
-            }
+            },
+            CancellationToken.None
         );
     }
 }

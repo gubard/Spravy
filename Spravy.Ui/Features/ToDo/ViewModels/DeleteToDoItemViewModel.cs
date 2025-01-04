@@ -58,13 +58,14 @@ public partial class DeleteToDoItemViewModel : ToDoItemEditIdViewModel, IApplySe
                 ct
             )
            .IfSuccessAsync(
-                response => this.InvokeUiBackgroundAsync(
+                response => this.PostUiBackground(
                     () =>
                     {
                         ChildrenText = response.ToStringItems.Select(x => x.Text).JoinString(Environment.NewLine);
 
                         return Result.Success;
-                    }
+                    },
+                    ct
                 ),
                 ct
             );

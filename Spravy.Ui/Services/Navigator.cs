@@ -22,15 +22,16 @@ public class Navigator : INavigator
     {
         return list.Pop()
            .IfSuccessAsync(
-                item => this.InvokeUiBackgroundAsync(
+                item => this.PostUiBackground(
                         () =>
                         {
                             mainSplitViewModel.IsPaneOpen = false;
 
                             return Result.Success;
-                        }
+                        },
+                        ct
                     )
-                   .IfSuccessAsync(() => dialogViewer.CloseLastDialogAsync(ct), ct)
+                   .IfSuccess(() => dialogViewer.CloseLastDialog(ct))
                    .IfSuccessAsync(
                         value =>
                         {
@@ -50,13 +51,14 @@ public class Navigator : INavigator
                                    .ConfigureAwait(false);
                             }
 
-                            return this.InvokeUiBackgroundAsync(
+                            return this.PostUiBackground(
                                     () =>
                                     {
                                         mainSplitViewModel.Content = item;
 
                                         return Result.Success;
-                                    }
+                                    },
+                                    ct
                                 )
                                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct)
                                .IfSuccessAsync(() => item.ToResult().ToValueTaskResult().ConfigureAwait(false), ct);
@@ -69,28 +71,28 @@ public class Navigator : INavigator
 
     public Cvtar NavigateToAsync(INavigatable parameter, CancellationToken ct)
     {
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
                 () =>
                 {
                     mainSplitViewModel.IsPaneOpen = false;
 
                     return Result.Success;
-                }
+                },
+                ct
             )
            .IfSuccessAsync(
-                () => Result.AwaitableSuccess
-                   .IfSuccessAsync(
+                () => Result.Success
+                   .IfSuccess(
                         () =>
                         {
                             if (mainSplitViewModel.Content.IsPooled
                              && mainSplitViewModel.Content.ViewId != parameter.ViewId)
                             {
-                                return list.Add(mainSplitViewModel.Content).GetAwaitable();
+                                return list.Add(mainSplitViewModel.Content);
                             }
 
-                            return Result.AwaitableSuccess;
-                        },
-                        ct
+                            return Result.Success;
+                        }
                     )
                    .IfSuccessAsync(
                         () => parameter.LoadStateAsync(ct)
