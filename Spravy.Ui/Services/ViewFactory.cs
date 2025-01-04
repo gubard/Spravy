@@ -71,8 +71,7 @@ public class ViewFactory : IViewFactory
             objectStorage,
             CreateToDoItemSelectorViewModel(),
             toDoCache,
-            isEditShow,
-            isEditDescriptionShow
+            isEditShow
         );
     }
 

@@ -77,7 +77,7 @@
                 </StackPanel>
             </Grid>
 
-            <StackPanel IsVisible="{Binding IsEditDescriptionShow}">
+            <StackPanel>
                 <StackPanel Classes="horizontal">
                     <TextBlock Classes="field"
                                Text="{DynamicResource Lang.DescriptionType}" />

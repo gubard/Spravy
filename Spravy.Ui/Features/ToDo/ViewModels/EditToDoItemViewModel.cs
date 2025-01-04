@@ -119,16 +119,13 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         IObjectStorage objectStorage,
         ToDoItemSelectorViewModel toDoItemSelector,
         IToDoCache toDoCache,
-        bool isEditShow,
-        bool isEditDescriptionShow
+        bool isEditShow
     )
     {
         this.objectStorage = objectStorage;
         ToDoItemSelector = toDoItemSelector;
         this.toDoCache = toDoCache;
         IsEditShow = isEditShow;
-        IsEditDescriptionShow = isEditDescriptionShow;
-        ToDoItemTypes = new(UiHelper.ToDoItemTypes.ToArray());
         WeeklyDays = new();
         MonthlyDays = new();
         FavoriteIcons = new();
@@ -177,9 +174,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     }
 
     public bool IsEditShow { get; }
-    public bool IsEditDescriptionShow { get; }
     public AvaloniaList<string> FavoriteIcons { get; }
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYearSelectItem> AnnuallyDays { get; }
