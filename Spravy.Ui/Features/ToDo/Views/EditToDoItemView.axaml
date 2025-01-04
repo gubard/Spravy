@@ -77,28 +77,6 @@
                 </StackPanel>
             </Grid>
 
-            <StackPanel>
-                <StackPanel Classes="horizontal">
-                    <TextBlock Classes="field"
-                               Text="{DynamicResource Lang.DescriptionType}" />
-                    <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescriptionType}"
-                                  IsVisible="{Binding IsEditShow}" />
-                </StackPanel>
-
-                <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
-
-                <StackPanel Classes="horizontal">
-                    <TextBlock Classes="field"
-                               Text="{DynamicResource Lang.Description}" />
-                    <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescription}"
-                                  IsVisible="{Binding IsEditShow}" />
-                </StackPanel>
-
-                <TextBox x:Name="DescriptionTextBox"
-                         Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
-                         Text="{Binding Description}" />
-            </StackPanel>
-
             <StackPanel Classes="horizontal">
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Type}" />
                 <ToggleSwitch Classes="field" IsChecked="{Binding IsEditType}" IsVisible="{Binding IsEditShow}" />
@@ -315,7 +293,8 @@
                                 <TabControl ItemsSource="{Binding AnnuallyDays}">
                                     <TabControl.ItemTemplate>
                                         <DataTemplate x:DataType="m:DayOfYearSelectItem">
-                                            <TextBlock Text="{Binding Month, Converter={StaticResource EnumLocalizationValueConverter}}" />
+                                            <TextBlock
+                                                Text="{Binding Month, Converter={StaticResource EnumLocalizationValueConverter}}" />
                                         </DataTemplate>
                                     </TabControl.ItemTemplate>
                                 </TabControl>
@@ -324,6 +303,26 @@
                     </StackPanel>
                 </c:ViewSelectorItemControl>
             </c:ViewSelectorControl>
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource Lang.DescriptionType}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescriptionType}"
+                              IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource Lang.Description}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescription}"
+                              IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <TextBox x:Name="DescriptionTextBox"
+                     Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
+                     Text="{Binding Description}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
