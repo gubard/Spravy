@@ -1,5 +1,20 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="TextBox.block">
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBox.block:focus /template/ Border#PART_BorderElement">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBox.block:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
     <Style Selector="TextBox">
         <Setter Property="Margin" Value="2" />
     </Style>

@@ -119,8 +119,8 @@
 
                     <c:ViewSelectorControl State="{Binding Item.DescriptionType}">
                         <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
-                            <TextBlock Classes="alignment-left text-wrap"
-                                       Text="{Binding Item.Description}" />
+                            <TextBox Classes="alignment-left text-wrap block"
+                                     Text="{Binding Item.Description}" />
                         </c:ViewSelectorItemControl>
 
                         <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
