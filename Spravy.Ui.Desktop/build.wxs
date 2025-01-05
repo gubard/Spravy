@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Package Name="Spravy" Version="$(var.Version)" Manufacturer="SerhiiMaksymovFOP" UpgradeCode="6082C698-0B7B-44E7-AF42-58955B765618">
+        <Property Id="INSTALLFOLDER" Value="C:\Spravy" />
+        <Media Id="1" Cabinet="Spravy.cab" EmbedCab="yes" />
+        <File Id="appsettings.json" Source="appsettings.json" />
+
+        <Component Id="Spravy.Ui.Desktop.exe">
+            <File Id="Spravy.Ui.Desktop.exe" Source="Spravy.Ui.Desktop.exe" KeyPath="yes" />
+            <!-- Define a desktop shortcut -->
+            <Shortcut Id="DesktopShortcut"
+                      Directory="DesktopFolder"
+                      Name="Spravy"
+                      Description="Launch Spravy"
+                      Target="[INSTALLFOLDER]Spravy.Ui.Desktop.exe"
+                      WorkingDirectory="INSTALLFOLDER" />
+        </Component>
+
+        <ComponentGroup Id="Libs">
+            <Component Id="av_libglesv2.dll">
+                <File Id="av_libglesv2.dll" Source="av_libglesv2.dll" />
+            </Component>
+            <Component Id="e_sqlite3.dll">
+                <File Id="e_sqlite3.dll" Source="e_sqlite3.dll" />
+            </Component>
+            <Component Id="libHarfBuzzSharp.dll">
+                <File Id="libHarfBuzzSharp.dll" Source="libHarfBuzzSharp.dll" />
+            </Component>
+            <Component Id="libSkiaSharp.dll">
+                <File Id="libSkiaSharp.dll" Source="libSkiaSharp.dll" />
+            </Component>
+        </ComponentGroup>
+    </Package>
+</Wix>
