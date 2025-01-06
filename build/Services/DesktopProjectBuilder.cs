@@ -29,30 +29,20 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
                    .SetRuntime(runtime.Name)
             );
 
-            if (runtime.Name.StartsWith("win"))
+            if (!runtime.Name.StartsWith("win"))
             {
-                Cli
-                   .Wrap("wix")
-                   .WithWorkingDirectory(publishFolder.FullName)
-                   .WithArguments(
-                        $"build .\\build.wxs -pdbtype none -d Version={version}"
-                    )
-                   .ExecuteAsync()
-                   .GetAwaiter()
-                   .GetResult();
-
-                foreach (var file in publishFolder.GetFiles())
-                {
-                    var extension = file.GetFileNameWithoutExtension().ToUpper();
-
-                    if (extension == ".MSI")
-                    {
-                        continue;
-                    }
-
-                    file.Delete();
-                }
+                continue;
             }
+
+            Cli
+               .Wrap("wix")
+               .WithWorkingDirectory(publishFolder.FullName)
+               .WithArguments(
+                    $"build .\\build.wxs -pdbtype none -d Version={version}"
+                )
+               .ExecuteAsync()
+               .GetAwaiter()
+               .GetResult();
         }
 
         using var ftpClient = Options.CreateFtpClient();
