@@ -5,8 +5,22 @@ namespace _build.Extensions;
 
 public static class DirectoryInfoExtension
 {
-    public static FileInfo ToFile(this DirectoryInfo folder, string fileName) =>
-        Path.Combine(folder.FullName, fileName).ToFile();
+    public static string ToLinuxPath(this DirectoryInfo folder)
+    {
+        var fullPath = folder.FullName;
+
+        if (fullPath.Contains(":"))
+        {
+            return fullPath.Substring(2).Replace("\\", "/");
+        }
+
+        return fullPath;
+    }
+    
+    public static FileInfo ToFile(this DirectoryInfo folder, string fileName)
+    {
+        return Path.Combine(folder.FullName, fileName).ToFile();
+    }
 
     public static DirectoryInfo Combine(this DirectoryInfo folder, params string[] parts)
     {

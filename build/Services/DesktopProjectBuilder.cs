@@ -46,13 +46,13 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
                .GetResult();
         }
 
-        var appFolder = Options.GetAppFolder();
+        var appFolder = Options.GetAppFolder().ToLinuxPath();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(appFolder);
         ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
         Log.Information("Upload {LocalFolder} {RemoteFolder}", Options.PublishFolder, appFolder);
-        ftpClient.UploadDirectory(Options.PublishFolder.FullName, appFolder.FullName);
+        ftpClient.UploadDirectory(Options.PublishFolder.FullName, appFolder);
 
         foreach (var publishServer in Options.PublishServers)
         {

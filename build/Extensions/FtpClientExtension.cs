@@ -17,6 +17,18 @@ public static class FtpClientExtension
         client.DeleteDirectory(folder.FullName, options);
         Log.Logger.Information("Delete FTP folder {Folder}", folder);
     }
+    
+    public static void DeleteIfExistsFolder(this FtpClient client, string folderPath)
+    {
+        if (!client.DirectoryExists(folderPath))
+        {
+            return;
+        }
+
+        var options = FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
+        client.DeleteDirectory(folderPath, options);
+        Log.Logger.Information("Delete FTP folder {Folder}", folderPath);
+    }
 
     public static void CreateIfNotExistsFolder(this FtpClient client, DirectoryInfo folder)
     {
