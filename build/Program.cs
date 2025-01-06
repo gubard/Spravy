@@ -1,4 +1,5 @@
-﻿using _build.Builds;
+﻿using System;
+using _build.Builds;
 using Serilog;
 
 namespace _build;
@@ -12,7 +13,7 @@ public static class Program
         for (var index = 0; index < args.Length; index++)
         {
             var arg = args[index];
-            Log.Logger.Information("Argument {Arg}", arg);
+            Console.WriteLine($"Argument {arg}");
 
             if (arg != "--build")
             {
@@ -24,7 +25,7 @@ public static class Program
             break;
         }
 
-        Log.Logger.Information("Build {Arg}", buildIndex + 1);
+        Console.WriteLine($"Build {args[buildIndex + 1]}");
         
         return args[buildIndex + 1] switch
         {
