@@ -17,8 +17,12 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
 
     public void Publish()
     {
+        using var ftpClient = Options.CreateFtpClient();
+        ftpClient.Connect();
+
         foreach (var runtime in Options.Runtimes.Span)
         {
+            var appFolder = Options.GetAppFolder().Combine(runtime.Name).ToLinuxPath();
             var publishFolder = Options.PublishFolder.Combine(runtime.Name);
 
             DotNetTasks.DotNetPublish(
@@ -44,15 +48,11 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
                .ExecuteAsync()
                .GetAwaiter()
                .GetResult();
-        }
 
-        var appFolder = Options.GetAppFolder().ToLinuxPath();
-        using var ftpClient = Options.CreateFtpClient();
-        ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(appFolder);
-        ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
-        Log.Information("Upload {LocalFolder} {RemoteFolder}", Options.PublishFolder, appFolder);
-        ftpClient.UploadDirectory(Options.PublishFolder.FullName, appFolder);
+            ftpClient.DeleteIfExistsFolder(appFolder);
+            Log.Information("Upload {LocalFolder} {RemoteFolder}", Options.PublishFolder, appFolder);
+            ftpClient.UploadDirectory(publishFolder.FullName, appFolder);
+        }
 
         foreach (var publishServer in Options.PublishServers)
         {
