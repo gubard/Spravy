@@ -11,9 +11,9 @@ namespace _build.Services;
 
 public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions>
 {
-    public ServiceProjectBuilder(VersionService versionService, ServiceProjectBuilderOptions serviceOptions) : base(
+    public ServiceProjectBuilder(SpravyVersion version, ServiceProjectBuilderOptions serviceOptions) : base(
         serviceOptions,
-        versionService
+        version
     )
     {
     }

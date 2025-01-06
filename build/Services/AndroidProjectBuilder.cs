@@ -7,9 +7,9 @@ namespace _build.Services;
 
 public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptions>
 {
-    public AndroidProjectBuilder(VersionService versionService, AndroidProjectBuilderOptions androidOptions) : base(
+    public AndroidProjectBuilder(SpravyVersion version, AndroidProjectBuilderOptions androidOptions) : base(
         androidOptions,
-        versionService
+        version
     )
     {
     }

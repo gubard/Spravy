@@ -9,9 +9,9 @@ namespace _build.Services;
 
 public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptions>
 {
-    public BrowserProjectBuilder(VersionService versionService, BrowserProjectBuilderOptions browserOptions) : base(
+    public BrowserProjectBuilder(SpravyVersion version, BrowserProjectBuilderOptions browserOptions) : base(
         browserOptions,
-        versionService
+        version
     )
     {
     }

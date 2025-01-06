@@ -101,13 +101,13 @@ public class ProjectBuilderFactory
                     emailAccount2Password
                 );
 
-                yield return new TestProjectBuilder(projectBuilderOptions, versionService);
+                yield return new TestProjectBuilder(projectBuilderOptions, versionService.Version);
             }
 
             if (projectName.EndsWith(".Service"))
             {
                 yield return new ServiceProjectBuilder(
-                    versionService,
+                    versionService.Version,
                     new(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
@@ -136,7 +136,7 @@ public class ProjectBuilderFactory
             if (projectName.EndsWith(".Android"))
             {
                 yield return new AndroidProjectBuilder(
-                    versionService,
+                    versionService.Version,
                     publishFolders.AddItem(
                         new AndroidProjectBuilderOptions(
                             csprojFile,
@@ -163,7 +163,7 @@ public class ProjectBuilderFactory
             if (projectName.EndsWith(".Browser"))
             {
                 yield return new BrowserProjectBuilder(
-                    versionService,
+                    versionService.Version,
                     new(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
@@ -189,7 +189,7 @@ public class ProjectBuilderFactory
             if (projectName.EndsWith(".Desktop"))
             {
                 yield return new DesktopProjectBuilder(
-                    versionService,
+                    versionService.Version,
                     publishFolders.AddItem(
                         new DesktopProjectBuilderOptions(
                             csprojFile,
