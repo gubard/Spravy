@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using _build.Extensions;
 using _build.Helpers;
@@ -36,9 +37,6 @@ class DesktopPublishSingleBuild : NukeBuild
     [Parameter]
     readonly string Domain;
 
-    [Parameter]
-    readonly string PublishFolder;
-
     DesktopProjectBuilder Project;
 
     public static int Execute() => Execute<DesktopPublishSingleBuild>(x => x.Publish);
@@ -68,7 +66,7 @@ class DesktopPublishSingleBuild : NukeBuild
                         FtpHost,
                         FtpUser,
                         FtpPassword,
-                        new DirectoryInfo(PublishFolder).Combine(csprojFile.GetFileNameWithoutExtension()),
+                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)).Combine(csprojFile.GetFileNameWithoutExtension()),
                         new()
                     )
                 );

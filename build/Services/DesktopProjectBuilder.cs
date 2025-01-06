@@ -37,7 +37,7 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
         {
             using var sshClient = publishServer.Value.CreateSshClient();
             sshClient.Connect();
-            sshClient.SafeRun($"git clone https://github.com/gubard/Spravy.git;cd Spravy;nuke --configuration Release --target DesktopPublishSingle --desktop-runtime {publishServer.Key}");
+            sshClient.SafeRun($"git clone https://github.com/gubard/Spravy.git;cd Spravy;nuke --build desktop --configuration Release --runtime {publishServer.Key} --version {version} --ftp-host {Options.FtpHost} --ftp-user {Options.FtpUser} --ftp-password {Options.FtpPassword} --ftp-user {Options.FtpUser} --domain {Options.Domain}");
         }
     }
 }
