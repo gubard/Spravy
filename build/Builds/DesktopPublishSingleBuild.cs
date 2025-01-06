@@ -82,7 +82,7 @@ class DesktopPublishSingleBuild : NukeBuild
             }
         );
 
-    Target ProdClean => _ => _.DependsOn(SetupAppSettings)
+    Target Clean => _ => _.DependsOn(SetupAppSettings)
        .Executes(
             () => BuildHelper.Clean(
                 new IProjectBuilder[]
@@ -92,7 +92,7 @@ class DesktopPublishSingleBuild : NukeBuild
             )
         );
 
-    Target ProdRestore => _ => _.DependsOn(ProdClean)
+    Target Restore => _ => _.DependsOn(Clean)
        .Executes(
             () => BuildHelper.Restore(
                 new IProjectBuilder[]
@@ -102,7 +102,7 @@ class DesktopPublishSingleBuild : NukeBuild
             )
         );
 
-    Target ProdCompile => _ => _.DependsOn(ProdRestore)
+    Target Compile => _ => _.DependsOn(Restore)
        .Executes(
             () => BuildHelper.Compile(
                 new IProjectBuilder[]
@@ -113,7 +113,7 @@ class DesktopPublishSingleBuild : NukeBuild
         );
 
     Target Publish =>
-        _ => _.DependsOn(ProdCompile)
+        _ => _.DependsOn(Compile)
            .Executes(
                 () => BuildHelper.PublishDesktop(
                     new IProjectBuilder[]
