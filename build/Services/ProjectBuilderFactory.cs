@@ -154,7 +154,7 @@ public class ProjectBuilderFactory
                     publishFolder.Combine(projectName)
                 );
 
-                publishFolders.Add(options.GetAppFolder());
+                publishFolders.Add(publishFolder.Combine(projectName));
 
                 yield return new AndroidProjectBuilder(
                     versionService.Version,
@@ -207,7 +207,7 @@ public class ProjectBuilderFactory
                     desktopPublishServers
                 );
 
-                publishFolders.Add(options.GetAppFolder());
+                publishFolders.Add(publishFolder.Combine(projectName));
 
                 yield return new DesktopProjectBuilder(
                     versionService.Version,
