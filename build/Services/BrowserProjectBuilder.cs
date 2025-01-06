@@ -69,14 +69,22 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
                 if (file is not null)
                 {
+                    Log.Logger.Information("Copy {From} {To}", file, versionFolder.Combine(published.Name));
                     sshClient.RunSudo(Options, $"cp -rf {file} {versionFolder.Combine(published.Name)}");
                 }
                 else if (files.Any(x => x.Name.EndsWith(".aab")))
                 {
+                    Log.Logger.Information("Copy {From} {To}", directory, versionFolder.Combine(published.Name));
                     sshClient.RunSudo(Options, $"cp -rf {directory} {versionFolder.Combine(published.Name)}");
                 }
                 else
                 {
+                    Log.Logger.Information(
+                        "Copy {From} {To}",
+                        directory,
+                        versionFolder.Combine(published.Name).ToFile($"{published.Name}.{directory.Name}.zip")
+                    );
+
                     sshClient.SafeRun(
                         $"cd {directory} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.Name).ToFile($"{published.Name}.{directory.Name}.zip")} ./*"
                     );
