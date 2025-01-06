@@ -12,12 +12,14 @@ public static class Program
         {
             var arg = args[index];
 
-            if (arg == "--build")
+            if (arg != "--build")
             {
-                buildIndex = index;
-
-                break;
+                continue;
             }
+
+            buildIndex = index;
+
+            break;
         }
 
         return args[buildIndex + 1] switch
