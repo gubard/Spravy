@@ -8,6 +8,7 @@ using System.Text;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Interfaces;
+using _build.Models;
 using _build.Services;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
@@ -98,6 +99,12 @@ class Build : NukeBuild
 
     [Parameter]
     readonly string TelegramToken;
+
+    [Parameter]
+    readonly string DesktopPublishServers;
+    
+    [Parameter]
+    readonly string DesktopRuntime;
 
     IReadOnlyDictionary<string, ushort> Ports;
     IProjectBuilder[] Projects;
@@ -196,6 +203,13 @@ class Build : NukeBuild
         _ => _.DependsOn(StagingPublishServices).Executes(PublishDesktop);
 
     Target ProdPublishDesktop => _ => _.DependsOn(ProdPublishServices).Executes(PublishDesktop);
+    
+    Target DesktopPublishSingle => _ => _.Executes(
+        () =>
+        {
+            
+        }
+    );
 
     Target StagingPublishAndroid =>
         _ => _.DependsOn(StagingPublishServices).Executes(PublishAndroid);
@@ -293,7 +307,21 @@ class Build : NukeBuild
             AndroidSigningKeyPass,
             AndroidSigningStorePass,
             EmailAccountPassword,
-            EmailAccount2Password
+            EmailAccount2Password,
+            new(
+                DesktopPublishServers.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                   .Select(
+                        x =>
+                        {
+                            var values = x.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                            return new KeyValuePair<Runtime, SshOptions>(
+                                new(values[0]),
+                                new(values[1], values[2], values[3])
+                            );
+                        }
+                    )
+            ),new (DesktopRuntime)
         );
 
     ProjectBuilderFactory CreateProdFactory() =>
@@ -315,7 +343,21 @@ class Build : NukeBuild
             AndroidSigningKeyPass,
             AndroidSigningStorePass,
             EmailAccountPassword,
-            EmailAccount2Password
+            EmailAccount2Password,
+            new(
+                DesktopPublishServers.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                   .Select(
+                        x =>
+                        {
+                            var values = x.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                            return new KeyValuePair<Runtime, SshOptions>(
+                                new(values[0]),
+                                new(values[1], values[2], values[3])
+                            );
+                        }
+                    )
+            ),new (DesktopRuntime)
         );
 
     void SetupAppSettings()

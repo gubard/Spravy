@@ -15,29 +15,16 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
 
     public void Publish()
     {
-        if (Options.Runtimes.IsEmpty)
+        foreach (var runtime in Options.Runtimes.Span)
         {
             DotNetTasks.DotNetPublish(
                 setting => setting.SetConfiguration(Options.Configuration)
                    .SetProject(Options.CsprojFile.FullName)
-                   .SetOutput(Options.PublishFolder.FullName)
+                   .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                    .EnableNoBuild()
                    .EnableNoRestore()
+                   .SetRuntime(runtime.Name)
             );
-        }
-        else
-        {
-            foreach (var runtime in Options.Runtimes.Span)
-            {
-                DotNetTasks.DotNetPublish(
-                    setting => setting.SetConfiguration(Options.Configuration)
-                       .SetProject(Options.CsprojFile.FullName)
-                       .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
-                       .EnableNoBuild()
-                       .EnableNoRestore()
-                       .SetRuntime(runtime.Name)
-                );
-            }
         }
 
         using var ftpClient = Options.CreateFtpClient();
@@ -45,5 +32,12 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
         ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
         ftpClient.UploadDirectory(Options.PublishFolder.FullName, Options.GetAppFolder().FullName);
+
+        foreach (var publishServer in Options.PublishServers)
+        {
+            using var sshClient = publishServer.Value.CreateSshClient();
+            sshClient.Connect();
+            sshClient.SafeRun("git clone https://github.com/gubard/Spravy.git;cd Spravy;nuke --configuration Release --target DesktopPublishSingle");
+        }
     }
 }

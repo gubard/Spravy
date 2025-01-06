@@ -16,7 +16,8 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
         string ftpHost,
         string ftpUser,
         string ftpPassword,
-        DirectoryInfo publishFolder
+        DirectoryInfo publishFolder,
+        Dictionary<Runtime, SshOptions> publishServers
     ) : base(
         csprojFile,
         appSettingsFile,
@@ -30,6 +31,7 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
         FtpUser = ftpUser;
         FtpPassword = ftpPassword;
         PublishFolder = publishFolder;
+        PublishServers = publishServers;
     }
 
     public string FtpHost { get; }
@@ -37,4 +39,5 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
     public string FtpPassword { get; }
     public DirectoryInfo PublishFolder { get; }
     public bool IsNeedZip => true;
+    public Dictionary<Runtime, SshOptions> PublishServers { get; }
 }

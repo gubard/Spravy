@@ -10,7 +10,7 @@ public class Runtime
     public static readonly Runtime WinArm64 = new("win-arm64");
     public static readonly Runtime LinuxArm64 = new("linux-arm64");
 
-    Runtime(string name)
+    public Runtime(string name)
     {
         Name = name;
     }

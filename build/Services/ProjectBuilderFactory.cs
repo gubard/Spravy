@@ -27,6 +27,8 @@ public class ProjectBuilderFactory
     readonly string sshUser;
     readonly string token;
     readonly VersionService versionService;
+    readonly Dictionary<Runtime, SshOptions> desktopPublishServers;
+    readonly Runtime desktopRuntime;
 
     public ProjectBuilderFactory(
         string configuration,
@@ -46,7 +48,9 @@ public class ProjectBuilderFactory
         string androidSigningKeyPass,
         string androidSigningStorePass,
         string emailAccountPassword,
-        string emailAccount2Password
+        string emailAccount2Password,
+        Dictionary<Runtime, SshOptions> desktopPublishServers,
+        Runtime desktopRuntime
     )
     {
         this.versionService = versionService;
@@ -63,6 +67,8 @@ public class ProjectBuilderFactory
         this.androidSigningStorePass = androidSigningStorePass;
         this.emailAccountPassword = emailAccountPassword;
         this.emailAccount2Password = emailAccount2Password;
+        this.desktopPublishServers = desktopPublishServers;
+        this.desktopRuntime = desktopRuntime;
         this.emailPassword = emailPassword;
         this.token = token;
         this.configuration = configuration;
@@ -191,17 +197,15 @@ public class ProjectBuilderFactory
                             ports,
                             new[]
                             {
-                                Runtime.LinuxX64,
-                                //Runtime.LinuxArm64,
-                                //Runtime.WinX64,
-                                //Runtime.WinArm64,
+                                desktopRuntime,
                             },
                             configuration,
                             domain,
                             ftpHost,
                             ftpUser,
                             ftpPassword,
-                            publishFolder.Combine(projectName)
+                            publishFolder.Combine(projectName),
+                            desktopPublishServers
                         )
                     )
                 );
