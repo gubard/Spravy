@@ -83,12 +83,13 @@ class DesktopPublishSingleBuild : NukeBuild
         );
 
     Target Publish =>
-        _ => _.Executes(
-            () => BuildHelper.PublishDesktop(
-                new IProjectBuilder[]
-                {
-                    Project,
-                }
-            )
-        );
+        _ => _.DependsOn(SetupAppSettings)
+           .Executes(
+                () => BuildHelper.PublishDesktop(
+                    new IProjectBuilder[]
+                    {
+                        Project,
+                    }
+                )
+            );
 }
