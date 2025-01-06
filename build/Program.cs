@@ -1,6 +1,6 @@
 ﻿using System;
 using _build.Builds;
-using Serilog;
+using _build.Enums;
 
 namespace _build;
 
@@ -8,31 +8,42 @@ public static class Program
 {
     static int Main(string[] args)
     {
-        var buildIndex = 0;
+        var buildType = BuildType.Publish;
 
         for (var index = 0; index < args.Length; index++)
         {
             var arg = args[index];
-            Console.WriteLine($"Argument {arg}");
 
-            if (arg != "--build")
+            if (arg == "--build-desktop")
             {
-                continue;
+                buildType = BuildType.Desktop;
+
+                break;
             }
 
-            buildIndex = index + 1;
+            if (arg == "--build-test")
+            {
+                buildType = BuildType.Test;
 
-            break;
+                break;
+            }
+
+            if (arg == "--build-publish")
+            {
+                buildType = BuildType.Publish;
+
+                break;
+            }
         }
 
-        Console.WriteLine($"Build {args[buildIndex]}");
-        
-        return args[buildIndex] switch
+        Console.WriteLine($"Build {buildType}");
+
+        return buildType switch
         {
-            "publish" => Build.Execute(),
-            "test" => TestBuild.Execute(),
-            "desktop" => DesktopPublishSingleBuild.Execute(),
-            _ => throw new($"Unknown command {args[1]}")
+            BuildType.Publish => Build.Execute(),
+            BuildType.Test => TestBuild.Execute(),
+            BuildType.Desktop => DesktopPublishSingleBuild.Execute(),
+            _ => throw new($"Unknown command {args[1]}"),
         };
     }
 }
