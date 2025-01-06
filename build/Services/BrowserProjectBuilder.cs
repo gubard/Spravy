@@ -65,8 +65,8 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
                 if (file is not null)
                 {
-                    Log.Logger.Information("Copy {From} {To}", file, versionFolder.Combine(published.Name));
-                    sshClient.RunSudo(Options, $"cp -rf {file} {versionFolder.Combine(published.Name)}");
+                    Log.Logger.Information("Copy {From} {To}", file.FullName, versionFolder.Combine(published.Name));
+                    sshClient.RunSudo(Options, $"cp -rf {file.FullName} {versionFolder.Combine(published.Name)}");
                 }
                 else if (files.Any(x => x.Name.EndsWith(".aab")))
                 {
