@@ -4,6 +4,7 @@ using System.Linq;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
+using Serilog;
 
 namespace _build.Services;
 
@@ -36,8 +37,9 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
-        ftpClient.UploadDirectory(appBundleFolder.FullName, Options.GetAppFolder().FullName);
+        var appFolder = Options.GetAppFolder();
+        ftpClient.DeleteIfExistsFolder(appFolder);
+        ftpClient.UploadDirectory(appBundleFolder.FullName, appFolder.FullName);
         var urlFolder = PathHelper.WwwFolder.Combine(Options.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
@@ -46,11 +48,12 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         var currentFolder = browserDownloadsFolder.Combine("current");
         sshClient.RunSudo(Options, $"mkdir -p {versionFolder}");
         sshClient.RunSudo(Options, $"mkdir -p {currentFolder}");
-        sshClient.RunSudo(Options, $" cp -rf {Options.GetAppFolder()}/* {browserFolder}");
+        sshClient.RunSudo(Options, $" cp -rf {appFolder}/* {browserFolder}");
 
         foreach (var published in Options.Downloads)
         {
-            ftpClient.UploadDirectory(published, Options.GetAppsFolder());
+            Log.Logger.Information("Upload {LocalFolder} {RemoteFolder}", published, appFolder);
+            ftpClient.UploadDirectory(published, appFolder);
         }
 
         foreach (var published in Options.Downloads)
