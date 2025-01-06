@@ -20,14 +20,14 @@ public static class Program
                 continue;
             }
 
-            buildIndex = index;
+            buildIndex = index + 1;
 
             break;
         }
 
-        Console.WriteLine($"Build {args[buildIndex + 1]}");
+        Console.WriteLine($"Build {args[buildIndex]}");
         
-        return args[buildIndex + 1] switch
+        return args[buildIndex] switch
         {
             "publish" => Build.Execute(),
             "test" => TestBuild.Execute(),
