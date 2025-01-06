@@ -32,10 +32,10 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
             if (runtime.Name.StartsWith("win"))
             {
                 Cli
-                   .Wrap("cmd")
+                   .Wrap("wix")
                    .WithWorkingDirectory(publishFolder.FullName)
                    .WithArguments(
-                        $"wix build .\\build.wxs -pdbtype none -d Version={version}"
+                        $"build .\\build.wxs -pdbtype none -d Version={version}"
                     )
                    .ExecuteAsync()
                    .GetAwaiter()
