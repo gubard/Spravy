@@ -50,20 +50,26 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
         foreach (var published in Options.Downloads)
         {
+            ftpClient.UploadDirectory(published, Options.GetAppsFolder());
+        }
+
+        foreach (var published in Options.Downloads)
+        {
             sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.Name)}");
             sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.Name)}");
-            ftpClient.UploadDirectory(published, published);
 
-            foreach (var directory in published.GetDirectories())
+            foreach (var directory in ftpClient.GetListing(published.FullName))
             {
-                if (directory.GetFiles(".msi").Any())
+                var files = ftpClient.GetListing(directory.FullName);
+                var file = files.FirstOrDefault(x => x.Name.EndsWith(".msi"));
+
+                if (file is not null)
                 {
-                    var file = directory.GetFiles(".msi")[0];
-                    sshClient.RunSudo(Options, $"cp -rf {file} {versionFolder}");
+                    sshClient.RunSudo(Options, $"cp -rf {file} {versionFolder.Combine(published.Name)}");
                 }
-                else if (directory.GetFiles(".aab").Any())
+                else if (files.Any(x => x.Name.EndsWith(".aab")))
                 {
-                    sshClient.RunSudo(Options, $"cp -rf {directory} {versionFolder}");
+                    sshClient.RunSudo(Options, $"cp -rf {directory} {versionFolder.Combine(published.Name)}");
                 }
                 else
                 {
