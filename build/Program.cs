@@ -36,8 +36,6 @@ public static class Program
             }
         }
 
-        Console.WriteLine($"Build {buildType}");
-
         return buildType switch
         {
             BuildType.Publish => Build.Execute(),
