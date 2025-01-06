@@ -52,8 +52,9 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
 
         foreach (var published in Options.Downloads)
         {
-            Log.Logger.Information("Upload {LocalFolder} {RemoteFolder}", published, appFolder);
-            ftpClient.UploadDirectory(published, appFolder);
+            var app = appFolder.Parent.Combine(published.Name);
+            Log.Logger.Information("Upload {LocalFolder} {RemoteFolder}", published, app);
+            ftpClient.UploadDirectory(published, app);
         }
 
         foreach (var published in Options.Downloads)
