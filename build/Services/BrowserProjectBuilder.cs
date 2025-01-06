@@ -88,6 +88,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             }
         }
 
+        sshClient.RunSudo(Options, $"cp -rf {versionFolder}/* {currentFolder}");
         sshClient.RunSudo(Options, $"chown -R $USER:$USER {browserFolder}");
         sshClient.RunSudo(Options, $"chmod -R 755 {urlFolder}");
         sshClient.RunSudo(Options, "systemctl restart nginx");
