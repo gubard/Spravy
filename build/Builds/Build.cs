@@ -131,7 +131,7 @@ class Build : NukeBuild
     {
         base.OnBuildInitialized();
         PathHelper.TempFolder.DeleteIfExits();
-        Token = TokenHelper.CreteToken(JwtIssuer, JwtAudience, JwtKey);
+        Token = TokenHelper.CreteToken(JwtKey, JwtIssuer, JwtAudience);
         VersionService = new($"/home/{FtpUser}/storage/version.txt".ToFile());
         VersionService.Load();
     }
