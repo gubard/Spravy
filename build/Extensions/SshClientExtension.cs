@@ -6,19 +6,19 @@ namespace _build.Extensions;
 
 public static class SshClientExtension
 {
-    public static void SafeRun(this SshClient client, string command)
+    public static void SafeRun(this SshClient client, string command, bool ignoreError = false)
     {
         using var runCommand = client.RunCommand(command);
         Log.Logger.Information("Run SSH command: {Command}", command);
 
-        if (!string.IsNullOrWhiteSpace(runCommand.Error) && !runCommand.Error.StartsWith("[sudo] password for"))
+        if (!ignoreError && !string.IsNullOrWhiteSpace(runCommand.Error) && !runCommand.Error.StartsWith("[sudo] password for"))
         {
             throw new(runCommand.Error);
         }
 
         if (!string.IsNullOrWhiteSpace(runCommand.Result))
         {
-            Log.Error("SSH result: {Error}", runCommand.Result);
+            Log.Information("SSH result: {Error}", runCommand.Result);
         }
     }
 
