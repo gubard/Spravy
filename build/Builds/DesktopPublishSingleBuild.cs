@@ -66,7 +66,9 @@ class DesktopPublishSingleBuild : NukeBuild
                         FtpHost,
                         FtpUser,
                         FtpPassword,
-                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)).Combine(csprojFile.GetFileNameWithoutExtension()),
+                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)).Combine(
+                            csprojFile.GetFileNameWithoutExtension()
+                        ),
                         new()
                     )
                 );
@@ -80,8 +82,38 @@ class DesktopPublishSingleBuild : NukeBuild
             }
         );
 
+    Target ProdClean => _ => _.DependsOn(SetupAppSettings)
+       .Executes(
+            () => BuildHelper.Clean(
+                new IProjectBuilder[]
+                {
+                    Project,
+                }
+            )
+        );
+
+    Target ProdRestore => _ => _.DependsOn(ProdClean)
+       .Executes(
+            () => BuildHelper.Restore(
+                new IProjectBuilder[]
+                {
+                    Project,
+                }
+            )
+        );
+
+    Target ProdCompile => _ => _.DependsOn(ProdRestore)
+       .Executes(
+            () => BuildHelper.Compile(
+                new IProjectBuilder[]
+                {
+                    Project,
+                }
+            )
+        );
+
     Target Publish =>
-        _ => _.DependsOn(SetupAppSettings)
+        _ => _.DependsOn(ProdCompile)
            .Executes(
                 () => BuildHelper.PublishDesktop(
                     new IProjectBuilder[]
