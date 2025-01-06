@@ -1,9 +1,9 @@
 using System;
 using System.IO;
+using System.Linq;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
-using Serilog;
 
 namespace _build.Services;
 
@@ -48,44 +48,28 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         sshClient.RunSudo(Options, $"mkdir -p {currentFolder}");
         sshClient.RunSudo(Options, $" cp -rf {Options.GetAppFolder()}/* {browserFolder}");
 
-        foreach (var published in Options.Publisheds)
+        foreach (var published in Options.Downloads)
         {
-            if (published.IsNeedZip)
+            sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.Name)}");
+            sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.Name)}");
+
+            foreach (var directory in published.GetDirectories())
             {
-                Log.Information("Zip {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
-                sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.GetProjectName())}");
-
-                if (published.Runtimes.IsEmpty)
+                if (directory.GetFiles(".msi").Any())
                 {
-                    sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
-                    );
-
-                    sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
-                    );
+                    var file = directory.GetFiles(".msi")[0];
+                    sshClient.RunSudo(Options, $"cp -rf {file} {versionFolder}");
+                }
+                else if (directory.GetFiles(".aab").Any())
+                {
+                    sshClient.RunSudo(Options, $"cp -rf {directory} {versionFolder}");
                 }
                 else
                 {
-                    foreach (var runtime in published.Runtimes.Span)
-                    {
-                        sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
-                        );
-
-                        sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
-                        );
-                    }
+                    sshClient.SafeRun(
+                        $"cd {directory} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.Name).ToFile($"{published.Name}.{directory.Name}.zip")} ./*"
+                    );
                 }
-            }
-            else
-            {
-                Log.Information("Copy {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(Options, $"cp -rf {published.GetAppFolder()} {versionFolder}");
-                Log.Information("Copy {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(Options, $"cp -rf {published.GetAppFolder()} {currentFolder}");
             }
         }
 

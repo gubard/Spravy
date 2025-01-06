@@ -45,5 +45,4 @@ public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IPublished
     public string FtpUser { get; }
     public string FtpPassword { get; }
     public DirectoryInfo PublishFolder { get; }
-    public bool IsNeedZip => false;
 }

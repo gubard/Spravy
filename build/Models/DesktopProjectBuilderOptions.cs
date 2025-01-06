@@ -38,6 +38,5 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
     public string FtpUser { get; }
     public string FtpPassword { get; }
     public DirectoryInfo PublishFolder { get; }
-    public bool IsNeedZip => true;
     public Dictionary<Runtime, SshOptions> PublishServers { get; }
 }

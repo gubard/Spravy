@@ -19,7 +19,7 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         string sshHost,
         string sshUser,
         string sshPassword,
-        IEnumerable<IPublished> publisheds,
+        IEnumerable<DirectoryInfo> downloads,
         DirectoryInfo publishFolder
     ) : base(
         csprojFile,
@@ -36,13 +36,12 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         SshHost = sshHost;
         SshUser = sshUser;
         SshPassword = sshPassword;
-        Publisheds = publisheds;
+        Downloads = downloads;
         PublishFolder = publishFolder;
     }
 
-    public IEnumerable<IPublished> Publisheds { get; }
+    public IEnumerable<DirectoryInfo> Downloads { get; }
     public DirectoryInfo PublishFolder { get; }
-
     public string FtpHost { get; }
     public string FtpUser { get; }
     public string FtpPassword { get; }

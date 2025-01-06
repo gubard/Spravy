@@ -77,7 +77,7 @@ public class ProjectBuilderFactory
 
     public IEnumerable<IProjectBuilder> Create(IEnumerable<FileInfo> csprojFiles)
     {
-        var publishFolders = new List<IPublished>();
+        var publishFolders = new List<DirectoryInfo>();
 
         foreach (var csprojFile in csprojFiles)
         {
@@ -135,28 +135,30 @@ public class ProjectBuilderFactory
 
             if (projectName.EndsWith(".Android"))
             {
+                var options = new AndroidProjectBuilderOptions(
+                    csprojFile,
+                    csprojFile.Directory.ToFile("appsettings.json"),
+                    ports,
+                    new[]
+                    {
+                        Runtime.AndroidArm64,
+                    },
+                    configuration,
+                    domain,
+                    keyStoreFile,
+                    androidSigningKeyPass,
+                    androidSigningStorePass,
+                    ftpHost,
+                    ftpPassword,
+                    ftpUser,
+                    publishFolder.Combine(projectName)
+                );
+
+                publishFolders.Add(options.GetAppFolder());
+
                 yield return new AndroidProjectBuilder(
                     versionService.Version,
-                    publishFolders.AddItem(
-                        new AndroidProjectBuilderOptions(
-                            csprojFile,
-                            csprojFile.Directory.ToFile("appsettings.json"),
-                            ports,
-                            new[]
-                            {
-                                Runtime.AndroidArm64,
-                            },
-                            configuration,
-                            domain,
-                            keyStoreFile,
-                            androidSigningKeyPass,
-                            androidSigningStorePass,
-                            ftpHost,
-                            ftpPassword,
-                            ftpUser,
-                            publishFolder.Combine(projectName)
-                        )
-                    )
+                    options
                 );
             }
 
@@ -188,26 +190,28 @@ public class ProjectBuilderFactory
 
             if (projectName.EndsWith(".Desktop"))
             {
+                var options = new DesktopProjectBuilderOptions(
+                    csprojFile,
+                    csprojFile.Directory.ToFile("appsettings.json"),
+                    ports,
+                    new[]
+                    {
+                        desktopRuntime,
+                    },
+                    configuration,
+                    domain,
+                    ftpHost,
+                    ftpUser,
+                    ftpPassword,
+                    publishFolder.Combine(projectName),
+                    desktopPublishServers
+                );
+
+                publishFolders.Add(options.GetAppFolder());
+
                 yield return new DesktopProjectBuilder(
                     versionService.Version,
-                    publishFolders.AddItem(
-                        new DesktopProjectBuilderOptions(
-                            csprojFile,
-                            csprojFile.Directory.ToFile("appsettings.json"),
-                            ports,
-                            new[]
-                            {
-                                desktopRuntime,
-                            },
-                            configuration,
-                            domain,
-                            ftpHost,
-                            ftpUser,
-                            ftpPassword,
-                            publishFolder.Combine(projectName),
-                            desktopPublishServers
-                        )
-                    )
+                    options
                 );
             }
         }
