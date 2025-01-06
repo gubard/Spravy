@@ -55,14 +55,10 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             var app = appFolder.Parent.Combine(published.Name);
             Log.Logger.Information("Upload {LocalFolder} {RemoteFolder}", published, app);
             ftpClient.UploadDirectory(published, app);
-        }
-
-        foreach (var published in Options.Downloads)
-        {
             sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.Name)}");
             sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.Name)}");
 
-            foreach (var directory in ftpClient.GetListing(published.FullName))
+            foreach (var directory in ftpClient.GetListing(app.FullName))
             {
                 var files = ftpClient.GetListing(directory.FullName);
                 var file = files.FirstOrDefault(x => x.Name.EndsWith(".msi"));
