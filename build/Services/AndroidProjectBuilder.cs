@@ -34,8 +34,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                            .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
                            .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                           .SetProperty("ApplicationVersion", versionService.Version.Code)
-                           .AddProperty("Version", versionService.Version.ToString())
+                           .SetProperty("ApplicationVersion", version.Code)
+                           .AddProperty("Version", version.ToString())
                     );
                 }
                 else
@@ -52,8 +52,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
                                .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                               .SetProperty("ApplicationVersion", versionService.Version.Code)
-                               .AddProperty("Version", versionService.Version.ToString())
+                               .SetProperty("ApplicationVersion", version.Code)
+                               .AddProperty("Version", version.ToString())
                                .SetRuntime(runtime.Name)
                         );
                     }
@@ -94,8 +94,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                            .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
                            .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                           .SetProperty("ApplicationVersion", versionService.Version.Code)
-                           .SetProperty("Version", versionService.Version.ToString())
+                           .SetProperty("ApplicationVersion", version.Code)
+                           .SetProperty("Version", version.ToString())
                            .SetConfiguration(Options.Configuration)
                            .SetOutput(Options.PublishFolder.FullName)
                            .EnableNoRestore()
@@ -114,8 +114,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
                                .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                               .SetProperty("ApplicationVersion", versionService.Version.Code)
-                               .SetProperty("Version", versionService.Version.ToString())
+                               .SetProperty("ApplicationVersion", version.Code)
+                               .SetProperty("Version", version.ToString())
                                .SetConfiguration(Options.Configuration)
                                .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                .SetRuntime(runtime.Name)

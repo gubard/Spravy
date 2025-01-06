@@ -42,7 +42,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
         sshClient.RunSudo(Options, $"rm -rf {browserFolder}/*");
-        var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
+        var versionFolder = browserDownloadsFolder.Combine(version.ToString());
         var currentFolder = browserDownloadsFolder.Combine("current");
         sshClient.RunSudo(Options, $"mkdir -p {versionFolder}");
         sshClient.RunSudo(Options, $"mkdir -p {currentFolder}");

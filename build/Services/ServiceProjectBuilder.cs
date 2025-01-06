@@ -96,7 +96,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         var process = Process.Start(
                 new ProcessStartInfo(
                     "docker",
-                    $"build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}"
+                    $"build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{version}"
                 )
             )
            .ThrowIfNull();
@@ -114,7 +114,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         var processTag = Process.Start(
                 new ProcessStartInfo(
                     "docker",
-                    $"tag {Options.GetProjectName().ToLower()}:{versionService.Version} 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"
+                    $"tag {Options.GetProjectName().ToLower()}:{version} 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{version}"
                 )
             )
            .ThrowIfNull();
@@ -129,7 +129,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         var processPush = Process.Start(
                 new ProcessStartInfo(
                     "docker",
-                    $"image push 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"
+                    $"image push 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{version}"
                 )
             )
            .ThrowIfNull();
