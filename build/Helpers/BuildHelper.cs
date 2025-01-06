@@ -160,6 +160,7 @@ public static class BuildHelper
            .Where(
                 x => x.Type == FtpObjectType.File
                  && (x.Name.EndsWith(".msi")
+                     || x.Name.EndsWith(".zip")
                      || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed"))
             )
            .Select(
@@ -205,16 +206,15 @@ public static class BuildHelper
         }
     }
 
-    static string GetButtonName(string name)
-    {
-        return Path.GetExtension(name).ToUpperInvariant() switch
+    static string GetButtonName(string name) =>
+        Path.GetExtension(name).ToUpperInvariant() switch
         {
             ".APK" => ".APK",
             ".AAB" => ".AAB",
             ".MSI" => new FileInfo(name).DirectoryName?.ToUpperInvariant() ?? throw new NullReferenceException(),
+            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
             _ => throw new ArgumentOutOfRangeException(name),
         };
-    }
 
     static FtpClient CreateFtpClient(string ftpHost, string ftpUser, string ftpPassword)
     {
