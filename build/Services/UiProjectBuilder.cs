@@ -10,7 +10,7 @@ namespace _build.Services;
 
 public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> where TOptions : ProjectBuilderOptions
 {
-    protected UiProjectBuilder(TOptions options, VersionService versionService) : base(options, versionService)
+    protected UiProjectBuilder(TOptions options, SpravyVersion version) : base(options, version)
     {
     }
 
@@ -36,7 +36,7 @@ public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> wher
                         setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                            .EnableNoRestore()
                            .SetConfiguration(Options.Configuration)
-                           .AddProperty("Version", versionService.Version.ToString())
+                           .AddProperty("Version", version.ToString())
                     );
                 }
                 else
@@ -47,7 +47,7 @@ public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> wher
                             setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                                .EnableNoRestore()
                                .SetConfiguration(Options.Configuration)
-                               .AddProperty("Version", versionService.Version.ToString())
+                               .AddProperty("Version", version.ToString())
                                .SetRuntime(runtime.Name)
                         );
                     }

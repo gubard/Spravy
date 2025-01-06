@@ -8,12 +8,12 @@ namespace _build.Services;
 
 public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions : ProjectBuilderOptions
 {
-    protected readonly VersionService versionService;
+    protected readonly SpravyVersion version;
 
-    protected ProjectBuilder(TOptions options, VersionService versionService)
+    protected ProjectBuilder(TOptions options, SpravyVersion version)
     {
         Options = options;
-        this.versionService = versionService;
+        this.version = version;
     }
 
     public TOptions Options { get; }
@@ -69,7 +69,7 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
                 setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                    .EnableNoRestore()
                    .SetConfiguration(Options.Configuration)
-                   .AddProperty("Version", versionService.Version.ToString())
+                   .AddProperty("Version", version.ToString())
             );
         }
         else
@@ -80,7 +80,7 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
                     setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                        .EnableNoRestore()
                        .SetConfiguration(Options.Configuration)
-                       .AddProperty("Version", versionService.Version.ToString())
+                       .AddProperty("Version", version.ToString())
                        .SetRuntime(runtime.Name)
                 );
             }
