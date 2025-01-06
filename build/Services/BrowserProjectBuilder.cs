@@ -52,6 +52,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         {
             sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.Name)}");
             sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.Name)}");
+            ftpClient.UploadDirectory(published, published);
 
             foreach (var directory in published.GetDirectories())
             {
