@@ -159,12 +159,12 @@ public static class BuildHelper
            .GetListing(html.Combine("downloads", versionService.Version.ToString()).FullName, FtpListOption.Recursive)
            .Where(
                 x => x.Type == FtpObjectType.File
-                 && (x.Name.EndsWith(".zip")
+                 && (x.Name.EndsWith(".msi")
                      || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed"))
             )
            .Select(
                 x => InlineKeyboardButton.WithUrl(
-                    GetButtonName(x.Name),
+                    GetButtonName(x.FullName),
                     x.FullName.Replace(html.FullName, $"https://{domain}")
                 )
             )
@@ -205,14 +205,16 @@ public static class BuildHelper
         }
     }
 
-    static string GetButtonName(string name) =>
-        Path.GetExtension(name).ToUpperInvariant() switch
+    static string GetButtonName(string name)
+    {
+        return Path.GetExtension(name).ToUpperInvariant() switch
         {
             ".APK" => ".APK",
             ".AAB" => ".AAB",
-            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
+            ".MSI" => new FileInfo(name).DirectoryName?.ToUpperInvariant() ?? throw new NullReferenceException(),
             _ => throw new ArgumentOutOfRangeException(name),
         };
+    }
 
     static FtpClient CreateFtpClient(string ftpHost, string ftpUser, string ftpPassword)
     {
