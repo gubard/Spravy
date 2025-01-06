@@ -2,6 +2,7 @@ using _build.Extensions;
 using _build.Models;
 using CliWrap;
 using Nuke.Common.Tools.DotNet;
+using Serilog;
 
 namespace _build.Services;
 
@@ -45,11 +46,13 @@ public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptio
                .GetResult();
         }
 
+        var appFolder = Options.GetAppFolder();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
+        ftpClient.DeleteIfExistsFolder(appFolder);
         ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
-        ftpClient.UploadDirectory(Options.PublishFolder.FullName, Options.GetAppFolder().FullName);
+        Log.Information("Upload {LocalFolder} {RemoteFolder}", Options.PublishFolder, appFolder);
+        ftpClient.UploadDirectory(Options.PublishFolder.FullName, appFolder.FullName);
 
         foreach (var publishServer in Options.PublishServers)
         {
