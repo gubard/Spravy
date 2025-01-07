@@ -27,15 +27,6 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
         ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()).ThrowIfError();
-
-        PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(IsMulti))
-            {
-                UpdateCommands();
-                ToDoSubItemsViewModel.List.IsMulti = IsMulti;
-            }
-        };
     }
 
     public ToDoItemEntityNotify Item { get; }
@@ -63,6 +54,17 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(IsMulti))
+        {
+            UpdateCommandsUi();
+            ToDoSubItemsViewModel.List.IsMulti = IsMulti;
+        }
     }
 
     private async ValueTask<Result> RefreshCore()
@@ -93,12 +95,15 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
                 ct
             )
            .IfSuccessAsync(
-                () =>
-                {
-                    UpdateCommands();
+                () => this.PostUiBackground(
+                    () =>
+                    {
+                        UpdateCommandsUi();
 
-                    return Result.Success;
-                },
+                        return Result.Success;
+                    },
+                    ct
+                ),
                 ct
             );
     }
@@ -133,7 +138,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
             );
     }
 
-    private void UpdateCommands()
+    private void UpdateCommandsUi()
     {
         if (IsMulti)
         {
