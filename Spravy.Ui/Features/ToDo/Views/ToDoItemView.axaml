@@ -111,7 +111,7 @@
             <StackPanel>
                 <Expander Classes="header-alignment-left"
                           Margin="3"
-                          IsExpanded="True"
+                          IsExpanded="{Binding Item.IsExpandDescription}"
                           IsVisible="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
                         <TextBlock Text="{DynamicResource Lang.Description}" Classes="alignment-center" />

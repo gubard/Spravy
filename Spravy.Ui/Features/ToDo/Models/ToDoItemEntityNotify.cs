@@ -100,6 +100,9 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     [ObservableProperty]
     private bool isUpdated;
 
+    [ObservableProperty]
+    private bool isExpandDescription;
+
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -344,6 +347,10 @@ public partial class ToDoItemEntityNotify : NotifyBase,
             case nameof(IsCan):
             case nameof(Icon):
                 OnPropertyChanged(nameof(IconType));
+
+                break;
+            case nameof(Description):
+                IsExpandDescription = !Description.IsNullOrWhiteSpace();
 
                 break;
         }

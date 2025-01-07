@@ -13,7 +13,7 @@ public partial class AccountNotify : NotifyBase
 
         if (e.PropertyName == nameof(Login))
         {
-            OnPropertyChanged(nameof(Login));
+            OnPropertyChanged(nameof(IsAdmin));
         }
     }
 }
