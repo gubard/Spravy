@@ -211,7 +211,7 @@ public static class BuildHelper
         {
             ".APK" => ".APK",
             ".AAB" => ".AAB",
-            ".MSI" => new FileInfo(name).DirectoryName?.ToUpperInvariant() ?? throw new NullReferenceException(),
+            ".MSI" => ".MSI",
             ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
             _ => throw new ArgumentOutOfRangeException(name),
         };
