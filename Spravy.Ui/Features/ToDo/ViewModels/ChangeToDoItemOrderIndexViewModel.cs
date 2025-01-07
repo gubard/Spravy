@@ -114,7 +114,7 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
     {
-        return Items.UpdateUi(newItems).ToResultOnly();
+        return Items.UpdateUi(newItems);
     }
 
     public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> _)

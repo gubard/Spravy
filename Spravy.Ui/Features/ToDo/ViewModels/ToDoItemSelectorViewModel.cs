@@ -102,7 +102,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
                     ct
                 )
                .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
-               .IfSuccessAsync(items => this.InvokeUiAsync(() => Roots.UpdateUi(items).ToResultOnly()), ct),
+               .IfSuccessAsync(items => this.InvokeUiAsync(() => Roots.UpdateUi(items)), ct),
             () => this.PostUiBackground(
                 () =>
                 {

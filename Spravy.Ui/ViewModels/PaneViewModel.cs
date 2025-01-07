@@ -20,6 +20,6 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
 
     public Result SetBookmarksUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByLoadedIndex());
+        return Bookmarks.UpdateUi(items).IfSuccess(() => Bookmarks.BinarySortByLoadedIndex());
     }
 }
