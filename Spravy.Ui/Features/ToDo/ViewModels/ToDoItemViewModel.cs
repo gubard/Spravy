@@ -84,14 +84,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
                 ct
             )
            .IfSuccessAsync(
-                response => response.ChildrenItems
-                   .Select(x => x.Children)
-                   .SelectMany()
-                   .Select(x => x.Item.Id)
-                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                   .IfSuccess(
-                        items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
-                    ),
+                _ => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()), ct),
                 ct
             )
            .IfSuccessAsync(

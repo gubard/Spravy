@@ -40,7 +40,6 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-
     public override string ViewId => TypeCache<RootToDoItemsViewModel>.Name;
 
     public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
@@ -69,13 +68,10 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
            .IfSuccess(items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct))
            .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
            .IfSuccessAsync(
-                response => response.RootItems
-                   .Items
-                   .Select(x => x.Item.Id)
-                   .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                   .IfSuccess(
-                        items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
-                    ),
+                _ => this.PostUiBackground(
+                    () => toDoCache.GetRootItems().IfSuccess(items => ToDoSubItemsViewModel.SetItemsUi(items)),
+                    ct
+                ),
                 ct
             );
     }
