@@ -6,7 +6,6 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
     {
         Account = account;
         Bookmarks = new();
-        Account.PropertyChanged += OnPropertyChanged;
 
         toDoUiService.Requested += response => response.BookmarkItems
            .Items
@@ -19,18 +18,8 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
     public AccountNotify Account { get; }
     public AvaloniaList<ToDoItemEntityNotify> Bookmarks { get; }
 
-    public bool IsShowPasswordGenerator => Account.Login is "vafnir" or "admin";
-
     public Result SetBookmarksUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Bookmarks.UpdateUi(items).IfSuccess(x => x.BinarySortByLoadedIndex());
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(Account.Login))
-        {
-            OnPropertyChanged(nameof(IsShowPasswordGenerator));
-        }
     }
 }

@@ -119,7 +119,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         AnnuallyDays = new();
         color = Colors.Transparent;
         icon = string.Empty;
-        PropertyChanged += OnPropertyChanged;
     }
 
     public Guid Id { get; }
@@ -327,8 +326,10 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         return this.ToResult();
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
+        base.OnPropertyChanged(e);
+        
         switch (e.PropertyName)
         {
             case nameof(Reference):

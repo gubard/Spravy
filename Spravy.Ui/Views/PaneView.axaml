@@ -61,7 +61,7 @@
 
         <Button Classes="mode-press"
                 Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
-                IsVisible="{Binding IsShowPasswordGenerator}">
+                IsVisible="{Binding Account.IsAdmin}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <i:Icon Value="mdi-lock" />
                 <TextBlock Grid.Column="1" Text="{DynamicResource Lang.PasswordGenerator}" />

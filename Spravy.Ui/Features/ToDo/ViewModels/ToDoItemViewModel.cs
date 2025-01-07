@@ -26,6 +26,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
         Item = item;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
+        ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()).ThrowIfError();
 
         PropertyChanged += (_, e) =>
         {
@@ -73,15 +74,11 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()), ct)
-           .IfSuccessAsync(
-                () => toDoUiService.GetRequest(
-                    GetToDo.WithDefaultItems
-                       .SetParentItem(Item.Id)
-                       .SetChildrenItem(Item.Id)
-                       .SetItem(Item.Id),
-                    ct
-                ),
+        return toDoUiService.GetRequest(
+                GetToDo.WithDefaultItems
+                   .SetParentItem(Item.Id)
+                   .SetChildrenItem(Item.Id)
+                   .SetItem(Item.Id),
                 ct
             )
            .IfSuccessAsync(
