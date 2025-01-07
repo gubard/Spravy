@@ -4,22 +4,13 @@
              Version="$(var.Version)"
              Manufacturer="SerhiiMaksymovFOP"
              UpgradeCode="402AA807-F73D-49F3-83A3-454DFB1411C6">
-        <Upgrade Id="402AA807-F73D-49F3-83A3-454DFB1411C6">
-            <UpgradeVersion OnlyDetect="no"
-                            Property="OLDPRODUCTS"
-                            Minimum="0.0.0.0"
-                            Maximum="10.0.0.0"
-                            IncludeMinimum="yes"
-                            IncludeMaximum="no"/>
-        </Upgrade>
-
-        <InstallExecuteSequence>
-            <RemoveExistingProducts After="InstallInitialize"/>
-        </InstallExecuteSequence>
-
         <Property Id="INSTALLFOLDER" Value="C:\Spravy"/>
         <Media Id="1" Cabinet="Spravy.cab" EmbedCab="yes"/>
         <File Id="appsettings.json" Source="appsettings.json"/>
+        <File Id="av_libglesv2.dll" Source="av_libglesv2.dll"/>
+        <File Id="e_sqlite3.dll" Source="e_sqlite3.dll"/>
+        <File Id="libHarfBuzzSharp.dll" Source="libHarfBuzzSharp.dll"/>
+        <File Id="libSkiaSharp.dll" Source="libSkiaSharp.dll"/>
 
         <Component Id="Spravy.Ui.Desktop.exe">
             <File Id="Spravy.Ui.Desktop.exe" Source="Spravy.Ui.Desktop.exe" KeyPath="yes"/>
@@ -32,19 +23,17 @@
                       WorkingDirectory="INSTALLFOLDER"/>
         </Component>
 
-        <ComponentGroup Id="Libs">
-            <Component Id="av_libglesv2.dll">
-                <File Id="av_libglesv2.dll" Source="av_libglesv2.dll"/>
-            </Component>
-            <Component Id="e_sqlite3.dll">
-                <File Id="e_sqlite3.dll" Source="e_sqlite3.dll"/>
-            </Component>
-            <Component Id="libHarfBuzzSharp.dll">
-                <File Id="libHarfBuzzSharp.dll" Source="libHarfBuzzSharp.dll"/>
-            </Component>
-            <Component Id="libSkiaSharp.dll">
-                <File Id="libSkiaSharp.dll" Source="libSkiaSharp.dll"/>
-            </Component>
-        </ComponentGroup>
+        <Upgrade Id="402AA807-F73D-49F3-83A3-454DFB1411C6">
+            <UpgradeVersion OnlyDetect="no"
+                            Property="OLDPRODUCTS"
+                            Minimum="0.0.0.0"
+                            Maximum="10.0.0.0"
+                            IncludeMinimum="yes"
+                            IncludeMaximum="no"/>
+        </Upgrade>
+
+        <InstallExecuteSequence>
+            <RemoveExistingProducts After="InstallInitialize"/>
+        </InstallExecuteSequence>
     </Package>
 </Wix>
