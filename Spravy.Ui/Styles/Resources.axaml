@@ -37,6 +37,7 @@
     <c:Int32MoreThenConverter x:Key="Int32LessThen" IsEquals="False" IsReverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreOrEqualsThen" IsEquals="True" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessOrEqualsThen" IsEquals="True" IsReverse="True" />
+    <c:LinesSubstringConverter x:Key="LinesSubstringConverter" MaxLines="5" />
 
     <DataTemplates x:Key="CommandDataTemplates">
         <DataTemplate x:DataType="m:SpravyCommandNotify">

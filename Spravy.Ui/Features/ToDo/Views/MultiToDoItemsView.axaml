@@ -37,7 +37,7 @@
                             <c:ViewSelectorControl State="{Binding DescriptionType}">
                                 <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.PlainText}">
                                     <TextBlock Classes="alignment-left text-wrap"
-                                               Text="{Binding Description}" />
+                                               Text="{Binding Description, Converter={StaticResource LinesSubstringConverter}}" />
                                 </c:ViewSelectorItemControl>
 
                                 <c:ViewSelectorItemControl State="{x:Static e:DescriptionType.Markdown}">
