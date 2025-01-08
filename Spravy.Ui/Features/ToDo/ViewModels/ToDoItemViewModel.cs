@@ -5,7 +5,6 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
     private readonly IObjectStorage objectStorage;
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
-    private readonly IToDoCache toDoCache;
 
     [ObservableProperty]
     private bool isMulti;
@@ -15,14 +14,12 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
         IObjectStorage objectStorage,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
-        IToDoUiService toDoUiService,
-        IToDoCache toDoCache
+        IToDoUiService toDoUiService
     ) : base(true)
     {
         this.objectStorage = objectStorage;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoUiService = toDoUiService;
-        this.toDoCache = toDoCache;
         Item = item;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
@@ -98,7 +95,24 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
                     ct
                 ),
                 ct
-            );
+            )
+           .IfSuccessAsync(
+                () =>
+                {
+                    var ids = Item.Children
+                       .Select(x => x.Id)
+                       .ToArray()
+                       .ToReadOnlyMemory()
+                       .Combine(Item.Path.OfType<ToDoItemEntityNotify>().Select(x => x.Id).ToArray());
+
+                    return toDoUiService.GetRequest(
+                        GetToDo.WithDefaultItems.SetItems(ids).SetParentItems(ids),
+                        ct
+                    );
+                },
+                ct
+            )
+           .ToResultOnlyAsync();
     }
 
     public override Result Stop()
