@@ -1,6 +1,3 @@
-using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
-using EditDescriptionViewModel = Spravy.Ui.Features.ToDo.ViewModels.EditDescriptionViewModel;
-
 namespace Spravy.Ui.Services;
 
 public class ViewSelector : IViewSelector
