@@ -114,7 +114,15 @@
                           IsExpanded="{Binding Item.IsExpandDescription}"
                           IsVisible="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
-                        <TextBlock Text="{DynamicResource Lang.Description}" Classes="alignment-center" />
+                        <Button Command="{x:Static h:UiHelper.SetToDoItemDescription}"
+                                CommandParameter="{Binding Item}"
+                                Classes="mode-press alignment-left">
+                            <StackPanel Orientation="Horizontal">
+                                <i:Icon Value="mdi-pencil" Margin="0,0,3,0" />
+                                <TextBlock Text="{DynamicResource Lang.Description}"
+                                           Classes="alignment-center" />
+                            </StackPanel>
+                        </Button>
                     </Expander.Header>
 
                     <c:ViewSelectorControl State="{Binding Item.DescriptionType}">
