@@ -34,7 +34,6 @@ public partial class DeleteAccountViewModel : NavigatableViewModelBase
     }
 
     public SpravyCommand DeleteAccountCommand { get; }
-
     public override string ViewId => TypeCache<DeleteAccountViewModel>.Name;
 
     public override Result Stop()

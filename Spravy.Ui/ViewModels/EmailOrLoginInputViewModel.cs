@@ -33,7 +33,6 @@ public partial class EmailOrLoginInputViewModel : NavigatableViewModelBase
     }
 
     public SpravyCommand ForgotPasswordCommand { get; }
-
     public override string ViewId => TypeCache<EmailOrLoginInputViewModel>.Name;
 
     private Cvtar ForgotPasswordAsync(CancellationToken ct)

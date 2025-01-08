@@ -23,7 +23,6 @@ public class ConfirmViewModel : DialogableViewModelBase
     public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
     public IDialogable Content { get; }
-
     public override string ViewId => TypeCache<ConfirmViewModel>.Name;
 
     private Cvtar CancelAsync(CancellationToken ct)
