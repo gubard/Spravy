@@ -140,7 +140,6 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
                 )
         );
 
-        PropertyChanged += OnPropertyChanged;
         WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
 
@@ -365,8 +364,10 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         return result;
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
+        base.OnPropertyChanged(e);
+
         switch (e.PropertyName)
         {
             case nameof(Icon):

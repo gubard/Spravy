@@ -51,14 +51,6 @@ public partial class ToDoItemsViewModel : ViewModelBase
             errorHandler,
             taskProgressService
         );
-
-        PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(SortBy))
-            {
-                Sort();
-            }
-        };
     }
 
     public TextLocalization Header { get; }
@@ -82,6 +74,23 @@ public partial class ToDoItemsViewModel : ViewModelBase
         return Sort();
     }
 
+    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    {
+        toDoItems.RemoveAll(items.ToArray());
+
+        return Result.Success;
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(SortBy))
+        {
+            Sort();
+        }
+    }
+
     private Result Sort()
     {
         return SortBy switch
@@ -96,12 +105,5 @@ public partial class ToDoItemsViewModel : ViewModelBase
             SortByToDoItem.DueDate => toDoItems.BinarySortByName(),
             _ => new(new SortByToDoItemOutOfRangeError(SortBy)),
         };
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        toDoItems.RemoveAll(items.ToArray());
-
-        return Result.Success;
     }
 }

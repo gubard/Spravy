@@ -45,27 +45,6 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
         Steps = steps;
         References = references;
         ComingSoon = comingSoon;
-
-        PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(SortBy))
-            {
-                Favorite.SortBy = SortBy;
-                Items.SortBy = SortBy;
-                Missed.SortBy = SortBy;
-                ReadyForCompleted.SortBy = SortBy;
-                ComingSoon.SortBy = SortBy;
-                Completed.SortBy = SortBy;
-                Values.SortBy = SortBy;
-                Groups.SortBy = SortBy;
-                Planneds.SortBy = SortBy;
-                Periodicitys.SortBy = SortBy;
-                PeriodicityOffsets.SortBy = SortBy;
-                Circles.SortBy = SortBy;
-                Steps.SortBy = SortBy;
-                References.SortBy = SortBy;
-            }
-        };
     }
 
     public ToDoItemsViewModel Favorite { get; }
@@ -206,5 +185,28 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
                 () => References.AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Reference))
                    .IfSuccess(() => References.RemoveUi(items.Where(x => x.Type != ToDoItemType.Reference)))
             );
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(SortBy))
+        {
+            Favorite.SortBy = SortBy;
+            Items.SortBy = SortBy;
+            Missed.SortBy = SortBy;
+            ReadyForCompleted.SortBy = SortBy;
+            ComingSoon.SortBy = SortBy;
+            Completed.SortBy = SortBy;
+            Values.SortBy = SortBy;
+            Groups.SortBy = SortBy;
+            Planneds.SortBy = SortBy;
+            Periodicitys.SortBy = SortBy;
+            PeriodicityOffsets.SortBy = SortBy;
+            Circles.SortBy = SortBy;
+            Steps.SortBy = SortBy;
+            References.SortBy = SortBy;
+        }
     }
 }

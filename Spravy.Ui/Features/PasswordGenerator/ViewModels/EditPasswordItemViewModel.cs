@@ -73,7 +73,6 @@ public partial class EditPasswordItemViewModel : ViewModelBase
     public EditPasswordItemViewModel(bool isEditShow)
     {
         IsEditShow = isEditShow;
-        PropertyChanged += OnPropertyChanged;
     }
 
     public bool IsEditShow { get; }
@@ -131,7 +130,7 @@ public partial class EditPasswordItemViewModel : ViewModelBase
         {
             result = result.SetRegex(new(Regex));
         }
-        
+
         if (IsEditType)
         {
             result = result.SetType(new(Type));
@@ -139,7 +138,7 @@ public partial class EditPasswordItemViewModel : ViewModelBase
 
         return result;
     }
-    
+
     public AddPasswordOptions ToAddPasswordOptions()
     {
         return new(
@@ -191,8 +190,10 @@ public partial class EditPasswordItemViewModel : ViewModelBase
         return Result.Success;
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
+        base.OnPropertyChanged(e);
+
         switch (e.PropertyName)
         {
             case nameof(CustomAvailableCharacters):

@@ -40,7 +40,6 @@ public partial class SettingViewModel : NavigatableViewModelBase
         SaveCommand = SpravyCommand.Create(SaveStateAsync, errorHandler, taskProgressService);
         ChangePasswordCommand = SpravyCommand.Create(ChangePasswordAsync, errorHandler, taskProgressService);
         DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
-        PropertyChanged += OnPropertyChanged;
 
         Languages =
         [
@@ -110,8 +109,10 @@ public partial class SettingViewModel : NavigatableViewModelBase
         return Result.AwaitableSuccess;
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
+        base.OnPropertyChanged(e);
+
         switch (e.PropertyName)
         {
             case nameof(SelectedTheme):

@@ -36,29 +36,6 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
             errorHandler,
             taskProgressService
         );
-
-        PropertyChanged += (s, e) =>
-        {
-            if (s is not ToDoItemSelectorViewModel vm)
-            {
-                return;
-            }
-
-            switch (e.PropertyName)
-            {
-                case nameof(SelectedItem):
-                {
-                    if (vm.SelectedItem is null)
-                    {
-                        return;
-                    }
-
-                    vm.SelectedItem.IsExpanded = true;
-
-                    break;
-                }
-            }
-        };
     }
 
     public Option<ToDoItemEntityNotify> Item { get; }
@@ -72,6 +49,26 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
         return SelectedItem.IfNotNull(nameof(SelectedItem));
     }
 
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        switch (e.PropertyName)
+        {
+            case nameof(SelectedItem):
+            {
+                if (SelectedItem is null)
+                {
+                    return;
+                }
+
+                SelectedItem.IsExpanded = true;
+
+                break;
+            }
+        }
+    }
+
     private Cvtar InitializedAsync(CancellationToken ct)
     {
         return Refresh(ct);
@@ -81,7 +78,10 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     {
         return Result.AwaitableSuccess.IfSuccessTryFinallyAsync(
             () => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsSelectorItems(true), ct)
-               .IfSuccessAsync(_ => this.PostUiBackground(() => toDoCache.SetIgnoreItemsUi(ignoreItems.Select(x => x.Id)), ct), ct)
+               .IfSuccessAsync(
+                    _ => this.PostUiBackground(() => toDoCache.SetIgnoreItemsUi(ignoreItems.Select(x => x.Id)), ct),
+                    ct
+                )
                .IfSuccessAsync(
                     () =>
                     {
@@ -108,7 +108,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
                 {
                     IsBusy = false;
 
-                     return Result.Success;
+                    return Result.Success;
                 },
                 ct
             ),

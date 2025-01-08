@@ -27,15 +27,6 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-
-        PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(IsMulti))
-            {
-                UpdateCommands();
-                ToDoSubItemsViewModel.List.IsMulti = IsMulti;
-            }
-        };
     }
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
@@ -104,6 +95,17 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                 ),
                 ct
             );
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(IsMulti))
+        {
+            UpdateCommands();
+            ToDoSubItemsViewModel.List.IsMulti = IsMulti;
+        }
     }
 
     private async ValueTask<Result> RefreshCore()

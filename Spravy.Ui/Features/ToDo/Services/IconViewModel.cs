@@ -14,7 +14,6 @@ public abstract partial class IconViewModel : ViewModelBase, IStateHolder
     public IconViewModel(IObjectStorage objectStorage)
     {
         this.objectStorage = objectStorage;
-        PropertyChanged += OnPropertyChanged;
     }
 
     public AvaloniaList<string> FavoriteIcons { get; } = new();
@@ -50,8 +49,10 @@ public abstract partial class IconViewModel : ViewModelBase, IStateHolder
         );
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
+        base.OnPropertyChanged(e);
+
         if (e.PropertyName == nameof(Icon))
         {
             if (firstIconChanged)

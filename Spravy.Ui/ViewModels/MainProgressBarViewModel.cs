@@ -11,13 +11,10 @@ public partial class MainProgressBarViewModel : ViewModelBase
     [ObservableProperty]
     private double value;
 
-    public MainProgressBarViewModel()
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        PropertyChanged += OnPropertyChanged;
-    }
+        base.OnPropertyChanged(e);
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
         if (e.PropertyName == nameof(Value))
         {
             IsIndeterminate = Math.Abs(Value) < 0.1;
