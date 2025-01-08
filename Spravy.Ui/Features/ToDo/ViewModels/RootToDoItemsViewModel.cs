@@ -59,12 +59,25 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
            .IfSuccess(items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct))
            .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
            .IfSuccessAsync(
-                _ => this.PostUiBackground(
-                    () => toDoCache.GetRootItems().IfSuccess(items => ToDoSubItemsViewModel.SetItemsUi(items)),
-                    ct
-                ),
+                response => this.PostUiBackground(
+                        () => toDoCache.GetRootItems().IfSuccess(items => ToDoSubItemsViewModel.SetItemsUi(items)),
+                        ct
+                    )
+                   .IfSuccessAsync(
+                        () =>
+                        {
+                            var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
+
+                            return toDoUiService.GetRequest(
+                                GetToDo.WithDefaultItems.SetItems(ids).SetParentItems(ids),
+                                ct
+                            );
+                        },
+                        ct
+                    ),
                 ct
-            );
+            )
+           .ToResultOnlyAsync();
     }
 
     public override Result Stop()
