@@ -66,10 +66,11 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                    .IfSuccessAsync(
                         () =>
                         {
+                            
                             var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
 
                             return toDoUiService.GetRequest(
-                                GetToDo.WithDefaultItems.SetItems(ids).SetParentItems(ids),
+                                GetToDo.WithDefaultItems.SetParentItems(ids),
                                 ct
                             );
                         },

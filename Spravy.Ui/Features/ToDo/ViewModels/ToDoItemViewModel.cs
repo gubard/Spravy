@@ -99,14 +99,20 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
            .IfSuccessAsync(
                 () =>
                 {
+                    var pathIds = Item.Path
+                       .OfType<ToDoItemEntityNotify>()
+                       .Select(x => x.Id)
+                       .ToArray()
+                       .ToReadOnlyMemory();
+
                     var ids = Item.Children
                        .Select(x => x.Id)
                        .ToArray()
                        .ToReadOnlyMemory()
-                       .Combine(Item.Path.OfType<ToDoItemEntityNotify>().Select(x => x.Id).ToArray());
+                       .Combine(pathIds);
 
                     return toDoUiService.GetRequest(
-                        GetToDo.WithDefaultItems.SetItems(ids).SetParentItems(ids),
+                        GetToDo.WithDefaultItems.SetItems(pathIds).SetParentItems(ids),
                         ct
                     );
                 },
