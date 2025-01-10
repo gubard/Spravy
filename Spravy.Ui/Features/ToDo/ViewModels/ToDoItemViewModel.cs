@@ -85,11 +85,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
                 ct
             )
            .IfSuccessAsync(
-                _ => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()), ct),
-                ct
-            )
-           .IfSuccessAsync(
-                () => this.PostUiBackground(
+                _ => this.PostUiBackground(
                     () =>
                     {
                         UpdateCommandsUi();

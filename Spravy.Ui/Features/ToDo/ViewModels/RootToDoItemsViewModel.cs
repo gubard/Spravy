@@ -27,6 +27,12 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
+
+        toDoCache.GetRootItems()
+           .IfSuccess(
+                items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), CancellationToken.None)
+            )
+           .ThrowIfError();
     }
 
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
@@ -55,30 +61,29 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoCache.GetRootItems()
-           .IfSuccess(items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct))
-           .IfSuccessAsync(() => ToDoSubItemsViewModel.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
-           .IfSuccessAsync(
-                response => this.PostUiBackground(
-                        () => toDoCache.GetRootItems().IfSuccess(items => ToDoSubItemsViewModel.SetItemsUi(items)),
-                        ct
-                    )
-                   .IfSuccessAsync(
-                        () =>
-                        {
-                            var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
+        return
+            ToDoSubItemsViewModel.RefreshAsync(ct)
+               .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
+               .IfSuccessAsync(
+                    response => this.PostUiBackground(
+                            () => toDoCache.GetRootItems().IfSuccess(items => ToDoSubItemsViewModel.SetItemsUi(items)),
+                            ct
+                        )
+                       .IfSuccessAsync(
+                            () =>
+                            {
+                                var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
 
-                            return toDoUiService.GetRequest(
-                                GetToDo.WithDefaultItems.SetParentItems(ids).SetChildrenItems(ids),
-                                ct
-                            );
-                        },
-                        ct
-                    ),
-                ct
-            )
-           .ToResultOnlyAsync();
+                                return toDoUiService.GetRequest(
+                                    GetToDo.WithDefaultItems.SetParentItems(ids).SetChildrenItems(ids),
+                                    ct
+                                );
+                            },
+                            ct
+                        ),
+                    ct
+                )
+               .ToResultOnlyAsync();
     }
 
     public override Result Stop()
