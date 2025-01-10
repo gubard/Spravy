@@ -87,11 +87,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
            .IfSuccessAsync(
                 _ => this.PostUiBackground(
                     () =>
-                    {
-                        UpdateCommandsUi();
-
-                        return Result.Success;
-                    },
+                        ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()).IfSuccess(UpdateCommandsUi),
                     ct
                 ),
                 ct
@@ -151,15 +147,8 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
             );
     }
 
-    private void UpdateCommandsUi()
+    private Result UpdateCommandsUi()
     {
-        if (IsMulti)
-        {
-            Commands.UpdateUi(UiHelper.ToDoItemCommands);
-        }
-        else
-        {
-            Commands.UpdateUi(Item.Commands);
-        }
+        return IsMulti ? Commands.UpdateUi(UiHelper.ToDoItemCommands) : Commands.UpdateUi(Item.Commands);
     }
 }
