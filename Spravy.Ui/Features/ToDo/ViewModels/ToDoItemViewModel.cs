@@ -73,11 +73,15 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.GetRequest(
-                GetToDo.WithDefaultItems
-                   .SetParentItem(Item.Id)
-                   .SetChildrenItem(Item.Id)
-                   .SetItem(Item.Id),
+        return ToDoSubItemsViewModel.RefreshAsync(ct)
+           .IfSuccessAsync(
+                () => toDoUiService.GetRequest(
+                    GetToDo.WithDefaultItems
+                       .SetParentItem(Item.Id)
+                       .SetChildrenItem(Item.Id)
+                       .SetItem(Item.Id),
+                    ct
+                ),
                 ct
             )
            .IfSuccessAsync(

@@ -2,6 +2,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 {
+    private bool isSubscribe;
     private readonly IToDoCache toDoCache;
     private readonly IToDoUiService toDoUiService;
 
@@ -21,6 +22,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
             );
 
         toDoUiService.Requested += Requested;
+        isSubscribe = true;
     }
 
     public MultiToDoItemsViewModel List { get; }
@@ -42,8 +44,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     public Cvtar RefreshAsync(CancellationToken ct)
     {
-        toDoUiService.Requested -= Requested;
-        toDoUiService.Requested += Requested;
+        if (!isSubscribe)
+        {
+            toDoUiService.Requested += Requested;
+            isSubscribe = true;
+        }
 
         return Result.AwaitableSuccess;
     }
@@ -51,6 +56,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
     public Result Stop()
     {
         toDoUiService.Requested -= Requested;
+        isSubscribe = false;
 
         return Result.Success;
     }
@@ -69,6 +75,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
 
     private Cvtar Requested(ToDoResponse response)
     {
+        if (!response.FavoriteItems.IsResponse)
+        {
+            return Result.AwaitableSuccess;
+        }
+
         return response.FavoriteItems
            .Items
            .Select(x => x.Item.Id)

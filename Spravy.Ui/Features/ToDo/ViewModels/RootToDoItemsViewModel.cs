@@ -57,6 +57,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     {
         return toDoCache.GetRootItems()
            .IfSuccess(items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct))
+           .IfSuccessAsync(() => ToDoSubItemsViewModel.RefreshAsync(ct), ct)
            .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
            .IfSuccessAsync(
                 response => this.PostUiBackground(
@@ -66,7 +67,6 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                    .IfSuccessAsync(
                         () =>
                         {
-                            
                             var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
 
                             return toDoUiService.GetRequest(
