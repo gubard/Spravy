@@ -1,6 +1,6 @@
 namespace Spravy.Client.Enums;
 
-public enum ChannelCredentialType
+public enum ChannelCredentialType : byte
 {
     SecureSsl,
     Insecure,

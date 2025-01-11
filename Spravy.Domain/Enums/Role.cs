@@ -1,6 +1,6 @@
 namespace Spravy.Domain.Enums;
 
-public enum Role
+public enum Role : byte
 {
     User,
     Service,

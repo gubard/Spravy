@@ -1,6 +1,6 @@
 ﻿namespace _build.Enums;
 
-public enum BuildType
+public enum BuildType : byte
 {
     Publish,
     Test,

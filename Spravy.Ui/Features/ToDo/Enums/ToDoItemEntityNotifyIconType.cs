@@ -1,6 +1,6 @@
 ﻿namespace Spravy.Ui.Features.ToDo.Enums;
 
-public enum ToDoItemEntityNotifyIconType
+public enum ToDoItemEntityNotifyIconType : byte
 {
     Empty,
     Checked,

@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Enums;
 
-public enum UserIdentifierType
+public enum UserIdentifierType : byte
 {
     Email,
     Login,

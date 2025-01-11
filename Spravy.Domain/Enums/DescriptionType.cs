@@ -1,6 +1,6 @@
 namespace Spravy.Domain.Enums;
 
-public enum DescriptionType
+public enum DescriptionType : byte
 {
     PlainText,
     Markdown,

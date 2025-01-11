@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Enums;
 
-public enum ViewModelSortBy
+public enum ViewModelSortBy : byte
 {
     OrderIndex,
     LoadedIndex,

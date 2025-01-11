@@ -1,6 +1,6 @@
 ﻿namespace Spravy.Client.Enums;
 
-public enum GrpcChannelType
+public enum GrpcChannelType : byte
 {
     Default,
     GrpcWeb,

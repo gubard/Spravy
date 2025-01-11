@@ -1,6 +1,6 @@
 namespace Spravy.Domain.Enums;
 
-public enum Os
+public enum Os : byte
 {
     Android,
     Browser,

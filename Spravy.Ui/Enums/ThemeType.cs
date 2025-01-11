@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Enums;
 
-public enum ThemeType
+public enum ThemeType : byte
 {
     Default,
     Light,

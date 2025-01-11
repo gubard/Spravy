@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Enums;
 
-public enum MaterialDesignSizeType
+public enum MaterialDesignSizeType : byte
 {
     ExtraSmall,
     Small,

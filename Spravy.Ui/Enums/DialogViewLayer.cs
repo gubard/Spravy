@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Enums;
 
-public enum DialogViewLayer
+public enum DialogViewLayer : byte
 {
     Error,
     Progress,
