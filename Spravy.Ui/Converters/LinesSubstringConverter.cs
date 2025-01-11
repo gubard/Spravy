@@ -14,8 +14,7 @@ public class LinesSubstringConverter : IValueConverter
         return string.Join(
             Environment.NewLine,
             str.Split(
-                    '\r',
-                    '\n'
+                    ["\r\n","\n",], StringSplitOptions.None
                 )
                .Take(MaxLines)
         );
