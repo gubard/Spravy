@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace Spravy.Ui.Services;
 
 public class ErrorHandler : IErrorHandler
@@ -31,6 +33,7 @@ public class ErrorHandler : IErrorHandler
         }
 
         var viewFactory = serviceFactory.CreateService<IViewFactory>();
+        Log.Logger.Error("Error handler errors: {Errors}", errors);
 
         return dialogViewer.ShowInfoDialogAsync(
             viewFactory,
@@ -66,6 +69,7 @@ public class ErrorHandler : IErrorHandler
         }
 
         var viewFactory = serviceFactory.CreateService<IViewFactory>();
+        Log.Logger.Error(exception, "Error handler exception");
 
         return dialogViewer.ShowInfoDialogAsync(
             viewFactory,

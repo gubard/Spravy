@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.MaterialDesign;
+using Serilog;
 using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Desktop.Modules;
@@ -13,7 +14,18 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+        try
+        {
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Fatal(e, "Application terminated unexpectedly");
+
+            throw;
+        }
     }
 
     public static AppBuilder BuildAvaloniaApp()

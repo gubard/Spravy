@@ -1,6 +1,7 @@
 ﻿using Avalonia.Android;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.MaterialDesign;
+using Serilog;
 using Spravy.Ui.Android.Modules;
 
 namespace Spravy.Ui.Android;
@@ -19,6 +20,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     static MainActivity()
     {
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
         IconProvider.Current.Register<MaterialDesignIconProvider>();
     }
 
