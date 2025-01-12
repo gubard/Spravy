@@ -12,6 +12,22 @@
         <File Id="libHarfBuzzSharp.dll" Source="libHarfBuzzSharp.dll"/>
         <File Id="libSkiaSharp.dll" Source="libSkiaSharp.dll"/>
 
+        <StandardDirectory Id="ProgramMenuFolder">
+            <Directory Id="ApplicationProgramsFolder" Name="Spravy"/>
+        </StandardDirectory>
+
+        <DirectoryRef Id="ApplicationProgramsFolder">
+            <Component Id="ApplicationShortcut">
+                <Shortcut Id="ApplicationStartMenuShortcut"
+                          Name="Spravy"
+                          Description="Spravy Application "
+                          Target="Spravy.Ui.Desktop.exe"
+                          WorkingDirectory="INSTALLFOLDER"/>
+                <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+                <RegistryValue Root="HKCU" Key="Software\SerhiiMaksymovFOP\Spravy" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+        </DirectoryRef>
+
         <Component Id="Spravy.Ui.Desktop.exe">
             <File Id="Spravy.Ui.Desktop.exe" Source="Spravy.Ui.Desktop.exe" KeyPath="yes"/>
             <!-- Define a desktop shortcut -->
