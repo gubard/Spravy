@@ -10,7 +10,7 @@
     <ScrollViewer Classes="vertical">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Classes="alignment-left" Text="{DynamicResource ToDoItemSettingsView.Settings}" />
+                <TextBlock Classes="alignment-left" Text="{DynamicResource Lang.Settings}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
