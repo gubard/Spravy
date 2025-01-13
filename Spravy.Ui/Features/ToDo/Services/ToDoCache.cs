@@ -232,16 +232,6 @@ public class ToDoCache : IToDoCache
         return cache.Values.Where(x => x.IsFavorite).OrderBy(x => x.OrderIndex).ToArray().ToReadOnlyMemory().ToResult();
     }
 
-    public Result SetFavoriteItems(ReadOnlyMemory<Guid> ids)
-    {
-        foreach (var item in cache)
-        {
-            item.Value.IsFavorite = ids.Contains(item.Key);
-        }
-        
-        return Result.Success;
-    }
-
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoShortItem shortItem)
     {
         return GetToDoItem(shortItem.Id)

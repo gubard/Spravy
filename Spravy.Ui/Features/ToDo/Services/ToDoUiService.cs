@@ -62,9 +62,7 @@ public class ToDoUiService : IToDoUiService
                         ? response.FavoriteItems
                            .Items
                            .IfSuccessForEach(toDoCache.UpdateUi)
-                           .IfSuccess(
-                                _ => toDoCache.SetFavoriteItems(response.FavoriteItems.Items.Select(x => x.Item.Id))
-                            )
+                           .ToResultOnly()
                         : Result.Success
                 )
                .IfSuccess(() => response.LeafItems.IfSuccessForEach(x => x.Leafs.IfSuccessForEach(toDoCache.UpdateUi)))
