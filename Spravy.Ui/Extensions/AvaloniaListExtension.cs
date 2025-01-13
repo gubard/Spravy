@@ -18,10 +18,12 @@ public static class AvaloniaListExtension
         return Result.Success;
     }
 
-    public static void UpdateUi<T>(this AvaloniaList<T> list, IEnumerable<T> items)
+    public static Result UpdateUi<T>(this AvaloniaList<T> list, IEnumerable<T> items)
     {
         list.Clear();
         list.AddRange(items);
+
+        return Result.Success;
     }
 
     public static Result UpdateUi<T>(this AvaloniaList<T> list, ReadOnlyMemory<T> items)

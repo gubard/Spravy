@@ -17,7 +17,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         orderIndex = uint.MaxValue;
         isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;
-        Commands = new();
+        commands = [];
         Children = new();
         WeeklyDays = new();
         MonthlyDays = new();
@@ -28,7 +28,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     }
 
     public Guid Id { get; }
-    public AvaloniaList<SpravyCommandNotify> Commands { get; }
+    public IEnumerable<SpravyCommandNotify> Commands => commands;
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
@@ -246,6 +246,8 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
+    private SpravyCommandNotify[] commands;
+
     [ObservableProperty]
     private ToDoItemEntityNotify? active;
 
@@ -341,45 +343,51 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     private Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {
-        var commands = new List<SpravyCommandNotify>();
-
-        commands.AddRange(
-            [
-                spravyCommandNotifyService.AddChild,
-                spravyCommandNotifyService.ShowSetting,
-                spravyCommandNotifyService.Delete,
-                spravyCommandNotifyService.OpenLeaf,
-                spravyCommandNotifyService.ChangeParent,
-                spravyCommandNotifyService.CopyToClipboard,
-                spravyCommandNotifyService.RandomizeChildrenOrder,
-                spravyCommandNotifyService.ChangeOrder,
-                spravyCommandNotifyService.Reset,
-                spravyCommandNotifyService.Clone,
-                spravyCommandNotifyService.CreateReference,
-                spravyCommandNotifyService.CreateTimer,
-            ]
-        );
-
-        commands.Add(
-            IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark : spravyCommandNotifyService.AddToBookmark
-        );
+        var length = 14;
+        var currentIndex = 14;
 
         if (!Link.IsNullOrWhiteSpace())
         {
-            commands.Add(spravyCommandNotifyService.OpenLink);
+            length++;
         }
-
-        commands.Add(
-            IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite : spravyCommandNotifyService.AddToFavorite
-        );
 
         if (IsCan != ToDoItemIsCan.None)
         {
-            commands.Add(spravyCommandNotifyService.Complete);
+            length++;
         }
 
-        Commands.Clear();
-        Commands.AddRange(commands);
+        commands = new SpravyCommandNotify[length];
+        commands[0] = spravyCommandNotifyService.AddChild;
+        commands[1] = spravyCommandNotifyService.ShowSetting;
+        commands[2] = spravyCommandNotifyService.Delete;
+        commands[3] = spravyCommandNotifyService.OpenLeaf;
+        commands[4] = spravyCommandNotifyService.ChangeParent;
+        commands[5] = spravyCommandNotifyService.CopyToClipboard;
+        commands[6] = spravyCommandNotifyService.RandomizeChildrenOrder;
+        commands[7] = spravyCommandNotifyService.ChangeOrder;
+        commands[8] = spravyCommandNotifyService.Reset;
+        commands[9] = spravyCommandNotifyService.Clone;
+        commands[10] = spravyCommandNotifyService.CreateReference;
+        commands[11] = spravyCommandNotifyService.CreateTimer;
+
+        commands[12] = IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark
+            : spravyCommandNotifyService.AddToBookmark;
+
+        commands[13] = IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite
+            : spravyCommandNotifyService.AddToFavorite;
+
+        if (!Link.IsNullOrWhiteSpace())
+        {
+            commands[currentIndex] = spravyCommandNotifyService.OpenLink;
+            currentIndex++;
+        }
+
+        if (IsCan != ToDoItemIsCan.None)
+        {
+            commands[currentIndex] = spravyCommandNotifyService.Complete;
+        }
+
+        OnPropertyChanged(nameof(Commands));
 
         return this.ToResult();
     }
