@@ -7,12 +7,20 @@ public class PaneViewModel : ViewModelBase, IBookmarksToDoItemsView
         Account = account;
         Bookmarks = new();
 
-        toDoUiService.Requested += response => response.BookmarkItems
-           .Items
-           .Select(x => x.Id)
-           .IfSuccessForEach(toDoCache.GetToDoItem)
-           .IfSuccess(items => this.PostUiBackground(() => SetBookmarksUi(items), CancellationToken.None))
-           .GetAwaitable();
+        toDoUiService.Requested += response =>
+        {
+            if (!response.BookmarkItems.IsResponse)
+            {
+                return Result.AwaitableSuccess;
+            }
+
+            return response.BookmarkItems
+               .Items
+               .Select(x => x.Id)
+               .IfSuccessForEach(toDoCache.GetToDoItem)
+               .IfSuccess(items => this.PostUiBackground(() => SetBookmarksUi(items), CancellationToken.None))
+               .GetAwaitable();
+        };
     }
 
     public AccountNotify Account { get; }

@@ -108,7 +108,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IRemove, IToD
                        .Combine(pathIds);
 
                     return toDoUiService.GetRequest(
-                        GetToDo.WithDefaultItems.SetItems(pathIds).SetParentItems(ids).SetChildrenItems(ids),
+                        GetToDo.Default.SetItems(pathIds).SetParentItems(ids).SetChildrenItems(ids),
                         ct
                     );
                 },

@@ -75,7 +75,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
                                 var ids = response.RootItems.Items.Select(x => x.Item.Id).ToArray();
 
                                 return toDoUiService.GetRequest(
-                                    GetToDo.WithDefaultItems.SetParentItems(ids).SetChildrenItems(ids),
+                                    GetToDo.Default.SetParentItems(ids).SetChildrenItems(ids),
                                     ct
                                 );
                             },

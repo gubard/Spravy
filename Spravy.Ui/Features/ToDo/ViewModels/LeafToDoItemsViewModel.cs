@@ -109,7 +109,15 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x)),
                 ct
             )
-           .IfSuccessAsync(items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct), ct);
+           .IfSuccessAsync(
+                items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
+                   .IfSuccessAsync(
+                        () => toDoUiService.GetRequest(GetToDo.Default.SetParentItems(items.Select(x => x.Id)), ct),
+                        ct
+                    ),
+                ct
+            )
+           .ToResultOnlyAsync();
     }
 
     private ReadOnlyMemory<Guid> GetIds()

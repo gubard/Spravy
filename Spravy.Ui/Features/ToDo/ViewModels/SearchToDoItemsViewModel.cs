@@ -66,11 +66,20 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
                    .Items
                    .Select(x => x.Item.Id)
                    .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
-                   .IfSuccess(
+                   .IfSuccessAsync(
                         items => this.PostUiBackground(() => ToDoSubItemsViewModel.SetItemsUi(items), ct)
+                           .IfSuccessAsync(
+                                () => toDoUiService.GetRequest(
+                                    GetToDo.Default.SetParentItems(items.Select(x => x.Id)),
+                                    ct
+                                ),
+                                ct
+                            ),
+                        ct
                     ),
                 ct
-            );
+            )
+           .ToResultOnlyAsync();
     }
 
     public override Result Stop()
