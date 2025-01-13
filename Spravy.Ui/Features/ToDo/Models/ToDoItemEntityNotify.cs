@@ -5,104 +5,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     IObjectParameters,
     IToDoItemEditId
 {
-    private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
-    private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
-
-    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
-
-    [ObservableProperty]
-    private ToDoItemEntityNotify? active;
-
-    [ObservableProperty]
-    private ToDoItemChildrenType childrenType;
-
-    [ObservableProperty]
-    private Color color;
-
-    [ObservableProperty]
-    private ushort daysOffset;
-
-    [ObservableProperty]
-    private string description;
-
-    [ObservableProperty]
-    private DescriptionType descriptionType;
-
-    [ObservableProperty]
-    private DateOnly dueDate;
-
-    [ObservableProperty]
-    private string icon;
-
-    [ObservableProperty]
-    private bool isBookmark;
-
-    [ObservableProperty]
-    private ToDoItemIsCan isCan;
-
-    [ObservableProperty]
-    private bool isExpanded;
-
-    [ObservableProperty]
-    private bool isFavorite;
-
-    [ObservableProperty]
-    private bool isIgnore;
-
-    [ObservableProperty]
-    private bool isRequiredCompleteInDueDate;
-
-    [ObservableProperty]
-    private bool isSelected;
-
-    [ObservableProperty]
-    private string link;
-
-    [ObservableProperty]
-    private ushort loadedIndex;
-
-    [ObservableProperty]
-    private ushort monthsOffset;
-
-    [ObservableProperty]
-    private string name;
-
-    [ObservableProperty]
-    private uint orderIndex;
-
-    [ObservableProperty]
-    private ToDoItemEntityNotify? parent;
-
-    [ObservableProperty]
-    private object[] path;
-
-    [ObservableProperty]
-    private ToDoItemEntityNotify? reference;
-
-    [ObservableProperty]
-    private uint remindDaysBefore;
-
-    [ObservableProperty]
-    private ToDoItemStatus status;
-
-    [ObservableProperty]
-    private ToDoItemType type;
-
-    [ObservableProperty]
-    private TypeOfPeriodicity typeOfPeriodicity;
-
-    [ObservableProperty]
-    private ushort weeksOffset;
-
-    [ObservableProperty]
-    private ushort yearsOffset;
-
-    [ObservableProperty]
-    private bool isUpdated;
-
-    [ObservableProperty]
-    private bool isExpandDescription;
-
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
     {
         this.spravyCommandNotifyService = spravyCommandNotifyService;
@@ -288,51 +190,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         return Id.GetHashCode();
     }
 
-    public Result<ToDoItemEntityNotify> UpdateCommandsUi()
-    {
-        var commands = new List<SpravyCommandNotify>();
-
-        commands.AddRange(
-            [
-                spravyCommandNotifyService.AddChild,
-                spravyCommandNotifyService.ShowSetting,
-                spravyCommandNotifyService.Delete,
-                spravyCommandNotifyService.OpenLeaf,
-                spravyCommandNotifyService.ChangeParent,
-                spravyCommandNotifyService.CopyToClipboard,
-                spravyCommandNotifyService.RandomizeChildrenOrder,
-                spravyCommandNotifyService.ChangeOrder,
-                spravyCommandNotifyService.Reset,
-                spravyCommandNotifyService.Clone,
-                spravyCommandNotifyService.CreateReference,
-                spravyCommandNotifyService.CreateTimer,
-            ]
-        );
-
-        commands.Add(
-            IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark : spravyCommandNotifyService.AddToBookmark
-        );
-
-        if (!Link.IsNullOrWhiteSpace())
-        {
-            commands.Add(spravyCommandNotifyService.OpenLink);
-        }
-
-        commands.Add(
-            IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite : spravyCommandNotifyService.AddToFavorite
-        );
-
-        if (IsCan != ToDoItemIsCan.None)
-        {
-            commands.Add(spravyCommandNotifyService.Complete);
-        }
-
-        Commands.Clear();
-        Commands.AddRange(commands);
-
-        return this.ToResult();
-    }
-
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
@@ -382,5 +239,148 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
                 break;
         }
+    }
+
+    private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
+    private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
+
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? active;
+
+    [ObservableProperty]
+    private ToDoItemChildrenType childrenType;
+
+    [ObservableProperty]
+    private Color color;
+
+    [ObservableProperty]
+    private ushort daysOffset;
+
+    [ObservableProperty]
+    private string description;
+
+    [ObservableProperty]
+    private DescriptionType descriptionType;
+
+    [ObservableProperty]
+    private DateOnly dueDate;
+
+    [ObservableProperty]
+    private string icon;
+
+    [ObservableProperty]
+    private bool isBookmark;
+
+    [ObservableProperty]
+    private ToDoItemIsCan isCan;
+
+    [ObservableProperty]
+    private bool isExpanded;
+
+    [ObservableProperty]
+    private bool isFavorite;
+
+    [ObservableProperty]
+    private bool isIgnore;
+
+    [ObservableProperty]
+    private bool isRequiredCompleteInDueDate;
+
+    [ObservableProperty]
+    private bool isSelected;
+
+    [ObservableProperty]
+    private string link;
+
+    [ObservableProperty]
+    private ushort loadedIndex;
+
+    [ObservableProperty]
+    private ushort monthsOffset;
+
+    [ObservableProperty]
+    private string name;
+
+    [ObservableProperty]
+    private uint orderIndex;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? parent;
+
+    [ObservableProperty]
+    private object[] path;
+
+    [ObservableProperty]
+    private ToDoItemEntityNotify? reference;
+
+    [ObservableProperty]
+    private uint remindDaysBefore;
+
+    [ObservableProperty]
+    private ToDoItemStatus status;
+
+    [ObservableProperty]
+    private ToDoItemType type;
+
+    [ObservableProperty]
+    private TypeOfPeriodicity typeOfPeriodicity;
+
+    [ObservableProperty]
+    private ushort weeksOffset;
+
+    [ObservableProperty]
+    private ushort yearsOffset;
+
+    [ObservableProperty]
+    private bool isUpdated;
+
+    [ObservableProperty]
+    private bool isExpandDescription;
+
+    private Result<ToDoItemEntityNotify> UpdateCommandsUi()
+    {
+        var commands = new List<SpravyCommandNotify>();
+
+        commands.AddRange(
+            [
+                spravyCommandNotifyService.AddChild,
+                spravyCommandNotifyService.ShowSetting,
+                spravyCommandNotifyService.Delete,
+                spravyCommandNotifyService.OpenLeaf,
+                spravyCommandNotifyService.ChangeParent,
+                spravyCommandNotifyService.CopyToClipboard,
+                spravyCommandNotifyService.RandomizeChildrenOrder,
+                spravyCommandNotifyService.ChangeOrder,
+                spravyCommandNotifyService.Reset,
+                spravyCommandNotifyService.Clone,
+                spravyCommandNotifyService.CreateReference,
+                spravyCommandNotifyService.CreateTimer,
+            ]
+        );
+
+        commands.Add(
+            IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark : spravyCommandNotifyService.AddToBookmark
+        );
+
+        if (!Link.IsNullOrWhiteSpace())
+        {
+            commands.Add(spravyCommandNotifyService.OpenLink);
+        }
+
+        commands.Add(
+            IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite : spravyCommandNotifyService.AddToFavorite
+        );
+
+        if (IsCan != ToDoItemIsCan.None)
+        {
+            commands.Add(spravyCommandNotifyService.Complete);
+        }
+
+        Commands.Clear();
+        Commands.AddRange(commands);
+
+        return this.ToResult();
     }
 }
