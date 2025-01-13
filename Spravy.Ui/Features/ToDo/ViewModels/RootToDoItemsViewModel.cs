@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove, IToDoItemEditId
+public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
 {
     private readonly IObjectStorage objectStorage;
     private readonly TaskWork refreshWork;
@@ -38,11 +38,6 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IRemove,
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public override string ViewId => TypeCache<RootToDoItemsViewModel>.Name;
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
-    }
 
     public Result<ToDoItemEditId> GetToDoItemEditId()
     {

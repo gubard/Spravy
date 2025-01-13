@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameters, IToDoItemEditId, IRemove
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameters, IToDoItemEditId
 {
     private static readonly ReadOnlyMemory<char> headerParameterName = nameof(Header).AsMemory();
     private readonly IObjectStorage objectStorage;
@@ -68,11 +68,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IObjectParameter
     public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
     {
         return new(new NotImplementedError(nameof(SetParameter)));
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return ToDoSubItemsViewModel.RemoveUi(items);
     }
 
     public Result<ToDoItemEditId> GetToDoItemEditId()

@@ -151,37 +151,29 @@ public class SpravyCommandService
                         {
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
 
-                            return uiApplicationService.GetCurrentView<IRemove>()
-                               .IfSuccess(
-                                    remove => this.PostUiBackground(
-                                        () => editId.ResultItems
-                                           .ToResult()
-                                           .IfSuccessForEach(
-                                                item =>
+                            return this.PostUiBackground(
+                                    () => editId.ResultItems
+                                       .ToResult()
+                                       .IfSuccessForEach(
+                                            item =>
+                                            {
+                                                switch (item.IsCan)
                                                 {
-                                                    switch (item.IsCan)
+                                                    case ToDoItemIsCan.None:
+                                                        return Result.Success;
+                                                    case ToDoItemIsCan.CanComplete:
+                                                    case ToDoItemIsCan.CanIncomplete:
                                                     {
-                                                        case ToDoItemIsCan.None:
-                                                            return Result.Success;
-                                                        case ToDoItemIsCan.CanComplete:
-                                                        case ToDoItemIsCan.CanIncomplete:
-                                                        {
-                                                            item.IsUpdated = false;
+                                                        item.IsUpdated = false;
 
-                                                            return remove.RemoveUi(
-                                                                new[]
-                                                                {
-                                                                    item,
-                                                                }
-                                                            );
-                                                        }
-                                                        default:
-                                                            return new(new ToDoItemIsCanOutOfRangeError(item.IsCan));
+                                                        return Result.Success;
                                                     }
+                                                    default:
+                                                        return new(new ToDoItemIsCanOutOfRangeError(item.IsCan));
                                                 }
-                                            ),
-                                        CancellationToken.None
-                                    )
+                                            }
+                                        ),
+                                    CancellationToken.None
                                 )
                                .IfSuccessAsync(
                                     () => toDoService.SwitchCompleteAsync(
