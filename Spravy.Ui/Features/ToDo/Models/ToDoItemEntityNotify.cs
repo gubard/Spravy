@@ -122,6 +122,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         AnnuallyDays = new();
         color = Colors.Transparent;
         icon = string.Empty;
+        UpdateCommandsUi().ThrowIfError();
     }
 
     public Guid Id { get; }
