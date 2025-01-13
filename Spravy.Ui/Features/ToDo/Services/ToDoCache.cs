@@ -124,7 +124,7 @@ public class ToDoCache : IToDoCache
                         item.Parent = null;
                     }
 
-                    return item.UpdateCommandsUi();
+                    return item.ToResult();
                 }
             );
     }
@@ -316,7 +316,7 @@ public class ToDoCache : IToDoCache
                         item.Parent = null;
                     }
 
-                    return item.UpdateCommandsUi();
+                    return item.ToResult();
                 }
             );
     }

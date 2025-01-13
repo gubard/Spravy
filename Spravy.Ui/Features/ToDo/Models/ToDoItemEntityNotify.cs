@@ -289,9 +289,9 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     public Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {
-        Commands.Clear();
+        var commands = new List<SpravyCommandNotify>();
 
-        Commands.AddRange(
+        commands.AddRange(
             [
                 spravyCommandNotifyService.AddChild,
                 spravyCommandNotifyService.ShowSetting,
@@ -308,23 +308,26 @@ public partial class ToDoItemEntityNotify : NotifyBase,
             ]
         );
 
-        Commands.Add(
+        commands.Add(
             IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark : spravyCommandNotifyService.AddToBookmark
         );
 
         if (!Link.IsNullOrWhiteSpace())
         {
-            Commands.Add(spravyCommandNotifyService.OpenLink);
+            commands.Add(spravyCommandNotifyService.OpenLink);
         }
 
-        Commands.Add(
+        commands.Add(
             IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite : spravyCommandNotifyService.AddToFavorite
         );
 
         if (IsCan != ToDoItemIsCan.None)
         {
-            Commands.Add(spravyCommandNotifyService.Complete);
+            commands.Add(spravyCommandNotifyService.Complete);
         }
+
+        Commands.Clear();
+        Commands.AddRange(commands);
 
         return this.ToResult();
     }
@@ -332,9 +335,34 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        
+
         switch (e.PropertyName)
         {
+            case nameof(IsBookmark):
+            {
+                UpdateCommandsUi().ThrowIfError();
+
+                break;
+            }
+            case nameof(IsFavorite):
+            {
+                UpdateCommandsUi().ThrowIfError();
+
+                break;
+            }
+            case nameof(Link):
+            {
+                UpdateCommandsUi().ThrowIfError();
+
+                break;
+            }
+            case nameof(IsCan):
+            {
+                OnPropertyChanged(nameof(IconType));
+                UpdateCommandsUi().ThrowIfError();
+
+                break;
+            }
             case nameof(Reference):
                 OnPropertyChanged(nameof(CurrentId));
 
@@ -344,7 +372,6 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
                 break;
             case nameof(Type):
-            case nameof(IsCan):
             case nameof(Icon):
                 OnPropertyChanged(nameof(IconType));
 
