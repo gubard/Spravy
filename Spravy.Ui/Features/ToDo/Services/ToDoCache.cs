@@ -242,11 +242,6 @@ public class ToDoCache : IToDoCache
         return Result.Success;
     }
 
-    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetBookmarkItems()
-    {
-        return cache.Values.Where(x => x.IsBookmark).OrderBy(x => x.OrderIndex).ToArray().ToReadOnlyMemory().ToResult();
-    }
-
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoShortItem shortItem)
     {
         return GetToDoItem(shortItem.Id)

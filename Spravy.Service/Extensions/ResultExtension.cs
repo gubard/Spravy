@@ -44,14 +44,16 @@ public static class ResultExtension
         CancellationToken ct
     ) where TValue : notnull
     {
-        var result = await task;
+        var taskResult = await task;
 
-        if (!result.TryGetValue(out var rv))
+        if (!taskResult.TryGetValue(out var rv))
         {
-            throw await result.ToRpcExceptionAsync(serializer, ct);
+            throw await taskResult.ToRpcExceptionAsync(serializer, ct);
         }
 
-        return func.Invoke(rv);
+        var result = func.Invoke(rv);
+
+        return result;
     }
 
     public static async Task<TValue> HandleAsync<TValue>(

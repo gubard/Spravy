@@ -10,52 +10,61 @@ public static partial class ToDoMapper
     public static partial ResetToDoItemOptions ToResetToDoItemOptions(this ResetToDoItemOptionsGrpc value);
     public static partial ResetToDoItemOptionsGrpc ToResetToDoItemOptionsGrpc(this ResetToDoItemOptions value);
     public static partial GetToStringItemGrpc ToGetToStringItemGrpc(this GetToStringItem value);
-    public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(this IEnumerable<FullToDoItemGrpc> value);
-    public static partial EditPropertyDaysOfYearGrpc ToEditPropertyDaysOfYearGrpc(this EditPropertyValue<ReadOnlyMemory<DayOfYear>> value);
-    public static partial EditPropertyToDoItemTypeGrpc ToEditPropertyToDoItemTypeGrpc(this EditPropertyValue<ToDoItemType> value);
-    public static partial EditPropertyDescriptionTypeGrpc ToEditPropertyDescriptionTypeGrpc(this EditPropertyValue<DescriptionType> value);
+    public static partial EditPropertyDaysOfYearGrpc ToEditPropertyDaysOfYearGrpc(
+        this EditPropertyValue<ReadOnlyMemory<DayOfYear>> value
+    );
+    public static partial EditPropertyToDoItemTypeGrpc ToEditPropertyToDoItemTypeGrpc(
+        this EditPropertyValue<ToDoItemType> value
+    );
+    public static partial EditPropertyDescriptionTypeGrpc ToEditPropertyDescriptionTypeGrpc(
+        this EditPropertyValue<DescriptionType> value
+    );
     public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(this EditPropertyValue<ushort> value);
-    public static partial EditPropertyToDoItemChildrenTypeGrpc ToEditPropertyToDoItemChildrenTypeGrpc(this EditPropertyValue<ToDoItemChildrenType> value);
-    public static partial EditPropertyUInt32sGrpc ToEditPropertyUInt32sGrpc(this EditPropertyValue<ReadOnlyMemory<byte>> value);
+    public static partial EditPropertyToDoItemChildrenTypeGrpc ToEditPropertyToDoItemChildrenTypeGrpc(
+        this EditPropertyValue<ToDoItemChildrenType> value
+    );
+    public static partial EditPropertyUInt32sGrpc ToEditPropertyUInt32sGrpc(
+        this EditPropertyValue<ReadOnlyMemory<byte>> value
+    );
     public static partial EditPropertyBooleanGrpc ToEditPropertyBooleanGrpc(this EditPropertyValue<bool> value);
-    public static partial EditPropertyTypeOfPeriodicityGrpc ToEditPropertyTypeOfPeriodicityGrpc(this EditPropertyValue<TypeOfPeriodicity> value);
-    public static partial EditPropertyDaysOfWeekGrpc ToEditPropertyDaysOfWeekGrpc(this EditPropertyValue<ReadOnlyMemory<DayOfWeek>> value);
+    public static partial EditPropertyTypeOfPeriodicityGrpc ToEditPropertyTypeOfPeriodicityGrpc(
+        this EditPropertyValue<TypeOfPeriodicity> value
+    );
+    public static partial EditPropertyDaysOfWeekGrpc ToEditPropertyDaysOfWeekGrpc(
+        this EditPropertyValue<ReadOnlyMemory<DayOfWeek>> value
+    );
     public static partial EditPropertyUInt32Grpc ToEditPropertyUInt32Grpc(this EditPropertyValue<uint> value);
-    public static partial UpdateOrderIndexToDoItemOptionsGrpc ToUpdateOrderIndexToDoItemOptionsGrpc(this UpdateOrderIndexToDoItemOptions value);
-    public static partial UpdateOrderIndexToDoItemOptions ToUpdateOrderIndexToDoItemOptions(this UpdateOrderIndexToDoItemOptionsGrpc value);
+    public static partial UpdateOrderIndexToDoItemOptionsGrpc ToUpdateOrderIndexToDoItemOptionsGrpc(
+        this UpdateOrderIndexToDoItemOptions value
+    );
+    public static partial UpdateOrderIndexToDoItemOptions ToUpdateOrderIndexToDoItemOptions(
+        this UpdateOrderIndexToDoItemOptionsGrpc value
+    );
     public static partial DayOfYearGrpc ToDayOfYearGrpc(this DayOfYear value);
     public static partial DayOfYear ToDayOfYear(this DayOfYearGrpc value);
     public static partial ToDoItemTypeGrpc ToToDoItemTypeGrpc(this ToDoItemType value);
     public static partial ToDoItemType ToToDoItemType(this ToDoItemTypeGrpc value);
     public static partial ToDoItemIsCanGrpc ToToDoItemIsCanGrpc(this ToDoItemIsCan value);
     public static partial ToDoItemIsCan ToToDoItemIsCan(this ToDoItemIsCanGrpc value);
-    public static partial ToDoItemToStringOptionsGrpc ToToDoItemToStringOptionsGrpc(this ToDoItemToStringOptions value);
-    public static partial ToDoItemToStringOptions ToToDoItemToStringOptions(this ToDoItemToStringOptionsGrpc value);
     public static partial ToDoSelectorItemGrpc ToToDoSelectorItemGrpc(this ToDoSelectorItem value);
-    public static partial ReadOnlyMemory<ToDoSelectorItemGrpc> ToToDoSelectorItemGrpc(this ReadOnlyMemory<ToDoSelectorItem> value);
-    public static partial ToDoSelectorItem ToToDoSelectorItem(this ToDoSelectorItemGrpc value);
-    public static partial ReadOnlyMemory<ToDoSelectorItem> ToToDoSelectorItem(this RepeatedField<ToDoSelectorItemGrpc> value);
-    public static partial ReadOnlyMemory<FullToDoItem> ToFullToDoItem(this RepeatedField<FullToDoItemGrpc> value);
-    public static partial RepeatedField<FullToDoItemGrpc> ToFullToDoItemGrpc(this ReadOnlyMemory<FullToDoItem> value);
+  
     public static partial ToDoShortItem ToToDoShortItem(this ToDoShortItemGrpc value);
-    public static partial RepeatedField<GetToStringItemGrpc> ToGetToStringItemGrpc(this ReadOnlyMemory<GetToStringItem> value);
-    public static partial ReadOnlyMemory<GetToStringItem> ToGetToStringItem(this RepeatedField<GetToStringItemGrpc> value);
+    public static partial RepeatedField<GetToStringItemGrpc> ToGetToStringItemGrpc(
+        this ReadOnlyMemory<GetToStringItem> value
+    );
     public static partial ReadOnlyMemory<ToDoItemStatus> ToToDoItemStatus(this RepeatedField<ToDoItemStatusGrpc> value);
-    public static partial LeafItem ToLeafItem(this LeafItemGrpc value);
     public static partial LeafItemGrpc ToLeafItemGrpc(this LeafItem value);
-    public static partial ParentItem ToParentItem(this ParentItemGrpc value);
     public static partial ParentItemGrpc ToParentItemGrpc(this ParentItem value);
-    private static partial ReadOnlyMemory<Guid> ToGuid(RepeatedField<ByteString> value);
-    public static partial ToDoSelectorItemsResponse ToToDoSelectorItemsResponse(this ToDoSelectorItemsResponseGrpc value);
-    public static partial ToDoSelectorItemsResponseGrpc ToToDoSelectorItemsResponseGrpc(this ToDoSelectorItemsResponse value);
+    public static partial ToDoSelectorItemsResponse ToToDoSelectorItemsResponse(
+        this ToDoSelectorItemsResponseGrpc value
+    );
+    public static partial ToDoSelectorItemsResponseGrpc ToToDoSelectorItemsResponseGrpc(
+        this ToDoSelectorItemsResponse value
+    );
     public static partial ToDoFullItemsResponse ToToDoFullItemsResponse(this ToDoFullItemsResponseGrpc value);
     public static partial ToDoFullItemsResponseGrpc ToToDoFullItemsResponseGrpc(this ToDoFullItemsResponse value);
     public static partial ToStringItemGrpc ToToStringItemGrpc(this ToStringItem value);
-    public static partial ToStringItem ToToStringItem(this ToStringItemGrpc value);
     public static partial ActiveItemGrpc ToActiveItemGrpc(this ActiveItem value);
-    public static partial ActiveItem ToActiveItem(this ActiveItemGrpc value);
-    public static partial ReadOnlyMemory<ToStringItem> ToToStringItem(this RepeatedField<ToStringItemGrpc> value);
-    public static partial ReadOnlyMemory<ActiveItem> ToActiveItem(this RepeatedField<ActiveItemGrpc> value);
     public static partial GetReply ToGetReply(this ToDoResponse value);
     public static partial ToDoResponse ToToDoResponse(this GetReply value);
     public static partial ToDoShortItemsResponseGrpc ToToDoShortItemsResponseGrpc(this ToDoShortItemsResponse value);
@@ -88,18 +97,24 @@ public static partial class ToDoMapper
     {
         var target = new GetToDo(
             value.IsSelectorItems,
-            value.ToStringItems != null ? MapToGetToStringItemArray(value.ToStringItems) : throw new ArgumentNullException(nameof(value.ToStringItems)),
+            value.ToStringItems != null ? value.ToStringItems.Select(x => x.ToGetToStringItem()).ToArray()
+                : throw new ArgumentNullException(nameof(value.ToStringItems)),
             value.IsCurrentActiveItem,
-            value.ActiveItems != null ? MapToGuidArray(value.ActiveItems) : throw new ArgumentNullException(nameof(value.ActiveItems)),
+            value.ActiveItems != null ? value.ActiveItems.Select(x => x.ToGuid()).ToArray()
+                : throw new ArgumentNullException(nameof(value.ActiveItems)),
             value.IsFavoriteItems,
             value.IsBookmarkItems,
-            value.ChildrenItems != null ? MapToGuidArray(value.ChildrenItems) : throw new ArgumentNullException(nameof(value.ChildrenItems)),
-            value.LeafItems != null ? MapToGuidArray(value.LeafItems) : throw new ArgumentNullException(nameof(value.LeafItems)),
+            value.ChildrenItems != null ? value.ChildrenItems.Select(x => x.ToGuid()).ToArray()
+                : throw new ArgumentNullException(nameof(value.ChildrenItems)),
+            value.LeafItems != null ? value.LeafItems.Select(x => x.ToGuid()).ToArray()
+                : throw new ArgumentNullException(nameof(value.LeafItems)),
             value.SearchText ?? throw new ArgumentNullException(nameof(value.SearchText)),
-            value.ParentItems != null ? MapToGuidArray(value.ParentItems) : throw new ArgumentNullException(nameof(value.ParentItems)),
+            value.ParentItems != null ? value.ParentItems.Select(x => x.ToGuid()).ToArray()
+                : throw new ArgumentNullException(nameof(value.ParentItems)),
             value.IsTodayItems,
             value.IsRootItems,
-            value.Items != null ? MapToGuidArray(value.Items) : throw new ArgumentNullException(nameof(value.Items))
+            value.Items != null ? value.Items.Select(x => x.ToGuid()).ToArray()
+                : throw new ArgumentNullException(nameof(value.Items))
         );
 
         return target;
@@ -160,20 +175,17 @@ public static partial class ToDoMapper
         return (ToDoItemChildrenTypeGrpc)value;
     }
 
-    public static FullToDoItem ToFullToDoItem(this FullToDoItemGrpc value)
-    {
-        return new(value.Item.ToToDoShortItem(), value.Status.ToToDoItemStatus(), value.Active.ToOptionToDoShortItem(), value.IsCan.ToToDoItemIsCan());
-    }
-
     public static FullToDoItemGrpc ToFullToDoItemGrpc(this FullToDoItem value)
     {
-        return new()
+        var result = new FullToDoItemGrpc
         {
             Active = value.Active.ToToDoShortItemNullableGrpc(),
             Item = value.Item.ToToDoShortItemGrpc(),
             Status = value.Status.ToToDoItemStatusGrpc(),
             IsCan = value.IsCan.ToToDoItemIsCanGrpc(),
         };
+
+        return result;
     }
 
     public static ToDoShortItemGrpc ToToDoShortItemGrpc(this ToDoShortItem value)
@@ -443,24 +455,9 @@ public static partial class ToDoMapper
         return id.ToByteString();
     }
 
-    private static ByteString ToByteString(ReadOnlyMemory<byte> bytes)
-    {
-        return bytes.ToByteString();
-    }
-
     private static Guid ToGuid(ByteString byteString)
     {
         return byteString.ToGuid();
-    }
-
-    private static ByteString ToByteString(OptionStruct<Guid> id)
-    {
-        if (id.TryGetValue(out var value))
-        {
-            return value.ToByteString();
-        }
-
-        return ByteString.Empty;
     }
 
     private static OptionStruct<Guid> ToOptionGuid(ByteString byteString)
@@ -476,16 +473,6 @@ public static partial class ToDoMapper
     private static Option<Uri> ToOptionUri(string? str)
     {
         return str.ToOptionUri();
-    }
-
-    private static string MapToString(Option<Uri> str)
-    {
-        return str.MapToString();
-    }
-
-    private static Timestamp ToTimestamp(DateOnly value)
-    {
-        return value.ToTimestamp();
     }
 
     private static DateOnly ToDateOnly(Timestamp value)

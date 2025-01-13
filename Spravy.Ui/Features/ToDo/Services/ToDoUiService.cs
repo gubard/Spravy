@@ -59,13 +59,17 @@ public class ToDoUiService : IToDoUiService
                 )
                .IfSuccess(
                     () => response.FavoriteItems.IsResponse
-                        ? response.FavoriteItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly()
+                        ? response.FavoriteItems
+                           .Items
+                           .IfSuccessForEach(toDoCache.UpdateUi)
+                           .IfSuccess(
+                                _ => toDoCache.SetFavoriteItems(response.FavoriteItems.Items.Select(x => x.Item.Id))
+                            )
                         : Result.Success
                 )
                .IfSuccess(() => response.LeafItems.IfSuccessForEach(x => x.Leafs.IfSuccessForEach(toDoCache.UpdateUi)))
-               .IfSuccess(_ => toDoCache.SetFavoriteItems(response.FavoriteItems.Items.Select(x => x.Item.Id)))
                .IfSuccess(
-                    () => response.BookmarkItems.IsResponse
+                    _ => response.BookmarkItems.IsResponse
                         ? response.BookmarkItems.Items.IfSuccessForEach(toDoCache.UpdateUi).ToResultOnly()
                         : Result.Success
                 )

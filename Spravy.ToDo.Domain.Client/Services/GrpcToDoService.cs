@@ -235,7 +235,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
                     metadata => client.GetAsync(get.ToGetRequest(), metadata, DateTime.UtcNow.Add(Timeout), ct)
                        .ToValueTaskResultValueOnly()
                        .ConfigureAwait(false)
-                       .IfSuccessAsync(reply => reply.ToToDoResponse().ToResult(), ct),
+                       .IfSuccessAsync(reply =>
+                        {
+                            var result = reply.ToToDoResponse();
+
+                            return result.ToResult();
+                        }, ct),
                     ct
                 ),
             ct

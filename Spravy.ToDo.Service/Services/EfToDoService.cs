@@ -346,99 +346,6 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.GetEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(
-                        item =>
-                        {
-                            var parents = new List<ToDoShortItem>
-                            {
-                                item.ToToDoShortItem(),
-                            };
-
-                            return GetParentsAsync(context, id, parents, ct)
-                               .ConfigureAwait(false)
-                               .IfSuccessAsync(
-                                    () =>
-                                    {
-                                        parents.Reverse();
-
-                                        return parents.ToArray().ToReadOnlyMemory().ToResult();
-                                    },
-                                    ct
-                                );
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(string searchText, CancellationToken ct)
-    {
-        var normalizeSearchText = searchText.ToUpperInvariant();
-
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.Name.Contains(searchText) || x.NormalizeName.Contains(normalizeSearchText)).OrderBy(x => x.OrderIndex).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => x.ParentId == id)
-                   .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(ct)
-                   .IfSuccessAsync(
-                        entities =>
-                        {
-                            if (entities.IsEmpty)
-                            {
-                                return ReadOnlyMemory<Guid>.Empty.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                            }
-
-                            var result = new List<Guid>();
-
-                            return entities.ToResult()
-                               .IfSuccessForEachAsync(
-                                    e => GetLeafToDoItemIdsAsync(context, e, new(), ct)
-                                       .ConfigureAwait(false)
-                                       .IfSuccessForEachAsync(
-                                            i =>
-                                            {
-                                                result.Add(i);
-
-                                                return Result.Success;
-                                            },
-                                            ct
-                                        ),
-                                    ct
-                                )
-                               .IfSuccessAsync(() => result.ToArray().ToReadOnlyMemory().ToResult(), ct);
-                        },
-                        ct
-                    ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(OptionStruct<Guid> id, ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct)
-    {
-        var ignoreIdsArray = ignoreIds.ToArray();
-        var i = id.GetValueOrNull();
-
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == i && !ignoreIdsArray.Contains(x.Id)).OrderBy(x => x.OrderIndex).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(CancellationToken ct)
-    {
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().OrderBy(x => x.OrderIndex).ThenBy(x => x.NormalizeName).Where(x => x.IsFavorite).Select(x => x.Id).ToArrayEntitiesAsync(ct), ct);
-    }
-
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> AddToDoItemAsync(ReadOnlyMemory<AddToDoItemOptions> o, CancellationToken ct)
     {
         return dbContextFactory.Create()
@@ -568,13 +475,6 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetShortToDoItemsAsync(ReadOnlyMemory<Guid> ids, CancellationToken ct)
-    {
-        var idsArray = ids.ToArray();
-
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>().AsNoTracking().Where(x => idsArray.Contains(x.Id)).OrderBy(x => x.OrderIndex).ToArrayEntitiesAsync(ct).IfSuccessForEachAsync(x => x.ToToDoShortItem().ToResult(), ct), ct);
-    }
-
     public Cvtar UpdateToDoItemOrderIndexAsync(ReadOnlyMemory<UpdateOrderIndexToDoItemOptions> o, CancellationToken ct)
     {
         return dbContextFactory.Create()
@@ -615,30 +515,6 @@ public class EfToDoService : IToDoService
                     ),
                     ct
                 ),
-                ct
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(CancellationToken ct)
-    {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        var today = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
-
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<ToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => !x.IsCompleted && (x.Type == ToDoItemType.Periodicity || x.Type == ToDoItemType.PeriodicityOffset || x.Type == ToDoItemType.Planned))
-                   .Select(
-                        x => new
-                        {
-                            x.Id,
-                            x.DueDate,
-                            x.RemindDaysBefore,
-                        }
-                    )
-                   .ToArrayEntitiesAsync(ct)
-                   .IfSuccessAsync(items => items.ToArray().Where(x => x.DueDate <= today || x.RemindDaysBefore != 0 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)).Select(x => x.Id).ToArray().ToReadOnlyMemory().ToResult(), ct),
                 ct
             );
     }
@@ -827,27 +703,6 @@ public class EfToDoService : IToDoService
                         },
                         ct
                     ),
-                ct
-            );
-    }
-
-    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(SpravyDbToDoDbContext context, CancellationToken ct)
-    {
-        return context.Set<ToDoItemEntity>()
-           .AsNoTracking()
-           .ToArrayEntitiesAsync(ct)
-           .IfSuccessAsync(
-                items =>
-                {
-                    var dictionary = new Dictionary<Guid, ToDoItemEntity>();
-
-                    foreach (var item in items.Span)
-                    {
-                        dictionary.TryAdd(item.Id, item);
-                    }
-
-                    return dictionary.ToFrozenDictionary().ToResult();
-                },
                 ct
             );
     }
@@ -1109,59 +964,6 @@ public class EfToDoService : IToDoService
         return items.Where(x => x.ParentId == id).OrderBy(x => x.OrderIndex).IfSuccessForEach(item => GetToDoSelectorItems(items, item.Id).IfSuccess(children => new ToDoSelectorItem(item.ToToDoShortItem(), children).ToResult()));
     }
 
-    private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(SpravyDbToDoDbContext context, ToDoItemEntity itemEntity, List<Guid> ignoreIds, [EnumeratorCancellation] CancellationToken ct)
-    {
-        if (ignoreIds.Contains(itemEntity.Id))
-        {
-            yield break;
-        }
-
-        if (itemEntity.Type == ToDoItemType.Reference)
-        {
-            ignoreIds.Add(itemEntity.Id);
-
-            if (itemEntity.ReferenceId is null)
-            {
-                yield return itemEntity.Id.ToResult();
-
-                yield break;
-            }
-
-            var result = await context.GetEntityAsync<ToDoItemEntity>(itemEntity.ReferenceId);
-
-            if (!result.TryGetValue(out var reference))
-            {
-                yield return new(result.Errors);
-
-                yield break;
-            }
-
-            await foreach (var item in GetLeafToDoItemIdsAsync(context, reference, ignoreIds, ct))
-            {
-                yield return item;
-            }
-
-            yield break;
-        }
-
-        var entities = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == itemEntity.Id).OrderBy(x => x.OrderIndex).ToArrayAsync(ct);
-
-        if (entities.IsEmpty())
-        {
-            yield return itemEntity.Id.ToResult();
-
-            yield break;
-        }
-
-        foreach (var entity in entities)
-        {
-            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, ignoreIds, ct))
-            {
-                yield return item;
-            }
-        }
-    }
-
     private IEnumerable<FullToDoItem> GetLeafToDoItems(
         FrozenDictionary<Guid, ToDoItemEntity> allItems,
         Dictionary<Guid, FullToDoItem> fullToDoItems,
@@ -1247,20 +1049,6 @@ public class EfToDoService : IToDoService
                 },
                 ct
             );
-    }
-
-    private async ValueTask<Result> GetParentsAsync(SpravyDbToDoDbContext context, Guid id, List<ToDoShortItem> parents, CancellationToken ct)
-    {
-        var parent = await context.Set<ToDoItemEntity>().AsNoTracking().Include(x => x.Parent).SingleAsync(x => x.Id == id, ct);
-
-        if (parent.Parent is null)
-        {
-            return Result.Success;
-        }
-
-        parents.Add(parent.Parent.ToToDoShortItem());
-
-        return await GetParentsAsync(context, parent.Parent.Id, parents, ct);
     }
 
     private IEnumerable<ToDoShortItem> GetParents(FrozenDictionary<Guid, ToDoItemEntity> allItems, Guid id)
