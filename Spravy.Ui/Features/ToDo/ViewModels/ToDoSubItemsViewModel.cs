@@ -40,7 +40,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
             isSubscribe = true;
         }
 
-        return Result.AwaitableSuccess;
+        return List.RefreshAsync(ct);
     }
 
     public Result Stop()

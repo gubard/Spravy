@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class MultiToDoItemsViewModel : ViewModelBase
+public partial class MultiToDoItemsViewModel : ViewModelBase, IRefresh
 {
     [ObservableProperty]
     private GroupBy groupBy;
@@ -66,31 +66,9 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
     public ToDoItemsViewModel Steps { get; }
     public ToDoItemsViewModel References { get; }
 
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return Items.RemoveUi(items)
-           .IfSuccess(() => Missed.RemoveUi(items))
-           .IfSuccess(() => ReadyForCompleted.RemoveUi(items))
-           .IfSuccess(() => Planned.RemoveUi(items))
-           .IfSuccess(() => Completed.RemoveUi(items))
-           .IfSuccess(() => Values.RemoveUi(items))
-           .IfSuccess(() => Groups.RemoveUi(items))
-           .IfSuccess(() => Planneds.RemoveUi(items))
-           .IfSuccess(() => Periodicitys.RemoveUi(items))
-           .IfSuccess(() => PeriodicityOffsets.RemoveUi(items))
-           .IfSuccess(() => Circles.RemoveUi(items))
-           .IfSuccess(() => Steps.RemoveUi(items))
-           .IfSuccess(() => References.RemoveUi(items));
-    }
-
     public Result SetFavoriteItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Favorite.SetItemsUi(items);
-    }
-
-    public Result AddOrUpdateFavoriteUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return Favorite.AddOrUpdateUi(items);
     }
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
@@ -185,6 +163,23 @@ public partial class MultiToDoItemsViewModel : ViewModelBase
                 () => References.AddOrUpdateUi(items.Where(x => x.Type == ToDoItemType.Reference))
                    .IfSuccess(() => References.RemoveUi(items.Where(x => x.Type != ToDoItemType.Reference)))
             );
+    }
+
+    public Cvtar RefreshAsync(CancellationToken ct)
+    {
+        return Items.RefreshAsync(ct)
+           .IfSuccessAsync(() => Missed.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => ReadyForCompleted.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Planned.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Completed.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Values.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Groups.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Planneds.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Periodicitys.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => PeriodicityOffsets.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Circles.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => Steps.RefreshAsync(ct), ct)
+           .IfSuccessAsync(() => References.RefreshAsync(ct), ct);
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
