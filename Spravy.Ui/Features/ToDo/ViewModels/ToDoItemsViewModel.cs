@@ -2,7 +2,7 @@ using Spravy.Ui.Features.ToDo.Errors;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ToDoItemsViewModel : ViewModelBase, IRefresh
+public partial class ToDoItemsViewModel : ViewModelBase
 {
     private readonly AvaloniaList<ToDoItemEntityNotify> toDoItems = new();
     private readonly ViewModelSortBy viewModelSortBy;
@@ -82,26 +82,18 @@ public partial class ToDoItemsViewModel : ViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public Result RefreshUi()
     {
         var remove = toDoItems.Where(x => !x.IsUpdated).ToArray();
 
         if (remove.Length == 0)
         {
-            return Result.AwaitableSuccess;
+            return Result.Success;
         }
 
-        return this.PostUiBackground(
-                () =>
-                {
-                    toDoItems.RemoveAll(remove);
+        toDoItems.RemoveAll(remove);
 
-                    return Result.Success;
-                },
-                ct
-            )
-           .ToValueTaskResult()
-           .ConfigureAwait(false);
+        return Result.Success;
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

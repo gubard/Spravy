@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId
+public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemEditId, IToDoSubItemsViewModelOwner
 {
     private readonly IObjectStorage objectStorage;
     private readonly TaskWork refreshWork;
@@ -57,7 +57,7 @@ public partial class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoIte
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return
-            ToDoSubItemsViewModel.RefreshAsync(ct)
+            this.PostUiBackground(() => ToDoSubItemsViewModel.RefreshUi(), ct)
                .IfSuccessAsync(() => toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetIsRootItems(true), ct), ct)
                .IfSuccessAsync(
                     response => this.PostUiBackground(

@@ -32,7 +32,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
         return List.SetItemsUi(items);
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public Result RefreshUi()
     {
         if (!isSubscribe)
         {
@@ -40,7 +40,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
             isSubscribe = true;
         }
 
-        return List.RefreshAsync(ct);
+        return List.RefreshUi();
     }
 
     public Result Stop()

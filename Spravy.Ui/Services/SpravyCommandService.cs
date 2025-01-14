@@ -151,7 +151,11 @@ public class SpravyCommandService
                         {
                             var playComplete = editId.ResultItems.Any(x => x.IsCan == ToDoItemIsCan.CanComplete);
 
-                            return this.PostUiBackground(
+                            var ownerViewModel = uiApplicationService
+                               .GetCurrentView<IToDoSubItemsViewModelOwner>()
+                               .GetValueOrDefault();
+
+                            return this.PostUi(
                                     () => editId.ResultItems
                                        .ToResult()
                                        .IfSuccessForEach(
@@ -166,14 +170,18 @@ public class SpravyCommandService
                                                     {
                                                         item.IsUpdated = false;
 
+                                                        if (ownerViewModel is not null)
+                                                        {
+                                                            return ownerViewModel.ToDoSubItemsViewModel.RefreshUi();
+                                                        }
+
                                                         return Result.Success;
                                                     }
                                                     default:
                                                         return new(new ToDoItemIsCanOutOfRangeError(item.IsCan));
                                                 }
                                             }
-                                        ),
-                                    CancellationToken.None
+                                        )
                                 )
                                .IfSuccessAsync(
                                     () => toDoService.SwitchCompleteAsync(

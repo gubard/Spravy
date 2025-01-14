@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class MultiToDoItemsViewModel : ViewModelBase, IRefresh
+public partial class MultiToDoItemsViewModel : ViewModelBase
 {
     [ObservableProperty]
     private GroupBy groupBy;
@@ -165,21 +165,21 @@ public partial class MultiToDoItemsViewModel : ViewModelBase, IRefresh
             );
     }
 
-    public Cvtar RefreshAsync(CancellationToken ct)
+    public Result RefreshUi()
     {
-        return Items.RefreshAsync(ct)
-           .IfSuccessAsync(() => Missed.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => ReadyForCompleted.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Planned.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Completed.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Values.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Groups.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Planneds.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Periodicitys.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => PeriodicityOffsets.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Circles.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => Steps.RefreshAsync(ct), ct)
-           .IfSuccessAsync(() => References.RefreshAsync(ct), ct);
+        return Items.RefreshUi()
+           .IfSuccess(() => Missed.RefreshUi())
+           .IfSuccess(() => ReadyForCompleted.RefreshUi())
+           .IfSuccess(() => Planned.RefreshUi())
+           .IfSuccess(() => Completed.RefreshUi())
+           .IfSuccess(() => Values.RefreshUi())
+           .IfSuccess(() => Groups.RefreshUi())
+           .IfSuccess(() => Planneds.RefreshUi())
+           .IfSuccess(() => Periodicitys.RefreshUi())
+           .IfSuccess(() => PeriodicityOffsets.RefreshUi())
+           .IfSuccess(() => Circles.RefreshUi())
+           .IfSuccess(() => Steps.RefreshUi())
+           .IfSuccess(() => References.RefreshUi());
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
