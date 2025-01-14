@@ -28,7 +28,6 @@
             <Setter Property="ItemTemplate">
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <Button x:Name="RootToDoItemButton"
-                            IsVisible="{Binding IsUpdated}"
                             Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                             CommandParameter="{Binding}"
                             Classes="alignment-stretch content-alignment-stretch to-do-item"
