@@ -197,43 +197,14 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         switch (e.PropertyName)
         {
             case nameof(IsBookmark):
-            {
-                UpdateCommandsUi().ThrowIfError();
-
-                break;
-            }
             case nameof(IsFavorite):
-            {
-                UpdateCommandsUi().ThrowIfError();
-
-                break;
-            }
             case nameof(Link):
-            {
-                UpdateCommandsUi().ThrowIfError();
-
-                break;
-            }
             case nameof(IsCan):
             {
-                OnPropertyChanged(nameof(IconType));
                 UpdateCommandsUi().ThrowIfError();
 
                 break;
             }
-            case nameof(Reference):
-                OnPropertyChanged(nameof(CurrentId));
-
-                break;
-            case nameof(DueDate):
-                OnPropertyChanged(nameof(ActualDueDate));
-
-                break;
-            case nameof(Type):
-            case nameof(Icon):
-                OnPropertyChanged(nameof(IconType));
-
-                break;
             case nameof(Description):
                 IsExpandDescription = !Description.IsNullOrWhiteSpace();
 
@@ -267,15 +238,18 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     private DescriptionType descriptionType;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ActualDueDate))]
     private DateOnly dueDate;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IconType))]
     private string icon;
 
     [ObservableProperty]
     private bool isBookmark;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IconType))]
     private ToDoItemIsCan isCan;
 
     [ObservableProperty]
@@ -315,6 +289,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     private object[] path;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentId))]
     private ToDoItemEntityNotify? reference;
 
     [ObservableProperty]
@@ -324,6 +299,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     private ToDoItemStatus status;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IconType))]
     private ToDoItemType type;
 
     [ObservableProperty]
