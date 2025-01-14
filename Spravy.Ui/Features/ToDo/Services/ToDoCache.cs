@@ -211,14 +211,8 @@ public class ToDoCache : IToDoCache
                    .IfSuccess(
                         item =>
                         {
-                            item.Children.RemoveAll(item.Children.Where(x => !items.Span.Contains(x.Id)));
-                            var currentChildrenIds = item.Children.Select(x => x.Id).ToArray().ToReadOnlyMemory();
-
-                            item.Children.AddRange(
-                                children.Where(x => !currentChildrenIds.Span.Contains(x.Id)).ToArray()
-                            );
-
-                            item.Children.BinarySortByOrderIndex();
+                            item.Children.Clear();
+                            item.Children.AddRange(children.ToArray());
 
                             return Result.Success;
                         }

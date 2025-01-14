@@ -17,7 +17,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         orderIndex = uint.MaxValue;
         isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;
-        commands = [];
+        commands = new();
         Children = new();
         WeeklyDays = new();
         MonthlyDays = new();
@@ -28,7 +28,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     }
 
     public Guid Id { get; }
-    public IEnumerable<SpravyCommandNotify> Commands => commands;
+    public IAvaloniaReadOnlyList<SpravyCommandNotify> Commands => commands;
     public AvaloniaList<ToDoItemEntityNotify> Children { get; }
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
@@ -246,7 +246,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
-    private SpravyCommandNotify[] commands;
+    private readonly AvaloniaList<SpravyCommandNotify> commands;
 
     [ObservableProperty]
     private ToDoItemEntityNotify? active;
@@ -356,38 +356,39 @@ public partial class ToDoItemEntityNotify : NotifyBase,
             length++;
         }
 
-        commands = new SpravyCommandNotify[length];
-        commands[0] = spravyCommandNotifyService.AddChild;
-        commands[1] = spravyCommandNotifyService.ShowSetting;
-        commands[2] = spravyCommandNotifyService.Delete;
-        commands[3] = spravyCommandNotifyService.OpenLeaf;
-        commands[4] = spravyCommandNotifyService.ChangeParent;
-        commands[5] = spravyCommandNotifyService.CopyToClipboard;
-        commands[6] = spravyCommandNotifyService.RandomizeChildrenOrder;
-        commands[7] = spravyCommandNotifyService.ChangeOrder;
-        commands[8] = spravyCommandNotifyService.Reset;
-        commands[9] = spravyCommandNotifyService.Clone;
-        commands[10] = spravyCommandNotifyService.CreateReference;
-        commands[11] = spravyCommandNotifyService.CreateTimer;
+        var notifies = new SpravyCommandNotify[length];
+        notifies[0] = spravyCommandNotifyService.AddChild;
+        notifies[1] = spravyCommandNotifyService.ShowSetting;
+        notifies[2] = spravyCommandNotifyService.Delete;
+        notifies[3] = spravyCommandNotifyService.OpenLeaf;
+        notifies[4] = spravyCommandNotifyService.ChangeParent;
+        notifies[5] = spravyCommandNotifyService.CopyToClipboard;
+        notifies[6] = spravyCommandNotifyService.RandomizeChildrenOrder;
+        notifies[7] = spravyCommandNotifyService.ChangeOrder;
+        notifies[8] = spravyCommandNotifyService.Reset;
+        notifies[9] = spravyCommandNotifyService.Clone;
+        notifies[10] = spravyCommandNotifyService.CreateReference;
+        notifies[11] = spravyCommandNotifyService.CreateTimer;
 
-        commands[12] = IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark
+        notifies[12] = IsBookmark ? spravyCommandNotifyService.RemoveFromBookmark
             : spravyCommandNotifyService.AddToBookmark;
 
-        commands[13] = IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite
+        notifies[13] = IsFavorite ? spravyCommandNotifyService.RemoveFromFavorite
             : spravyCommandNotifyService.AddToFavorite;
 
         if (!Link.IsNullOrWhiteSpace())
         {
-            commands[currentIndex] = spravyCommandNotifyService.OpenLink;
+            notifies[currentIndex] = spravyCommandNotifyService.OpenLink;
             currentIndex++;
         }
 
         if (IsCan != ToDoItemIsCan.None)
         {
-            commands[currentIndex] = spravyCommandNotifyService.Complete;
+            notifies[currentIndex] = spravyCommandNotifyService.Complete;
         }
 
-        OnPropertyChanged(nameof(Commands));
+        commands.Clear();
+        commands.AddRange(notifies);
 
         return this.ToResult();
     }
