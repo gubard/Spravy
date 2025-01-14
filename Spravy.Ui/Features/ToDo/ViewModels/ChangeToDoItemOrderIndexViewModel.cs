@@ -1,6 +1,6 @@
 ﻿namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel, IToDoItemsView, IApplySettings
+public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
     private readonly IToDoUiService toDoUiService;
@@ -26,7 +26,6 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
     }
 
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
-
     public override string ViewId => TypeCache<DialogableViewModelBase>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
@@ -112,21 +111,9 @@ public partial class ChangeToDoItemOrderIndexViewModel : ToDoItemEditIdViewModel
             );
     }
 
-    public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
+    private Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> newItems)
     {
         return Items.UpdateUi(newItems);
-    }
-
-    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> _)
-    {
-        return new(new NotImplementedError(nameof(AddOrUpdateUi)));
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        Items.RemoveAll(items.ToArray());
-
-        return Result.Success;
     }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)

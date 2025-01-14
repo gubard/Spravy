@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
+public class ToDoSubItemsViewModel : ViewModelBase
 {
     private bool isSubscribe;
     private readonly IToDoCache toDoCache;
@@ -30,16 +30,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemsView
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return List.SetItemsUi(items);
-    }
-
-    public Result AddOrUpdateUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return List.AddOrUpdateUi(items);
-    }
-
-    public Result RemoveUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        return List.RemoveUi(items);
     }
 
     public Cvtar RefreshAsync(CancellationToken ct)
