@@ -59,9 +59,10 @@ public partial class ToDoItemsViewModel : ViewModelBase, IRefresh
 
     public Result SetItemsUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        var removeItems = ToDoItems.Where(x => !items.Span.Contains(x) || !x.IsUpdated).ToArray();
-        toDoItems.RemoveAll(removeItems);
-        AddOrUpdateUi(items);
+        var span = items.Span.ToArray();
+        Sort(span);
+        toDoItems.Clear();
+        toDoItems.AddRange(span);
 
         return Result.Success;
     }
@@ -125,6 +126,22 @@ public partial class ToDoItemsViewModel : ViewModelBase, IRefresh
             },
             SortByToDoItem.Name => toDoItems.BinarySortByName(),
             SortByToDoItem.DueDate => toDoItems.BinarySortByName(),
+            _ => new(new SortByToDoItemOutOfRangeError(SortBy)),
+        };
+    }
+    
+    private Result Sort(Span<ToDoItemEntityNotify> items)
+    {
+        return SortBy switch
+        {
+            SortByToDoItem.Index => viewModelSortBy switch
+            {
+                ViewModelSortBy.OrderIndex => items.BinarySortByOrderIndex(),
+                ViewModelSortBy.LoadedIndex => items.BinarySortByLoadedIndex(),
+                _ => new(new ViewModelSortByOutOfRangeError(viewModelSortBy)),
+            },
+            SortByToDoItem.Name => items.BinarySortByName(),
+            SortByToDoItem.DueDate => items.BinarySortByName(),
             _ => new(new SortByToDoItemOutOfRangeError(SortBy)),
         };
     }
