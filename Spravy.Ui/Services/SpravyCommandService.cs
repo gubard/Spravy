@@ -196,7 +196,7 @@ public class SpravyCommandService
                                     {
                                         if (playComplete)
                                         {
-                                            return audioService.PlayCompleteAsync(CancellationToken.None);
+                                            return audioService.PlayCompleteAsync(ct);
                                         }
 
                                         return Result.AwaitableSuccess;
