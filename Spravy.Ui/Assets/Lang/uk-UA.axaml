@@ -167,6 +167,7 @@
     <s:String x:Key="Lang.Month.December">Грудень</s:String>
     <s:String x:Key="Lang.SoundSetting">Налаштування звуку</s:String>
     <s:String x:Key="Lang.Mute">Вимкнути звук</s:String>
+    <s:String x:Key="Lang.Images">Зображення</s:String>
 
     <s:String x:Key="PolicyView.Policy">
         Умови використання

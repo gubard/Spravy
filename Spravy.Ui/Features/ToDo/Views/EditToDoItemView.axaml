@@ -8,6 +8,8 @@
              xmlns:e="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:tdi="clr-namespace:Spravy.Ui.Features.ToDo.Interfaces"
+             xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.EditToDoItemView"
              x:DataType="vm:EditToDoItemViewModel">
@@ -323,6 +325,32 @@
             <TextBox x:Name="DescriptionTextBox"
                      Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
                      Text="{Binding Description}" />
+
+            <StackPanel Classes="horizontal">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource Lang.Images}" />
+                <ToggleSwitch Classes="field" IsChecked="{Binding IsEditDescriptionType}"
+                              IsVisible="{Binding IsEditShow}" />
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*, Auto">
+                <ItemsControl Classes="wrap-panel" ItemsSource="{Binding Images}">
+                    <ItemsControl.ItemTemplate>
+                        <c:SelectorDataTemplate>
+                            <DataTemplate x:DataType="tdi:IToDoImage">
+                                <Image Height="70" Margin="5" Source="{Binding Data}" />
+                            </DataTemplate>
+
+                            <DataTemplate x:DataType="models:AddImageButton">
+                                <Button Grid.Column="1" Margin="5" Width="70" Height="70"
+                                        Command="{Binding AddImageCommand.Command}">
+                                    <i:Icon Value="mdi-plus" Classes="h1" />
+                                </Button>
+                            </DataTemplate>
+                        </c:SelectorDataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

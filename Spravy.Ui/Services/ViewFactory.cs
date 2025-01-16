@@ -71,6 +71,9 @@ public class ViewFactory : IViewFactory
             objectStorage,
             CreateToDoItemSelectorViewModel(),
             toDoCache,
+            errorHandler,
+            taskProgressService,
+            Application.Current.ThrowIfNull().GetTopLevel().ThrowIfNull(),
             isEditShow
         );
     }

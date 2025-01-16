@@ -155,7 +155,7 @@ public class SpravyCommandService
                                .GetCurrentView<IToDoSubItemsViewModelOwner>()
                                .GetValueOrDefault();
 
-                            return this.PostUi(
+                            return this.PostUiBackground(
                                     () => editId.ResultItems
                                        .ToResult()
                                        .IfSuccessForEach(
@@ -181,7 +181,8 @@ public class SpravyCommandService
                                                         return new(new ToDoItemIsCanOutOfRangeError(item.IsCan));
                                                 }
                                             }
-                                        )
+                                        ),
+                                    CancellationToken.None
                                 )
                                .IfSuccessAsync(
                                     () => toDoService.SwitchCompleteAsync(

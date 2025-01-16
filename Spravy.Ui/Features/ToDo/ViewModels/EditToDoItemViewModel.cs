@@ -115,10 +115,16 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     [ObservableProperty]
     private ushort yearsOffset;
 
+    [ObservableProperty]
+    private bool isEditImages;
+
     public EditToDoItemViewModel(
         IObjectStorage objectStorage,
         ToDoItemSelectorViewModel toDoItemSelector,
         IToDoCache toDoCache,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService,
+        TopLevel topLevel,
         bool isEditShow
     )
     {
@@ -129,6 +135,63 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         WeeklyDays = new();
         MonthlyDays = new();
         FavoriteIcons = new();
+        WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
+        MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
+        Images = new();
+
+        var addImageButton = new AddImageButton(
+            SpravyCommand.Create(
+                ct => topLevel.StorageProvider
+                   .SpravyOpenFilePickerAsync(
+                        new()
+                        {
+                            AllowMultiple = true,
+                            FileTypeFilter =
+                            [
+                                new("Image")
+                                {
+                                    Patterns =
+                                    [
+                                        "*.bmp", "*.jpg", "*.jpeg", "*.png", "*.tif", "*.tiff", "*.webp", "*.pbm",
+                                        "*.tga",
+                                    ],
+                                    MimeTypes =
+                                    [
+                                        "image/bmp", "image/jpeg", "image/png", "image/tiff", "image/webp",
+                                    ],
+                                    AppleUniformTypeIdentifiers = ["bmp", "jpeg", "png", "tiff", "webP",],
+                                },
+                            ],
+                        }
+                    )
+                   .ConfigureAwait(false)
+                   .IfSuccessAsync(
+                        files => files.ToArray()
+                           .ToReadOnlyMemory()
+                           .IfSuccessForEachAsync(
+                                file => LocalToDoImage.CreateAsync(file).ConfigureAwait(false),
+                                ct
+                            )
+                           .IfSuccessAsync(
+                                localToDoImages => this.PostUiBackground(
+                                    () =>
+                                    {
+                                        Images.InsertRange(Images.Count - 1, localToDoImages.ToArray());
+
+                                        return Result.Success;
+                                    },
+                                    ct
+                                ),
+                                ct
+                            ),
+                        ct
+                    ),
+                errorHandler,
+                taskProgressService
+            )
+        );
+
+        Images.Add(addImageButton);
 
         AnnuallyDays = new(
             Enumerable.Range(1, 12)
@@ -139,9 +202,6 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
                     }
                 )
         );
-
-        WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
-        MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
 
         ToDoItemSelector.PropertyChanged += (_, e) =>
         {
@@ -172,14 +232,14 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         }
     }
 
+    public override string ViewId => TypeCache<ToDoItemToStringSettingsViewModel>.Name;
     public bool IsEditShow { get; }
     public AvaloniaList<string> FavoriteIcons { get; }
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYearSelectItem> AnnuallyDays { get; }
     public ToDoItemSelectorViewModel ToDoItemSelector { get; }
-
-    public override string ViewId => TypeCache<ToDoItemToStringSettingsViewModel>.Name;
+    public AvaloniaList<object> Images { get; }
 
     public override Cvtar LoadStateAsync(CancellationToken ct)
     {
