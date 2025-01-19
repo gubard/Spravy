@@ -2,6 +2,7 @@ namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
 {
+    private bool isRefreshed;
     private readonly IObjectStorage objectStorage;
     private readonly IPropertyValidator propertyValidator;
 
@@ -32,6 +33,11 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
 
     public IEnumerable GetErrors(string? propertyName)
     {
+        if (!isRefreshed)
+        {
+            yield break;
+        }
+
         switch (propertyName)
         {
             case nameof(Login):
@@ -113,6 +119,8 @@ public partial class LoginViewModel : NavigatableViewModelBase, INotifyDataError
 
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
+        isRefreshed = true;
+        
         return Result.AwaitableSuccess;
     }
 }
