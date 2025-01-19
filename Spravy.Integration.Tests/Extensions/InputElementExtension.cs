@@ -5,7 +5,7 @@ public static class InputElementExtension
     public static TInputElement MustFocused<TInputElement>(this TInputElement inputElement)
         where TInputElement : InputElement
     {
-        inputElement.IsFocused.Should().BeTrue($"{inputElement.Name} must be focused");
+        Assert.Equals(inputElement.IsFocused, true);
 
         return inputElement;
     }
@@ -13,7 +13,7 @@ public static class InputElementExtension
     public static TInputElement MustEnabled<TInputElement>(this TInputElement inputElement)
         where TInputElement : InputElement
     {
-        inputElement.IsEnabled.Should().BeTrue($"{inputElement.Name} must be enabled");
+        Assert.Equals(inputElement.IsEnabled, true);
 
         return inputElement;
     }

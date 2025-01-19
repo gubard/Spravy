@@ -63,7 +63,7 @@ public static class RootToDoItemsViewExtension
 
     public static Button GetToDoItemButton(this RootToDoItemsView view, Index index)
     {
-        return view.GetDoItemItemsControl()
+        return view.GetToDoItemItemsControl()
            .ThrowIfNull()
            .GetVisualChildren()
            .Single()
@@ -84,9 +84,10 @@ public static class RootToDoItemsViewExtension
 
     public static RootToDoItemsView AddToDoItem(this RootToDoItemsView view, Window window, string name)
     {
-        var toDoItemCount = view.GetDoItemItemsControl()?.ItemCount ?? 0;
+        var toDoItemCount = view.GetToDoItemItemsControl()?.ItemCount ?? 0;
 
-        view.Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(4))
+        var toDoItemItemsControl = view
+           .Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(4))
            .Case(
                 () => window.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                    .Case(
@@ -99,10 +100,10 @@ public static class RootToDoItemsViewExtension
                     )
                    .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5))
             )
-           .GetDoItemItemsControl()
-           .ThrowIfNull()
-           .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
+           .GetToDoItemItemsControl()
+           .ThrowIfNull();
 
+        Assert.Equals(toDoItemItemsControl.ItemCount, toDoItemCount + 1);
         view.RunJobsAll(4).CheckLastToDoItemName(name);
 
         return view;
@@ -110,7 +111,7 @@ public static class RootToDoItemsViewExtension
 
     public static RootToDoItemsView CheckLastToDoItemName(this RootToDoItemsView view, string name)
     {
-        view.GetDoItemItemsControl()
+        var text = view.GetToDoItemItemsControl()
            .ThrowIfNull()
            .GetVisualChildren()
            .Single()
@@ -136,12 +137,15 @@ public static class RootToDoItemsViewExtension
            .Children
            .First()
            .ThrowIfIsNotCast<TextBlock>()
-           .Case(tb => tb.Text.Should().Be(name));
+           .Text
+           .ThrowIfNull();
+
+        Assert.Equals(text, name);
 
         return view;
     }
 
-    public static ItemsControl? GetDoItemItemsControl(this RootToDoItemsView view)
+    public static ItemsControl? GetToDoItemItemsControl(this RootToDoItemsView view)
     {
         var children = view.GetControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
            .GetContentView<ToDoSubItemsView>()

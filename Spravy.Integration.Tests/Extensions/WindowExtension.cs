@@ -7,7 +7,7 @@ public static class WindowExtension
     public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window) where TWindow : Window
     {
         var dialogHost = window.GetErrorDialogHost();
-        dialogHost.IsOpen.Should().BeTrue();
+        Assert.Equals(dialogHost.IsOpen, true);
 
         dialogHost.GetVisualChildren()
            .Single()
@@ -24,14 +24,14 @@ public static class WindowExtension
            .GetControl<Button>(ElementNames.OkButton)
            .ClickOn(window);
 
-        dialogHost.IsOpen.Should().BeFalse();
+        Assert.Equals(dialogHost.IsOpen, false);
 
         return window;
     }
 
     public static TWindow MustShowError<TWindow>(this TWindow window) where TWindow : Window
     {
-        window.GetErrorDialogHost().IsOpen.Should().BeTrue();
+        Assert.Equals(window.GetErrorDialogHost().IsOpen, true);
 
         return window;
     }
@@ -182,20 +182,29 @@ public static class WindowExtension
     public static TView GetContentDialogView<TView, TViewModel>(this Window window)
         where TView : UserControl where TViewModel : ViewModelBase
     {
-        return window.GetErrorDialogHost()
+        var progressDialogHost = window.GetErrorDialogHost()
            .Content
            .ThrowIfNull()
-           .ThrowIfIsNotCast<DialogControl>()
-           .Case(dh => dh.Name.Should().Be("ProgressDialogHost"))
+           .ThrowIfIsNotCast<DialogControl>();
+
+        Assert.Equals(progressDialogHost.Name.ThrowIfNull(), "ProgressDialogHost");
+
+        var inputDialogHost = progressDialogHost
            .Content
            .ThrowIfNull()
-           .ThrowIfIsNotCast<DialogControl>()
-           .Case(dh => dh.Name.Should().Be("InputDialogHost"))
+           .ThrowIfIsNotCast<DialogControl>();
+
+        Assert.Equals(inputDialogHost.Name.ThrowIfNull(), "InputDialogHost");
+
+        var contentDialogHost = inputDialogHost
            .Content
            .ThrowIfNull()
-           .ThrowIfIsNotCast<DialogControl>()
-           .Case(dh => dh.Name.Should().Be("ContentDialogHost"))
-           .Case(dh => dh.IsOpen.Should().Be(true))
+           .ThrowIfIsNotCast<DialogControl>();
+
+        Assert.Equals(contentDialogHost.Name.ThrowIfNull(), "ContentDialogHost");
+        Assert.Equals(contentDialogHost.IsOpen, true);
+
+        return contentDialogHost
            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
            .GetVisualChildren()
            .Single()
@@ -215,8 +224,10 @@ public static class WindowExtension
     public static TView GetErrorDialogView<TView, TViewModel>(this Window window)
         where TView : UserControl where TViewModel : ViewModelBase
     {
-        return window.GetErrorDialogHost()
-           .Case(dh => dh.IsOpen.Should().Be(true))
+        var errorDialogHost = window.GetErrorDialogHost();
+        Assert.Equals(errorDialogHost.IsOpen, true);
+
+        return errorDialogHost
            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
            .GetVisualChildren()
            .Single()

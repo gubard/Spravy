@@ -44,7 +44,8 @@ public class Tests
                                                     w.WaitUntil(w.GetErrorDialogView<InfoView, InfoViewModel>)
                                                        .Case(
                                                             i =>
-                                                                i.FindControl<
+                                                            {
+                                                                var text = i.FindControl<
                                                                         ContentControl>(
                                                                         ElementNames.ContentContentControl
                                                                     )
@@ -53,7 +54,7 @@ public class Tests
                                                                    .FindControl<
                                                                         ItemsControl>(ElementNames.ErrorsItemsControl)
                                                                    .ThrowIfNull()
-                                                                   .Case(ic => ic.ItemCount.Should().Be(1))
+                                                                   .Case(ic => Assert.Equals(ic.ItemCount, 1))
                                                                    .GetVisualChildren()
                                                                    .Single()
                                                                    .ThrowIfIsNotCast<Border>()
@@ -72,10 +73,13 @@ public class Tests
                                                                    .ElementAt(1)
                                                                    .ThrowIfIsNotCast<TextBlock>()
                                                                    .Text
-                                                                   .Should()
-                                                                   .Be(
-                                                                        $"User with login \"{TextHelper.TextLength4}\" not exists"
-                                                                    )
+                                                                   .ThrowIfNull();
+
+                                                                Assert.Equals(
+                                                                    text,
+                                                                    $"User with login \"{TextHelper.TextLength4}\" not exists"
+                                                                );
+                                                            }
                                                         )
                                                        .FindControl<Button>(ElementNames.OkButton)
                                                        .ThrowIfNull()
@@ -376,14 +380,17 @@ public class Tests
                                .RunJobsAll(2)
                     )
                    .Case(
-                        () => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
-                           .FindControl<ContentControl>(ElementNames.ContentContentControl)
-                           .ThrowIfNull()
-                           .GetContentView<ChangeToDoItemOrderIndexView>()
-                           .GetControl<ListBox>(ElementNames.ItemsListBox)
-                           .ItemCount
-                           .Should()
-                           .Be(1)
+                        () =>
+                        {
+                            var itemCount = w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
+                               .FindControl<ContentControl>(ElementNames.ContentContentControl)
+                               .ThrowIfNull()
+                               .GetContentView<ChangeToDoItemOrderIndexView>()
+                               .GetControl<ListBox>(ElementNames.ItemsListBox)
+                               .ItemCount;
+
+                            Assert.Equals(itemCount, 1);
+                        }
                     )
                    .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
@@ -415,16 +422,18 @@ public class Tests
                             w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                                .Case(
                                     c =>
-                                        c.GetControl<ContentControl>(ElementNames.ContentContentControl)
+                                    {
+                                        var checkBox = c.GetControl<ContentControl>(ElementNames.ContentContentControl)
                                            .GetContentView<ResetToDoItemView>()
-                                           .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
-                                           .Case(cc => cc.IsChecked.Should().Be(true))
-                                           .ClickOn(w)
-                                           .RunJobsAll(1)
-                                           .Case(cc => cc.IsChecked = false)
-                                           .IsChecked
-                                           .Should()
-                                           .Be(false)
+                                           .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName);
+
+                                        Assert.Equals(checkBox.IsChecked.ThrowIfNullStruct(), true);
+
+                                        checkBox.ClickOn(w)
+                                           .RunJobsAll(1);
+
+                                        Assert.Equals(checkBox.IsChecked.ThrowIfNullStruct(), false);
+                                    }
                                 )
                                .GetControl<Button>(ElementNames.OkButton)
                                .ClickOn(w)
@@ -441,13 +450,16 @@ public class Tests
                    .Case(
                         () => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                            .Case(
-                                c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
-                                   .ThrowIfNull()
-                                   .GetContentView<ResetToDoItemView>()
-                                   .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
-                                   .IsChecked
-                                   .Should()
-                                   .Be(false)
+                                c =>
+                                {
+                                    var isChecked = c.FindControl<ContentControl>(ElementNames.ContentContentControl)
+                                       .ThrowIfNull()
+                                       .GetContentView<ResetToDoItemView>()
+                                       .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
+                                       .IsChecked;
+
+                                    Assert.Equals(isChecked.ThrowIfNullStruct(), false);
+                                }
                             )
                     )
                    .Close(),

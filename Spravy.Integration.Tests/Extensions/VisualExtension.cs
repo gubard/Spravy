@@ -4,7 +4,7 @@ public static class VisualExtension
 {
     public static TVisual ClickOn<TVisual>(this TVisual visual, Window window) where TVisual : Visual
     {
-        visual.IsVisible.Should().Be(true);
+        Assert.Equals(visual.IsVisible, true);
 
         if (visual is InputElement inputElement)
         {
@@ -25,7 +25,7 @@ public static class VisualExtension
 
     public static TVisual MustWidth<TVisual>(this TVisual visual, double width) where TVisual : Visual
     {
-        visual.Bounds.Width.Should().Be(width);
+        Assert.Equals(visual.Bounds.Width, width);
 
         return visual;
     }

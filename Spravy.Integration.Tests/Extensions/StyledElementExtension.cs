@@ -4,14 +4,14 @@ public static class StyledElementExtension
 {
     public static TStyleable MustHasError<TStyleable>(this TStyleable styledElement) where TStyleable : StyledElement
     {
-        styledElement.Classes.Should().Contain(":error");
+        Assert.Equals(true, styledElement.Classes.Contains(":error"));
 
         return styledElement;
     }
 
     public static TStyleable MustNotHasError<TStyleable>(this TStyleable styledElement) where TStyleable : StyledElement
     {
-        styledElement.Classes.Should().NotContain(":error");
+        Assert.Equals(false, styledElement.Classes.Contains(":error"));
 
         return styledElement;
     }
