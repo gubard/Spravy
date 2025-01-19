@@ -17,223 +17,222 @@ public class Tests
     {
         LogCurrentTestMethod();
         Directory.GetCurrentDirectory().ToDirectory().Combine("storage").DeleteIfExists(true);
+        var window = WindowHelper.CreateWindow();
 
-        WindowHelper.CreateWindow()
-           .TryCatch(
-                w => w.SetSize(1000, 1000)
-                   .ShowWindow()
-                   .Case(
-                        () =>
-                            w
-                               .Case(
-                                    () =>
-                                        w.WaitUntil(w.GetCurrentView<LoginView, LoginViewModel>)
-                                           .Case(
-                                                l =>
-                                                    l.GetControl<TextBox>(ElementNames.LoginTextBox)
-                                                       .SetText(w, TextHelper.TextLength4)
-                                            )
-                                           .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                                           .RunJobsAll(1)
-                                           .Case(
-                                                l =>
-                                                    l.GetControl<TextBox>(ElementNames.PasswordTextBox)
-                                                       .SetText(w, TextHelper.TextLength8, false)
-                                            )
-                                           .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                                           .Case(
-                                                () =>
-                                                    w.WaitUntil(w.GetErrorDialogView<InfoView, InfoViewModel>)
-                                                       .Case(
-                                                            i =>
-                                                            {
-                                                                var errorsItemsControl = i.FindControl<
-                                                                        ContentControl>(
-                                                                        ElementNames.ContentContentControl
-                                                                    )
-                                                                   .ThrowIfNull()
-                                                                   .GetContentView<ErrorView>()
-                                                                   .FindControl<
-                                                                        ItemsControl>(ElementNames.ErrorsItemsControl)
-                                                                   .ThrowIfNull();
+        try
+        {
+            window.SetSize(1000, 1000)
+               .ShowWindow();
 
-                                                                errorsItemsControl.ItemCount.ShouldBe(1);
-
-                                                                var text = errorsItemsControl.GetVisualChildren()
-                                                                   .Single()
-                                                                   .ThrowIfIsNotCast<Border>()
-                                                                   .Child
-                                                                   .ThrowIfNull()
-                                                                   .GetVisualChildren()
-                                                                   .Single()
-                                                                   .ThrowIfIsNotCast<StackPanel>()
-                                                                   .Children
-                                                                   .Single()
-                                                                   .ThrowIfIsNotCast<ContentPresenter>()
-                                                                   .Child
-                                                                   .ThrowIfNull()
-                                                                   .ThrowIfIsNotCast<StackPanel>()
-                                                                   .Children
-                                                                   .ElementAt(1)
-                                                                   .ThrowIfIsNotCast<TextBlock>()
-                                                                   .Text
-                                                                   .ThrowIfNull();
-
-                                                                text.ShouldBe(
-                                                                    $"User with login \"{TextHelper.TextLength4}\" not exists"
-                                                                );
-                                                            }
-                                                        )
-                                                       .FindControl<Button>(ElementNames.OkButton)
-                                                       .ThrowIfNull()
-                                                       .ClickOn(w)
-                                            )
-                                           .Case(
-                                                l =>
-                                                    l.FindControl<TextBox>(ElementNames.LoginTextBox)
-                                                       .ThrowIfNull()
-                                                       .FocusInput(w)
-                                                       .ClearText(w)
-                                            )
-                                           .FindControl<Button>(ElementNames.CreateUserButton)
-                                           .ThrowIfNull()
-                                           .ClickOn(w)
-                                           .RunJobsAll(1)
-                                )
-                               .Case(
-                                    () =>
-                                        w.GetCurrentView<CreateUserView, CreateUserViewModel>()
-                                           .FindControl<Button>(ElementNames.BackButton)
-                                           .ThrowIfNull()
-                                           .ClickOn(w)
-                                )
-                               .RunJobsAll(1)
-                               .Case(
-                                    () =>
-                                        w.GetCurrentView<LoginView, LoginViewModel>()
-                                           .FindControl<Button>(ElementNames.CreateUserButton)
-                                           .ThrowIfNull()
-                                           .ClickOn(w)
-                                )
-                               .GetCurrentView<CreateUserView, CreateUserViewModel>()
-                               .Case(
-                                    c =>
-                                        c.FindControl<TextBox>(ElementNames.EmailTextBox)
-                                           .ThrowIfNull()
-                                           .MustFocused()
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength4)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength3)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength51)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength50)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.EmailLength51)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.EmailLength50)
-                                           .Case(() => w.SetKeyTextInput(TextHelper.Email))
-                                )
-                               .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                               .RunJobsAll(1)
-                               .Case(
-                                    c =>
-                                        c.FindControl<TextBox>(ElementNames.LoginTextBox)
-                                           .ThrowIfNull()
-                                           .MustFocused()
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength513)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength512)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength3)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength8)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength512)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength4)
-                                           .Case(() => w.SetKeyTextInput(TextHelper.TextLength4))
-                                )
-                               .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                               .RunJobsAll(1)
-                               .Case(
-                                    c =>
-                                        c.FindControl<TextBox>(ElementNames.PasswordTextBox)
-                                           .ThrowIfNull()
-                                           .MustFocused()
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength513)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength7)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextWithSpaceLength512)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextWithSpaceLength8)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength512)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength8)
-                                           .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
-                                )
-                               .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                               .RunJobsAll(1)
-                               .Case(
-                                    c =>
-                                        c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
-                                           .ThrowIfNull()
-                                           .MustFocused()
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength513)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength7)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength512)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength8)
-                                           .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength512)
-                                           .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength8)
-                                           .Case(() => w.SetKeyTextInput(TextHelper.TextLength512))
-                                )
-                               .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
-                    )
-                   .Case(() => TestAppBuilder.Configuration.GetImapConnection().ClearInbox())
-                   .Case(
-                        () =>
-                            w.GetCurrentView<CreateUserView, CreateUserViewModel>()
-                               .Case(
-                                    c =>
-                                        c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
-                                           .ThrowIfNull()
-                                           .ClearText(w)
-                                           .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
-                                )
-                               .FindControl<Button>(ElementNames.CreateUserButton)
-                               .ThrowIfNull()
-                               .MustEnabled()
-                               .ClickOn(w)
-                               .RunJobsAll(2)
-                    )
-                   .Case(
-                        () =>
-                            w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>()
-                               .FindControl<TextBox>(ElementNames.VerificationCodeTextBox)
-                               .ThrowIfNull()
-                               .FocusInput(w)
-                               .Case(
-                                    () =>
-                                        w.SetKeyTextInput(
-                                            TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
+            window.WaitUntil(window.GetCurrentView<LoginView, LoginViewModel>)
+               .Case(
+                    l =>
+                        l.GetControl<TextBox>(ElementNames.LoginTextBox)
+                           .SetText(window, TextHelper.TextLength4)
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .RunJobsAll(1)
+               .Case(
+                    l =>
+                        l.GetControl<TextBox>(ElementNames.PasswordTextBox)
+                           .SetText(window, TextHelper.TextLength8, false)
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .Case(
+                    () =>
+                        window.WaitUntil(window.GetErrorDialogView<InfoView, InfoViewModel>)
+                           .Case(
+                                i =>
+                                {
+                                    var errorsItemsControl = i.FindControl<
+                                            ContentControl>(
+                                            ElementNames.ContentContentControl
                                         )
-                                )
-                               .FindControl<Button>(ElementNames.VerificationEmailButton)
-                               .ThrowIfNull()
-                               .MustEnabled()
-                               .ClickOn(w)
-                               .RunJobsAll(3)
-                    )
-                   .Case(
-                        () => w.GetCurrentView<LoginView, LoginViewModel>()
-                           .Case(
-                                view =>
-                                    view.FindControl<TextBox>(ElementNames.LoginTextBox)
                                        .ThrowIfNull()
-                                       .SetText(w, TextHelper.TextLength4)
-                            )
-                           .Case(
-                                view =>
-                                    view.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                                       .GetContentView<ErrorView>()
+                                       .FindControl<
+                                            ItemsControl>(ElementNames.ErrorsItemsControl)
+                                       .ThrowIfNull();
+
+                                    errorsItemsControl.ItemCount.ShouldBe(1);
+
+                                    var text = errorsItemsControl.GetVisualChildren()
+                                       .Single()
+                                       .ThrowIfIsNotCast<Border>()
+                                       .Child
                                        .ThrowIfNull()
-                                       .SetText(w, TextHelper.TextLength8)
+                                       .GetVisualChildren()
+                                       .Single()
+                                       .ThrowIfIsNotCast<StackPanel>()
+                                       .Children
+                                       .Single()
+                                       .ThrowIfIsNotCast<ContentPresenter>()
+                                       .Child
+                                       .ThrowIfNull()
+                                       .ThrowIfIsNotCast<StackPanel>()
+                                       .Children
+                                       .ElementAt(1)
+                                       .ThrowIfIsNotCast<TextBlock>()
+                                       .Text
+                                       .ThrowIfNull();
+
+                                    text.ShouldBe(
+                                        $"User with login \"{TextHelper.TextLength4}\" not exists"
+                                    );
+                                }
                             )
-                           .FindControl<Button>(ElementNames.LoginButton)
+                           .FindControl<Button>(ElementNames.OkButton)
                            .ThrowIfNull()
-                           .ClickOn(w)
-                           .RunJobsAll(11)
-                    )
-                   .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
-                   .Close(),
-                (w, _) => w.SaveFrame().LogCurrentState()
-            );
+                           .ClickOn(window)
+                )
+               .Case(
+                    l =>
+                        l.FindControl<TextBox>(ElementNames.LoginTextBox)
+                           .ThrowIfNull()
+                           .FocusInput(window)
+                           .ClearText(window)
+                )
+               .FindControl<Button>(ElementNames.CreateUserButton)
+               .ThrowIfNull()
+               .ClickOn(window)
+               .RunJobsAll(1);
+
+            window.GetCurrentView<CreateUserView, CreateUserViewModel>()
+               .FindControl<Button>(ElementNames.BackButton)
+               .ThrowIfNull()
+               .ClickOn(window)
+               .RunJobsAll(1);
+
+            window.GetCurrentView<LoginView, LoginViewModel>()
+               .FindControl<Button>(ElementNames.CreateUserButton)
+               .ThrowIfNull()
+               .ClickOn(window);
+
+            window
+               .GetCurrentView<CreateUserView, CreateUserViewModel>()
+               .Case(
+                    c =>
+                        c.FindControl<TextBox>(ElementNames.EmailTextBox)
+                           .ThrowIfNull()
+                           .MustFocused()
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength4)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength3)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength51)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength50)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.EmailLength51)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.EmailLength50)
+                           .Case(() => window.SetKeyTextInput(TextHelper.Email))
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .RunJobsAll(1)
+               .Case(
+                    c =>
+                        c.FindControl<TextBox>(ElementNames.LoginTextBox)
+                           .ThrowIfNull()
+                           .MustFocused()
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength513)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextWithSpaceLength512)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength3)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextWithSpaceLength8)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextLength512)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextLength4)
+                           .Case(() => window.SetKeyTextInput(TextHelper.TextLength4))
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .RunJobsAll(1)
+               .Case(
+                    c =>
+                        c.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                           .ThrowIfNull()
+                           .MustFocused()
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength513)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength7)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextWithSpaceLength512)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextWithSpaceLength8)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextLength512)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextLength8)
+                           .Case(() => window.SetKeyTextInput(TextHelper.TextLength8))
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .RunJobsAll(1)
+               .Case(
+                    c =>
+                        c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
+                           .ThrowIfNull()
+                           .MustFocused()
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength513)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength7)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextWithSpaceLength512)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextWithSpaceLength8)
+                           .ValidateCreateUserViewTextBoxError(window, c, TextHelper.TextLength512)
+                           .ValidateCreateUserViewTextBox(window, c, TextHelper.TextLength8)
+                           .Case(() => window.SetKeyTextInput(TextHelper.TextLength512))
+                )
+               .Case(() => window.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+               .Case(() => TestAppBuilder.Configuration.GetImapConnection().ClearInbox())
+               .Case(
+                    () =>
+                        window.GetCurrentView<CreateUserView, CreateUserViewModel>()
+                           .Case(
+                                c =>
+                                    c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
+                                       .ThrowIfNull()
+                                       .ClearText(window)
+                                       .Case(() => window.SetKeyTextInput(TextHelper.TextLength8))
+                            )
+                           .FindControl<Button>(ElementNames.CreateUserButton)
+                           .ThrowIfNull()
+                           .MustEnabled()
+                           .ClickOn(window)
+                           .RunJobsAll(2)
+                )
+               .Case(
+                    () =>
+                        window.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>()
+                           .FindControl<TextBox>(ElementNames.VerificationCodeTextBox)
+                           .ThrowIfNull()
+                           .FocusInput(window)
+                           .Case(
+                                () =>
+                                    window.SetKeyTextInput(
+                                        TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
+                                    )
+                            )
+                           .FindControl<Button>(ElementNames.VerificationEmailButton)
+                           .ThrowIfNull()
+                           .MustEnabled()
+                           .ClickOn(window)
+                           .RunJobsAll(3)
+                )
+               .Case(
+                    () => window.GetCurrentView<LoginView, LoginViewModel>()
+                       .Case(
+                            view =>
+                                view.FindControl<TextBox>(ElementNames.LoginTextBox)
+                                   .ThrowIfNull()
+                                   .SetText(window, TextHelper.TextLength4)
+                        )
+                       .Case(
+                            view =>
+                                view.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                                   .ThrowIfNull()
+                                   .SetText(window, TextHelper.TextLength8)
+                        )
+                       .FindControl<Button>(ElementNames.LoginButton)
+                       .ThrowIfNull()
+                       .ClickOn(window)
+                       .RunJobsAll(11)
+                )
+               .Case(() => window.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>());
+
+            window.Close();
+        }
+        catch
+        {
+            window.SaveFrame().LogCurrentState();
+
+            throw;
+        }
     }
 
     [AvaloniaTest]
