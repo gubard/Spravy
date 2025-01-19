@@ -2,7 +2,7 @@
     <ItemGroup>
         <PackageReference Include="Grpc.Net.Client" Version="$(GrpcVersion)" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="$(GrpcVersion)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
     </ItemGroup>
 
     <ItemGroup>
