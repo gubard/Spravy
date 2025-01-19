@@ -1,3 +1,5 @@
+using Shouldly;
+
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class InputElementExtension
@@ -5,7 +7,7 @@ public static class InputElementExtension
     public static TInputElement MustFocused<TInputElement>(this TInputElement inputElement)
         where TInputElement : InputElement
     {
-        Assert.Equals(inputElement.IsFocused, true);
+        inputElement.IsFocused.ShouldBe(true);
 
         return inputElement;
     }
@@ -13,7 +15,7 @@ public static class InputElementExtension
     public static TInputElement MustEnabled<TInputElement>(this TInputElement inputElement)
         where TInputElement : InputElement
     {
-        Assert.Equals(inputElement.IsEnabled, true);
+        inputElement.IsEnabled.ShouldBe(true);
 
         return inputElement;
     }

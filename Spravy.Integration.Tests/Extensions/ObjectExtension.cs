@@ -21,34 +21,29 @@ public static class ObjectExtension
 
         while (true)
         {
-            var milliseconds = TimeSpan.FromMilliseconds(Environment.TickCount - currentTick);
-
-            if (milliseconds >= timeout)
+            try
             {
-                throw new TimeoutException();
+                return predicate.Invoke();
             }
-
-            using (var cancellationTokenSource = new CancellationTokenSource())
+            catch
             {
-                cancellationTokenSource.CancelAfter(timeout - milliseconds);
+                var milliseconds = TimeSpan.FromMilliseconds(Environment.TickCount - currentTick);
 
-                try
+                if (milliseconds >= timeout)
                 {
-                    return predicate.Invoke();
+                    throw;
                 }
-                catch
-                {
-                    var value = index;
 
-                    Dispatcher.UIThread.Post(
-                        () => Task.Delay(TimeSpan.FromSeconds(Math.Exp(value)), cancellationTokenSource.Token)
-                           .ConfigureAwait(false)
-                           .GetAwaiter()
-                           .GetResult()
-                    );
+                var value = index;
 
-                    Dispatcher.UIThread.RunJobs();
-                }
+                Dispatcher.UIThread.Post(
+                    () => Task.Delay(TimeSpan.FromSeconds(Math.Exp(value)))
+                       .ConfigureAwait(false)
+                       .GetAwaiter()
+                       .GetResult()
+                );
+
+                Dispatcher.UIThread.RunJobs();
             }
 
             index++;

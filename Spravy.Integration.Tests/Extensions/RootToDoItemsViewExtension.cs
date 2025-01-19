@@ -1,3 +1,5 @@
+using Shouldly;
+
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class RootToDoItemsViewExtension
@@ -103,7 +105,7 @@ public static class RootToDoItemsViewExtension
            .GetToDoItemItemsControl()
            .ThrowIfNull();
 
-        Assert.Equals(toDoItemItemsControl.ItemCount, toDoItemCount + 1);
+        toDoItemItemsControl.ItemCount.ShouldBe(toDoItemCount + 1);
         view.RunJobsAll(4).CheckLastToDoItemName(name);
 
         return view;
@@ -111,7 +113,7 @@ public static class RootToDoItemsViewExtension
 
     public static RootToDoItemsView CheckLastToDoItemName(this RootToDoItemsView view, string name)
     {
-        var text = view.GetToDoItemItemsControl()
+        view.GetToDoItemItemsControl()
            .ThrowIfNull()
            .GetVisualChildren()
            .Single()
@@ -138,9 +140,7 @@ public static class RootToDoItemsViewExtension
            .First()
            .ThrowIfIsNotCast<TextBlock>()
            .Text
-           .ThrowIfNull();
-
-        Assert.Equals(text, name);
+           .ShouldBe(name);
 
         return view;
     }

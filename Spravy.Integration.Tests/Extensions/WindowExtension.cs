@@ -1,3 +1,4 @@
+using Shouldly;
 using Spravy.Ui.Controls;
 
 namespace Spravy.Integration.Tests.Extensions;
@@ -7,7 +8,7 @@ public static class WindowExtension
     public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window) where TWindow : Window
     {
         var dialogHost = window.GetErrorDialogHost();
-        Assert.Equals(dialogHost.IsOpen, true);
+        dialogHost.IsOpen.ShouldBe(true);
 
         dialogHost.GetVisualChildren()
            .Single()
@@ -24,14 +25,14 @@ public static class WindowExtension
            .GetControl<Button>(ElementNames.OkButton)
            .ClickOn(window);
 
-        Assert.Equals(dialogHost.IsOpen, false);
+        dialogHost.IsOpen.ShouldBe(false);
 
         return window;
     }
 
     public static TWindow MustShowError<TWindow>(this TWindow window) where TWindow : Window
     {
-        Assert.Equals(window.GetErrorDialogHost().IsOpen, true);
+        window.GetErrorDialogHost().IsOpen.ShouldBe(true);
 
         return window;
     }
@@ -187,22 +188,22 @@ public static class WindowExtension
            .ThrowIfNull()
            .ThrowIfIsNotCast<DialogControl>();
 
-        Assert.Equals(progressDialogHost.Name.ThrowIfNull(), "ProgressDialogHost");
+        progressDialogHost.Name.ShouldBe("ProgressDialogHost");
 
         var inputDialogHost = progressDialogHost
            .Content
            .ThrowIfNull()
            .ThrowIfIsNotCast<DialogControl>();
 
-        Assert.Equals(inputDialogHost.Name.ThrowIfNull(), "InputDialogHost");
+        inputDialogHost.Name.ShouldBe("InputDialogHost");
 
         var contentDialogHost = inputDialogHost
            .Content
            .ThrowIfNull()
            .ThrowIfIsNotCast<DialogControl>();
 
-        Assert.Equals(contentDialogHost.Name.ThrowIfNull(), "ContentDialogHost");
-        Assert.Equals(contentDialogHost.IsOpen, true);
+        contentDialogHost.Name.ShouldBe("ContentDialogHost");
+        contentDialogHost.IsOpen.ShouldBe(true);
 
         return contentDialogHost
            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
@@ -225,7 +226,7 @@ public static class WindowExtension
         where TView : UserControl where TViewModel : ViewModelBase
     {
         var errorDialogHost = window.GetErrorDialogHost();
-        Assert.Equals(errorDialogHost.IsOpen, true);
+        errorDialogHost.IsOpen.ShouldBe(true);
 
         return errorDialogHost
            .Case(dh => dh.Dialog.ThrowIfNull().Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
