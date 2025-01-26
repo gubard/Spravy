@@ -1,18 +1,23 @@
+using Spravy.Picture.Domain.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
 {
     private readonly IToDoService toDoService;
+    private readonly IPictureService pictureService;
 
     public ToDoItemSettingsViewModel(
         Option<ToDoItemEntityNotify> editItem,
         ReadOnlyMemory<ToDoItemEntityNotify> editItems,
         IToDoService toDoService,
+        IPictureService pictureService,
         EditToDoItemViewModel editToDoItemViewModel
     ) : base(editItem, editItems)
     {
         this.toDoService = toDoService;
         EditToDoItemViewModel = editToDoItemViewModel;
+        this.pictureService = pictureService;
     }
 
     public EditToDoItemViewModel EditToDoItemViewModel { get; }
@@ -21,7 +26,11 @@ public class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.EditToDoItemsAsync(EditToDoItemViewModel.GetEditToDoItems().SetIds(ResultIds), ct);
+        return Result.AwaitableSuccess.IfSuccessAllAsync(
+            ct,
+            () => toDoService.EditToDoItemsAsync(EditToDoItemViewModel.GetEditToDoItems().SetIds(ResultIds), ct),
+            () => pictureService.EditPictureAsync(EditToDoItemViewModel.GetEditPicture(ResultIds), ct)
+        );
     }
 
     public Result UpdateItemUi()

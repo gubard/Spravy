@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="Grpc.Net.Client" Version="$(GrpcVersion)" />
+        <PackageReference Include="Grpc.Net.Client.Web" Version="$(GrpcVersion)" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="$(GrpcVersion)" />
+        <PackageReference Include="Grpc.Tools" Version="2.69.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain.Mapper\Spravy.Picture.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain\Spravy.Picture.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Spravy.Picture.Domain\Protos\picture.proto" GrpcServices="Client" ProtoRoot="..\Spravy.Picture.Domain">
+            <Link>Protos/picture.proto</Link>
+        </Protobuf>
+
+        <Protobuf Include="..\Spravy.Picture.Domain\Protos\picture_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/picture_messages.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+</Project>

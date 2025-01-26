@@ -39,10 +39,9 @@ public abstract class SpravyDbContext : DbContext
         base.Dispose();
     }
 
-    public override ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         IsDisposed = true;
-
-        return base.DisposeAsync();
+        await base.DisposeAsync();
     }
 }

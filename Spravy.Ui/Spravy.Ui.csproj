@@ -40,6 +40,7 @@
         <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
         <ProjectReference Include="..\Spravy.PasswordGenerator.Domain.Client\Spravy.PasswordGenerator.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.PasswordGenerator.Domain\Spravy.PasswordGenerator.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain.Client\Spravy.Picture.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />

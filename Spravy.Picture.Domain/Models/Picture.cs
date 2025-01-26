@@ -1,10 +1,8 @@
-using System.Runtime.CompilerServices;
-
 namespace Spravy.Picture.Domain.Models;
 
-public readonly struct Picture
+public readonly struct Picture : IDisposable, IAsyncDisposable
 {
-    private Picture(Guid id, string name, string description, Stream data)
+    public Picture(Guid id, string name, string description, Stream data)
     {
         Id = id;
         Name = name;
@@ -12,21 +10,18 @@ public readonly struct Picture
         Description = description;
     }
 
-    public Guid Id { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public Stream Data { get; }
+    public readonly Guid Id;
+    public readonly string Name;
+    public readonly string Description;
+    public readonly Stream Data;
 
-    public static ConfiguredValueTaskAwaitable<Picture> CreateAsync(Guid id, string name, string description, Stream data)
+    public void Dispose()
     {
-        return CreateCore(id, name, description, data).ConfigureAwait(false);
+        Data.Dispose();
     }
 
-    private static async ValueTask<Picture> CreateCore(Guid id, string name, string description, Stream data)
+    public async ValueTask DisposeAsync()
     {
-        var stream = new MemoryStream();
-        await data.CopyToAsync(stream);
-
-        return new(id, name, description, data);
+        await Data.DisposeAsync();
     }
 }

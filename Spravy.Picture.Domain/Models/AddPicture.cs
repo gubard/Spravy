@@ -1,30 +1,25 @@
-using System.Runtime.CompilerServices;
-
 namespace Spravy.Picture.Domain.Models;
 
-public readonly struct AddPicture
+public readonly struct AddPicture : IDisposable, IAsyncDisposable
 {
-    private AddPicture(string name, string description, Stream data)
+    public AddPicture(string name, string description, Stream data)
     {
         Name = name;
         Data = data;
         Description = description;
     }
 
-    public string Name { get; }
-    public string Description { get; }
-    public Stream Data { get; }
+    public readonly string Name;
+    public readonly string Description;
+    public readonly Stream Data;
 
-    public static ConfiguredValueTaskAwaitable<AddPicture> CreateAsync(string name, string description, Stream data)
+    public void Dispose()
     {
-        return CreateCore(name, description, data).ConfigureAwait(false);
+        Data.Dispose();
     }
 
-    private static async ValueTask<AddPicture> CreateCore(string name, string description, Stream data)
+    public async ValueTask DisposeAsync()
     {
-        var stream = new MemoryStream();
-        await data.CopyToAsync(stream);
-
-        return new(name, description, data);
+        await Data.DisposeAsync();
     }
 }

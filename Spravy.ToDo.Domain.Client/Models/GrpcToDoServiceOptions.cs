@@ -9,8 +9,3 @@ public class GrpcToDoServiceOptions : IGrpcOptionsValue
     public ChannelCredentialType ChannelCredentialType { get; set; }
     public string? Token { get; set; }
 }
-
-public class GrpcToDoServiceOptionsConfiguration
-{
-    public GrpcToDoServiceOptions? GrpcToDoService { get; set; }
-}

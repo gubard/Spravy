@@ -4,20 +4,57 @@ option csharp_namespace = "Spravy.Picture.Protos";
 
 package spravy.picture;
 
-message AddPicturesRequest {
+message GetPictureRequest {
+  repeated IdPictureParametersGrpc pictures = 1;
 }
 
-message AddPicturesReply {
+message GetPictureReply {
+  repeated PictureItemGrpc pictures = 1;
 }
 
-message DeletePicturesRequest {
+message EditPictureRequest {
+  repeated AddPictureItemGrpc add_pictures = 1;
 }
 
-message DeletePicturesReply {
+message EditPictureReply {
 }
 
-message GetPicturesRequest {
+message AddPictureItemGrpc {
+  EntryIdGrpc entry_id = 1;
+  repeated AddPictureGrpc items = 2;
 }
 
-message GetPicturesReply {
+message AddPictureGrpc {
+  string Name = 1;
+  string Description = 2;
+  bytes Data = 3;
+}
+
+message PictureItemGrpc {
+  string entry = 1;
+  bytes  id = 2;
+  PictureGrpc picture = 3;
+}
+
+message PictureGrpc {
+  bytes Id = 1;
+  string Name = 2;
+  string Description = 3;
+  bytes Data = 4;
+}
+
+message IdPictureParametersGrpc {
+  double size = 1;
+  SizeTypeGrpc type = 2;
+  repeated EntryIdGrpc entry_ids = 3;
+}
+
+message EntryIdGrpc {
+  repeated bytes ids = 1;
+  string entry = 2;
+}
+
+enum SizeTypeGrpc {
+  SIZE_TYPE_GRPC_WIDTH = 0;
+  SIZE_TYPE_GRPC_HEIGHT = 1;
 }

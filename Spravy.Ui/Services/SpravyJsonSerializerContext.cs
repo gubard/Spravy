@@ -1,5 +1,6 @@
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Models;
+using Spravy.Picture.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Features.Schedule.Settings;
@@ -54,6 +55,7 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(VerificationCodePasswordError))]
 [JsonSerializable(typeof(GrpcScheduleServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcToDoServiceOptionsConfiguration))]
+[JsonSerializable(typeof(GrpcPictureServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcAuthenticationServiceOptionsConfiguration))]
 [JsonSerializable(typeof(GrpcPasswordServiceOptionsConfiguration))]
 [JsonSerializable(typeof(AppOptionsConfiguration))]

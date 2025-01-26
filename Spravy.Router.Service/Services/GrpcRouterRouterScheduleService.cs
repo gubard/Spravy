@@ -1,4 +1,3 @@
-using Google.Protobuf.WellKnownTypes;
 using Spravy.Schedule.Domain.Mapper.Mappers;
 using Spravy.Schedule.Protos;
 

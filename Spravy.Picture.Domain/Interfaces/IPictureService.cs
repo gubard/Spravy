@@ -6,10 +6,6 @@ namespace Spravy.Picture.Domain.Interfaces;
 
 public interface IPictureService
 {
-    ConfiguredValueTaskAwaitable<Result<Guid>> AddPicturesAsync(ReadOnlyMemory<AddPicture> picture);
-    Cvtar DeletePicturesAsync(ReadOnlyMemory<Guid> picture);
-
-    ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<Models.Picture>>> GetPicturesAsync(
-        ReadOnlyMemory<PictureParameters> parameters
-    );
+    ConfiguredValueTaskAwaitable<Result<PictureResponse>> GetPictureAsync(GetPicture getPicture, CancellationToken ct);
+    Cvtar EditPictureAsync(EditPicture editPicture, CancellationToken ct);
 }

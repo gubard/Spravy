@@ -2,6 +2,7 @@ using Jab;
 using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
+using Spravy.Picture.Domain.Client.Modules;
 using Spravy.Schedule.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
 using EditDescriptionView = Spravy.Ui.Features.ToDo.Views.EditDescriptionView;
@@ -12,6 +13,7 @@ namespace Spravy.Ui.Modules;
 [Import(typeof(IAuthenticationClientModule))]
 [Import(typeof(IClientModule))]
 [Import(typeof(IToDoClientModule))]
+[Import(typeof(IPictureClientModule))]
 [Import(typeof(IPasswordGeneratorClientModule))]
 [Import(typeof(IScheduleClientModule))]
 [Singleton(typeof(AccountNotify))]

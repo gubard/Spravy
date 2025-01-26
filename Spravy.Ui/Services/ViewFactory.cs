@@ -1,3 +1,5 @@
+using Spravy.Picture.Domain.Interfaces;
+
 namespace Spravy.Ui.Services;
 
 public class ViewFactory : IViewFactory
@@ -21,6 +23,7 @@ public class ViewFactory : IViewFactory
     private readonly IToDoService toDoService;
     private readonly IToDoUiService toDoUiService;
     private readonly SoundSettingsNotify soundSettingsNotify;
+    private readonly IPictureService pictureService;
 
     public ViewFactory(
         IToDoService toDoService,
@@ -41,7 +44,8 @@ public class ViewFactory : IViewFactory
         IScheduleService scheduleService,
         ISerializer serializer,
         IClipboardService clipboardService,
-        SoundSettingsNotify soundSettingsNotify
+        SoundSettingsNotify soundSettingsNotify,
+        IPictureService pictureService
     )
     {
         this.toDoService = toDoService;
@@ -63,6 +67,7 @@ public class ViewFactory : IViewFactory
         this.serializer = serializer;
         this.clipboardService = clipboardService;
         this.soundSettingsNotify = soundSettingsNotify;
+        this.pictureService = pictureService;
     }
 
     public EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow)
@@ -89,6 +94,7 @@ public class ViewFactory : IViewFactory
                 item,
                 items,
                 toDoService,
+                pictureService,
                 CreateEditToDoItemViewModel(false, false)
             );
 
@@ -98,7 +104,13 @@ public class ViewFactory : IViewFactory
             return result;
         }
 
-        return new(item, items, toDoService, CreateEditToDoItemViewModel(true, false));
+        return new(
+            item,
+            items,
+            toDoService,
+            pictureService,
+            CreateEditToDoItemViewModel(true, false)
+        );
     }
 
     public LeafToDoItemsViewModel CreateLeafToDoItemsViewModel(
@@ -477,6 +489,7 @@ public class ViewFactory : IViewFactory
             items,
             objectStorage,
             toDoService,
+            pictureService,
             CreateEditToDoItemViewModel(false, true)
         );
     }

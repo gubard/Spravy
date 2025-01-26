@@ -2,10 +2,17 @@ namespace Spravy.Domain.Services;
 
 public class SpravyFileSystem : ISpravyFileSystem
 {
+    private static readonly string UserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    private static readonly DirectoryInfo DbDirectory = new(Path.Combine(UserProfile, "DataBases"));
+    private static readonly DirectoryInfo FilesDirectory = new(Path.Combine(UserProfile, "Files"));
+
     public DirectoryInfo GetDbDirectory()
     {
-        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return DbDirectory;
+    }
 
-        return new(Path.Combine(home, "DataBases"));
+    public DirectoryInfo GetFilesDirectory()
+    {
+        return FilesDirectory;
     }
 }

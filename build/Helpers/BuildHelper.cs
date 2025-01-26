@@ -40,6 +40,9 @@ public static class BuildHelper
             {
                 "Spravy.Password.Service".GetGrpcServiceName(), 5005
             },
+            {
+                "Spravy.Picture.Service".GetGrpcServiceName(), 5006
+            },
         };
     }
 

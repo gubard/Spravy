@@ -77,6 +77,11 @@ public static partial class CoreMapper
         return ByteString.CopyFrom(value.Span);
     }
 
+    public static ByteString ToByteString(this Stream value)
+    {
+        return ByteString.FromStream(value);
+    }
+
     public static ByteString ToByteString(this Guid value)
     {
         return ByteString.CopyFrom(value.ToByteArray());

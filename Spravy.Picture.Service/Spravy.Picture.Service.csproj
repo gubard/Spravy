@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="$(GrpcVersion)" />
+        <PackageReference Include="Grpc.AspNetCore.Web" Version="$(GrpcVersion)" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Spravy.Picture.Domain\Protos\picture.proto" GrpcServices="Server" ProtoRoot="..\Spravy.Picture.Domain">
+            <Link>Protos/picture.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\Spravy.Picture.Domain\Protos\picture_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/picture_messages.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Db.Mapper\Spravy.Picture.Db.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Db.Sqlite.Migrator\Spravy.Picture.Db.Sqlite.Migrator.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain.Mapper\Spravy.Picture.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Domain\Spravy.Picture.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.Picture.Db.Sqlite\Spravy.Picture.Db.Sqlite.csproj" />
+    </ItemGroup>
+</Project>

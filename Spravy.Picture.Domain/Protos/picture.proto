@@ -7,7 +7,6 @@ package spravy.picture;
 import "Protos/picture_messages.proto";
 
 service PictureService {
-  rpc AddPictures (AddPicturesRequest) returns (AddPicturesReply);
-  rpc DeletePictures (DeletePicturesRequest) returns (DeletePicturesReply);
-  rpc GetPictures (GetPicturesRequest) returns (GetPicturesReply);
+  rpc GetPicture (GetPictureRequest) returns (GetPictureReply);
+  rpc EditPicture (EditPictureRequest) returns (EditPictureReply);
 }

@@ -1,3 +1,4 @@
+using Spravy.Picture.Domain.Models;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -273,6 +274,31 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    public EditPicture GetEditPicture(ReadOnlyMemory<Guid> ids)
+    {
+        var addPictures = Images.OfType<LocalToDoImage>()
+           .Select(
+                x =>
+                {
+                    var memoryStream = new MemoryStream();
+                    x.Data.Save(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+
+                    return new AddPicture(string.Empty, string.Empty, memoryStream);
+                }
+            )
+           .ToArray();
+
+        var result = new EditPicture(
+            new AddPictureItem[]
+            {
+                new(new("ToDo", ids), addPictures),
+            }
+        );
+
+        return result;
     }
 
     public AddToDoItemOptions GetAddToDoItemOptions(OptionStruct<Guid> parentId)
