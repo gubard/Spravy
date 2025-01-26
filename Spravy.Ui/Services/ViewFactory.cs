@@ -136,7 +136,8 @@ public class ViewFactory : IViewFactory
             objectStorage,
             CreateToDoSubItemsViewModel(ViewModelSortBy.OrderIndex),
             errorHandler,
-            toDoUiService
+            toDoUiService,
+            pictureService
         );
     }
 

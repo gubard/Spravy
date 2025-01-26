@@ -316,6 +316,9 @@ public partial class ToDoItemEntityNotify : NotifyBase,
 
     [ObservableProperty]
     private bool isExpandDescription;
+    
+    [ObservableProperty]
+    private bool isExpandImages = true;
 
     private Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {

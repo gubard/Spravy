@@ -1,7 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 
-namespace Spravy.Ui.Features.ToDo.Models;
+namespace Spravy.Ui.Features.Picture.Models;
 
 public class LocalToDoImage : IToDoImage, IDisposable
 {
@@ -20,7 +20,7 @@ public class LocalToDoImage : IToDoImage, IDisposable
     public static async ValueTask<Result<LocalToDoImage>> CreateAsync(IStorageFile file)
     {
         await using var imageStream = await file.OpenReadAsync();
-        var data = await Task.Run(() => Bitmap.DecodeToWidth(imageStream, 400));
+        var data = new Bitmap(imageStream);
 
         return new LocalToDoImage(data).ToResult();
     }

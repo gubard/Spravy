@@ -1,3 +1,8 @@
+using Spravy.Picture.Domain.Enums;
+using Spravy.Picture.Domain.Interfaces;
+using Spravy.Picture.Domain.Models;
+using Spravy.Ui.Features.Picture.Models;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEditId, IToDoSubItemsViewModelOwner
@@ -5,6 +10,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
     private readonly IObjectStorage objectStorage;
     private readonly TaskWork refreshWork;
     private readonly IToDoUiService toDoUiService;
+    private readonly IPictureService pictureService;
 
     [ObservableProperty]
     private bool isMulti;
@@ -14,12 +20,15 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
         IObjectStorage objectStorage,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IErrorHandler errorHandler,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        IPictureService pictureService
     ) : base(true)
     {
+        Images = new();
         this.objectStorage = objectStorage;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoUiService = toDoUiService;
+        this.pictureService = pictureService;
         Item = item;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         Commands = new(Item.Commands);
@@ -29,6 +38,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
     public ToDoItemEntityNotify Item { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
+    public AvaloniaList<MemoryToDoImage> Images { get; }
     public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Name}:{Item.Id}";
 
     public Result<ToDoItemEditId> GetToDoItemEditId()
@@ -68,47 +78,85 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
         return this.PostUiBackground(() => ToDoSubItemsViewModel.RefreshUi(), ct)
-           .IfSuccessAsync(
-                () => toDoUiService.GetRequest(
-                    GetToDo.WithDefaultItems
-                       .SetParentItem(Item.Id)
-                       .SetChildrenItem(Item.Id)
-                       .SetItem(Item.Id),
-                    ct
-                ),
-                ct
-            )
-           .IfSuccessAsync(
-                _ => this.PostUiBackground(
-                    () =>
-                        ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()).IfSuccess(UpdateCommandsUi),
-                    ct
-                ),
-                ct
-            )
-           .IfSuccessAsync(
-                () =>
-                {
-                    var pathIds = Item.Path
-                       .OfType<ToDoItemEntityNotify>()
-                       .Select(x => x.Id)
-                       .ToArray()
-                       .ToReadOnlyMemory();
-
-                    var ids = Item.Children
-                       .Select(x => x.Id)
-                       .ToArray()
-                       .ToReadOnlyMemory()
-                       .Combine(pathIds);
-
-                    return toDoUiService.GetRequest(
-                        GetToDo.Default.SetItems(pathIds).SetParentItems(ids).SetChildrenItems(ids),
+           .IfSuccessAllAsync(
+                ct,
+                () => pictureService.GetPictureAsync(
+                        new(
+                            new IdPictureParameters[]
+                            {
+                                new(
+                                    new EntryId[]
+                                    {
+                                        new(
+                                            "ToDo",
+                                            new[]
+                                            {
+                                                Item.Id,
+                                            }
+                                        ),
+                                    },
+                                    100,
+                                    SizeType.Height
+                                ),
+                            }
+                        ),
                         ct
-                    );
-                },
-                ct
-            )
-           .ToResultOnlyAsync();
+                    )
+                   .IfSuccessAsync(
+                        response => this.PostUiBackground(
+                            () => response.Pictures
+                               .IfSuccessForEach(
+                                    picture =>
+                                    {
+                                        using var stream = picture.Picture.Data;
+
+                                        return new MemoryToDoImage(stream).ToResult();
+                                    }
+                                )
+                               .IfSuccess(images => Images.UpdateUi(images)),
+                            ct
+                        ),
+                        ct
+                    ),
+                () => toDoUiService.GetRequest(
+                        GetToDo.WithDefaultItems
+                           .SetParentItem(Item.Id)
+                           .SetChildrenItem(Item.Id)
+                           .SetItem(Item.Id),
+                        ct
+                    )
+                   .IfSuccessAsync(
+                        _ => this.PostUiBackground(
+                            () =>
+                                ToDoSubItemsViewModel.SetItemsUi(Item.Children.ToArray()).IfSuccess(UpdateCommandsUi),
+                            ct
+                        ),
+                        ct
+                    )
+                   .IfSuccessAsync(
+                        () =>
+                        {
+                            var pathIds = Item.Path
+                               .OfType<ToDoItemEntityNotify>()
+                               .Select(x => x.Id)
+                               .ToArray()
+                               .ToReadOnlyMemory();
+
+                            var ids = Item.Children
+                               .Select(x => x.Id)
+                               .ToArray()
+                               .ToReadOnlyMemory()
+                               .Combine(pathIds);
+
+                            return toDoUiService.GetRequest(
+                                GetToDo.Default.SetItems(pathIds).SetParentItems(ids).SetChildrenItems(ids),
+                                ct
+                            );
+                        },
+                        ct
+                    )
+                   .ToResultOnlyAsync()
+            );
     }
 
     public override Result Stop()

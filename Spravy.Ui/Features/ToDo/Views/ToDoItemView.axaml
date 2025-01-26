@@ -10,6 +10,7 @@
              xmlns:e="clr-namespace:Spravy.Domain.Enums;assembly=Spravy.Domain"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:tde="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
+             xmlns:models="clr-namespace:Spravy.Ui.Features.Picture.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
              x:DataType="vm:ToDoItemViewModel"
@@ -135,6 +136,24 @@
                             <!--<mdxaml:MarkdownScrollViewer Markdown="{Binding Item.Description}" />-->
                         </c:ViewSelectorItemControl>
                     </c:ViewSelectorControl>
+                </Expander>
+
+                <Expander Classes="header-alignment-left"
+                          Margin="3"
+                          IsExpanded="{Binding Item.IsExpandImages}"
+                          IsVisible="{Binding Images.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                    <Expander.Header>
+                        <TextBlock Text="{DynamicResource Lang.Images}"
+                                   Classes="alignment-center" />
+                    </Expander.Header>
+
+                    <ItemsControl ItemsSource="{Binding Images}" Classes="wrap-panel">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:MemoryToDoImage">
+                                <Image Source="{Binding Data}" Height="100" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

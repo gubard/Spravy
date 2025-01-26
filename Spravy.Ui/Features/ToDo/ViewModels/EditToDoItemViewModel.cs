@@ -1,4 +1,5 @@
 using Spravy.Picture.Domain.Models;
+using Spravy.Ui.Features.Picture.Models;
 using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;

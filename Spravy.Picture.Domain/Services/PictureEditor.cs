@@ -37,13 +37,13 @@ public class PictureEditor : IPictureEditor
     {
         using var image = await Image.LoadAsync(stream, ct);
         var scale = GetScale(image.Size, size, type);
-        image.Mutate(x => x.Resize(image.Width * scale, image.Height * scale));
+        image.Mutate(x => x.Resize((int)(image.Width * scale), (int)(image.Height * scale)));
         await image.SaveAsWebpAsync(saveFile.FullName, ct);
 
         return Result.Success;
     }
 
-    private int GetScale(
+    private double GetScale(
         Size imageSize,
         double size,
         SizeType type
@@ -51,8 +51,8 @@ public class PictureEditor : IPictureEditor
     {
         return type switch
         {
-            SizeType.Width => (int)Math.Round(imageSize.Width / size),
-            SizeType.Height => (int)Math.Round(imageSize.Height / size),
+            SizeType.Width => size / imageSize.Width,
+            SizeType.Height => size / imageSize.Height,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
         };
     }

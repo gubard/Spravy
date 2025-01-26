@@ -4,7 +4,10 @@ public static class ByteExtension
 {
     public static MemoryStream ToMemoryStream(this byte[] bytes)
     {
-        return new(bytes);
+        var result = new MemoryStream(bytes);
+        result.Seek(0, SeekOrigin.Begin);
+
+        return result;
     }
 
     public static string ToHex(this byte[] bytes)
