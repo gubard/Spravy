@@ -7,7 +7,7 @@ using Spravy.PasswordGenerator.Db.Contexts;
 
 namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator;
 
-public class UserSecretDbContextFactory : IFactory<string, UserSecretDbContext>
+public class UserSecretDbContextFactory : IFactory<string, UserSecretSpravyDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
 
@@ -16,7 +16,7 @@ public class UserSecretDbContextFactory : IFactory<string, UserSecretDbContext>
         this.dbContextSetup = dbContextSetup;
     }
 
-    public Result<UserSecretDbContext> Create(string key)
+    public Result<UserSecretSpravyDbContext> Create(string key)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 key,
@@ -24,6 +24,6 @@ public class UserSecretDbContextFactory : IFactory<string, UserSecretDbContext>
             )
            .Options;
 
-        return new UserSecretDbContext(options, dbContextSetup).ToResult();
+        return new UserSecretSpravyDbContext(options, dbContextSetup).ToResult();
     }
 }

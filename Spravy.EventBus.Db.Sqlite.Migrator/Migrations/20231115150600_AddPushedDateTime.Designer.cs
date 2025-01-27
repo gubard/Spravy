@@ -10,7 +10,7 @@ using Spravy.EventBus.Db.Contexts;
 
 namespace Spravy.EventBus.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbEventBusDbContext))]
+    [DbContext(typeof(EventBusSpravyDbContext))]
     [Migration("20231115150600_AddPushedDateTime")]
     partial class AddPushedDateTime
     {

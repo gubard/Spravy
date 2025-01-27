@@ -12,11 +12,11 @@ namespace Spravy.Picture.Service.Services;
 
 public class PictureService : IPictureService
 {
-    private readonly IFactory<SpravyPictureDbContext> dbContextFactory;
+    private readonly IFactory<PictureSpravyDbContext> dbContextFactory;
     private readonly IFactory<IPictureEntryService> pictureEntryServiceFactory;
 
     public PictureService(
-        IFactory<SpravyPictureDbContext> dbContextFactory,
+        IFactory<PictureSpravyDbContext> dbContextFactory,
         IFactory<IPictureEntryService> pictureEntryServiceFactory
     )
     {

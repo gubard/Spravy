@@ -7,7 +7,7 @@ using Spravy.EventBus.Db.Contexts;
 
 namespace Spravy.EventBus.Db.Sqlite.Migrator;
 
-public class SpravyEventBusDbContextFactory : IFactory<string, SpravyDbEventBusDbContext>
+public class SpravyEventBusDbContextFactory : IFactory<string, EventBusSpravyDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
 
@@ -16,7 +16,7 @@ public class SpravyEventBusDbContextFactory : IFactory<string, SpravyDbEventBusD
         this.dbContextSetup = dbContextSetup;
     }
 
-    public Result<SpravyDbEventBusDbContext> Create(string key)
+    public Result<EventBusSpravyDbContext> Create(string key)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 key,
@@ -24,6 +24,6 @@ public class SpravyEventBusDbContextFactory : IFactory<string, SpravyDbEventBusD
             )
            .Options;
 
-        return new SpravyDbEventBusDbContext(options, dbContextSetup).ToResult();
+        return new EventBusSpravyDbContext(options, dbContextSetup).ToResult();
     }
 }

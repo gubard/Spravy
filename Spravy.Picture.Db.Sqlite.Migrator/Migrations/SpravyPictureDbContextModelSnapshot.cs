@@ -9,7 +9,7 @@ using Spravy.Picture.Db.Contexts;
 
 namespace Spravy.Picture.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyPictureDbContext))]
+    [DbContext(typeof(PictureSpravyDbContext))]
     partial class SpravyPictureDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

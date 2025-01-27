@@ -11,14 +11,14 @@ public class EfToDoService : IToDoService
 {
     private static readonly ReadOnlyMemory<Guid> eventIds = new([AddToDoItemToFavoriteEventOptions.EventId,]);
 
-    private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
+    private readonly IFactory<ToDoSpravyDbContext> dbContextFactory;
     private readonly IEventBusService eventBusService;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly ISerializer serializer;
 
     public EfToDoService(
-        IFactory<SpravyDbToDoDbContext> dbContextFactory,
+        IFactory<ToDoSpravyDbContext> dbContextFactory,
         IHttpContextAccessor httpContextAccessor,
         GetterToDoItemParametersService getterToDoItemParametersService,
         IEventBusService eventBusService,
@@ -715,7 +715,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async ValueTask<Result<Guid>> AddCloneAsync(SpravyDbToDoDbContext context, ToDoItemEntity clone, OptionStruct<Guid> parentId, CancellationToken ct)
+    private async ValueTask<Result<Guid>> AddCloneAsync(ToDoSpravyDbContext context, ToDoItemEntity clone, OptionStruct<Guid> parentId, CancellationToken ct)
     {
         var id = clone.Id;
         clone.Id = Guid.NewGuid();
@@ -731,7 +731,7 @@ public class EfToDoService : IToDoService
         return clone.Id.ToResult();
     }
 
-    private Cvtar DeleteToDoItemAsync(Guid id, SpravyDbToDoDbContext context, CancellationToken ct)
+    private Cvtar DeleteToDoItemAsync(Guid id, ToDoSpravyDbContext context, CancellationToken ct)
     {
         return context.GetEntityAsync<ToDoItemEntity>(id)
            .IfSuccessAsync(
@@ -1028,7 +1028,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private Cvtar NormalizeOrderIndexAsync(SpravyDbToDoDbContext context, OptionStruct<Guid> parentId, CancellationToken ct)
+    private Cvtar NormalizeOrderIndexAsync(ToDoSpravyDbContext context, OptionStruct<Guid> parentId, CancellationToken ct)
     {
         var pi = parentId.TryGetValue(out var value) ? (Guid?)value : null;
 
@@ -1068,7 +1068,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private Cvtar MoveNextDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity item, TimeSpan offset, CancellationToken ct)
+    private Cvtar MoveNextDueDateAsync(ToDoSpravyDbContext context, ToDoItemEntity item, TimeSpan offset, CancellationToken ct)
     {
         switch (item.Type)
         {
@@ -1168,7 +1168,7 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(SpravyDbToDoDbContext context, ReadOnlyMemory<Guid> ids, bool tracking, CancellationToken ct)
+    private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, ToDoItemEntity>>> GetAllChildrenAsync(ToDoSpravyDbContext context, ReadOnlyMemory<Guid> ids, bool tracking, CancellationToken ct)
     {
         var parameters = CreateSqlRawParametersForAllChildren(ids);
         var query = context.Set<ToDoItemEntity>().FromSqlRaw(parameters.Sql, parameters.Parameters.ToArray());

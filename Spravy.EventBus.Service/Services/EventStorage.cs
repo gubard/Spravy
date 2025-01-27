@@ -8,10 +8,10 @@ public class EventStorage
 {
     private static readonly TimeSpan EventLiveTime = TimeSpan.FromMinutes(1);
     private static readonly Dictionary<string, DateTime> lastWriteTimeUtc = new();
-    private readonly IFactory<SpravyDbEventBusDbContext> dbContextFactory;
+    private readonly IFactory<EventBusSpravyDbContext> dbContextFactory;
     private readonly IFactory<FileInfo> fileFactory;
 
-    public EventStorage(IFactory<SpravyDbEventBusDbContext> dbContextFactory, IFactory<FileInfo> fileFactory)
+    public EventStorage(IFactory<EventBusSpravyDbContext> dbContextFactory, IFactory<FileInfo> fileFactory)
     {
         this.dbContextFactory = dbContextFactory;
         this.fileFactory = fileFactory;

@@ -7,12 +7,12 @@ namespace Spravy.PasswordGenerator.Service.Services;
 
 public class EfPasswordService : IPasswordService
 {
-    private readonly IFactory<PasswordDbContext> dbContextFactory;
+    private readonly IFactory<PasswordSpravyDbContext> dbContextFactory;
     private readonly IPasswordGenerator passwordGenerator;
     private readonly IUserSecretService userSecretService;
 
     public EfPasswordService(
-        IFactory<PasswordDbContext> dbContextFactory,
+        IFactory<PasswordSpravyDbContext> dbContextFactory,
         IUserSecretService userSecretService,
         IPasswordGenerator passwordGenerator
     )
@@ -232,7 +232,7 @@ public class EfPasswordService : IPasswordService
     }
 
     private ConfiguredValueTaskAwaitable<Result<FrozenDictionary<Guid, PasswordItemEntity>>> GetAllChildrenAsync(
-        PasswordDbContext context,
+        PasswordSpravyDbContext context,
         ReadOnlyMemory<Guid> ids,
         bool tracking,
         CancellationToken ct

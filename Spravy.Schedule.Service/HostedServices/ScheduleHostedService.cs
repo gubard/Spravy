@@ -4,13 +4,13 @@ public class ScheduleHostedService : IHostedService
 {
     private readonly IFactory<string, IEventBusService> eventBusServiceFactory;
     private readonly ILogger<ScheduleHostedService> logger;
-    private readonly IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory;
+    private readonly IFactory<string, ScheduleSpravyDbContext> spravyScheduleDbContextFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly Dictionary<string, Task> tasks = new();
     private readonly IDbFileSystem dbFileSystem;
 
     public ScheduleHostedService(
-        IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory,
+        IFactory<string, ScheduleSpravyDbContext> spravyScheduleDbContextFactory,
         SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, IEventBusService> eventBusServiceFactory,
         ILogger<ScheduleHostedService> logger,

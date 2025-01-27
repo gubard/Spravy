@@ -10,7 +10,7 @@ using Spravy.Schedule.Db.Contexts;
 
 namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbScheduleDbContext))]
+    [DbContext(typeof(ScheduleSpravyDbContext))]
     [Migration("20240816140950_AddName")]
     partial class AddName
     {

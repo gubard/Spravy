@@ -5,9 +5,9 @@ using Spravy.Picture.Db.Sqlite.Services;
 
 namespace Spravy.Picture.Db.Sqlite.Migrator;
 
-public class SpravyPictureDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyPictureDbContext>
+public class SpravyPictureDesignTimeDbContextFactory : IDesignTimeDbContextFactory<PictureSpravyDbContext>
 {
-    public SpravyPictureDbContext CreateDbContext(string[] args)
+    public PictureSpravyDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],

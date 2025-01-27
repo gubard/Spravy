@@ -10,7 +10,7 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbToDoDbContext))]
+    [DbContext(typeof(ToDoSpravyDbContext))]
     [Migration("20230825144557_AddChildrenType")]
     partial class AddChildrenType
     {

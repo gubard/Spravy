@@ -11,7 +11,7 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbToDoDbContext))]
+    [DbContext(typeof(ToDoSpravyDbContext))]
     [Migration("20230707211345_AddCreatedDateTime")]
     partial class AddCreatedDateTime
     {

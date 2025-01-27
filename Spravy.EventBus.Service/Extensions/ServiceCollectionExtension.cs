@@ -4,8 +4,8 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterEventBus(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbEventBusDbContext>>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyDbEventBusDbContext, SpravyEventBusDbSqliteMigratorMark>();
+        serviceCollection.AddHostedService<FolderMigratorHostedService<EventBusSpravyDbContext>>();
+        serviceCollection.AddSpravySqliteFolderContext<EventBusSpravyDbContext, SpravyEventBusDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteEventBusDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddTransient<EventStorage>();

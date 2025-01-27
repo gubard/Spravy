@@ -2,10 +2,10 @@ namespace Spravy.Schedule.Service.Services;
 
 public class EfScheduleService : IScheduleService
 {
-    private readonly IFactory<SpravyDbScheduleDbContext> dbContextFactory;
+    private readonly IFactory<ScheduleSpravyDbContext> dbContextFactory;
     private readonly IEventBusService eventBusService;
 
-    public EfScheduleService(IFactory<SpravyDbScheduleDbContext> dbContextFactory, IEventBusService eventBusService)
+    public EfScheduleService(IFactory<ScheduleSpravyDbContext> dbContextFactory, IEventBusService eventBusService)
     {
         this.dbContextFactory = dbContextFactory;
         this.eventBusService = eventBusService;

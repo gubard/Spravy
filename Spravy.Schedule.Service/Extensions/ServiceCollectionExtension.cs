@@ -5,9 +5,9 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<IRetryService, RetryService>();
-        serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbScheduleDbContext>>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
-        serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
+        serviceCollection.AddHostedService<FolderMigratorHostedService<ScheduleSpravyDbContext>>();
+        serviceCollection.AddSpravySqliteFolderContext<ScheduleSpravyDbContext, SpravyScheduleDbSqliteMigratorMark>();
+        serviceCollection.AddSingleton<IFactory<string, ScheduleSpravyDbContext>, SpravyScheduleDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();

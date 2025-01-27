@@ -1,6 +1,6 @@
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
-public class SpravyToDoDbContextFactory : IFactory<string, SpravyDbToDoDbContext>
+public class SpravyToDoDbContextFactory : IFactory<string, ToDoSpravyDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
     private readonly ILoggerFactory loggerFactory;
@@ -11,14 +11,14 @@ public class SpravyToDoDbContextFactory : IFactory<string, SpravyDbToDoDbContext
         this.loggerFactory = loggerFactory;
     }
 
-    public Result<SpravyDbToDoDbContext> Create(string key)
+    public Result<ToDoSpravyDbContext> Create(string key)
     {
         var options = new DbContextOptionsBuilder()
            .UseSqlite(key, b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName))
            .UseLoggerFactory(loggerFactory)
            .Options;
 
-        var context = new SpravyDbToDoDbContext(options, dbContextSetup);
+        var context = new ToDoSpravyDbContext(options, dbContextSetup);
 
         return context.ToResult();
     }

@@ -9,7 +9,7 @@ using Spravy.Schedule.Db.Contexts;
 
 namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbScheduleDbContext))]
+    [DbContext(typeof(ScheduleSpravyDbContext))]
     partial class SpravyScheduleDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

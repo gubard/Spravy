@@ -9,7 +9,7 @@ using Spravy.PasswordGenerator.Db.Contexts;
 
 namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations.PasswordDb
 {
-    [DbContext(typeof(PasswordDbContext))]
+    [DbContext(typeof(PasswordSpravyDbContext))]
     partial class PasswordDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

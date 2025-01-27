@@ -16,7 +16,7 @@ try
     WebApplication.CreateBuilder(args)
        .BuildSpravy<GrpcPictureService, SpravyPictureMark>(
             args,
-            typeof(DataBaseSetupSqliteMiddleware<SpravyPictureDbContext>).ToEnumerable(),
+            typeof(DataBaseSetupSqliteMiddleware<PictureSpravyDbContext>).ToEnumerable(),
             x => x.RegisterPicture()
         )
        .Run();

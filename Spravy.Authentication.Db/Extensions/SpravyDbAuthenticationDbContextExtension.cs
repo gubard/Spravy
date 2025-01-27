@@ -3,7 +3,7 @@ namespace Spravy.Authentication.Db.Extensions;
 public static class SpravyDbAuthenticationDbContextExtension
 {
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetNotVerifiedUserByEmailAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string email,
         CancellationToken ct
     )
@@ -28,7 +28,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetNotVerifiedUserByLoginAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string login,
         CancellationToken ct
     )
@@ -53,7 +53,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByEmailAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string email,
         CancellationToken ct
     )
@@ -78,7 +78,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByLoginAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string login,
         CancellationToken ct
     )
@@ -103,7 +103,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByLoginAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string login,
         CancellationToken ct
     )
@@ -112,7 +112,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     private static async ValueTask<Result<UserEntity>> GetUserByLoginCore(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string login,
         CancellationToken ct
     )
@@ -133,7 +133,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByEmailAsync(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string email,
         CancellationToken ct
     )
@@ -142,7 +142,7 @@ public static class SpravyDbAuthenticationDbContextExtension
     }
 
     private static async ValueTask<Result<UserEntity>> GetUserByEmailCore(
-        this SpravyDbAuthenticationDbContext context,
+        this AuthenticationSpravyDbContext context,
         string email,
         CancellationToken ct
     )

@@ -7,7 +7,7 @@ try
     WebApplication.CreateBuilder(args)
        .BuildSpravy<GrpcUserSecretService, GrpcPasswordService, SpravyPasswordGeneratorMark>(
             args,
-            typeof(DataBaseSetupSqliteMiddleware<PasswordDbContext>).ToEnumerable(),
+            typeof(DataBaseSetupSqliteMiddleware<PasswordSpravyDbContext>).ToEnumerable(),
             x => x.RegisterPasswordGenerator()
         )
        .Run();

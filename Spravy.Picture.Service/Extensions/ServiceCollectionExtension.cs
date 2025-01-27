@@ -25,8 +25,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IFactory<IPictureEntryService>, PictureEntryServiceFactory>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<PictureOptions>());
-        serviceCollection.AddSingleton<IFactory<string, SpravyPictureDbContext>, SpravyPictureDbContextFactory>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyPictureDbContext, SpravyPictureDbSqliteMigratorMark>();
+        serviceCollection.AddSingleton<IFactory<string, PictureSpravyDbContext>, SpravyPictureDbContextFactory>();
+        serviceCollection.AddSpravySqliteFolderContext<PictureSpravyDbContext, SpravyPictureDbSqliteMigratorMark>();
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
         

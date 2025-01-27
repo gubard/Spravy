@@ -10,7 +10,7 @@ using Spravy.PasswordGenerator.Db.Contexts;
 
 namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations.PasswordDb
 {
-    [DbContext(typeof(PasswordDbContext))]
+    [DbContext(typeof(PasswordSpravyDbContext))]
     [Migration("20240327104753_InitializeUserSecretDbContext")]
     partial class InitializeUserSecretDbContext
     {

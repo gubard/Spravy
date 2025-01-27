@@ -1,9 +1,9 @@
 namespace Spravy.Authentication.Db.Sqlite.Migrator;
 
 public class
-    SpravyAuthenticationDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbAuthenticationDbContext>
+    SpravyAuthenticationDesignTimeDbContextFactory : IDesignTimeDbContextFactory<AuthenticationSpravyDbContext>
 {
-    public SpravyDbAuthenticationDbContext CreateDbContext(string[] args)
+    public AuthenticationSpravyDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],

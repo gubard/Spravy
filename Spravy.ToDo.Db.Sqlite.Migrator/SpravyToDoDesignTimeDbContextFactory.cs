@@ -1,8 +1,8 @@
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
-public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbToDoDbContext>
+public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ToDoSpravyDbContext>
 {
-    public SpravyDbToDoDbContext CreateDbContext(string[] args)
+    public ToDoSpravyDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],

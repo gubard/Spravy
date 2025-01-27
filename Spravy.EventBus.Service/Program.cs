@@ -12,7 +12,7 @@ try
     WebApplication.CreateBuilder(args)
        .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(
             args,
-            typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>),
+            typeof(DataBaseSetupSqliteMiddleware<EventBusSpravyDbContext>),
             x => x.RegisterEventBus()
         )
        .Run();

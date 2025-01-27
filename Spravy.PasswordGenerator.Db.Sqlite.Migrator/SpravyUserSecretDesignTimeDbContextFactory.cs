@@ -5,9 +5,9 @@ using Spravy.PasswordGenerator.Db.Sqlite.Services;
 
 namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator;
 
-public class SpravyUserSecretDesignTimeDbContextFactory : IDesignTimeDbContextFactory<UserSecretDbContext>
+public class SpravyUserSecretDesignTimeDbContextFactory : IDesignTimeDbContextFactory<UserSecretSpravyDbContext>
 {
-    public UserSecretDbContext CreateDbContext(string[] args)
+    public UserSecretSpravyDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],

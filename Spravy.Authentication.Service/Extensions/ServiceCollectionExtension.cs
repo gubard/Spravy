@@ -7,7 +7,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterAuthentication(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<IRetryService, RetryService>();
-        serviceCollection.AddHostedService<FileMigratorHostedService<SpravyDbAuthenticationDbContext>>();
+        serviceCollection.AddHostedService<FileMigratorHostedService<AuthenticationSpravyDbContext>>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
@@ -42,14 +42,14 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IHasher, Hasher>();
 
         serviceCollection
-           .AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext, SpravyAuthenticationDbSqliteMigratorMark>();
+           .AddSpravySqliteFileDbContext<AuthenticationSpravyDbContext, SpravyAuthenticationDbSqliteMigratorMark>();
 
         serviceCollection
            .AddGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
                 GrpcEventBusServiceOptions>();
 
         serviceCollection
-           .AddTransient<IFactory<string, SpravyDbAuthenticationDbContext>, SpravyAuthenticationDbContextFactory>();
+           .AddTransient<IFactory<string, AuthenticationSpravyDbContext>, SpravyAuthenticationDbContextFactory>();
 
         serviceCollection.AddTransient<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(

@@ -9,7 +9,7 @@ using Spravy.Authentication.Db.Contexts;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbAuthenticationDbContext))]
+    [DbContext(typeof(AuthenticationSpravyDbContext))]
     partial class SqliteSpravyAuthenticationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

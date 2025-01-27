@@ -11,7 +11,7 @@ using Spravy.Authentication.Db.Sqlite.Migrator;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbAuthenticationDbContext))]
+    [DbContext(typeof(AuthenticationSpravyDbContext))]
     [Migration("20230829152120_FixLogin")]
     partial class FixLogin
     {

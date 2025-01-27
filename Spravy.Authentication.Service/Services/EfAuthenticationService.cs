@@ -5,7 +5,7 @@ namespace Spravy.Authentication.Service.Services;
 
 public class EfAuthenticationService : IAuthenticationService
 {
-    private readonly SpravyDbAuthenticationDbContext context;
+    private readonly AuthenticationSpravyDbContext context;
     private readonly IEmailService emailService;
     private readonly IHasher hasher;
     private readonly IFactory<string, IHasher> hasherFactory;
@@ -15,7 +15,7 @@ public class EfAuthenticationService : IAuthenticationService
     private readonly ITokenFactory tokenFactory;
 
     public EfAuthenticationService(
-        SpravyDbAuthenticationDbContext context,
+        AuthenticationSpravyDbContext context,
         IHasher hasher,
         IFactory<string, IHasher> hasherFactory,
         ITokenFactory tokenFactory,

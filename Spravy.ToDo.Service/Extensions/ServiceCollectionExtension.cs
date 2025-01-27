@@ -11,11 +11,11 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterToDo(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<IRetryService, RetryService>();
-        serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbToDoDbContext>>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
+        serviceCollection.AddHostedService<FolderMigratorHostedService<ToDoSpravyDbContext>>();
+        serviceCollection.AddSpravySqliteFolderContext<ToDoSpravyDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
-        serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
+        serviceCollection.AddSingleton<IFactory<string, ToDoSpravyDbContext>, SpravyToDoDbContextFactory>();
 
         serviceCollection
            .AddTransient<IFactory<ChannelBase, AuthenticationService.AuthenticationServiceClient>,

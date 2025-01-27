@@ -10,7 +10,7 @@ using Spravy.Authentication.Db.Contexts;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyDbAuthenticationDbContext))]
+    [DbContext(typeof(AuthenticationSpravyDbContext))]
     [Migration("20231130121553_AddEmail")]
     partial class AddEmail
     {

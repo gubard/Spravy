@@ -2,10 +2,10 @@ namespace Spravy.PasswordGenerator.Service.Services;
 
 public class EfUserSecretService : IUserSecretService
 {
-    private readonly UserSecretDbContext context;
+    private readonly UserSecretSpravyDbContext context;
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public EfUserSecretService(UserSecretDbContext context, IHttpContextAccessor httpContextAccessor)
+    public EfUserSecretService(UserSecretSpravyDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         this.context = context;
         this.httpContextAccessor = httpContextAccessor;

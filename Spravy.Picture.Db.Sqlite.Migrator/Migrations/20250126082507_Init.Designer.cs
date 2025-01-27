@@ -10,7 +10,7 @@ using Spravy.Picture.Db.Contexts;
 
 namespace Spravy.Picture.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyPictureDbContext))]
+    [DbContext(typeof(PictureSpravyDbContext))]
     [Migration("20250126082507_Init")]
     partial class Init
     {

@@ -5,9 +5,9 @@ using Spravy.EventBus.Db.Sqlite.Services;
 
 namespace Spravy.EventBus.Db.Sqlite.Migrator;
 
-public class SpravyEventBusDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbEventBusDbContext>
+public class SpravyEventBusDesignTimeDbContextFactory : IDesignTimeDbContextFactory<EventBusSpravyDbContext>
 {
-    public SpravyDbEventBusDbContext CreateDbContext(string[] args)
+    public EventBusSpravyDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],
