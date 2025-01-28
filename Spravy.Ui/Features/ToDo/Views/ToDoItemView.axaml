@@ -112,6 +112,24 @@
             <StackPanel>
                 <Expander Classes="header-alignment-left"
                           Margin="3"
+                          IsExpanded="{Binding Item.IsExpandImages}"
+                          IsVisible="{Binding Images.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                    <Expander.Header>
+                        <TextBlock Text="{DynamicResource Lang.Images}"
+                                   Classes="alignment-center" />
+                    </Expander.Header>
+
+                    <ItemsControl ItemsSource="{Binding Images}" Classes="wrap-panel">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:MemoryToDoImage">
+                                <Image Source="{Binding Data}" Height="100" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+
+                <Expander Classes="header-alignment-left"
+                          Margin="3"
                           IsExpanded="{Binding Item.IsExpandDescription}"
                           IsVisible="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
@@ -136,24 +154,6 @@
                             <!--<mdxaml:MarkdownScrollViewer Markdown="{Binding Item.Description}" />-->
                         </c:ViewSelectorItemControl>
                     </c:ViewSelectorControl>
-                </Expander>
-
-                <Expander Classes="header-alignment-left"
-                          Margin="3"
-                          IsExpanded="{Binding Item.IsExpandImages}"
-                          IsVisible="{Binding Images.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
-                    <Expander.Header>
-                        <TextBlock Text="{DynamicResource Lang.Images}"
-                                   Classes="alignment-center" />
-                    </Expander.Header>
-
-                    <ItemsControl ItemsSource="{Binding Images}" Classes="wrap-panel">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="models:MemoryToDoImage">
-                                <Image Source="{Binding Data}" Height="100" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
