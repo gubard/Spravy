@@ -10,129 +10,132 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.PaneView"
              x:DataType="vm:PaneViewModel">
-    <StackPanel>
-        <StackPanel.Styles>
-            <Style Selector="Button">
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-            </Style>
+    <ScrollViewer Classes="vertical">
+        <StackPanel>
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
 
-            <Style Selector="TextBlock">
-                <Setter Property="Margin" Value="2,0,0,0" />
-            </Style>
-        </StackPanel.Styles>
+                <Style Selector="TextBlock">
+                    <Setter Property="Margin" Value="2,0,0,0" />
+                </Style>
+            </StackPanel.Styles>
 
-        <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Classes="alignment-left vertical-alignment-center" Margin="5,0,0,0" Text="{Binding Account.Login}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="alignment-left vertical-alignment-center" Margin="5,0,0,0"
+                           Text="{Binding Account.Login}" />
 
-            <Button Grid.Column="1"
-                    Classes="label alignment-top alignment-right"
-                    Command="{x:Static h:UiHelper.SwitchPane}">
-                <i:Icon Value="mdi-close" />
+                <Button Grid.Column="1"
+                        Classes="label alignment-top alignment-right"
+                        Command="{x:Static h:UiHelper.SwitchPane}">
+                    <i:Icon Value="mdi-close" />
+                </Button>
+            </Grid>
+
+            <Rectangle Height="1"
+                       Margin="0,10,0,10"
+                       Fill="{DynamicResource ExpanderHeaderBorderBrush}" />
+
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-check-all" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Spravy}" />
+                </Grid>
             </Button>
-        </Grid>
 
-        <Rectangle Height="1"
-                   Margin="0,10,0,10"
-                   Fill="{DynamicResource ExpanderHeaderBorderBrush}" />
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-calendar-today" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.TodayToDoItems}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-check-all" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Spravy}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-magnify" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Search}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-calendar-today" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.TodayToDoItems}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
+                    IsVisible="{Binding Account.IsAdmin}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-lock" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.PasswordGenerator}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-magnify" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Search}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToTimers}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-timer" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Timers}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
-                IsVisible="{Binding Account.IsAdmin}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-lock" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.PasswordGenerator}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToSetting}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-cog" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Settings}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToTimers}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-timer" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Timers}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.NavigateToPolicy}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-file-document" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Policy}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToSetting}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-cog" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Settings}" />
-            </Grid>
-        </Button>
+            <Button Classes="mode-press"
+                    Command="{x:Static h:UiHelper.Logout}">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <i:Icon Value="mdi-logout" />
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Logout}" />
+                </Grid>
+            </Button>
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.NavigateToPolicy}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-file-document" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Policy}" />
-            </Grid>
-        </Button>
+            <Rectangle Height="1"
+                       Margin="0,10,0,10"
+                       Fill="{DynamicResource ExpanderHeaderBorderBrush}"
+                       IsVisible="{Binding Bookmarks.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-        <Button Classes="mode-press"
-                Command="{x:Static h:UiHelper.Logout}">
-            <Grid ColumnDefinitions="Auto,Auto">
-                <i:Icon Value="mdi-logout" />
-                <TextBlock Grid.Column="1" Text="{DynamicResource Lang.Logout}" />
-            </Grid>
-        </Button>
+            <ItemsControl ItemsSource="{Binding Bookmarks}">
+                <ItemsControl.DataTemplates>
+                    <DataTemplate DataType="tdm:ToDoItemEntityNotify">
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <Grid.Styles>
+                                <Style Selector="Button" x:DataType="m:SpravyCommandNotify">
+                                    <Setter Property="CommandParameter"
+                                            Value="{Binding $parent[Grid].DataContext}" />
+                                </Style>
+                            </Grid.Styles>
 
-        <Rectangle Height="1"
-                   Margin="0,10,0,10"
-                   Fill="{DynamicResource ExpanderHeaderBorderBrush}"
-                   IsVisible="{Binding Bookmarks.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                            <Button x:Name="RootToDoItemButton"
+                                    Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                                    CommandParameter="{Binding}"
+                                    Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
+                                <StackPanel Classes="horizontal">
+                                    <i:Icon Value="{Binding Icon}"
+                                            Margin="0,0,4,0"
+                                            IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </Button>
 
-        <ItemsControl ItemsSource="{Binding Bookmarks}">
-            <ItemsControl.DataTemplates>
-                <DataTemplate DataType="tdm:ToDoItemEntityNotify">
-                    <Grid ColumnDefinitions="*,Auto,Auto">
-                        <Grid.Styles>
-                            <Style Selector="Button" x:DataType="m:SpravyCommandNotify">
-                                <Setter Property="CommandParameter"
-                                        Value="{Binding $parent[Grid].DataContext}" />
-                            </Style>
-                        </Grid.Styles>
-
-                        <Button x:Name="RootToDoItemButton"
-                                Command="{x:Static h:UiHelper.NavigateToToDoItem}"
-                                CommandParameter="{Binding}"
-                                Background="{Binding Color, Converter={StaticResource ColorToButtonBackgroundConverter}}">
-                            <StackPanel Classes="horizontal">
-                                <i:Icon Value="{Binding Icon}"
-                                        Margin="0,0,4,0"
-                                        IsVisible="{Binding Icon, Converter={StaticResource StringIsNullOrWhiteSpaceConverter}, ConverterParameter={x:True}}" />
-                                <TextBlock Text="{Binding Name}" />
-                            </StackPanel>
-                        </Button>
-
-                        <ContentControl Grid.Column="1" Content="{x:Static h:UiHelper.ShowSetting}" />
-                        <ContentControl Grid.Column="2" Content="{x:Static h:UiHelper.RemoveFromBookmark}" />
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.DataTemplates>
-        </ItemsControl>
-    </StackPanel>
+                            <ContentControl Grid.Column="1" Content="{x:Static h:UiHelper.ShowSetting}" />
+                            <ContentControl Grid.Column="2" Content="{x:Static h:UiHelper.RemoveFromBookmark}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
