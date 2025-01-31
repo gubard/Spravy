@@ -37,7 +37,12 @@ public class PictureEditor : IPictureEditor
     {
         using var image = await Image.LoadAsync(stream, ct);
         var scale = GetScale(image.Size, size, type);
-        image.Mutate(x => x.Resize((int)(image.Width * scale), (int)(image.Height * scale)));
+
+        if (scale < 1)
+        {
+            image.Mutate(x => x.Resize((int)(image.Width * scale), (int)(image.Height * scale)));
+        }
+
         await image.SaveAsWebpAsync(saveFile.FullName, ct);
 
         return Result.Success;
