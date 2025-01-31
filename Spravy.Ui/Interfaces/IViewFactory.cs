@@ -28,6 +28,7 @@ public interface IViewFactory
 
     EditToDoItemViewModel CreateEditToDoItemViewModel(
         bool isEditShow,
+        Option<ToDoItemEntityNotify> selectedItem,
         ReadOnlyMemory<MemoryToDoImage> images
     );
 
@@ -54,8 +55,8 @@ public interface IViewFactory
     );
 
     ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        Option<ToDoItemEntityNotify> item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
+        Option<ToDoItemEntityNotify> selectItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     );
 
     ChangeParentViewModel CreateChangeParentViewModel(

@@ -21,7 +21,6 @@ public class ToDoItemSettingsViewModel : ToDoItemEditIdViewModel, IApplySettings
     }
 
     public EditToDoItemViewModel EditToDoItemViewModel { get; }
-
     public override string ViewId => TypeCache<ToDoItemSettingsViewModel>.Name;
 
     public Cvtar ApplySettingsAsync(CancellationToken ct)

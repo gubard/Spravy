@@ -16,7 +16,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     private ToDoItemEntityNotify? selectedItem;
 
     public ToDoItemSelectorViewModel(
-        Option<ToDoItemEntityNotify> item,
+        Option<ToDoItemEntityNotify> selectItem,
         ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems,
         IToDoCache toDoCache,
         IToDoUiService toDoUiService,
@@ -24,7 +24,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
         ITaskProgressService taskProgressService
     )
     {
-        Item = item;
+        SelectItem = GetSelectItem(selectItem);
         isBusy = true;
         this.toDoCache = toDoCache;
         this.ignoreItems = ignoreItems;
@@ -38,7 +38,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
         );
     }
 
-    public Option<ToDoItemEntityNotify> Item { get; }
+    public Option<ToDoItemEntityNotify> SelectItem { get; }
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand SearchCommand { get; }
@@ -85,7 +85,7 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
                .IfSuccessAsync(
                     () =>
                     {
-                        if (!Item.TryGetValue(out var i))
+                        if (!SelectItem.TryGetValue(out var i))
                         {
                             return Result.AwaitableSuccess;
                         }
@@ -94,6 +94,11 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
                             () =>
                             {
                                 SelectedItem = i;
+
+                                if (SelectedItem is not null)
+                                {
+                                    toDoCache.ExpandItemUi(SelectedItem.Id);
+                                }
 
                                 return Result.Success;
                             }
@@ -169,5 +174,20 @@ public partial class ToDoItemSelectorViewModel : DialogableViewModelBase
     public override Cvtar RefreshAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
+    }
+
+    private Option<ToDoItemEntityNotify> GetSelectItem(Option<ToDoItemEntityNotify> item)
+    {
+        if (!item.TryGetValue(out var i))
+        {
+            return Option<ToDoItemEntityNotify>.None;
+        }
+
+        if (i.Type == ToDoItemType.Reference)
+        {
+            return i.Reference.ToOption();
+        }
+
+        return item;
     }
 }

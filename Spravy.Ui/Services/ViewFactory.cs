@@ -73,12 +73,13 @@ public class ViewFactory : IViewFactory
 
     public EditToDoItemViewModel CreateEditToDoItemViewModel(
         bool isEditShow,
+        Option<ToDoItemEntityNotify> selectedItem,
         ReadOnlyMemory<MemoryToDoImage> images
     )
     {
         return new(
             objectStorage,
-            CreateToDoItemSelectorViewModel(),
+            CreateToDoItemSelectorViewModel(selectedItem, ReadOnlyMemory<ToDoItemEntityNotify>.Empty),
             toDoCache,
             errorHandler,
             taskProgressService,
@@ -100,7 +101,7 @@ public class ViewFactory : IViewFactory
                 items,
                 toDoService,
                 pictureService,
-                CreateEditToDoItemViewModel(false, value.Images.ToArray())
+                CreateEditToDoItemViewModel(false, value.ToOption(), value.Images.ToArray())
             );
 
             result.EditToDoItemViewModel.SetItem(value);
@@ -114,7 +115,11 @@ public class ViewFactory : IViewFactory
             items,
             toDoService,
             pictureService,
-            CreateEditToDoItemViewModel(true, ReadOnlyMemory<MemoryToDoImage>.Empty)
+            CreateEditToDoItemViewModel(
+                true,
+                Option<ToDoItemEntityNotify>.None,
+                ReadOnlyMemory<MemoryToDoImage>.Empty
+            )
         );
     }
 
@@ -238,7 +243,15 @@ public class ViewFactory : IViewFactory
 
     public AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel()
     {
-        return new(CreateToDoItemSelectorViewModel(), serializer, objectStorage, toDoCache);
+        return new(
+            CreateToDoItemSelectorViewModel(
+                Option<ToDoItemEntityNotify>.None,
+                ReadOnlyMemory<ToDoItemEntityNotify>.Empty
+            ),
+            serializer,
+            objectStorage,
+            toDoCache
+        );
     }
 
     public ToDoItemCreateTimerViewModel CreateToDoItemCreateTimerViewModel(
@@ -374,13 +387,13 @@ public class ViewFactory : IViewFactory
     }
 
     public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        Option<ToDoItemEntityNotify> item,
-        ReadOnlyMemory<ToDoItemEntityNotify> items
+        Option<ToDoItemEntityNotify> selectItem,
+        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
     )
     {
         return new(
-            item,
-            items,
+            selectItem,
+            ignoreItems,
             toDoCache,
             toDoUiService,
             errorHandler,
@@ -496,7 +509,7 @@ public class ViewFactory : IViewFactory
             objectStorage,
             toDoService,
             pictureService,
-            CreateEditToDoItemViewModel(false, ReadOnlyMemory<MemoryToDoImage>.Empty)
+            CreateEditToDoItemViewModel(false, Option<ToDoItemEntityNotify>.None, ReadOnlyMemory<MemoryToDoImage>.Empty)
         );
     }
 
@@ -513,18 +526,6 @@ public class ViewFactory : IViewFactory
     public ToDoItemsViewModel CreateToDoItemsViewModel(ViewModelSortBy viewModelSortBy, TextLocalization header)
     {
         return new(viewModelSortBy, header, errorHandler, taskProgressService);
-    }
-
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel()
-    {
-        return new(
-            new(),
-            ReadOnlyMemory<ToDoItemEntityNotify>.Empty,
-            toDoCache,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
-        );
     }
 
     public MultiToDoItemsViewModel CreateMultiToDoItemsViewModel(ViewModelSortBy viewModelSortBy)
@@ -545,21 +546,6 @@ public class ViewFactory : IViewFactory
             CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Step")),
             CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemType.Reference")),
             CreateToDoItemsViewModel(viewModelSortBy, new("Lang.ToDoItemStatus.ComingSoon"))
-        );
-    }
-
-    public ToDoItemSelectorViewModel CreateToDoItemSelectorViewModel(
-        ToDoItemEntityNotify item,
-        ReadOnlyMemory<ToDoItemEntityNotify> ignoreItems
-    )
-    {
-        return new(
-            item.ToOption(),
-            ignoreItems,
-            toDoCache,
-            toDoUiService,
-            errorHandler,
-            taskProgressService
         );
     }
 }
