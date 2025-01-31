@@ -122,7 +122,7 @@
                     <ItemsControl ItemsSource="{Binding Images}" Classes="wrap-panel">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:MemoryToDoImage">
-                                <Image Source="{Binding Data}" Height="100" />
+                                <Image Height="100" Source="{Binding Data}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

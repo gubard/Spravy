@@ -1,3 +1,4 @@
+using Spravy.Picture.Domain.Enums;
 using Spravy.Picture.Domain.Models;
 using Spravy.Ui.Features.Picture.Models;
 using Spravy.Ui.Setting;
@@ -127,6 +128,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService,
         TopLevel topLevel,
+        ReadOnlyMemory<MemoryToDoImage> images,
         bool isEditShow
     )
     {
@@ -134,12 +136,13 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
         ToDoItemSelector = toDoItemSelector;
         this.toDoCache = toDoCache;
         IsEditShow = isEditShow;
-        WeeklyDays = new();
-        MonthlyDays = new();
-        FavoriteIcons = new();
+        WeeklyDays = [];
+        MonthlyDays = [];
+        FavoriteIcons = [];
         WeeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         MonthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
-        Images = new();
+        Images = [];
+        Images.AddRange(images.ToArray());
 
         var addImageButton = new AddImageButton(
             SpravyCommand.Create(
@@ -171,7 +174,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
                         files => files.ToArray()
                            .ToReadOnlyMemory()
                            .IfSuccessForEachAsync(
-                                file => LocalToDoImage.CreateAsync(file).ConfigureAwait(false),
+                                file => LocalToDoImage.CreateAsync(file, SizeType.Height, 70, ct).ConfigureAwait(false),
                                 ct
                             )
                            .IfSuccessAsync(
@@ -281,14 +284,7 @@ public partial class EditToDoItemViewModel : DialogableViewModelBase
     {
         var addPictures = Images.OfType<LocalToDoImage>()
            .Select(
-                x =>
-                {
-                    var memoryStream = new MemoryStream();
-                    x.Data.Save(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-
-                    return new AddPicture(string.Empty, string.Empty, memoryStream);
-                }
+                x => new AddPicture(x.Name, string.Empty, x.RawData)
             )
            .ToArray();
 

@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.Picture.Models;
+
 namespace Spravy.Ui.Interfaces;
 
 public interface IViewFactory
@@ -23,7 +25,11 @@ public interface IViewFactory
     CreateUserViewModel CreateCreateUserViewModel();
     InfoViewModel CreateInfoViewModel(IDialogable content, Func<IDialogable, Cvtar> okTask);
     AddToDoItemToFavoriteEventViewModel CreateAddToDoItemToFavoriteEventViewModel();
-    EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow);
+
+    EditToDoItemViewModel CreateEditToDoItemViewModel(
+        bool isEditShow,
+        ReadOnlyMemory<MemoryToDoImage> images
+    );
 
     ToDoItemSettingsViewModel CreateToDoItemSettingsViewModel(
         Option<ToDoItemEntityNotify> item,

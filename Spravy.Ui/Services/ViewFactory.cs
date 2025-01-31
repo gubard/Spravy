@@ -1,4 +1,5 @@
 using Spravy.Picture.Domain.Interfaces;
+using Spravy.Ui.Features.Picture.Models;
 
 namespace Spravy.Ui.Services;
 
@@ -70,7 +71,10 @@ public class ViewFactory : IViewFactory
         this.pictureService = pictureService;
     }
 
-    public EditToDoItemViewModel CreateEditToDoItemViewModel(bool isEditShow, bool isEditDescriptionShow)
+    public EditToDoItemViewModel CreateEditToDoItemViewModel(
+        bool isEditShow,
+        ReadOnlyMemory<MemoryToDoImage> images
+    )
     {
         return new(
             objectStorage,
@@ -79,6 +83,7 @@ public class ViewFactory : IViewFactory
             errorHandler,
             taskProgressService,
             Application.Current.ThrowIfNull().GetTopLevel().ThrowIfNull(),
+            images,
             isEditShow
         );
     }
@@ -95,7 +100,7 @@ public class ViewFactory : IViewFactory
                 items,
                 toDoService,
                 pictureService,
-                CreateEditToDoItemViewModel(false, false)
+                CreateEditToDoItemViewModel(false, value.Images.ToArray())
             );
 
             result.EditToDoItemViewModel.SetItem(value);
@@ -109,7 +114,7 @@ public class ViewFactory : IViewFactory
             items,
             toDoService,
             pictureService,
-            CreateEditToDoItemViewModel(true, false)
+            CreateEditToDoItemViewModel(true, ReadOnlyMemory<MemoryToDoImage>.Empty)
         );
     }
 
@@ -491,7 +496,7 @@ public class ViewFactory : IViewFactory
             objectStorage,
             toDoService,
             pictureService,
-            CreateEditToDoItemViewModel(false, true)
+            CreateEditToDoItemViewModel(false, ReadOnlyMemory<MemoryToDoImage>.Empty)
         );
     }
 

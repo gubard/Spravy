@@ -110,7 +110,7 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
                                     {
                                         using var stream = picture.Picture.Data;
 
-                                        return new MemoryToDoImage(stream).ToResult();
+                                        return new MemoryToDoImage(picture.Picture.Id, stream).ToResult();
                                     }
                                 )
                                .IfSuccess(images => Images.UpdateUi(images)),

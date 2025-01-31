@@ -1,6 +1,6 @@
 ﻿namespace Spravy.Ui.Models;
 
-public abstract class DialogableViewModelBase : ViewModelBase, IDialogable, IRefresh
+public abstract class DialogableViewModelBase : ViewModelBase, IDialogable
 {
     public abstract string ViewId { get; }
 

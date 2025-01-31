@@ -38,7 +38,7 @@ public static partial class ToDoDbMapper
             entity.Color,
             GetReferenceId(entity),
             entity.ParentId.ToOptionGuid(),
-            entity.Link.ToOptionUri(),
+            GetLink(entity),
             entity.RemindDaysBefore
         );
     }
@@ -77,6 +77,26 @@ public static partial class ToDoDbMapper
         result.SetAnnuallyDays(value.AnnuallyDays);
 
         return result;
+    }
+    
+    private static Option<Uri> GetLink(ToDoItemEntity item)
+    {
+        if (item.Type != ToDoItemType.Reference)
+        {
+            return item.Link.ToOptionUri();
+        }
+
+        if (item.ReferenceId == item.Id)
+        {
+            return item.Link.ToOptionUri();
+        }
+        
+        if (item.Reference is null)
+        {
+            return item.Link.ToOptionUri();
+        }
+
+        return item.Reference.Link.ToOptionUri();
     }
 
     private static OptionStruct<Guid> GetReferenceId(ToDoItemEntity item)

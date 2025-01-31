@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.Picture.Models;
+
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public partial class ToDoItemEntityNotify : NotifyBase,
@@ -17,11 +19,12 @@ public partial class ToDoItemEntityNotify : NotifyBase,
         orderIndex = uint.MaxValue;
         isCan = ToDoItemIsCan.CanComplete;
         isRequiredCompleteInDueDate = true;
-        commands = new();
-        Children = new();
-        WeeklyDays = new();
-        MonthlyDays = new();
-        AnnuallyDays = new();
+        commands = [];
+        Children = [];
+        WeeklyDays = [];
+        MonthlyDays = [];
+        AnnuallyDays = [];
+        Images = [];
         color = Colors.Transparent;
         icon = string.Empty;
         UpdateCommandsUi().ThrowIfError();
@@ -33,6 +36,7 @@ public partial class ToDoItemEntityNotify : NotifyBase,
     public AvaloniaList<DayOfWeek> WeeklyDays { get; }
     public AvaloniaList<int> MonthlyDays { get; }
     public AvaloniaList<DayOfYear> AnnuallyDays { get; }
+    public AvaloniaList<MemoryToDoImage> Images { get; }
     public Guid CurrentId => Reference?.Id ?? Id;
 
     public ToDoItemEntityNotifyIconType IconType
