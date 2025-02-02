@@ -1,8 +1,10 @@
-﻿namespace Spravy.ToDo.Domain.Models;
+﻿using Spravy.ToDo.Domain.Enums;
+
+namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct GetToDo
 {
-    public static GetToDo Default = new GetToDo().SetSearchText(string.Empty);
+    public static GetToDo Default = new GetToDo().SetSearchText(new(string.Empty, ReadOnlyMemory<ToDoItemType>.Empty));
     public static GetToDo WithDefaultItems = Default.SetIsBookmarkItems(true).SetIsFavoriteItems(true);
 
     public GetToDo(
@@ -14,7 +16,7 @@ public readonly struct GetToDo
         bool isBookmarkItems,
         ReadOnlyMemory<Guid> childrenItems,
         ReadOnlyMemory<Guid> leafItems,
-        string searchText,
+        GetSearch search,
         ReadOnlyMemory<Guid> parentItems,
         bool isTodayItems,
         bool isRootItems,
@@ -29,7 +31,7 @@ public readonly struct GetToDo
         IsBookmarkItems = isBookmarkItems;
         ChildrenItems = childrenItems;
         LeafItems = leafItems;
-        SearchText = searchText;
+        Search = search;
         ParentItems = parentItems;
         IsTodayItems = isTodayItems;
         IsRootItems = isRootItems;
@@ -44,7 +46,7 @@ public readonly struct GetToDo
     public readonly bool IsBookmarkItems;
     public readonly ReadOnlyMemory<Guid> ChildrenItems;
     public readonly ReadOnlyMemory<Guid> LeafItems;
-    public readonly string SearchText;
+    public readonly GetSearch Search;
     public readonly ReadOnlyMemory<Guid> ParentItems;
     public readonly bool IsTodayItems;
     public readonly bool IsRootItems;
@@ -61,7 +63,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -90,7 +92,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -109,7 +111,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             value,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -138,7 +140,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             value,
             IsRootItems,
@@ -146,7 +148,7 @@ public readonly struct GetToDo
         );
     }
 
-    public GetToDo SetSearchText(string value)
+    public GetToDo SetSearchText(GetSearch value)
     {
         return new(
             IsSelectorItems,
@@ -176,7 +178,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             value,
@@ -195,7 +197,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             value,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -214,7 +216,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -233,7 +235,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -252,7 +254,7 @@ public readonly struct GetToDo
             value,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -271,7 +273,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -300,7 +302,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             ParentItems,
             IsTodayItems,
             IsRootItems,
@@ -329,7 +331,7 @@ public readonly struct GetToDo
             IsBookmarkItems,
             ChildrenItems,
             LeafItems,
-            SearchText,
+            Search,
             value,
             IsTodayItems,
             IsRootItems,

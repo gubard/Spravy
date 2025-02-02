@@ -25,8 +25,9 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
         this.objectStorage = objectStorage;
         this.toDoUiService = toDoUiService;
         this.toDoCache = toDoCache;
-        SearchTexts = new();
-        Commands = new();
+        SearchTexts = [];
+        Commands = [];
+        SelectedTypes = [];
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         ToDoSubItemsViewModel.List.PropertyChanged += OnPropertyChanged;
     }
@@ -34,7 +35,7 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<string> SearchTexts { get; }
-
+    public AvaloniaList<ToDoItemType> SelectedTypes { get; }
     public override string ViewId => TypeCache<SearchToDoItemsViewModel>.Name;
 
     public Result<ToDoItemEditId> GetToDoItemEditId()
@@ -55,7 +56,10 @@ public partial class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoI
 
     private Cvtar RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoUiService.GetRequest(GetToDo.WithDefaultItems.SetSearchText(SearchText), ct)
+        return toDoUiService.GetRequest(
+                GetToDo.WithDefaultItems.SetSearchText(new(SearchText, SelectedTypes.ToArray())),
+                ct
+            )
            .IfSuccessAsync(
                 response => response.SearchItems
                    .Items

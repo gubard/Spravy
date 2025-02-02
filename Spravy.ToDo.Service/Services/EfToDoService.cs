@@ -790,16 +790,22 @@ public class EfToDoService : IToDoService
                                    .ThrowIfError();
                             }
 
-                            if (!get.SearchText.IsNullOrWhiteSpace())
+                            var isEmptySearchText = get.Search.SearchText.IsNullOrWhiteSpace();
+
+                            if (!isEmptySearchText || !get.Search.Types.IsEmpty)
                             {
                                 searchItems = new(
                                     true,
                                     dictionary.Values
                                        .Where(
-                                            x => x.Name.Contains(
-                                                get.SearchText,
-                                                StringComparison.InvariantCultureIgnoreCase
-                                            )
+                                            x => isEmptySearchText
+                                             || x.Name.Contains(
+                                                    get.Search.SearchText,
+                                                    StringComparison.InvariantCultureIgnoreCase
+                                                )
+                                        )
+                                       .Where(
+                                            x => get.Search.Types.IsEmpty || get.Search.Types.Contains(x.Type)
                                         )
                                        .ToArray()
                                        .ToReadOnlyMemory()

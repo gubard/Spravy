@@ -47,7 +47,7 @@ public static partial class ToDoMapper
     public static partial ToDoItemIsCanGrpc ToToDoItemIsCanGrpc(this ToDoItemIsCan value);
     public static partial ToDoItemIsCan ToToDoItemIsCan(this ToDoItemIsCanGrpc value);
     public static partial ToDoSelectorItemGrpc ToToDoSelectorItemGrpc(this ToDoSelectorItem value);
-  
+
     public static partial ToDoShortItem ToToDoShortItem(this ToDoShortItemGrpc value);
     public static partial RepeatedField<GetToStringItemGrpc> ToGetToStringItemGrpc(
         this ReadOnlyMemory<GetToStringItem> value
@@ -70,11 +70,28 @@ public static partial class ToDoMapper
     public static partial ToDoShortItemsResponseGrpc ToToDoShortItemsResponseGrpc(this ToDoShortItemsResponse value);
     public static partial ToDoShortItemsResponse ToToDoShortItemsResponse(this ToDoShortItemsResponseGrpc value);
 
+    public static GetSearch ToGetSearch(this GetSearchGrpc value)
+    {
+        return new(value.SearchText, value.Types_.Select(x => (ToDoItemType)x).ToArray());
+    }
+
+    public static GetSearchGrpc ToGetSearchGrpc(this GetSearch value)
+    {
+        var result = new GetSearchGrpc
+        {
+            SearchText = value.SearchText,
+        };
+
+        result.Types_.AddRange(value.Types.Select(x => (ToDoItemTypeGrpc)x).ToArray());
+
+        return result;
+    }
+
     public static GetRequest ToGetRequest(this GetToDo value)
     {
         var result = new GetRequest
         {
-            SearchText = value.SearchText,
+            Search = value.Search.ToGetSearchGrpc(),
             IsBookmarkItems = value.IsBookmarkItems,
             IsFavoriteItems = value.IsFavoriteItems,
             IsRootItems = value.IsRootItems,
@@ -108,7 +125,7 @@ public static partial class ToDoMapper
                 : throw new ArgumentNullException(nameof(value.ChildrenItems)),
             value.LeafItems != null ? value.LeafItems.Select(x => x.ToGuid()).ToArray()
                 : throw new ArgumentNullException(nameof(value.LeafItems)),
-            value.SearchText ?? throw new ArgumentNullException(nameof(value.SearchText)),
+            value.Search.ToGetSearch(),
             value.ParentItems != null ? value.ParentItems.Select(x => x.ToGuid()).ToArray()
                 : throw new ArgumentNullException(nameof(value.ParentItems)),
             value.IsTodayItems,

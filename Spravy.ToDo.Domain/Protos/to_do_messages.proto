@@ -15,7 +15,7 @@ message GetRequest {
   bool is_bookmark_items = 6;
   repeated bytes children_items = 7;
   repeated bytes leaf_items = 8;
-  string search_text = 9;
+  GetSearchGrpc search = 9;
   repeated bytes parent_items = 10;
   bool is_today_items = 11;
   bool is_root_items = 12;
@@ -36,6 +36,11 @@ message GetReply {
   ToDoFullItemsResponseGrpc today_items = 11;
   ToDoFullItemsResponseGrpc root_items = 12;
   ToDoFullItemsResponseGrpc items = 13;
+}
+
+message GetSearchGrpc {
+  string search_text = 1;
+  repeated ToDoItemTypeGrpc types = 2;
 }
 
 message ToDoShortItemsResponseGrpc {
