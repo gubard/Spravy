@@ -825,15 +825,17 @@ public class EfToDoService : IToDoService
                                     true,
                                     dictionary.Values
                                        .Where(
-                                            x => !x.IsCompleted
-                                             && (x.Type == ToDoItemType.Periodicity
-                                                 || x.Type == ToDoItemType.PeriodicityOffset
-                                                 || x.Type == ToDoItemType.Planned)
-                                        )
-                                       .Where(
-                                            x => x.DueDate <= today
-                                             || x.RemindDaysBefore != 0
-                                             && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore)
+                                            x => x is
+                                                {
+                                                    Type: ToDoItemType.Periodicity or ToDoItemType.PeriodicityOffset,
+                                                }
+                                             && (x.DueDate <= today
+                                                 || x.RemindDaysBefore != 0
+                                                 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore))
+                                             || x is { Type: ToDoItemType.Planned, IsCompleted: false, }
+                                             && (x.DueDate <= today
+                                                 || x.RemindDaysBefore != 0
+                                                 && today >= x.DueDate.AddDays((int)-x.RemindDaysBefore))
                                         )
                                        .ToArray()
                                        .ToReadOnlyMemory()
