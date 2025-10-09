@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="$(GrpcVersion)" />
-        <PackageReference Include="Grpc.AspNetCore.Web" Version="$(GrpcVersion)" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Grpc.AspNetCore.Web" Version="2.71.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     </ItemGroup>
 
