@@ -1,8 +1,8 @@
 ﻿namespace Spravy.Picture.Domain.Models;
 
-public readonly struct PictureEntry
+public readonly struct PictureData
 {
-    public PictureEntry(Guid id, ReadOnlyMemory<byte> data)
+    public PictureData(Guid id, ReadOnlyMemory<byte> data)
     {
         Id = id;
         Data = data;

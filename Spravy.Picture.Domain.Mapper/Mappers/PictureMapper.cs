@@ -11,68 +11,90 @@ namespace Spravy.Picture.Domain.Mapper.Mappers;
 public static partial class PictureMapper
 {
     public static partial GetPictureReply ToGetPictureReply(this PictureResponse value);
-    public static partial IdPictureParametersGrpc ToIdPictureParametersGrpc(this IdPictureParameters value);
     public static partial GetPictureRequest ToGetPictureRequest(this GetPicture value);
     public static partial EditPictureRequest ToEditPictureRequest(this EditPicture value);
     public static partial AddPictureItemGrpc ToAddPictureItemGrpc(this AddPictureItem value);
+
+    public static PictureData ToPictureData(this PictureDataGrpc value)
+    {
+        var result = new PictureData(value.Id.ToGuid(), value.Data.ToByteArray());
+
+        return result;
+    }
+
+    public static PictureParameter ToPictureParameter(this PictureParameterGrpc value)
+    {
+        var result = new PictureParameter(value.Id.ToGuid(), value.Entry, (SizeType)value.Type, (ushort)value.Size);
+
+        return result;
+    }
+
+    public static PictureInfo ToPictureInfo(this PictureInfoGrpc value)
+    {
+        var result = new PictureInfo(value.Id.ToGuid(), value.Name, value.Description);
+
+        return result;
+    }
+
+    public static PictureParameterGrpc ToPictureParameterGrpc(this PictureParameter value)
+    {
+        var result = new PictureParameterGrpc
+        {
+            Size = value.Size,
+            Id = value.Id.ToByteString(),
+            Type = (SizeTypeGrpc)value.Type,
+        };
+
+        return result;
+    }
+
+    public static PictureInfoGrpc ToPictureInfoGrpc(this PictureInfo value)
+    {
+        var result = new PictureInfoGrpc
+        {
+            Name = value.Name,
+            Description = value.Description,
+            Id = value.Id.ToByteString(),
+        };
+
+        return result;
+    }
+
+    public static PictureDataGrpc ToPictureDataGrpc(this PictureData value)
+    {
+        var result = new PictureDataGrpc
+        {
+            Data = value.Data.ToByteString(),
+            Id = value.Id.ToByteString(),
+        };
+
+        return result;
+    }
 
     public static PictureItemGrpc ToPictureItemGrpc(this PictureItem value)
     {
         var result = new PictureItemGrpc
         {
             Entry = value.Entry,
-            Picture = value.Picture.ToPictureGrpc(),
+            Info = value.Info.ToPictureInfoGrpc(),
             Id = value.Id.ToByteString(),
         };
-
-        return result;
-    }
-
-    public static PictureGrpc ToPictureGrpc(this Models.Picture value)
-    {
-        var result = new PictureGrpc
-        {
-            Id = value.Id.ToByteString(),
-            Name = value.Name,
-            Description = value.Description,
-            Data = value.Data.ToByteString(),
-        };
-
-        return result;
-    }
-
-    public static Models.Picture ToPicture(this PictureGrpc value)
-    {
-        var result = new Models.Picture(
-            value.Id.ToGuid(),
-            value.Name,
-            value.Description,
-            value.Data.ToByteArray().ToMemoryStream()
-        );
 
         return result;
     }
 
     public static PictureItem ToPictureItem(this PictureItemGrpc value)
     {
-        var result = new PictureItem(value.Entry, value.Id.ToGuid(), value.Picture.ToPicture());
+        var result = new PictureItem(value.Entry, value.Id.ToGuid(), value.Info.ToPictureInfo());
 
         return result;
     }
 
     public static PictureResponse ToPictureResponse(this GetPictureReply value)
     {
-        var result = new PictureResponse(value.Pictures.Select(x => x.ToPictureItem()).ToArray());
-
-        return result;
-    }
-
-    public static IdPictureParameters ToIdPictureParameters(this IdPictureParametersGrpc value)
-    {
-        var result = new IdPictureParameters(
-            value.EntryIds.Select(x => x.ToEntryId()).ToArray(),
-            value.Size,
-            (SizeType)value.Type
+        var result = new PictureResponse(
+            value.Pictures.Select(x => x.ToPictureItem()).ToArray(),
+            value.Data.Select(x => x.ToPictureData()).ToArray()
         );
 
         return result;
@@ -80,7 +102,10 @@ public static partial class PictureMapper
 
     public static GetPicture ToGetPicture(this GetPictureRequest value)
     {
-        var result = new GetPicture(value.Pictures.Select(x => x.ToIdPictureParameters()).ToArray());
+        var result = new GetPicture(
+            value.EntryIds.Select(x => x.ToEntryId()).ToArray(),
+            value.Parameters.Select(x => x.ToPictureParameter()).ToArray()
+        );
 
         return result;
     }

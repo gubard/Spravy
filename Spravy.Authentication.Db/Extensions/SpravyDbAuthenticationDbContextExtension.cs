@@ -14,11 +14,13 @@ public static class SpravyDbAuthenticationDbContextExtension
                 {
                     if (user.IsEmailVerified)
                     {
-                        return Result.Success.IfSuccess(
-                            user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                            user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                            (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e))
-                        );
+                        return user.Login
+                           .CheckNullOrWhiteSpaceProperty(nameof(user.Login))
+                           .IfSuccess(login =>
+                                user.Email
+                                   .CheckNullOrWhiteSpaceProperty(nameof(user.Email))
+                                   .IfSuccess(e => new Result<UserEntity>(new UserVerifiedError(login, e)))
+                            );
                     }
 
                     return new(user);
@@ -39,11 +41,13 @@ public static class SpravyDbAuthenticationDbContextExtension
                 {
                     if (!user.IsEmailVerified)
                     {
-                        return Result.Success.IfSuccess(
-                            user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                            user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                            (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e))
-                        );
+                        return user.Login
+                           .CheckNullOrWhiteSpaceProperty(nameof(user.Login))
+                           .IfSuccess(l =>
+                                user.Email
+                                   .CheckNullOrWhiteSpaceProperty(nameof(user.Email))
+                                   .IfSuccess(email => new Result<UserEntity>(new UserVerifiedError(l, email)))
+                            );
                     }
 
                     return new(user);
@@ -64,11 +68,13 @@ public static class SpravyDbAuthenticationDbContextExtension
                 {
                     if (!user.IsEmailVerified)
                     {
-                        return Result.Success.IfSuccess(
-                            user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                            user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                            (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e))
-                        );
+                        return user.Login
+                           .CheckNullOrWhiteSpaceProperty(nameof(user.Login))
+                           .IfSuccess(login =>
+                                user.Email
+                                   .CheckNullOrWhiteSpaceProperty(nameof(user.Email))
+                                   .IfSuccess(e => new Result<UserEntity>(new UserVerifiedError(login, e)))
+                            );
                     }
 
                     return new(user);
@@ -89,11 +95,13 @@ public static class SpravyDbAuthenticationDbContextExtension
                 {
                     if (!user.IsEmailVerified)
                     {
-                        return Result.Success.IfSuccess(
-                            user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                            user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                            (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e))
-                        );
+                        return user.Login
+                           .CheckNullOrWhiteSpaceProperty(nameof(user.Login))
+                           .IfSuccess(l =>
+                                user.Email
+                                   .CheckNullOrWhiteSpaceProperty(nameof(user.Email))
+                                   .IfSuccess(email => new Result<UserEntity>(new UserVerifiedError(l, email)))
+                            );
                     }
 
                     return new(user);

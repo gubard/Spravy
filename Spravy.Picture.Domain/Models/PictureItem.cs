@@ -2,14 +2,14 @@
 
 public readonly struct PictureItem
 {
-    public PictureItem(string entry, Guid id, Picture picture)
+    public PictureItem(string entry, Guid id, PictureInfo info)
     {
         Entry = entry;
         Id = id;
-        Picture = picture;
+        Info = info;
     }
 
     public readonly string Entry;
     public readonly Guid Id;
-    public readonly Picture Picture;
+    public readonly PictureInfo Info;
 }

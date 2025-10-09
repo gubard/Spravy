@@ -35,6 +35,16 @@ public class PictureEntryService : IPictureEntryService
             )
            .ConfigureAwait(false);
     }
+    public ConfiguredValueTaskAwaitable<Result<PictureEntry>> GetEntryAsync(
+        string entry,
+        Guid pictureId,
+        double size,
+        SizeType type,
+        CancellationToken ct
+    )
+    {
+        throw new NotImplementedException();
+    }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PictureEntry>>> GetEntriesAsync(
         string entry,
@@ -52,6 +62,23 @@ public class PictureEntryService : IPictureEntryService
                 ct
             )
            .ConfigureAwait(false);
+    }
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetEntriesAsync(
+        string entry,
+        Guid id,
+        CancellationToken ct
+    )
+    {
+        var folder = root.Combine(entry).Combine(id.ToString());
+
+        if (!folder.Exists)
+        {
+            folder.Create();
+        }
+
+        var names = folder.GetFiles().Select(x => Guid.Parse(x.GetFileNameWithoutExtension())).ToArray();
+
+        return names.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
     private async ValueTask<Result<ReadOnlyMemory<PictureEntry>>> GetEntriesCore(
@@ -80,7 +107,7 @@ public class PictureEntryService : IPictureEntryService
 
             if (file.Exists)
             {
-                result[index] = new(Guid.Parse(name), file.OpenRead());
+                result[index] = new(Guid.Parse(name), await file.OpenRead().ToByteArrayAsync());
 
                 continue;
             }
@@ -103,7 +130,7 @@ public class PictureEntryService : IPictureEntryService
                 ct
             )).ThrowIfError();
 
-            result[index] = new(Guid.Parse(name), file.OpenRead());
+            result[index] = new(Guid.Parse(name), await file.OpenRead().ToByteArrayAsync());
         }
 
         return result.ToReadOnlyMemory().ToResult();

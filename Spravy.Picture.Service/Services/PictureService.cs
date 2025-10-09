@@ -33,44 +33,64 @@ public class PictureService : IPictureService
            .IfSuccessAsync(
                 pictureEntryService => dbContextFactory.Create()
                    .IfSuccessDisposeAsync(
-                        context => getPicture.Pictures.IfSuccessForEachAsync(
-                            picture => picture.EntryIds.IfSuccessForEachAsync(
-                                entryId => entryId.Ids.IfSuccessForEachAsync(
-                                    id => pictureEntryService.GetEntriesAsync(
-                                            entryId.Entry,
-                                            id,
-                                            picture.Size,
-                                            picture.Type,
-                                            ct
-                                        )
-                                       .IfSuccessForEachAsync(
-                                            entry => context.GetEntityAsync<PictureItemEntity>(entry.Id)
-                                               .IfSuccessAsync(
-                                                    entity => new PictureItem(
-                                                        entryId.Entry,
-                                                        id,
-                                                        new(
-                                                            entity.Id,
-                                                            entity.Name,
-                                                            entity.Description,
-                                                            entry.Data
-                                                        )
-                                                    ).ToResult(),
+                        context =>
+                            Result.AwaitableSuccess.IfSuccessAsync(
+                                () => getPicture.EntryIds
+                                   .IfSuccessForEachAsync(
+                                        entryId => entryId.Ids.IfSuccessForEachAsync(
+                                            id => pictureEntryService.GetEntriesAsync(
+                                                    entryId.Entry,
+                                                    id,
+                                                    ct
+                                                )
+                                               .IfSuccessForEachAsync(
+                                                    entry => context.GetEntityAsync<PictureItemEntity>(entry)
+                                                       .IfSuccessAsync(
+                                                            entity => new PictureItem(
+                                                                entryId.Entry,
+                                                                id,
+                                                                new(
+                                                                    entity.Id,
+                                                                    entity.Name,
+                                                                    entity.Description
+                                                                )
+                                                            ).ToResult(),
+                                                            ct
+                                                        ),
                                                     ct
                                                 ),
                                             ct
                                         ),
-                                    ct
-                                ),
+                                        ct
+                                    )
+                                   .IfSuccessAsync(
+                                        a => getPicture.Parameters
+                                           .IfSuccessForEachAsync(
+                                                parameter => pictureEntryService.GetEntryAsync(
+                                                        parameter.Entry,
+                                                        parameter.Id,
+                                                        parameter.Size,
+                                                        parameter.Type,
+                                                        ct
+                                                    )
+                                                   .IfSuccessAsync(
+                                                        entry => new PictureData(parameter.Id, entry.Data).ToResult(),
+                                                        ct
+                                                    ),
+                                                ct
+                                            )
+                                           .IfSuccessAsync(
+                                                b => new PictureResponse(a.SelectMany().SelectMany(), b).ToResult(),
+                                                ct
+                                            ),
+                                        ct
+                                    ),
                                 ct
                             ),
-                            ct
-                        ),
                         ct
                     ),
                 ct
-            )
-           .IfSuccessAsync(items => new PictureResponse(items.SelectMany().SelectMany().SelectMany()).ToResult(), ct);
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> EditPictureAsync(EditPicture editPicture, CancellationToken ct)

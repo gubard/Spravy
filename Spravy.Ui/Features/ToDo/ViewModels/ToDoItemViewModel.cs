@@ -82,36 +82,25 @@ public partial class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemEdit
                 ct,
                 () => pictureService.GetPictureAsync(
                         new(
-                            new IdPictureParameters[]
-                            {
-                                new(
-                                    new EntryId[]
-                                    {
-                                        new(
-                                            "ToDo",
-                                            new[]
-                                            {
-                                                Item.Id,
-                                            }
-                                        ),
-                                    },
-                                    100,
-                                    SizeType.Height
-                                ),
-                            }
+                            ReadOnlyMemory<EntryId>.Empty,
+                            new(
+                                [
+                                    new(
+                                        Item.Id,
+                                        "ToDo",
+                                        SizeType.Height,
+                                        100
+                                    ),
+                                ]
+                            )
                         ),
                         ct
                     )
                    .IfSuccessAsync(
                         response => this.PostUiBackground(
-                            () => response.Pictures
-                               .IfSuccessForEach(
-                                    picture =>
-                                    {
-                                        using var stream = picture.Picture.Data;
-
-                                        return new MemoryToDoImage(picture.Picture.Id, stream).ToResult();
-                                    }
+                            () => response.Data
+                               .IfSuccessForEach(picture =>
+                                    new MemoryToDoImage(picture.Id, picture.Data).ToResult()
                                 )
                                .IfSuccess(images => Images.UpdateUi(images)),
                             ct

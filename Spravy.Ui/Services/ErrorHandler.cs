@@ -33,7 +33,7 @@ public class ErrorHandler : IErrorHandler
         }
 
         var viewFactory = serviceFactory.CreateService<IViewFactory>();
-        Log.Logger.Error("Error handler errors: {Errors}", errors);
+        Log.Logger.Error("Error handler errors: {Errors}", errors.Select(x => x.Message));
 
         return dialogViewer.ShowInfoDialogAsync(
             viewFactory,

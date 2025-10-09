@@ -1009,9 +1009,9 @@ public static class ResultExtension
         return await func.Invoke();
     }
 
-    private static async ValueTask<Result> IfSuccessCore<TValue, TArg>(
+    private static async ValueTask<Result> IfSuccessArgsCore<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
+        Func<Result<TArg>> arg,
         Func<TValue, TArg, Cvtar> func,
         CancellationToken ct
     ) where TValue : notnull where TArg : notnull
@@ -1023,9 +1023,11 @@ public static class ResultExtension
             return new(result.Errors);
         }
 
-        if (!arg.TryGetValue(out var a1))
+        var a = arg.Invoke();
+
+        if (!a.TryGetValue(out var a1))
         {
-            return new(arg.Errors);
+            return new(a.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -1036,29 +1038,29 @@ public static class ResultExtension
         return await func.Invoke(rv, a1);
     }
 
-    public static Cvtar IfSuccessAsync<TValue, TArg>(
+    public static Cvtar IfSuccessArgsAsync<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
+        Func<Result<TArg>> arg,
         Func<TValue, TArg, Cvtar> func,
         CancellationToken ct
     ) where TValue : notnull where TArg : notnull
     {
-        return IfSuccessCore(task, arg, func, ct).ConfigureAwait(false);
+        return IfSuccessArgsCore(task, arg, func, ct).ConfigureAwait(false);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessArgsAsync<TValue, TArg, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
+        Func<Result<TArg>> arg,
         Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
     ) where TReturn : notnull where TArg : notnull where TValue : notnull
     {
-        return IfSuccessCore(task, arg, func, ct).ConfigureAwait(false);
+        return IfSuccessArgsCore(task, arg, func, ct).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TArg, TReturn>(
+    private static async ValueTask<Result<TReturn>> IfSuccessArgsCore<TValue, TArg, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
+        Func<Result<TArg>> arg,
         Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken ct
     ) where TReturn : notnull where TValue : notnull where TArg : notnull
@@ -1070,9 +1072,11 @@ public static class ResultExtension
             return new(result.Errors);
         }
 
-        if (!arg.TryGetValue(out var a1))
+        var a = arg.Invoke();
+
+        if (!a.TryGetValue(out var a1))
         {
-            return new(arg.Errors);
+            return new(a.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -1083,61 +1087,15 @@ public static class ResultExtension
         return await func.Invoke(rv, a1);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
+    public static Cvtar IfSuccessArgsAsync<TValue, TArg1, TArg2>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result<TReturn>>> errorsFunc,
-        CancellationToken ct
-    ) where TReturn : notnull where TArg : notnull where TValue : notnull
-    {
-        return IfSuccessCore(
-                task,
-                arg,
-                func,
-                errorsFunc,
-                ct
-            )
-           .ConfigureAwait(false);
-    }
-
-    private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TArg, TReturn>(
-        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
-        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result<TReturn>>> errorsFunc,
-        CancellationToken ct
-    ) where TReturn : notnull where TArg : notnull where TValue : notnull
-    {
-        var result = await task;
-
-        if (!result.TryGetValue(out var rv))
-        {
-            return new(result.Errors);
-        }
-
-        if (!arg.TryGetValue(out var a1))
-        {
-            return new(arg.Errors);
-        }
-
-        if (ct.IsCancellationRequested)
-        {
-            return Result<TReturn>.CanceledByUserError;
-        }
-
-        return await func.Invoke(rv, a1);
-    }
-
-    public static Cvtar IfSuccessAsync<TValue, TArg1, TArg2>(
-        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg1> arg1,
-        Result<TArg2> arg2,
+        Func<Result<TArg1>> arg1,
+        Func<Result<TArg2>> arg2,
         Func<TValue, TArg1, TArg2, Cvtar> func,
         CancellationToken ct
     ) where TValue : notnull where TArg1 : notnull where TArg2 : notnull
     {
-        return IfSuccessCore(
+        return IfSuccessArgsCore(
                 task,
                 arg1,
                 arg2,
@@ -1147,10 +1105,10 @@ public static class ResultExtension
            .ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result> IfSuccessCore<TValue, TArg1, TArg2>(
+    private static async ValueTask<Result> IfSuccessArgsCore<TValue, TArg1, TArg2>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Result<TArg1> arg1,
-        Result<TArg2> arg2,
+        Func<Result<TArg1>> arg1,
+        Func<Result<TArg2>> arg2,
         Func<TValue, TArg1, TArg2, Cvtar> func,
         CancellationToken ct
     ) where TValue : notnull where TArg1 : notnull where TArg2 : notnull
@@ -1162,14 +1120,18 @@ public static class ResultExtension
             return new(result.Errors);
         }
 
-        if (!arg1.TryGetValue(out var a1))
+        var argr1 = arg1.Invoke();
+
+        if (!argr1.TryGetValue(out var a1))
         {
-            return new(arg1.Errors);
+            return new(argr1.Errors);
         }
 
-        if (!arg2.TryGetValue(out var a2))
+        var argr2 = arg2.Invoke();
+
+        if (!argr2.TryGetValue(out var a2))
         {
-            return new(arg2.Errors);
+            return new(argr2.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -1178,6 +1140,61 @@ public static class ResultExtension
         }
 
         return await func.Invoke(rv, a1, a2);
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessArgsAsync<TReturn, TArg1, TArg2>(
+        this Cvtar task,
+        Func<ConfiguredValueTaskAwaitable<Result<TArg1>>> arg1,
+        Func<ConfiguredValueTaskAwaitable<Result<TArg2>>> arg2,
+        Func<TArg1, TArg2, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    ) where TReturn : notnull where TArg1 : notnull where TArg2 : notnull
+    {
+        return IfSuccessArgsCore(
+                task,
+                arg1,
+                arg2,
+                func,
+                ct
+            )
+           .ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<TReturn>> IfSuccessArgsCore<TReturn, TArg1, TArg2>(
+        this Cvtar task,
+        Func<ConfiguredValueTaskAwaitable<Result<TArg1>>> arg1,
+        Func<ConfiguredValueTaskAwaitable<Result<TArg2>>> arg2,
+        Func<TArg1, TArg2, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    ) where TReturn : notnull where TArg1 : notnull where TArg2 : notnull
+    {
+        var result = await task;
+
+        if (!result.IsHasError)
+        {
+            return new(result.Errors);
+        }
+
+        var argr1 = await arg1.Invoke();
+
+        if (!argr1.TryGetValue(out var a1))
+        {
+            return new(argr1.Errors);
+        }
+
+        var argr2 = await arg2.Invoke();
+
+        if (!argr2.TryGetValue(out var a2))
+        {
+            return new(argr2.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError;
+        }
+
+        return await func.Invoke(a1, a2);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
@@ -1515,9 +1532,9 @@ public static class ResultExtension
         return await action.Invoke(rv);
     }
 
-    public static Cvtar IfSuccessAsync<TValue, TArg>(
+    public static Cvtar IfSuccessArgsAsync<TValue, TArg>(
         this Result<TValue> result,
-        Result<TArg> arg,
+        Func<Result<TArg>> arg,
         Func<TValue, TArg, Cvtar> action,
         CancellationToken ct
     ) where TValue : notnull where TArg : notnull
@@ -1527,9 +1544,11 @@ public static class ResultExtension
             return new Result(result.Errors).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        if (!arg.TryGetValue(out var a))
+        var argr = arg.Invoke();
+
+        if (!argr.TryGetValue(out var a))
         {
-            return new Result(arg.Errors).ToValueTaskResult().ConfigureAwait(false);
+            return new Result(argr.Errors).ToValueTaskResult().ConfigureAwait(false);
         }
 
         if (ct.IsCancellationRequested)
@@ -1818,10 +1837,10 @@ public static class ResultExtension
         return action.Invoke();
     }
 
-    public static Result<TReturn> IfSuccess<TArg1, TArg2, TReturn>(
+    public static Result<TReturn> IfSuccessArgs<TArg1, TArg2, TReturn>(
         this Result result,
-        Result<TArg1> arg1,
-        Result<TArg2> arg2,
+        Func<Result<TArg1>> arg1,
+        Func<Result<TArg2>> arg2,
         Func<TArg1, TArg2, Result<TReturn>> action
     ) where TReturn : notnull where TArg1 : notnull where TArg2 : notnull
     {
@@ -1830,23 +1849,27 @@ public static class ResultExtension
             return new(result.Errors);
         }
 
-        if (!arg1.TryGetValue(out var a1))
+        var argr1 = arg1.Invoke();
+
+        if (!argr1.TryGetValue(out var a1))
         {
-            return new(arg1.Errors);
+            return new(argr1.Errors);
         }
 
-        if (!arg2.TryGetValue(out var a2))
+        var argr2 = arg2.Invoke();
+
+        if (!argr2.TryGetValue(out var a2))
         {
-            return new(arg2.Errors);
+            return new(argr2.Errors);
         }
 
         return action.Invoke(a1, a2);
     }
 
-    public static Result<TReturn> IfSuccess<TValue, TArg1, TArg2, TReturn>(
+    public static Result<TReturn> IfSuccessArgs<TValue, TArg1, TArg2, TReturn>(
         this Result<TValue> result,
-        Result<TArg1> arg1,
-        Result<TArg2> arg2,
+        Func<Result<TArg1>> arg1,
+        Func<Result<TArg2>> arg2,
         Func<TValue, TArg1, TArg2, Result<TReturn>> action
     ) where TReturn : notnull where TArg1 : notnull where TArg2 : notnull where TValue : notnull
     {
@@ -1855,14 +1878,18 @@ public static class ResultExtension
             return new(result.Errors);
         }
 
-        if (!arg1.TryGetValue(out var a1))
+        var argr1 = arg1.Invoke();
+
+        if (!argr1.TryGetValue(out var a1))
         {
-            return new(arg1.Errors);
+            return new(argr1.Errors);
         }
 
-        if (!arg2.TryGetValue(out var a2))
+        var argr2 = arg2.Invoke();
+
+        if (!argr2.TryGetValue(out var a2))
         {
-            return new(arg2.Errors);
+            return new(argr2.Errors);
         }
 
         return action.Invoke(rv, a1, a2);

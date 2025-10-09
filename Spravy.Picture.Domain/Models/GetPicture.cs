@@ -2,10 +2,12 @@
 
 public readonly struct GetPicture
 {
-    public GetPicture(ReadOnlyMemory<IdPictureParameters> pictures)
+    public GetPicture(ReadOnlyMemory<EntryId> entryIds, ReadOnlyMemory<PictureParameter> parameters)
     {
-        Pictures = pictures;
+        EntryIds = entryIds;
+        Parameters = parameters;
     }
 
-    public readonly ReadOnlyMemory<IdPictureParameters> Pictures;
+    public readonly ReadOnlyMemory<EntryId> EntryIds;
+    public readonly ReadOnlyMemory<PictureParameter> Parameters;
 }
