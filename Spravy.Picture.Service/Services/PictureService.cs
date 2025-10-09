@@ -73,14 +73,14 @@ public class PictureService : IPictureService
                                                         parameter.Type,
                                                         ct
                                                     )
-                                                   .IfSuccessAsync(
+                                                   .IfSuccessForEachAsync(
                                                         entry => new PictureData(parameter.Id, entry.Data).ToResult(),
                                                         ct
                                                     ),
                                                 ct
                                             )
                                            .IfSuccessAsync(
-                                                b => new PictureResponse(a.SelectMany().SelectMany(), b).ToResult(),
+                                                b => new PictureResponse(a.SelectMany().SelectMany(), b.SelectMany()).ToResult(),
                                                 ct
                                             ),
                                         ct

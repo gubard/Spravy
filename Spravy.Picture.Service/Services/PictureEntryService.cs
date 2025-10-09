@@ -35,7 +35,8 @@ public class PictureEntryService : IPictureEntryService
             )
            .ConfigureAwait(false);
     }
-    public ConfiguredValueTaskAwaitable<Result<PictureEntry>> GetEntryAsync(
+
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PictureEntry>>> GetEntryAsync(
         string entry,
         Guid pictureId,
         double size,
@@ -43,45 +44,17 @@ public class PictureEntryService : IPictureEntryService
         CancellationToken ct
     )
     {
-        throw new NotImplementedException();
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PictureEntry>>> GetEntriesAsync(
-        string entry,
-        Guid id,
-        double size,
-        SizeType type,
-        CancellationToken ct
-    )
-    {
-        return GetEntriesCore(
+        return GetEntryCore(
                 entry,
-                id,
+                pictureId,
                 size,
                 type,
                 ct
             )
            .ConfigureAwait(false);
     }
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetEntriesAsync(
-        string entry,
-        Guid id,
-        CancellationToken ct
-    )
-    {
-        var folder = root.Combine(entry).Combine(id.ToString());
 
-        if (!folder.Exists)
-        {
-            folder.Create();
-        }
-
-        var names = folder.GetFiles().Select(x => Guid.Parse(x.GetFileNameWithoutExtension())).ToArray();
-
-        return names.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<PictureEntry>>> GetEntriesCore(
+    private async ValueTask<Result<ReadOnlyMemory<PictureEntry>>> GetEntryCore(
         string entry,
         Guid id,
         double size,
@@ -134,6 +107,24 @@ public class PictureEntryService : IPictureEntryService
         }
 
         return result.ToReadOnlyMemory().ToResult();
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetEntriesAsync(
+        string entry,
+        Guid id,
+        CancellationToken ct
+    )
+    {
+        var folder = root.Combine(entry).Combine(id.ToString());
+
+        if (!folder.Exists)
+        {
+            folder.Create();
+        }
+
+        var names = folder.GetFiles().Select(x => Guid.Parse(x.GetFileNameWithoutExtension())).ToArray();
+
+        return names.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
     private async ValueTask<Result> SaveCore(

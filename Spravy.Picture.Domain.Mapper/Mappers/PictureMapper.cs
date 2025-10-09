@@ -1,3 +1,4 @@
+using Google.Protobuf.Collections;
 using Riok.Mapperly.Abstractions;
 using Spravy.Core.Mappers;
 using Spravy.Domain.Extensions;
@@ -11,9 +12,17 @@ namespace Spravy.Picture.Domain.Mapper.Mappers;
 public static partial class PictureMapper
 {
     public static partial GetPictureReply ToGetPictureReply(this PictureResponse value);
-    public static partial GetPictureRequest ToGetPictureRequest(this GetPicture value);
     public static partial EditPictureRequest ToEditPictureRequest(this EditPicture value);
     public static partial AddPictureItemGrpc ToAddPictureItemGrpc(this AddPictureItem value);
+
+    public static GetPictureRequest ToGetPictureRequest(this GetPicture value)
+    {
+        var request = new GetPictureRequest();
+        request.EntryIds.AddRange(value.EntryIds.Select(x => x.ToEntryIdGrpc()).ToArray());
+        request.Parameters.AddRange(value.Parameters.Select(x => x.ToPictureParameterGrpc()).ToArray());
+
+        return request;
+    }
 
     public static PictureData ToPictureData(this PictureDataGrpc value)
     {
@@ -43,6 +52,7 @@ public static partial class PictureMapper
             Size = value.Size,
             Id = value.Id.ToByteString(),
             Type = (SizeTypeGrpc)value.Type,
+            Entry = value.Entry,
         };
 
         return result;

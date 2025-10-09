@@ -9,15 +9,7 @@ public interface IPictureEntryService
 {
     Cvtar SaveAsync(string entry, Guid id, string name, Stream stream, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<PictureEntry>> GetEntryAsync(
-        string entry,
-        Guid pictureId,
-        double size,
-        SizeType type,
-        CancellationToken ct
-    );
-
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PictureEntry>>> GetEntriesAsync(
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PictureEntry>>> GetEntryAsync(
         string entry,
         Guid id,
         double size,
