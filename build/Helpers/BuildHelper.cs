@@ -176,7 +176,7 @@ public static class BuildHelper
 
         var botClient = new TelegramBotClient(telegramToken);
 
-        botClient.SendTextMessageAsync(
+        botClient.SendMessage(
                 "@spravy_release",
                 $"Published {name} v{versionService.Version}({versionService.Version.Code})"
             )
@@ -194,7 +194,7 @@ public static class BuildHelper
                 continue;
             }
 
-            botClient.SendTextMessageAsync("@spravy_release", "^", replyMarkup: new InlineKeyboardMarkup(currentItems))
+            botClient.SendMessage("@spravy_release", "^", replyMarkup: new InlineKeyboardMarkup(currentItems))
                .GetAwaiter()
                .GetResult();
 
@@ -203,7 +203,7 @@ public static class BuildHelper
 
         if (currentItems.Count != 0)
         {
-            botClient.SendTextMessageAsync("@spravy_release", "#", replyMarkup: new InlineKeyboardMarkup(currentItems))
+            botClient.SendMessage("@spravy_release", "#", replyMarkup: new InlineKeyboardMarkup(currentItems))
                .GetAwaiter()
                .GetResult();
         }
