@@ -14,6 +14,6 @@ public class AvaloniaClipboardService : IClipboardService
         return application.GetTopLevel()
            .IfNotNull(nameof(TopLevel))
            .IfSuccess(toplevel => toplevel.Clipboard.IfNotNull(nameof(toplevel.Clipboard)))
-           .IfSuccessAsync(clipboard => clipboard.SetTextAsync(text).Wrap(), ct);
+           .IfSuccessAsync(clipboard => Dispatcher.UIThread.InvokeAsync(() => clipboard.SetTextAsync(text)).Wrap(), ct);
     }
 }
