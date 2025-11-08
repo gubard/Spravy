@@ -72,7 +72,12 @@ public static partial class ToDoMapper
 
     public static GetSearch ToGetSearch(this GetSearchGrpc value)
     {
-        return new(value.SearchText, value.Types_.Select(x => (ToDoItemType)x).ToArray());
+        if (value is null)
+        {
+            return new("", ReadOnlyMemory<ToDoItemType>.Empty);       
+        }
+        
+        return new(value.SearchText, value.Types_ is null ? [] : value.Types_.Select(x => (ToDoItemType)x).ToArray());
     }
 
     public static GetSearchGrpc ToGetSearchGrpc(this GetSearch value)
